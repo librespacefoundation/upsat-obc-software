@@ -1,4 +1,4 @@
-12:26:04 **** Build of configuration Debug for project su_sd_fr_test Configuration ****
+16:29:47 **** Build of configuration Debug for project su_sd_fr_test Configuration ****
 make all 
 'Building file: G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c'
 'Invoking: MCU GCC Compiler'
@@ -202,6 +202,21 @@ arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D_
 'Invoking: MCU GCC Compiler'
 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\su_sd_fr_test\SW4STM32\su_sd_fr_test Configuration\Debug
 arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Inc" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/STM32F4xx_HAL_Driver/Inc" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src/drivers" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/include" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/CMSIS/Include" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Application/User/main.d" -MT"Application/User/main.o" -o "Application/User/main.o" "G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c"
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c: In function 'StartDefaultTask':
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:394:14: warning: passing argument 1 of 'f_mount' from incompatible pointer type
+   if(f_mount(&SD_Driver, SD_Path, 0) != FR_OK)
+              ^
+In file included from G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Inc/fatfs.h:41:0,
+                 from G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:36:
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src/ff.h:251:9: note: expected 'struct FATFS *' but argument is of type 'struct Diskio_drvTypeDef *'
+ FRESULT f_mount (FATFS* fs, const TCHAR* path, BYTE opt);   /* Mount/Unmount a logical drive */
+         ^
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:391:11: warning: unused variable 'rtext' [-Wunused-variable]
+   uint8_t rtext[100];                                   /* File read buffer */
+           ^
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:389:26: warning: unused variable 'bytesread' [-Wunused-variable]
+   uint32_t byteswritten, bytesread;                     /* File write/read counts */
+                          ^
 'Finished building: G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c'
 ' '
 'Building file: G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/stm32f4xx_hal_msp.c'
@@ -232,5 +247,43 @@ make --no-print-directory post-build
 arm-none-eabi-objcopy -O binary "su_sd_fr_test.elf" "su_sd_fr_test.bin"
 arm-none-eabi-size "su_sd_fr_test.elf"
    text	   data	    bss	    dec	    hex	filename
-  12516	     24	  17528	  30068	   7574	su_sd_fr_test.elf
+  21184	     24	  17808	  39016	   9868	su_sd_fr_test.elf
 ' '
+16:30:13 **** Incremental Build of configuration Debug for project su_sd_fr_test Configuration ****
+make all 
+'Building file: G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c'
+'Invoking: MCU GCC Compiler'
+G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\su_sd_fr_test\SW4STM32\su_sd_fr_test Configuration\Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32F407xx -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Inc" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/STM32F4xx_HAL_Driver/Inc" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src/drivers" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/include" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/CMSIS/Include" -I"G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Drivers/CMSIS/Device/ST/STM32F4xx/Include"  -Os -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Application/User/main.d" -MT"Application/User/main.o" -o "Application/User/main.o" "G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c"
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c: In function 'StartDefaultTask':
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:394:14: warning: passing argument 1 of 'f_mount' from incompatible pointer type
+   if(f_mount(&SD_Driver, SD_Path, 0) != FR_OK)
+              ^
+In file included from G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Inc/fatfs.h:41:0,
+                 from G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:36:
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Middlewares/Third_Party/FatFs/src/ff.h:251:9: note: expected 'struct FATFS *' but argument is of type 'struct Diskio_drvTypeDef *'
+ FRESULT f_mount (FATFS* fs, const TCHAR* path, BYTE opt);   /* Mount/Unmount a logical drive */
+         ^
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:391:11: warning: unused variable 'rtext' [-Wunused-variable]
+   uint8_t rtext[100];                                   /* File read buffer */
+           ^
+G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c:389:26: warning: unused variable 'bytesread' [-Wunused-variable]
+   uint32_t byteswritten, bytesread;                     /* File write/read counts */
+                          ^
+'Finished building: G:/Users/nanimo/Documents/GitHub/upsat-obc-software/stm_cube/su_sd_fr_test/Src/main.c'
+' '
+'Building target: su_sd_fr_test.elf'
+'Invoking: MCU GCC Linker'
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F407VGTx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -lm -o "su_sd_fr_test.elf" @"objects.list"  
+'Finished building target: su_sd_fr_test.elf'
+' '
+make --no-print-directory post-build
+'Generating binary and Printing size information:'
+arm-none-eabi-objcopy -O binary "su_sd_fr_test.elf" "su_sd_fr_test.bin"
+arm-none-eabi-size "su_sd_fr_test.elf"
+   text	   data	    bss	    dec	    hex	filename
+  21180	     24	  17808	  39012	   9864	su_sd_fr_test.elf
+' '
+16:32:46 **** Incremental Build of configuration Debug for project su_sd_fr_test Configuration ****
+make all 
+make: Nothing to be done for `all'.
