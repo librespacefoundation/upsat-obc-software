@@ -48,8 +48,6 @@ DMA_HandleTypeDef hdma_sdio_tx;
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
-osThreadId myTask02Handle;
-osMessageQId myQueue01Handle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -63,7 +61,6 @@ static void MX_DMA_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART2_UART_Init(void);
 void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -95,8 +92,6 @@ int main(void)
   MX_SDIO_SD_Init();
   MX_USART2_UART_Init();
 
-
- // BSP_SD_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -115,21 +110,12 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityAboveNormal, 0, 1024);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* definition and creation of myTask02 */
-  osThreadDef(myTask02, StartTask02, osPriorityIdle, 0, 128);
-  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
-  /* Create the queue(s) */
-  /* definition and creation of myQueue01 */
-  osMessageQDef(myQueue01, 16, uint16_t);
-  myQueue01Handle = osMessageCreate(osMessageQ(myQueue01), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -384,14 +370,22 @@ void StartDefaultTask(void const * argument)
   /* init code for FATFS */
   MX_FATFS_Init();
   FIL MyFile;
-
+  FATFS test;
+  
+  uint32_t l1, l2;
+  
   FRESULT res;                                          /* FatFs function common result code */
   uint32_t byteswritten, bytesread;                     /* File write/read counts */
   uint8_t wtext[] = "This is STM32 working with FatFs"; /* File write buffer */
   uint8_t rtext[100];                                   /* File read buffer */
 
+  l1 = HAL_GetTick();
+  HAL_Delay(10000);
+  osDelay(1);
+  l2 = HAL_GetTick();
+  
   /* Register the file system object to the FatFs module */
-  if(f_mount(&SD_Driver, SD_Path, 0) != FR_OK)
+  if(f_mount(&test, SD_Path, 0) != FR_OK)
   {
     /* FatFs Initialization Error */
   }
@@ -419,24 +413,12 @@ void StartDefaultTask(void const * argument)
       }
   }
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+	  /* Infinite loop */
+	  for(;;)
+	  {
+	    osDelay(1);
+	  }
   /* USER CODE END 5 */ 
-}
-
-/* StartTask02 function */
-void StartTask02(void const * argument)
-{
-  /* USER CODE BEGIN StartTask02 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartTask02 */
 }
 
 #ifdef USE_FULL_ASSERT
