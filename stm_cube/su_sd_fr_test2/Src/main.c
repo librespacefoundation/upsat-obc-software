@@ -50,72 +50,13 @@ I2C_HandleTypeDef hi2c1;
 SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
+SPI_HandleTypeDef hspi2;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-void WriteBuffer(uint8_t I2C_ADDRESS, uint8_t *aTxBuffer, uint8_t TXBUFFERSIZE) 
-{
-    /* -> Start the transmission process */
-    /* While the I2C in reception process, user can transmit data through "aTxBuffer" buffer */
-    if(HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)I2C_ADDRESS<<1, (uint8_t*)aTxBuffer, (uint16_t)TXBUFFERSIZE, (uint32_t)1000)!= HAL_OK)
-    {
-        /*
-         * Error_Handler() function is called when Timeout error occurs.
-         * When Acknowledge failure occurs (Slave don't acknowledge it's address)
-         * Master restarts communication
-         */
 
-        if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_AF)
-        {
-
-        }
-
-    }
-
-    /* -> Wait for the end of the transfer */
-    /* Before starting a new communication transfer, you need to check the current
-     * state of the peripheral; if it’s busy you need to wait for the end of current
-     * transfer before starting a new one.
-     * For simplicity reasons, this example is just waiting till the end of the
-     * transfer, but application may perform other tasks while transfer operation
-     * is ongoing.
-     */
-      while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
-      {
-      }
-}
-
-void ReadBuffer(uint8_t I2C_ADDRESS, uint8_t RegAddr, uint8_t *aRxBuffer, uint8_t RXBUFFERSIZE)
-{
-    /* -> Lets ask for register's address */
-    WriteBuffer(I2C_ADDRESS, &RegAddr, 1);
-
-    /* -> Put I2C peripheral in reception process */
-    if(HAL_I2C_Master_Receive(&hi2c1, (uint16_t)I2C_ADDRESS<<1, aRxBuffer, (uint16_t)RXBUFFERSIZE, (uint32_t)1000) != HAL_OK)
-    {
-        /* Error_Handler() function is called when Timeout error occurs.
-         * When Acknowledge failure occurs (Slave don't acknowledge it's address)
-         * Master restarts communication
-         */
-        if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_AF)
-        {
-
-        }
-    }
-
-    /* -> Wait for the end of the transfer */
-    /* Before starting a new communication transfer, you need to check the current
-     * state of the peripheral; if it’s busy you need to wait for the end of current
-     * transfer before starting a new one.
-     * For simplicity reasons, this example is just waiting till the end of the
-     * transfer, but application may perform other tasks while transfer operation
-     * is ongoing.
-     **/
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
-    {
-    }
-}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -123,6 +64,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SDIO_SD_Init(void);
+static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
@@ -153,12 +95,13 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_SDIO_SD_Init();
+  MX_SPI2_Init();
   MX_USART2_UART_Init();
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 2 */
   /* Register the file system object to the FatFs module */
-
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 
 
   
@@ -192,7 +135,7 @@ int main(void)
 //      }
 //  }
 //  0x0f
-  uint8_t temp[2];
+  uint8_t temp[2],rtemp[2];
   
   temp[0] = 0x20; 
   temp[1] = 0x0F; 
@@ -206,7 +149,7 @@ int main(void)
   temp[0] = 0x01;
   HAL_I2C_Mem_Read(&hi2c1, ( 0x6B << 1 ), 0x0f, 1, temp, 1, 10000);
   
-  
+  temp[0] = 0xB6;
 
   /* USER CODE END 2 */
 
@@ -217,6 +160,10 @@ int main(void)
      HAL_UART_Transmit(&huart2, temp, 2 , 10000);
      HAL_Delay(1000);
      HAL_I2C_Mem_Read(&hi2c1, ( 0x3B << 1 ), 0x0f, 1, temp, 1, 10000);
+     
+     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+     HAL_SPI_TransmitReceive(&hspi2, temp, rtemp, 2, 10000);
+     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -295,6 +242,26 @@ void MX_SDIO_SD_Init(void)
 
 }
 
+/* SPI2 init function */
+void MX_SPI2_Init(void)
+{
+
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLED;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
+  hspi2.Init.CRCPolynomial = 10;
+  HAL_SPI_Init(&hspi2);
+
+}
+
 /* USART2 init function */
 void MX_USART2_UART_Init(void)
 {
@@ -328,6 +295,7 @@ void MX_USART2_UART_Init(void)
      PA10   ------> USB_OTG_FS_ID
      PA11   ------> USB_OTG_FS_DM
      PA12   ------> USB_OTG_FS_DP
+     PC10   ------> I2S3_CK
 */
 void MX_GPIO_Init(void)
 {
@@ -394,6 +362,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
   HAL_GPIO_Init(CLK_IN_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin 
                            Audio_RST_Pin */
   GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin 
@@ -403,8 +378,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
+  /*Configure GPIO pins : PC7 I2S3_SCK_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_7|I2S3_SCK_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
