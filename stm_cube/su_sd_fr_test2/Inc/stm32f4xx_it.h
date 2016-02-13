@@ -46,9 +46,11 @@
 /* Exported functions ------------------------------------------------------- */
 
 void SysTick_Handler(void);
+void ADC_IRQHandler(void);
 void I2C1_EV_IRQHandler(void);
 void SPI2_IRQHandler(void);
 void USART2_IRQHandler(void);
+void TIM8_TRG_COM_TIM14_IRQHandler(void);
 void SDIO_IRQHandler(void);
 
 #ifdef __cplusplus

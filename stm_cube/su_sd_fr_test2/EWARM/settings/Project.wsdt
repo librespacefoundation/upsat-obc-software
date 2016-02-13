@@ -40,7 +40,7 @@
         </Tabs>
         <SelectedTab>0</SelectedTab>
       </Wnd2>
-      <Wnd4>
+      <Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-27655-1148</Identity>
@@ -50,7 +50,7 @@
           </Tab>
         </Tabs>
         <SelectedTab>0</SelectedTab>
-      </Wnd4>
+      </Wnd3>
     </Windows>
     <Editor>
       <Pane>
@@ -62,9 +62,9 @@
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>140</YPos2>
-          <SelStart2>0</SelStart2>
-          <SelEnd2>0</SelEnd2>
+          <YPos2>156</YPos2>
+          <SelStart2>6117</SelStart2>
+          <SelEnd2>6117</SelEnd2>
         </Tab>
         <ActiveTab>0</ActiveTab>
         <Tab>
@@ -75,7 +75,7 @@
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>621</YPos2>
+          <YPos2>606</YPos2>
           <SelStart2>23164</SelStart2>
           <SelEnd2>23284</SelEnd2>
         </Tab>
@@ -90,6 +90,30 @@
           <YPos2>405</YPos2>
           <SelStart2>17489</SelStart2>
           <SelEnd2>17498</SelEnd2>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>0</SelStart>
+          <SelEnd>0</SelEnd>
+          <XPos2>0</XPos2>
+          <YPos2>300</YPos2>
+          <SelStart2>13464</SelStart2>
+          <SelEnd2>13507</SelEnd2>
+        </Tab>
+        <Tab>
+          <Factory>TextEditor</Factory>
+          <Filename>$WS_DIR$\..\Src\stm32f4xx_hal_msp.c</Filename>
+          <XPos>0</XPos>
+          <YPos>0</YPos>
+          <SelStart>0</SelStart>
+          <SelEnd>0</SelEnd>
+          <XPos2>0</XPos2>
+          <YPos2>327</YPos2>
+          <SelStart2>0</SelStart2>
+          <SelEnd2>0</SelEnd2>
         </Tab>
       </Pane>
       <ActivePane>0</ActivePane>
@@ -110,6 +134,9 @@
             </Toolbar-00CCCA08>
           </Sizes>
         </Row0>
+        <Row1>
+          <Sizes/>
+        </Row1>
       </Top>
       <Left>
         <Row0>
@@ -141,7 +168,7 @@
       <Bottom>
         <Row0>
           <Sizes>
-            <Wnd4>
+            <Wnd3>
               <Rect>
                 <Top>-2</Top>
                 <Left>-2</Left>
@@ -156,7 +183,7 @@
                 <sizeVertCX>124456</sizeVertCX>
                 <sizeVertCY>223714</sizeVertCY>
               </Rect>
-            </Wnd4>
+            </Wnd3>
           </Sizes>
         </Row0>
       </Bottom>

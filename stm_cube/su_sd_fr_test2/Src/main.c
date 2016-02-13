@@ -45,12 +45,16 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 I2C_HandleTypeDef hi2c1;
 
 SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
 SPI_HandleTypeDef hspi2;
+
+TIM_HandleTypeDef htim14;
 
 UART_HandleTypeDef huart2;
 
@@ -62,9 +66,11 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_SPI2_Init(void);
+static void MX_TIM14_Init(void);
 static void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
@@ -93,9 +99,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_ADC1_Init();
   MX_I2C1_Init();
   MX_SDIO_SD_Init();
   MX_SPI2_Init();
+  MX_TIM14_Init();
   MX_USART2_UART_Init();
   MX_FATFS_Init();
 
@@ -136,14 +144,22 @@ int main(void)
 //  }
 //  0x0f
   uint8_t temp[2],rtemp[2];
+  uint32_t cnt;
+  TIM_OC_InitTypeDef sConfigOC;
   
+       sConfigOC.OCMode = TIM_OCMODE_PWM1;
+     sConfigOC.Pulse = 0;
+     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+     
   temp[0] = 0x20; 
   temp[1] = 0x0F; 
   
-  //WriteBuffer(0x6B, temp,2);
- // ReadBuffer(0x6B, 0x0f, temp,1);
+
   
   //while(HAL_I2C_IsDeviceReady(&hi2c1,  ( 0x3B << 1 ), 3, 1000) != HAL_I2C_STATE_READY ) {}
+  HAL_TIM_Base_Start(&htim14);
+  HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
   
   HAL_I2C_Mem_Write(&hi2c1, ( 0x6B << 1 ), 0x20, 1, temp, 1, 10000);
   temp[0] = 0x01;
@@ -164,6 +180,13 @@ int main(void)
      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
      HAL_SPI_TransmitReceive(&hspi2, temp, rtemp, 2, 10000);
      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+     
+     cnt += 250;
+     if( cnt > 0x0fff ) cnt = 0;
+     sConfigOC.Pulse = cnt;
+     HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
+     HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+     
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -209,6 +232,36 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/* ADC1 init function */
+void MX_ADC1_Init(void)
+{
+
+  ADC_ChannelConfTypeDef sConfig;
+
+    /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+    */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION12b;
+  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = EOC_SINGLE_CONV;
+  HAL_ADC_Init(&hadc1);
+
+    /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+    */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+
 }
 
 /* I2C1 init function */
@@ -262,6 +315,29 @@ void MX_SPI2_Init(void)
 
 }
 
+/* TIM14 init function */
+void MX_TIM14_Init(void)
+{
+
+  TIM_OC_InitTypeDef sConfigOC;
+
+  htim14.Instance = TIM14;
+  htim14.Init.Prescaler = 0;
+  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim14.Init.Period = 0x0fff;
+  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  HAL_TIM_Base_Init(&htim14);
+
+  HAL_TIM_PWM_Init(&htim14);
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0x009ff;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
+
+}
+
 /* USART2 init function */
 void MX_USART2_UART_Init(void)
 {
@@ -288,7 +364,6 @@ void MX_USART2_UART_Init(void)
      PA4   ------> I2S3_WS
      PA5   ------> SPI1_SCK
      PA6   ------> SPI1_MISO
-     PA7   ------> SPI1_MOSI
      PB10   ------> I2S2_CK
      PC7   ------> I2S3_MCK
      PA9   ------> USB_OTG_FS_VBUS
@@ -340,8 +415,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA5 PA6 PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  /*Configure GPIO pins : PA5 PA6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
