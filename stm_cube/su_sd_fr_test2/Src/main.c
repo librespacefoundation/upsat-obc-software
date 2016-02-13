@@ -144,7 +144,7 @@ int main(void)
 //  }
 //  0x0f
   uint8_t temp[2],rtemp[2];
-  uint32_t cnt;
+  uint32_t cnt, cnv;
   TIM_OC_InitTypeDef sConfigOC;
   
        sConfigOC.OCMode = TIM_OCMODE_PWM1;
@@ -165,8 +165,14 @@ int main(void)
   temp[0] = 0x01;
   HAL_I2C_Mem_Read(&hi2c1, ( 0x6B << 1 ), 0x0f, 1, temp, 1, 10000);
   
-  temp[0] = 0xB6;
 
+
+  HAL_ADC_Start(&hadc1);
+  HAL_ADC_PollForConversion(&hadc1, 10000);
+  cnv = HAL_ADC_GetValue(&hadc1);
+  
+  temp[0] = 0xB6;
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -186,6 +192,11 @@ int main(void)
      sConfigOC.Pulse = cnt;
      HAL_TIM_PWM_ConfigChannel(&htim14, &sConfigOC, TIM_CHANNEL_1);
      HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+     
+     HAL_ADC_Start(&hadc1);
+     HAL_ADC_PollForConversion(&hadc1, 10000);
+     cnv = HAL_ADC_GetValue(&hadc1);
+     HAL_UART_Transmit(&huart2, (uint8_t *) &cnv, 1 , 10000);
      
   /* USER CODE END WHILE */
 

@@ -62,23 +62,11 @@
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>156</YPos2>
-          <SelStart2>6117</SelStart2>
-          <SelEnd2>6117</SelEnd2>
+          <YPos2>164</YPos2>
+          <SelStart2>6435</SelStart2>
+          <SelEnd2>6435</SelEnd2>
         </Tab>
         <ActiveTab>0</ActiveTab>
-        <Tab>
-          <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_spi.c</Filename>
-          <XPos>0</XPos>
-          <YPos>0</YPos>
-          <SelStart>0</SelStart>
-          <SelEnd>0</SelEnd>
-          <XPos2>0</XPos2>
-          <YPos2>606</YPos2>
-          <SelStart2>23164</SelStart2>
-          <SelEnd2>23284</SelEnd2>
-        </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
           <Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</Filename>
@@ -105,15 +93,15 @@
         </Tab>
         <Tab>
           <Factory>TextEditor</Factory>
-          <Filename>$WS_DIR$\..\Src\stm32f4xx_hal_msp.c</Filename>
+          <Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</Filename>
           <XPos>0</XPos>
           <YPos>0</YPos>
           <SelStart>0</SelStart>
           <SelEnd>0</SelEnd>
           <XPos2>0</XPos2>
-          <YPos2>327</YPos2>
-          <SelStart2>0</SelStart2>
-          <SelEnd2>0</SelEnd2>
+          <YPos2>84</YPos2>
+          <SelStart2>35746</SelStart2>
+          <SelEnd2>35787</SelEnd2>
         </Tab>
       </Pane>
       <ActivePane>0</ActivePane>
