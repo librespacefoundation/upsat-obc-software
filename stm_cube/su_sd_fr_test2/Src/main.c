@@ -54,7 +54,68 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+void WriteBuffer(uint8_t I2C_ADDRESS, uint8_t *aTxBuffer, uint8_t TXBUFFERSIZE) 
+{
+    /* -> Start the transmission process */
+    /* While the I2C in reception process, user can transmit data through "aTxBuffer" buffer */
+    if(HAL_I2C_Master_Transmit(&hi2c1, (uint16_t)I2C_ADDRESS<<1, (uint8_t*)aTxBuffer, (uint16_t)TXBUFFERSIZE, (uint32_t)1000)!= HAL_OK)
+    {
+        /*
+         * Error_Handler() function is called when Timeout error occurs.
+         * When Acknowledge failure occurs (Slave don't acknowledge it's address)
+         * Master restarts communication
+         */
 
+        if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_AF)
+        {
+
+        }
+
+    }
+
+    /* -> Wait for the end of the transfer */
+    /* Before starting a new communication transfer, you need to check the current
+     * state of the peripheral; if it’s busy you need to wait for the end of current
+     * transfer before starting a new one.
+     * For simplicity reasons, this example is just waiting till the end of the
+     * transfer, but application may perform other tasks while transfer operation
+     * is ongoing.
+     */
+      while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
+      {
+      }
+}
+
+void ReadBuffer(uint8_t I2C_ADDRESS, uint8_t RegAddr, uint8_t *aRxBuffer, uint8_t RXBUFFERSIZE)
+{
+    /* -> Lets ask for register's address */
+    WriteBuffer(I2C_ADDRESS, &RegAddr, 1);
+
+    /* -> Put I2C peripheral in reception process */
+    if(HAL_I2C_Master_Receive(&hi2c1, (uint16_t)I2C_ADDRESS<<1, aRxBuffer, (uint16_t)RXBUFFERSIZE, (uint32_t)1000) != HAL_OK)
+    {
+        /* Error_Handler() function is called when Timeout error occurs.
+         * When Acknowledge failure occurs (Slave don't acknowledge it's address)
+         * Master restarts communication
+         */
+        if (HAL_I2C_GetError(&hi2c1) != HAL_I2C_ERROR_AF)
+        {
+
+        }
+    }
+
+    /* -> Wait for the end of the transfer */
+    /* Before starting a new communication transfer, you need to check the current
+     * state of the peripheral; if it’s busy you need to wait for the end of current
+     * transfer before starting a new one.
+     * For simplicity reasons, this example is just waiting till the end of the
+     * transfer, but application may perform other tasks while transfer operation
+     * is ongoing.
+     **/
+    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
+    {
+    }
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,12 +193,21 @@ int main(void)
 //  }
 //  0x0f
   uint8_t temp[2];
-  temp[0] = 0x0f; 
   
-   HAL_I2C_Master_Receive(&hi2c1, 0x3B, temp, 2, 10000);
+  temp[0] = 0x20; 
+  temp[1] = 0x0F; 
+  
+  //WriteBuffer(0x6B, temp,2);
+ // ReadBuffer(0x6B, 0x0f, temp,1);
+  
+  //while(HAL_I2C_IsDeviceReady(&hi2c1,  ( 0x3B << 1 ), 3, 1000) != HAL_I2C_STATE_READY ) {}
+  
+  HAL_I2C_Mem_Write(&hi2c1, ( 0x6B << 1 ), 0x20, 1, temp, 1, 10000);
+  temp[0] = 0x01;
+  HAL_I2C_Mem_Read(&hi2c1, ( 0x6B << 1 ), 0x0f, 1, temp, 1, 10000);
   
   
-  
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -146,6 +216,7 @@ int main(void)
   {
      HAL_UART_Transmit(&huart2, temp, 2 , 10000);
      HAL_Delay(1000);
+     HAL_I2C_Mem_Read(&hi2c1, ( 0x3B << 1 ), 0x0f, 1, temp, 1, 10000);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
