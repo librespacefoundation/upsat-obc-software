@@ -16,6 +16,11 @@
 
 #define TC_TM_SER_DIST		2
 #define TC_TM_SER_HK		3
+
+/* Minimal */
+#define TC_TM_SER_HK_PAR	25
+/* Additional */
+
 #define TC_TM_SER_STAT		4
 #define TC_TM_SER_EVENT		5
 #define TC_TM_SER_MEM		6
@@ -55,6 +60,8 @@
 #define TC_SER_VER_ACC_ILLEGAL_PKT_TP	3
 #define TC_SER_VER_ACC_ILLEGAL_PKT_STP	4
 #define TC_SER_VER_ACC_ILLEGAL_APP_DATA 5
+
+#define TC_TM_SER_LDATA_MAX_DATA_PKT	512
 
 struct tc_tm_header {
 	/* packet id */
@@ -116,7 +123,7 @@ struct tc_tm_ser_ver_header_suc {
 	struct tc_tm_ser_ver_hdr _tc_tm_ser_ver_hdr;
 };
 
-
+/* Service 1, Verification */
 struct tc_tm_ser_ver_header_fail {
 	struct tc_tm_ser_ver_hdr _tc_tm_ser_ver_hdr;
 	uintx_t error; /* x bits */
@@ -140,3 +147,11 @@ struct tc_tm_ser_ver_header_step_fail {
 	/*optional*/
 	uintx_t params; /* x bits*/
 };
+
+/* Service 3, Housekeeping and diagnostics */
+
+
+/* Service 13, Verification */
+
+
+
