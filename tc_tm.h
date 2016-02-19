@@ -1,7 +1,9 @@
 
 
 /* TM TC services*/
-#define TC_TM_SER_TC_VER	1
+#define ECSS_VER_NUMBER				0
+#define ECSS_DATA_FIELD_HDR_FLG		0
+#define TC_TM_SER_TC_VER			1
 
 /* Minimal */
 #define TC_TM_SER_TC_VER_ACC_SUCC			1
@@ -62,6 +64,21 @@
 #define TC_SER_VER_ACC_ILLEGAL_APP_DATA 5
 
 #define TC_TM_SER_LDATA_MAX_DATA_PKT	512
+
+#define VER_NUMBER 
+#define TC_TM_TYPE
+#define DATA_FIELD_HDR_FLG
+#define APP_ID
+#define SEQ_FLG
+
+union _cnv {
+	uint32_t cnv32;
+	uint16_t cnv16[2];
+	uint8_t cnv8[4];
+};
+
+
+const uint8_t route_verification[MAX_SERVICES][MAX_SUBTYPES][2][MAX_APPID] = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9} };
 
 struct tc_tm_header {
 	/* packet id */
