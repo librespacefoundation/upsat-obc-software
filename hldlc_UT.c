@@ -1,8 +1,8 @@
-#define TEST_ARRAY 20
-
 #include <stdio.h>
 
 #include "hldlc.h"
+
+#define TEST_ARRAY 20
 
 int main() {
 
