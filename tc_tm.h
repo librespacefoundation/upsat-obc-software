@@ -2,9 +2,11 @@
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER				0
-#define ECSS_DATA_FIELD_HDR_FLG		0
+#define ECSS_DATA_FIELD_HDR_FLG		1
 #define TC_TM_SER_TC_VER			1
 
+#define ECSS_PUS_VER			1
+#define ECSS_SEC_HDR_FIELD_FLG  0
 /* Minimal */
 #define TC_TM_SER_TC_VER_ACC_SUCC			1
 #define TC_TM_SER_TC_VER_ACC_FAIL			2
@@ -56,12 +58,12 @@
 #define TC_ACK_EXE_COMP		0x08
 #define TC_ACK_ALL			0x0F
 
-#define TC_SER_VER_ACC_ILLEGAL_APPID	0
-#define TC_SER_VER_ACC_INV_LEN			1
-#define TC_SER_VER_ACC_INC_CRC			2
-#define TC_SER_VER_ACC_ILLEGAL_PKT_TP	3
-#define TC_SER_VER_ACC_ILLEGAL_PKT_STP	4
-#define TC_SER_VER_ACC_ILLEGAL_APP_DATA 5
+#define TC_SER_VER_ACK_ILLEGAL_APPID	0
+#define TC_SER_VER_ACK_INV_LEN			1
+#define TC_SER_VER_ACK_INC_CRC			2
+#define TC_SER_VER_ACK_ILLEGAL_PKT_TP	3
+#define TC_SER_VER_ACK_ILLEGAL_PKT_STP	4
+#define TC_SER_VER_ACK_ILLEGAL_APP_DATA 5
 
 #define TC_TM_SER_LDATA_MAX_DATA_PKT	512
 
@@ -79,6 +81,10 @@
 #define R_OK	1
 #define R_ERROR	2
 #define R_EOT	3
+
+#define TC_VERIFICATION_SERVICE			1
+#define TC_HOUSEKEEPING_SERVICE			3
+#define TC_FUNCTION_MANAGEMENT_SERVICE	8
 
 union _cnv {
 	uint32_t cnv32;
@@ -167,5 +173,5 @@ uint8_t checkSum( uint8_t *data, uint16_t size);
 
 uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
 
-void pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
+uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
 
