@@ -6,7 +6,7 @@
 
 int main() {
 
-	uint8_t in[TEST_ARRAY], out[TEST_ARRAY];
+	uint8_t in[TEST_ARRAY];
 	
 	/*checksum UT*/
 	uint8_t res_cs;
@@ -26,7 +26,7 @@ int main() {
 
 
 	/*unpack_pkt UT*/
-	struct tc_tm_pkt res;
+	struct tc_tm_pkt res, out;
 	uint16_t size;
 
 	size = 13;
@@ -63,7 +63,55 @@ int main() {
 
 	in[12] = checkSum( in, size);
 
-	unpack_pkt(in, &res, size);
+	unpack_pkt(in, &out, size);
 
+    if (res.type == out.type) {
+        printf("type ok\n");
+    } else {
+        printf("type error\n");
+    }
+    
+    if (res.app_id == out.app_id) {
+        printf("app_id ok\n");
+    } else {
+        printf("app_id error\n");
+    }
+    
+    if (res.seq_flags == out.seq_flags) {
+        printf("seq_flags ok\n");
+    } else {
+        printf("seq_flags error\n");
+    }
+
+    if (res.seq_count == out.seq_count) {
+        printf("seq_count ok\n");
+    } else {
+        printf("seq_count error\n");
+    }
+    
+    if (res.ack == out.ack) {
+        printf("ack ok\n");
+    } else {
+        printf("ack error\n");
+    }
+    
+    if (res.ser_type == out.ser_type) {
+        printf("ser_type ok\n");
+    } else {
+        printf("ser_type error\n");
+    }
+    
+    if (res.ser_subtype == out.ser_subtype) {
+        printf("ser_subtype ok\n");
+    } else {
+        printf("ser_subtype error\n");
+    }
+    
+    if (res.dest_id == out.dest_id) {
+        printf("dest_id ok\n");
+    } else {
+        printf("dest_id error\n");
+    }
+    
 	return 0;
 }
