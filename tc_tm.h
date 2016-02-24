@@ -92,21 +92,14 @@ union _cnv {
 	uint8_t cnv8[4];
 };
 
-/*
-const uint8_t route_verification[MAX_SERVICES][MAX_SUBTYPES][2][MAX_APPID] = { 
-	{ 1, 2, 3 }, 
-	{ 4, 5, 6 }, 
-	{ 7, 8, 9} 
-};
-*/
-
 struct tc_tm_pkt {
 	/* packet id */
 	//uint8_t ver; /* 3 bits, should be equal to 0 */
-	uint8_t type; /* 1 bit, tm = 0, tc = 1 */
+	
 	//uint8_t data_field_hdr; /* 1 bit, data_field_hdr exists in data = 1 */
 	uint16_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. */
-
+	uint8_t type; /* 1 bit, tm = 0, tc = 1 */
+	
 	/* packet sequence control */
 	uint8_t seq_flags; /* 3 bits, definition in TC_SEQ_xPACKET */
 	uint16_t seq_count; /* 14 bits, packet counter, should be unique for each app id */
@@ -128,14 +121,14 @@ struct tc_tm_pkt {
 };
 
 
-struct tc_tm_ser_ver_hdr {
-	uint16_t tc_pckt_id; /* 16 bits, copy of originating tc's, packet id */
-	uint8_t tc_pckt_seq; /* 16 bits, copy of originating tc's, packet seq */
-};
+//struct tc_tm_ser_ver_hdr {
+//	uint16_t tc_pckt_id; /* 16 bits, copy of originating tc's, packet id */
+//	uint8_t tc_pckt_seq; /* 16 bits, copy of originating tc's, packet seq */
+//};
 
-struct tc_tm_ser_ver_header_suc {
-	struct tc_tm_ser_ver_hdr _tc_tm_ser_ver_hdr;
-};
+//struct tc_tm_ser_ver_header_suc {
+//	struct tc_tm_ser_ver_hdr _tc_tm_ser_ver_hdr;
+//};
 
 
 /* Service 1, Verification */
@@ -173,5 +166,5 @@ uint8_t checkSum( uint8_t *data, uint16_t size);
 
 uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
 
-uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
+uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size);
 

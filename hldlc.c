@@ -5,9 +5,10 @@
 uint8_t HLDLC_deframe( uint8_t *buf, uint16_t * cnt, uint8_t c) {
 
 	if( cnt != 0 && c == HLDLC_START_FLAG ) {
-		* cnt = 0;
+		*cnt = 0;
 		return R_EOT;
 	} else if( cnt == 0 && c != HLDLC_START_FLAG ) {
+		*cnt = 0;
 		return R_ERROR;
 	} else if( cnt != 0 && buf[(*cnt)-1] == HLDLC_CONTROL_FLAG ) {
 		if( c == 0x5E ) { buf[*cnt-1] = HLDLC_START_FLAG; }
