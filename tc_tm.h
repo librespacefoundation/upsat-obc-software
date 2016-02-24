@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdint.h>
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER				0
@@ -58,13 +58,6 @@
 #define TC_ACK_EXE_COMP		0x08
 #define TC_ACK_ALL			0x0F
 
-#define TC_SER_VER_ACK_ILLEGAL_APPID	0
-#define TC_SER_VER_ACK_INV_LEN			1
-#define TC_SER_VER_ACK_INC_CRC			2
-#define TC_SER_VER_ACK_ILLEGAL_PKT_TP	3
-#define TC_SER_VER_ACK_ILLEGAL_PKT_STP	4
-#define TC_SER_VER_ACK_ILLEGAL_APP_DATA 5
-
 #define TC_TM_SER_LDATA_MAX_DATA_PKT	512
 
 #define VER_NUMBER 
@@ -74,13 +67,22 @@
 #define SEQ_FLG
 
 #define MAX_PKT_DATA 20
+#define MAX_APP_ID 20
+#define MAX_SERVICES 20
+#define MAX_SUBTYPES 25
 
 #define TC 1
 #define TM 0
 
-#define R_OK	1
-#define R_ERROR	2
-#define R_EOT	3
+#define R_PKT_ILLEGAL_APPID	0
+#define R_PKT_INV_LEN		1
+#define R_PKT_INC_CRC		2
+#define R_PKT_ILLEGAL_PKT_TP	3
+#define R_PKT_ILLEGAL_PKT_STP	4
+#define R_PKT_ILLEGAL_APP_DATA  5
+#define R_OK                    6
+#define R_ERROR                 7
+#define R_EOT                   8
 
 #define TC_VERIFICATION_SERVICE			1
 #define TC_HOUSEKEEPING_SERVICE			3
@@ -162,9 +164,9 @@ struct tc_tm_pkt {
 /* Service 13, Verification */
 
 
-uint8_t checkSum( uint8_t *data, uint16_t size);
+uint8_t checkSum(const uint8_t *data, uint16_t size);
 
 uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
 
-uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size);
+uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size);
 

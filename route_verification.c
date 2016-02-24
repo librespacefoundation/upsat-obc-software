@@ -1,3 +1,5 @@
+#include "route_verification.h"
+#include "housekeeping_service.h"
 
 uint8_t route_pkt(struct tc_tm_pkt *pkt) {
 	uint16_t id;
@@ -9,7 +11,7 @@ uint8_t route_pkt(struct tc_tm_pkt *pkt) {
 	} else {
 		return R_ERROR;
 	}
-hk_app
+
 	if(id == OBC) {
 		if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE && ( pkt->ser_subtype == 21 || pkt->ser_subtype == 23)) {
 			hk_app(&pkt);
@@ -54,4 +56,6 @@ hk_app
 	} else {
 		return R_ERROR;
 	}
+
+        return R_ERROR;
 }

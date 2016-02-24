@@ -1,6 +1,7 @@
 #include "tc_tm.h"
+#include "route_verification.h"
 
-uint8_t checkSum( uint8_t *data, uint16_t size) {
+uint8_t checkSum(const uint8_t *data, uint16_t size) {
 	uint8_t CRC = 0;
 
 	for(int i=0; i<=size; i++){
@@ -18,7 +19,7 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 	uint8_t ver, dfield_hdr, ccsds_sec_hdr, tc_pus;
 
 	tmp_crc[0] = buf[size - 1];
-	tmp_crc[1] = checkSum( buf,size-2);
+	tmp_crc[1] = checkSum(buf, size-2);
 
 	ver = buf[0] >> 5;
 
@@ -49,20 +50,20 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 	pkt->ser_subtype = buf[8];
 	pkt->dest_id = buf[9];
 
-	if(app_id_verification[pkt->app_id]) {
-		return R_ERROR_INV_APP_ID;
+	if(app_id_verification[pkt->app_id] != 1) {
+		return R_PKT_ILLEGAL_APPID;
 	}
 
 	if ( pkt->len != size - 7 ) {
-		return R_ERROR_INV_PKT_LEN;
+		return R_PKT_INV_LEN;
 	}
 
 	if(tmp_crc[0] != tmp_crc[1]) {
-		return R_ERROR_CRC;
+		return R_PKT_INC_CRC;
 	}
 
 	if(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) {
-		return R_ERROR_INV_SER;
+		return R_PKT_ILLEGAL_PKT_TP;
 	}
 
 	if(ver != 0) {
@@ -94,7 +95,7 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 
 
 /*buf: buffer to store the data to be sent, pkt: the data to be stored in the buffer, size: size of the array*/
-uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size) {
+uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size) {
 
 	union _cnv cnv;
 	uint8_t buf_pointer;
@@ -141,10 +142,13 @@ uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size) {
 
 	} else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE ) {
 
-		buf[10] = pkt->data[0];
-		if(ser_subtype == 21 ) {
+		uint8_t sid;
+                sid = pkt->data[0];
+                buf[10] = sid;
+                
+		if(pkt->ser_subtype == 21 ) {
 		 	buf_pointer = 11;
-		} else if(ser_subtype == 23) {
+		} else if(pkt->ser_subtype == 23) {
 
 		 	if( sid == 3) {
 				buf[11] = pkt->data[4];
@@ -153,7 +157,7 @@ uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size) {
 				buf[14] = pkt->data[1];
 			}
 		 	buf_pointer = 16;
-		} else if(ser_subtype == 25) {
+		} else if(pkt->ser_subtype == 25) {
 
 		 	if( sid != 4) {
 		 		return R_ERROR;
@@ -173,7 +177,7 @@ uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t size) {
 		 	return R_ERROR;
 		}
 
-	} else if(pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE &&  pkt->ser_subtype == 1) {
+	} else if(pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE && pkt->ser_subtype == 1) {
 
 		buf[10] = pkt->data[0];
 

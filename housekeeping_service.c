@@ -1,15 +1,4 @@
-
-struct _obc_status {
-	uint8_t mode;
-	uint8_t batt_curr;
-	uint8_t batt_volt;
-	uint8_t 3v3_bus_curr;
-	uint8_t 5v_bus_curr;
-	uint8_t temp_eps;
-	uint8_t temp_batt;
-	uint8_t temp_comms;
-
-}obc_status;
+#include "housekeeping_service.h"
 
 uint8_t hk_SCH() {
 
@@ -26,8 +15,8 @@ uint8_t hk_SCH() {
 void clear_wod() {
 		obc_status.batt_curr = 0;
 		obc_status.batt_volt = 0;
-		obc_status.3v3_bus_curr = 0;
-		obc_status.5v_bus_curr = 0;
+		obc_status.bus_3v3_curr = 0;
+		obc_status.bus_5v_curr = 0;
 		obc_status.temp_eps = 0;
 		obc_status.temp_batt = 0;
 		obc_status.temp_comms = 0;

@@ -1,8 +1,7 @@
 #include "hldlc.h"
 
-
 /* it should return the status*/
-uint8_t HLDLC_deframe( uint8_t *buf, uint16_t * cnt, uint8_t c) {
+uint8_t HLDLC_deframe(uint8_t *buf, uint16_t *cnt, uint8_t c) {
 
 	if( cnt != 0 && c == HLDLC_START_FLAG ) {
 		*cnt = 0;
@@ -23,7 +22,7 @@ uint8_t HLDLC_deframe( uint8_t *buf, uint16_t * cnt, uint8_t c) {
 }
 
 /* it should return the status*/
-uint8_t HLDLC_frame( uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size) {
+uint8_t HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
 
 	//assert( *cnt < size);
 
@@ -48,5 +47,5 @@ uint8_t HLDLC_frame( uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t si
 		(*cnt)++;
 		return R_OK;
 	}
-    return R_ERROR;
+        return R_ERROR;
 }

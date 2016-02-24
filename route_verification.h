@@ -1,3 +1,6 @@
+#include <stdint.h>
+
+#include "tc_tm.h"
 
 const uint8_t app_id_verification[MAX_APP_ID] = { 0, 0, 0, 0, 0, 0 };
 
