@@ -85,6 +85,10 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 		return R_ERROR;
 	}
 
+	if(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) {
+		return R_ERROR;
+	}
+
 	for(int i = 0; i < pkt->len-4; i++) {
 		pkt->data[i] = buf[10+i];
 	}

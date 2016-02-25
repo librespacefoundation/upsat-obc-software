@@ -1,28 +1,23 @@
 #include "verification_service.h"
 
 uint8_t verify_pkt(struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
-	uint8_t subtype;
+/*this is TEMP*/
 struct tc_tm_pkt out;
 
-        if(pkt->type != TC ) {
+	if(pkt->type != TC ) {
 		return R_ERROR;
 	}
 
 	if(ack == TC_ACK_NO) {
 		return R_OK;
-	} else if(ack == TC_ACK_EXE_ACC && step == TC_ACK_EXE_ACC) {
-          subtype = 
-          if(res!= R_OK) {
-          
-          }
-                verify_crt_pkt( pkt, &out, res, subtype);
-                return R_OK;
+	} else if(ack == TC_ACK_ACC && step == TC_ACK_ACC) {
+		verify_crt_pkt( pkt, &out, res, 1);
+        return R_OK;
 	} else if(ack == TC_ACK_EXE_COMP && step == TC_ACK_EXE_COMP) {
-		verify_crt_pkt( pkt, &out, res, subtype);
-                return R_OK;
-	} else if(ack == TC_ACK_ALL || ack == TC_ACK_EXE_STEP || ack == TC_ACK_EXE_START) {
-		verify_crt_pkt( pkt, &out, res, subtype);
-                return R_OK;
+		verify_crt_pkt( pkt, &out, res, 7);
+        return R_OK;
+	} else if(ack == TC_ACK_ALL || ack == TC_ACK_EXE_PROG || ack == TC_ACK_EXE_START) {
+		return R_ERROR;
 	} else {
 		return R_ERROR;
 	}
@@ -47,11 +42,12 @@ uint8_t verify_crt_pkt(struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res
 	out->data[3] = cnv.cnv8[0];
 
 	out->ser_type = TC_VERIFICATION_SERVICE;
-        out->ser_subtype = subtype;
-        
+      
 	if(res != R_OK && ) {
 		out->data[4] = res;
+		subtype++;
 	}
+	out->ser_subtype = subtype;
 
 	return R_OK;
 }

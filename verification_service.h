@@ -7,6 +7,6 @@
 
 uint8_t verify_pkt(struct tc_tm_pkt *pkt, uint8_t step, uint8_t res);
 
-uint8_t verify_crt_pkt(struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res);
+uint8_t verify_crt_pkt(struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res, uint8_t subtype);
 
 #endif
