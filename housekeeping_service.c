@@ -1,13 +1,15 @@
 #include "housekeeping_service.h"
 
-uint8_t hk_SCH() {
+void hk_SCH() {
 
-	hk_crt_pkt_TC( &pkt, EPS, 1);
+  struct tc_tm_pkt pkt;
+  
+	hk_crt_pkt_TC(&pkt, EPS, 1);
 	route_pkt(&pkt);
-	hk_crt_pkt_TC( &pkt, COMMS, 1);
+	hk_crt_pkt_TC(&pkt, COMMS, 1);
 	route_pkt(&pkt);
 	//delay(59) sec;
-	hk_crt_pkt_TM( &pkt, GND, 4);
+	hk_crt_pkt_TM(&pkt, GND, 4);
 	route_pkt(&pkt);
 	clear_wod();
 }
@@ -32,8 +34,8 @@ uint8_t hk_app(struct tc_tm_pkt *pkt) {
 		if(pkt->app_id == EPS) {
 			obc_status.batt_curr = pkt->data[1];
 			obc_status.batt_volt = pkt->data[2];
-			obc_status.3v3_bus_curr = pkt->data[3];
-			obc_status.5v_bus_curr = pkt->data[4];
+			obc_status.bus_3v3_curr = pkt->data[3];
+			obc_status.bus_5v_curr = pkt->data[4];
 			obc_status.temp_eps = pkt->data[5];
 			obc_status.temp_batt = pkt->data[6];
 		} else if(pkt->app_id == COMMS) {
@@ -47,8 +49,7 @@ uint8_t hk_app(struct tc_tm_pkt *pkt) {
 	return R_OK;
 }
 
-uint8_t hk_crt_pkt_TC( struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
-	union _cnv cnv;
+uint8_t hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 
 	pkt->type = TC;
 	pkt->app_id = app_id; 
@@ -63,7 +64,7 @@ uint8_t hk_crt_pkt_TC( struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	return R_OK;
 }
 
-uint8_t hk_crt_pkt_TM( struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+uint8_t hk_crt_pkt_TM(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	union _cnv cnv;
 
 	pkt->type = TC;
@@ -77,7 +78,7 @@ uint8_t hk_crt_pkt_TM( struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	if(sid == 3) {
 		pkt->ser_subtype = 21;
 
-		cnv.cnv32 = time.now();
+		//cnv.cnv32 = time.now();
 		pkt->data[1] = cnv.cnv8[3];
 		pkt->data[2] = cnv.cnv8[2];
 		pkt->data[3] = cnv.cnv8[1];
@@ -88,8 +89,8 @@ uint8_t hk_crt_pkt_TM( struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 		pkt->data[1] = obc_status.mode;
 		pkt->data[2] = obc_status.batt_curr;
 		pkt->data[3] = obc_status.batt_volt;
-		pkt->data[4] = obc_status.3v3_bus_curr;
-		pkt->data[5] = obc_status.5v_bus_curr;
+		pkt->data[4] = obc_status.bus_3v3_curr;
+		pkt->data[5] = obc_status.bus_5v_curr;
 		pkt->data[6] = obc_status.temp_eps;
 		pkt->data[7] = obc_status.temp_batt;
 		pkt->data[8] = obc_status.temp_comms;

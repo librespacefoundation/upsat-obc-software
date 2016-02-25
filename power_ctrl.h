@@ -1,5 +1,5 @@
-#ifndef POWER_CTRL_H
-#define POWER_CTRL_H
+#ifndef __POWER_CTRL_H
+#define __POWER_CTRL_H
 
 #include <stdint.h>
 

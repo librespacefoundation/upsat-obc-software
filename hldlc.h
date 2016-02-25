@@ -1,5 +1,5 @@
-#ifndef HLDLC_H
-#define HLDLC_H
+#ifndef __HLDLC_H
+#define __HLDLC_H
 
 #include <stdio.h>
 #include "tc_tm.h"

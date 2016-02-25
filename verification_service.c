@@ -1,18 +1,28 @@
-##include "verification_service.h"
+#include "verification_service.h"
 
-uint8_t verify_pkt( struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
-	if(pkt->type != TC ) {
+uint8_t verify_pkt(struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
+	uint8_t subtype;
+struct tc_tm_pkt out;
+
+        if(pkt->type != TC ) {
 		return R_ERROR;
 	}
 
 	if(ack == TC_ACK_NO) {
 		return R_OK;
 	} else if(ack == TC_ACK_EXE_ACC && step == TC_ACK_EXE_ACC) {
-		verify_crt_pkt( pkt, &out, res)
+          subtype = 
+          if(res!= R_OK) {
+          
+          }
+                verify_crt_pkt( pkt, &out, res, subtype);
+                return R_OK;
 	} else if(ack == TC_ACK_EXE_COMP && step == TC_ACK_EXE_COMP) {
-		
-	} else if(ack == TC_ACK_ALL || ack == TC_ACK_STEP) {
-		
+		verify_crt_pkt( pkt, &out, res, subtype);
+                return R_OK;
+	} else if(ack == TC_ACK_ALL || ack == TC_ACK_EXE_STEP || ack == TC_ACK_EXE_START) {
+		verify_crt_pkt( pkt, &out, res, subtype);
+                return R_OK;
 	} else {
 		return R_ERROR;
 	}
@@ -20,7 +30,7 @@ uint8_t verify_pkt( struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
 	return R_ERROR;
 }
 
-uint8_t verify_crt_pkt( struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res) {
+uint8_t verify_crt_pkt(struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res, uint8_t subtype) {
 
 	union _cnv cnv;
 
@@ -33,17 +43,14 @@ uint8_t verify_crt_pkt( struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t re
 	out->data[1] = cnv.cnv8[0];
 	
 	cnv.cnv16[0] = pkt->seq_count;
-	out->data[2] = (  pkt->seq_flags << 6 | cnv.cnv8[1]);
+	out->data[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
 	out->data[3] = cnv.cnv8[0];
 
 	out->ser_type = TC_VERIFICATION_SERVICE;
-
-	if(res == R_OK && ) {
-		out->ser_subtype;
-	} else if(res == R_ERROR) {
-		out->data[4] = error;
-	} else {
-		return R_ERROR;
+        out->ser_subtype = subtype;
+        
+	if(res != R_OK && ) {
+		out->data[4] = res;
 	}
 
 	return R_OK;

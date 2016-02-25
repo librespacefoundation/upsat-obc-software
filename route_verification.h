@@ -1,5 +1,5 @@
-#ifndef ROUTE_VERIFICATION_H
-#define ROUTE_VERIFICATION_H
+#ifndef __ROUTE_VERIFICATION_H
+#define __ROUTE_VERIFICATION_H
 
 #include <stdint.h>
 
@@ -58,6 +58,6 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-uint8_t route_pkt( struct tc_tm_pkt *pkt);
+uint8_t route_pkt(struct tc_tm_pkt *pkt);
 
 #endif

@@ -1120,6 +1120,9 @@
       <name>$PROJ_DIR$\..\..\..\housekeeping_service.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\housekeeping_service.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\power_ctrl.c</name>
     </file>
     <file>
@@ -1132,9 +1135,6 @@
       <name>$PROJ_DIR$\..\..\..\route_verification.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\serial.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\tc_tm.c</name>
     </file>
     <file>
@@ -1142,6 +1142,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\verification_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\verification_service.h</name>
     </file>
   </group>
 </project>
