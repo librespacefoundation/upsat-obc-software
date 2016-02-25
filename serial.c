@@ -1,12 +1,13 @@
 #include "serial.h"
 
-uint8_t serial_app() {
+uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 	uint8_t buf_in[TEST_ARRAY], buf_out[TEST_ARRAY];
 	struct tc_tm_pkt pkt_in, pkt_out;
 	uint8_t buf_frm_in[TEST_ARRAY], buf_frm_out[TEST_ARRAY];
-	uint8_t c_in, c_out, res_in, res_out;
+	uint8_t c_in, c_out, res_in, res2_in, res_out;
 	uint16_t size_out, cnt_out, size_in, cnt_in;
-
+        HAL_StatusTypeDef res_uart;
+        
 	if(tx_flag == 1) {
 		
 		uint8_t i;
@@ -16,18 +17,18 @@ uint8_t serial_app() {
 			buf_frm_out[i++] = c_out;	
 		} while( res_out != R_EOT || res_out != R_ERROR);
 
-		HAL_UART_Transmit(UART_HandleTypeDef *huart, buf_frm_out, i, uint32_t Timeout);
+		HAL_UART_Transmit(&huart, buf_frm_out, i, 10);
 	}
 
-	HAL_UART_Receive(UART_HandleTypeDef *huart, &c_in, 1, uint32_t Timeout);
-	if() {
-		res_in = HLDLC_deframe( buf_in, &cnt_in, c, &size_in);
+	res_uart = HAL_UART_Receive(&huart, &c_in, 1, 10);
+	if( res_uart == HAL_OK ) {
+		res_in = HLDLC_deframe(buf_in, &cnt_in, c_in);
 		if(res_in == R_EOT) {
 			res2_in = unpack_pkt(buf_in, &pkt_in, size_in);
 			if(res2_in == R_OK) {
 				res2_in=route_pkt(&pkt_in);
 			}
-			verify_pkt( &pkt_in, ACC, res2_in);
+			verify_pkt(&pkt_in, TC_ACK_ACC, res2_in);
 		}
 	}
 };

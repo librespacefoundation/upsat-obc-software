@@ -2,6 +2,7 @@
 #define __POWER_CTRL_H
 
 #include <stdint.h>
+#include "stm32f4xx_hal.h"
 
 #include "tc_tm.h"
 #include "verification_service.h"

@@ -14,15 +14,15 @@ uint8_t power_control_app(struct tc_tm_pkt *pkt) {
 uint8_t power_control_app_api( uint8_t did, uint8_t fid) {
 
 	if(did == SD1 && fid == TURN_ON) {
-		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
 		return R_OK; 
 	} else if(did == SD1 && fid == TURN_OFF) {
-		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
 		return R_OK;
 	} else if(did == SD1 && fid == RESET) {
-		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
 		//delay
-		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
 		return R_OK;
 	} else if(did == OBC && fid == RESET) {
 		return R_OK;

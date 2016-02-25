@@ -1219,6 +1219,9 @@
       <name>$PROJ_DIR$\..\..\..\serial.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\serial.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\tc_tm.c</name>
     </file>
     <file>
