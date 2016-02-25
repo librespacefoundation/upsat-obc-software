@@ -1,3 +1,5 @@
+##include "verification_service.h"
+
 uint8_t verify_pkt( struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
 	if(pkt->type != TC ) {
 		return R_ERROR;

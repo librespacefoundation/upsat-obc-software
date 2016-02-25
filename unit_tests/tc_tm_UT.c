@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "tc_tm.h"
+#include "../tc_tm.h"
 
 #define TEST_ARRAY 20
 
@@ -32,15 +32,16 @@ int main() {
 	size = 16;
 	/*TC*/
 	in[0] = 0b00011000;
-	in[1] = 0xA9;
+	in[1] = 0x01;
 	res.type = TC;
-	res.app_id = 0xA9;
+	res.app_id = 0x01;
 
 	in[2] = 0b11000000;
 	in[3] = 0xB9;
 	res.seq_flags = 3;
 	res.seq_count = 0xB9;
 
+    /*data_hdr+data-1*/
 	in[4] = 5+5-1;
 	in[5] = 0;
 	res.len = 5+5-1;
@@ -129,7 +130,7 @@ int main() {
         }
     }
     
-    pack_pkt(out2, &res, size);
+    pack_pkt(out2, &res, &size);
     
     for (int i = 0; i < size; i++) {
         if(in[i] != out2[i]) {

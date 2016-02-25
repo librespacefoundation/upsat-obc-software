@@ -23,11 +23,11 @@ void clear_wod() {
 }
 
 uint8_t hk_app(struct tc_tm_pkt *pkt) {
-	uint8_t res;
+	uint8_t res, did, fid;
 
 	if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
-		hk_crt_pkt_TM( &pkt, pkt->dest_id, pkt->data[0]);
-		route_pkt(&pkt);
+		hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data[0]);
+		route_pkt(pkt);
 	} else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 23) {
 		if(pkt->app_id == EPS) {
 			obc_status.batt_curr = pkt->data[1];

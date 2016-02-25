@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "hldlc.h"
+#include "../hldlc.h"
 
 #define TEST_ARRAY 20
 

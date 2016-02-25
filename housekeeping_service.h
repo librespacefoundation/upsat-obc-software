@@ -1,4 +1,9 @@
+#ifndef HOUSEKEEPING_SERVICE_H
+#define HOUSEKEEPING_SERVICE_H
+
 #include <stdint.h>
+
+#include "tc_tm.h"
 
 struct _obc_status {
 	uint8_t mode;
@@ -11,3 +16,7 @@ struct _obc_status {
 	uint8_t temp_comms;
 
 }obc_status;
+
+uint8_t hk_app(struct tc_tm_pkt *pkt);
+
+#endif

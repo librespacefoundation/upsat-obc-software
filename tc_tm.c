@@ -1,5 +1,4 @@
 #include "tc_tm.h"
-#include "route_verification.h"
 
 uint8_t checkSum(const uint8_t *data, uint16_t size) {
 	uint8_t CRC = 0;

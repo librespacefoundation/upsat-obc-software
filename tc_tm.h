@@ -1,4 +1,8 @@
+#ifndef TC_TM_H
+#define TC_TM_H
+
 #include <stdint.h>
+#include "route_verification.h"
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER				0
@@ -66,10 +70,10 @@
 #define APP_ID
 #define SEQ_FLG
 
-#define MAX_PKT_DATA 20
-#define MAX_APP_ID 20
-#define MAX_SERVICES 20
-#define MAX_SUBTYPES 25
+#define MAX_PKT_DATA	20
+#define MAX_APP_ID		20
+#define MAX_SERVICES	20
+#define MAX_SUBTYPES	26
 
 #define TC 1
 #define TM 0
@@ -87,6 +91,21 @@
 #define TC_VERIFICATION_SERVICE			1
 #define TC_HOUSEKEEPING_SERVICE			3
 #define TC_FUNCTION_MANAGEMENT_SERVICE	8
+
+#define OBC		1
+#define EPS		2
+#define ADCS	3
+#define COMMS	4
+#define IAC		5
+#define GND		6
+
+#define SD1		1
+
+#define TURN_OFF	0
+#define TURN_ON		1
+#define RESET		2
+
+
 
 union _cnv {
 	uint32_t cnv32;
@@ -170,3 +189,4 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 
 uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size);
 
+#endif
