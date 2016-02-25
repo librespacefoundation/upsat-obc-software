@@ -38,7 +38,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -47,7 +47,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state></state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -325,6 +325,7 @@
           <state>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</state>
           <state>$PROJ_DIR$/../Drivers/CMSIS/Include</state>
           <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32F4xx/Include</state>
+          <state>G:\Users\nanimo\Documents\GitHub\upsat-obc-software</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -616,7 +617,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>Project.srec</state>
+          <state>test3.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1133,6 +1134,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\route_verification.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\serial.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\tc_tm.c</name>

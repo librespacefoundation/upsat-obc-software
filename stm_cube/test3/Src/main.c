@@ -36,6 +36,7 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
+#include "tc_tm.h"
 
 /* USER CODE END Includes */
 

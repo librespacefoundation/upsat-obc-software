@@ -1,11 +1,12 @@
-#ifndef __ROUTE_VERIFICATION_H
-#define __ROUTE_VERIFICATION_H
+#ifndef ROUTE_VERIFICATION_H
+#define ROUTE_VERIFICATION_H
 
 #include <stdint.h>
 
 #include "tc_tm.h"
-#include "housekeeping_service.h"
 #include "power_ctrl.h"
+
+extern uint8_t hk_app(struct tc_tm_pkt *pkt);
 
 const uint8_t app_id_verification[MAX_APP_ID] = { 0, 1, 0, 0, 0, 0 };
 

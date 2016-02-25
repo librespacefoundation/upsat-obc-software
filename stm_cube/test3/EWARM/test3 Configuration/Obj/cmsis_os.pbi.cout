@@ -22,6 +22,8 @@ G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM/../Driv
 -I
 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM/../Drivers/CMSIS/Device/ST/STM32F4xx/Include
 -I
+G:\Users\nanimo\Documents\GitHub\upsat-obc-software
+-I
 G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -I
 G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\inc
@@ -47,6 +49,8 @@ G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\Middlewares\T
 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\Drivers\CMSIS\Include
 -I
 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+-I
+G:\Users\nanimo\Documents\GitHub\upsat-obc-software
 -I
 G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

@@ -4,7 +4,12 @@
 #include <stdint.h>
 
 #include "tc_tm.h"
-#include "route_verification.h"
+
+extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
+extern const uint8_t app_id_verification[MAX_APP_ID];
+extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+extern uint8_t route_pkt(struct tc_tm_pkt *pkt);
+extern uint8_t power_control_app_api(uint8_t did, uint8_t fid);
 
 struct _obc_status {
 	uint8_t mode;

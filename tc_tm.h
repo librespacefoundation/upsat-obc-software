@@ -2,7 +2,6 @@
 #define __TC_TM_H
 
 #include <stdint.h>
-#include "route_verification.h"
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER				0
@@ -105,7 +104,9 @@
 #define TURN_ON		1
 #define RESET		2
 
-
+extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
+extern const uint8_t app_id_verification[MAX_APP_ID];
+extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 union _cnv {
 	uint32_t cnv32;
