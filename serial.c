@@ -1,11 +1,9 @@
-
-#include "tc_tm.h"
-
+#include "serial.h"
 
 uint8_t serial_app() {
-	uint8_t buf_in[], buf_out[];
+	uint8_t buf_in[TEST_ARRAY], buf_out[TEST_ARRAY];
 	struct tc_tm_pkt pkt_in, pkt_out;
-	uint8_t buf_frm_in[], buf_frm_out[];
+	uint8_t buf_frm_in[TEST_ARRAY], buf_frm_out[TEST_ARRAY];
 	uint8_t c_in, c_out, res_in, res_out;
 	uint16_t size_out, cnt_out, size_in, cnt_in;
 
