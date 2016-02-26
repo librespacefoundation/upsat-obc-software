@@ -1204,6 +1204,12 @@
       <name>$PROJ_DIR$\..\..\..\housekeeping_service.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\obc_hal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\obc_hal.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\power_ctrl.c</name>
     </file>
     <file>

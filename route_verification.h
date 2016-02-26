@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 #include "tc_tm.h"
-#include "power_ctrl.h"
 
 extern OBC_returnStateTypedef hk_app(struct tc_tm_pkt *pkt);
+extern OBC_returnStateTypedef power_control_app(struct tc_tm_pkt *pkt);
 
 const uint8_t app_id_verification[MAX_APP_ID] = { 0, 1, 0, 0, 0, 0 };
 

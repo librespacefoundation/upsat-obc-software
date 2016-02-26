@@ -77,16 +77,16 @@
 #define TC 1
 #define TM 0
 
-typedef enum {
-#define R_PKT_ILLEGAL_APPID 	= 0,
-#define R_PKT_INV_LEN			= 1,
-#define R_PKT_INC_CRC			= 2,
-#define R_PKT_ILLEGAL_PKT_TP	= 3,
-#define R_PKT_ILLEGAL_PKT_STP	= 4,
-#define R_PKT_ILLEGAL_APP_DATA  = 5,
-#define R_OK                    = 6,
-#define R_ERROR                 = 7,
-#define R_EOT                   = 8
+typedef enum {  
+R_PKT_ILLEGAL_APPID 	= 0,
+R_PKT_INV_LEN			= 1,
+R_PKT_INC_CRC			= 2,
+R_PKT_ILLEGAL_PKT_TP	= 3,
+R_PKT_ILLEGAL_PKT_STP	= 4,
+R_PKT_ILLEGAL_APP_DATA  = 5,
+R_OK                    = 6,
+R_ERROR                 = 7,
+R_EOT                   = 8
 }OBC_returnStateTypedef;
 
 #define TC_VERIFICATION_SERVICE			1
@@ -186,7 +186,7 @@ struct tc_tm_pkt {
 /* Service 13, Verification */
 
 
-OBC_returnStateTypedef checkSum(const uint8_t *data, uint16_t size);
+uint8_t checkSum(const uint8_t *data, uint16_t size);
 
 OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
 

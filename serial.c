@@ -1,6 +1,6 @@
 #include "serial.h"
 
-uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
+OBC_returnStateTypedef serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 	uint8_t buf_in[TEST_ARRAY], buf_out[TEST_ARRAY];
 	struct tc_tm_pkt pkt_in, pkt_out;
 	uint8_t buf_frm_in[TEST_ARRAY], buf_frm_out[TEST_ARRAY];
@@ -23,7 +23,7 @@ uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 
 	res_uart = HAL_UART_Receive(&huart, &c_in, 1, 10);
 	if( res_uart == HAL_OK ) {
-		res_in = HLDLC_deframe(buf_in, &cnt_in, c_in);
+		res_in = HLDLC_deframe(buf_in, &cnt_in, c_in, &size_in);
 		if(res_in == R_EOT) {
 			res2_in = unpack_pkt(buf_in, &pkt_in, size_in);
 			if(res2_in == R_OK) {

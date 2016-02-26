@@ -5,7 +5,10 @@
 
 #include "tc_tm.h"
 #include "verification_service.h"
-#include "obc_hal.h"
+
+extern void HAL_obc_SD_ON();
+
+extern void HAL_obc_SD_OFF();
 
 OBC_returnStateTypedef power_control_app(struct tc_tm_pkt *pkt);
 
