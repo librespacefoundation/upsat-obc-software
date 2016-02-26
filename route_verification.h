@@ -6,7 +6,7 @@
 #include "tc_tm.h"
 #include "power_ctrl.h"
 
-extern uint8_t hk_app(struct tc_tm_pkt *pkt);
+extern OBC_returnStateTypedef hk_app(struct tc_tm_pkt *pkt);
 
 const uint8_t app_id_verification[MAX_APP_ID] = { 0, 1, 0, 0, 0, 0 };
 
@@ -59,6 +59,6 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-uint8_t route_pkt(struct tc_tm_pkt *pkt);
+OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt);
 
 #endif

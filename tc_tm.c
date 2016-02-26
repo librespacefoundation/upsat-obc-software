@@ -11,7 +11,7 @@ uint8_t checkSum(const uint8_t *data, uint16_t size) {
 }
 
 /*Must check for endianess*/
-uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size) {
+OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size) {
 	union _cnv cnv;
 	uint8_t tmp_crc[2];
 
@@ -98,7 +98,7 @@ uint8_t unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t siz
 
 
 /*buf: buffer to store the data to be sent, pkt: the data to be stored in the buffer, size: size of the array*/
-uint8_t pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size) {
+OBC_returnStateTypedef pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size) {
 
 	union _cnv cnv;
 	uint8_t buf_pointer;

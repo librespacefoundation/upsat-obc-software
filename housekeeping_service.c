@@ -24,7 +24,7 @@ void clear_wod() {
 		obc_status.temp_comms = 0;
 }
 
-uint8_t hk_app(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef hk_app(struct tc_tm_pkt *pkt) {
 	uint8_t res, did, fid;
 
 	if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
@@ -49,7 +49,7 @@ uint8_t hk_app(struct tc_tm_pkt *pkt) {
 	return R_OK;
 }
 
-uint8_t hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+OBC_returnStateTypedef hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 
 	pkt->type = TC;
 	pkt->app_id = app_id; 
@@ -64,7 +64,7 @@ uint8_t hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	return R_OK;
 }
 
-uint8_t hk_crt_pkt_TM(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+OBC_returnStateTypedef hk_crt_pkt_TM(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	union _cnv cnv;
 
 	pkt->type = TC;

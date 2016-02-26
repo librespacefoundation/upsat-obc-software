@@ -6,7 +6,8 @@ uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 	uint8_t buf_frm_in[TEST_ARRAY], buf_frm_out[TEST_ARRAY];
 	uint8_t c_in, c_out, res_in, res2_in, res_out;
 	uint16_t size_out, cnt_out, size_in, cnt_in;
-        HAL_StatusTypeDef res_uart;
+
+    HAL_StatusTypeDef res_uart;
         
 	if(tx_flag == 1) {
 		
@@ -27,8 +28,9 @@ uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 			res2_in = unpack_pkt(buf_in, &pkt_in, size_in);
 			if(res2_in == R_OK) {
 				res2_in=route_pkt(&pkt_in);
+			} else {
+				verify_pkt(&pkt_in, TC_ACK_ACC, res2_in);
 			}
-			verify_pkt(&pkt_in, TC_ACK_ACC, res2_in);
 		}
 	}
 };

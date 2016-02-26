@@ -8,9 +8,9 @@
 
 #define TEST_ARRAY 100
 
-extern uint8_t HLDLC_deframe(uint8_t *buf, uint16_t *cnt, uint8_t c);
-extern uint8_t HLDLC_frame( uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size);
+extern OBC_returnStateTypedef HLDLC_deframe(uint8_t *buf, uint16_t *cnt, uint8_t c);
+extern OBC_returnStateTypedef HLDLC_frame( uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size);
 
-uint8_t serial_app(UART_HandleTypeDef huart, uint8_t tx_flag);
+OBC_returnStateTypedef serial_app(UART_HandleTypeDef huart, uint8_t tx_flag);
 
 #endif

@@ -1,6 +1,6 @@
 #include "power_ctrl.h"
 
-uint8_t power_control_app(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef power_control_app(struct tc_tm_pkt *pkt) {
 	uint8_t res, did, fid;
 
 	did = pkt->data[0];
@@ -11,18 +11,18 @@ uint8_t power_control_app(struct tc_tm_pkt *pkt) {
 }
 
 /*Must use real pins*/
-uint8_t power_control_app_api( uint8_t did, uint8_t fid) {
+OBC_returnStateTypedef power_control_app_api( uint8_t did, uint8_t fid) {
 
 	if(did == SD1 && fid == TURN_ON) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		HAL_obc_SD_ON();
 		return R_OK; 
 	} else if(did == SD1 && fid == TURN_OFF) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+		HAL_obc_SD_OFF();
 		return R_OK;
 	} else if(did == SD1 && fid == RESET) {
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+		HAL_obc_SD_OFF();
 		//delay
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		HAL_obc_SD_ON();
 		return R_OK;
 	} else if(did == OBC && fid == RESET) {
 		return R_OK;

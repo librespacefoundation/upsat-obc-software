@@ -1,6 +1,6 @@
 #include "route_verification.h"
 
-uint8_t route_pkt(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt) {
 	uint16_t id;
 
 	if(pkt->type == TC) {

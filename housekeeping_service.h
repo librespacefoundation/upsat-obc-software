@@ -8,8 +8,9 @@
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
-extern uint8_t route_pkt(struct tc_tm_pkt *pkt);
-extern uint8_t power_control_app_api(uint8_t did, uint8_t fid);
+
+extern OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt);
+extern OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
 
 struct _obc_status {
 	uint8_t mode;
@@ -23,11 +24,11 @@ struct _obc_status {
 
 }obc_status;
 
-uint8_t hk_app(struct tc_tm_pkt *pkt);
+OBC_returnStateTypedef hk_app(struct tc_tm_pkt *pkt);
 
-uint8_t hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+OBC_returnStateTypedef hk_crt_pkt_TC(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
-uint8_t hk_crt_pkt_TM(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+OBC_returnStateTypedef hk_crt_pkt_TM(struct tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
 void hk_SCH();
 
