@@ -361,9 +361,11 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+   uint8_t tx_flag = 0;
   /* Infinite loop */
   for(;;)
   {
+    serial_app(huart2, tx_flag);
     osDelay(1);
   }
   /* USER CODE END 5 */ 
