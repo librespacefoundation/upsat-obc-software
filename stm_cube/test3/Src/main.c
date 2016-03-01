@@ -194,7 +194,7 @@ void MX_USART2_UART_Init(void)
 {
 
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -362,6 +362,11 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
    uint8_t tx_flag = 0;
+   uint8_t uart_temp[20];
+
+   sprintf(uart_temp, "Hello\n");
+   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+   
   /* Infinite loop */
   for(;;)
   {
