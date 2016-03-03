@@ -92,6 +92,7 @@ R_EOT                   = 8
 #define TC_VERIFICATION_SERVICE			1
 #define TC_HOUSEKEEPING_SERVICE			3
 #define TC_FUNCTION_MANAGEMENT_SERVICE	8
+#define TC_MASS_STORAGE_SERVICE			15
 
 #define OBC		1
 #define EPS		2
