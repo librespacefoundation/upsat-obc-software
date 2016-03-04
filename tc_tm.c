@@ -11,7 +11,7 @@ uint8_t checkSum(const uint8_t *data, uint16_t size) {
 }
 
 /*Must check for endianess*/
-OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size) {
+OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size) {
 	union _cnv cnv;
 	uint8_t tmp_crc[2];
 
@@ -98,7 +98,7 @@ OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, con
 
 
 /*buf: buffer to store the data to be sent, pkt: the data to be stored in the buffer, size: size of the array*/
-OBC_returnStateTypedef pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size) {
+OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
 	union _cnv cnv;
 	uint8_t buf_pointer;
@@ -146,9 +146,9 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *s
 	} else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE ) {
 
 		uint8_t sid;
-                sid = pkt->data[0];
-                buf[10] = sid;
-                
+		sid = pkt->data[0];
+		buf[10] = sid;
+
 		if(pkt->ser_subtype == 21 ) {
 		 	buf_pointer = 11;
 		} else if(pkt->ser_subtype == 23) {

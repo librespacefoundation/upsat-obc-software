@@ -1,8 +1,8 @@
 #include "verification_service.h"
 
-OBC_returnStateTypedef verify_pkt(struct tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
+OBC_returnStateTypedef verify_pkt(tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
 /*this is TEMP*/
-struct tc_tm_pkt out;
+tc_tm_pkt out;
 
 	if(pkt->type != TC ) {
 		return R_ERROR;
@@ -11,10 +11,10 @@ struct tc_tm_pkt out;
 	if(pkt->ack == TC_ACK_NO) {
 		return R_OK;
 	} else if(pkt->ack == TC_ACK_ACC && step == TC_ACK_ACC) {
-		verify_crt_pkt( pkt, &out, res, 1);
+		verify_crt_pkt(pkt, &out, res, 1);
         return R_OK;
 	} else if(pkt->ack == TC_ACK_EXE_COMP && step == TC_ACK_EXE_COMP) {
-		verify_crt_pkt( pkt, &out, res, 7);
+		verify_crt_pkt(pkt, &out, res, 7);
         return R_OK;
 	} else if(pkt->ack == TC_ACK_ALL || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_START) {
 		return R_ERROR;
@@ -25,7 +25,7 @@ struct tc_tm_pkt out;
 	return R_ERROR;
 }
 
-OBC_returnStateTypedef verify_crt_pkt(struct tc_tm_pkt *pkt, struct tc_tm_pkt *out, uint8_t res, uint8_t subtype) {
+OBC_returnStateTypedef verify_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t res, uint8_t subtype) {
 
 	union _cnv cnv;
 

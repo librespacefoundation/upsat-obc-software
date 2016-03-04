@@ -117,7 +117,7 @@ union _cnv {
 	uint8_t cnv8[4];
 };
 
-struct tc_tm_pkt {
+typedef struct tc_tm_pkt {
 	/* packet id */
 	//uint8_t ver; /* 3 bits, should be equal to 0 */
 	
@@ -143,7 +143,7 @@ struct tc_tm_pkt {
 /*	uint8_t padding;  x bits, padding for word alligment */
 
 //	uint16_t crc; /* CRC or checksum, mission specific*/
-};
+}tc_tm_pkt;
 
 
 //struct tc_tm_ser_ver_hdr {
@@ -189,8 +189,8 @@ struct tc_tm_pkt {
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
-OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, struct tc_tm_pkt *pkt, const uint16_t size);
+OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 
-OBC_returnStateTypedef pack_pkt(uint8_t *buf, struct tc_tm_pkt *pkt, uint16_t *size);
+OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
 #endif

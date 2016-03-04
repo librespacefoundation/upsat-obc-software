@@ -10,7 +10,7 @@ void *get_pkt() {
 	return NULL;
 }
 
-OBC_returnStateTypedef free_pkt(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef free_pkt(tc_tm_pkt *pkt) {
 	for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
 		if(&pkt_pool.pkt[i] == pkt) {
 			pkt_pool.free[i] = 0;

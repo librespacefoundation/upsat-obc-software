@@ -1,6 +1,6 @@
 #include "power_ctrl.h"
 
-OBC_returnStateTypedef power_control_app(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef power_control_app(tc_tm_pkt *pkt) {
 	uint8_t res, did, fid;
 
 	did = pkt->data[0];

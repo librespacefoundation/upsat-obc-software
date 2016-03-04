@@ -1,6 +1,6 @@
 #include "route_verification.h"
 
-OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt) {
+OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
 	uint16_t id;
 
 	if(pkt->type == TC) {
@@ -12,7 +12,7 @@ OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt) {
 	}
 
 	if(id == OBC) {
-		if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE && ( pkt->ser_subtype == 21 || pkt->ser_subtype == 23)) {
+		if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE && (pkt->ser_subtype == 21 || pkt->ser_subtype == 23)) {
 			hk_app(pkt);
 			return R_OK;
 		} else if(pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE && pkt->ser_subtype == 1) {
@@ -23,6 +23,9 @@ OBC_returnStateTypedef route_pkt(struct tc_tm_pkt *pkt) {
 			} else {
 				return R_ERROR;
 			}
+		} else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && (pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13)) {
+			mass_storage_app(pkt);
+			return R_OK;
 		} else {
 			return R_ERROR;
 		}
