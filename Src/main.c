@@ -1,37 +1,38 @@
 /**
-  ******************************************************************************
-  * File Name          : main.c
-  * Description        : Main program body
-  ******************************************************************************
-  *
-  * COPYRIGHT(c) 2016 STMicroelectronics
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * File Name          : main.c
+ * Description        : Main program body
+ ******************************************************************************
+ *
+ * COPYRIGHT(c) 2016 STMicroelectronics
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *   1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
+ *      and/or other materials provided with the distribution.
+ *   3. Neither the name of STMicroelectronics nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software
+ *      without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ ******************************************************************************
+ */
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include "main.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_rcc.h"
@@ -48,8 +49,10 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart2;
-UART_HandleTypeDef huart3;
+UART_HandleTypeDef UartHandle;
+
+/* Buffer used for reception */
+uint8_t aRxBuffer[RXBUFFERSIZE];
 
 osThreadId defaultTaskHandle;
 
@@ -58,16 +61,19 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE END PV */
 
-void ToggleLED_Task1(void*);
-void ToggleLED_Task2(void*);
-void ToggleLED_Task3(void*);
-void ToggleLED_Task4(void*);
+TaskFunction_t ToggleLED_Timer1(void *);
+TaskFunction_t ToggleLED_Timer2(void*);
+TaskFunction_t ToggleLED_Timer3(void*);
+TaskFunction_t ToggleLED_Timer4(void*);
+
+void UART_ReceiveData(void);
+void UART_TransmitData(void);
+void MX_UART2_UART_Init(void);
+
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
-static void MX_USART3_UART_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -82,264 +88,329 @@ void StartDefaultTask(void const * argument);
 int main(void)
 {
 
-  /* USER CODE BEGIN 1 */
+    /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+    /* USER CODE END 1 */
 
-  /* MCU Configuration----------------------------------------------------------*/
-        
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    /* MCU Configuration----------------------------------------------------------*/
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
-  
-  /* USER CODE BEGIN 2 */
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* USER CODE END 2 */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+    /* Configure the system clock to 168 MHz */
+    SystemClock_Config();
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_UART2_UART_Init();
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+    /* USER CODE BEGIN 2 */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+    /* USER CODE END 2 */
 
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+    /* USER CODE BEGIN RTOS_MUTEX */
+    /* add mutexes, ... */
+    /* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  setbuf(stdout, NULL);
-   /* Create tasks */
-  xTaskCreate(
-		  ToggleLED_Task1,                 /* Function pointer */
-		  "Task1",                          /* Task name - for debugging only*/
-		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-		  NULL                              /* Task handle */
-  );
-  
-  xTaskCreate(
-		  ToggleLED_Task2,                 /* Function pointer */
-		  "Task1",                          /* Task name - for debugging only*/
-		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-		  NULL                              /* Task handle */
-  );
-  
-  xTaskCreate(
-		  ToggleLED_Task3,                 /* Function pointer */
-		  "Task1",                          /* Task name - for debugging only*/
-		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-		  NULL                              /* Task handle */
-  );
-  
-  xTaskCreate(
-		  ToggleLED_Task4,                 /* Function pointer */
-		  "Task1",                          /* Task name - for debugging only*/
-		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-		  NULL                              /* Task handle */
-  );
-  
-  /* USER CODE END RTOS_THREADS */
+    /* USER CODE BEGIN RTOS_SEMAPHORES */
+    /* add semaphores, ... */
+    /* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
- 
+    /* USER CODE BEGIN RTOS_TIMERS */
+    /* start timers, add new ones, ... */
+    /* USER CODE END RTOS_TIMERS */
 
-  /* Start scheduler */
-  osKernelStart();
-//  vTaskStartScheduler();
-  
-  /* We should never get here as control is now taken by the scheduler */
+    /* Create the thread(s) */
+    /* definition and creation of defaultTask */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-  /* USER CODE END WHILE */
+    osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN RTOS_THREADS */
+    /* add threads, ... */
+    setbuf(stdout, NULL);
 
-  }
-  /* USER CODE END 3 */
+
+    /* Create tasks */
+    xTaskCreate(
+                ToggleLED_Timer1, /* Function pointer */
+                "Task1", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
+
+    xTaskCreate(
+                UART_ReceiveData, /* Function pointer */
+                "usasrtrx", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
+
+    xTaskCreate(
+                UART_TransmitData, /* Function pointer */
+                "usasrtrx", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
+
+      xTaskCreate(
+    		  ToggleLED_Timer2,                 /* Function pointer */
+    		  "Task1",                          /* Task name - for debugging only*/
+    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+    		  NULL                              /* Task handle */
+      );
+      
+      xTaskCreate(
+    		  ToggleLED_Timer3,                 /* Function pointer */
+    		  "Task1",                          /* Task name - for debugging only*/
+    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+    		  NULL                              /* Task handle */
+      );
+      
+      xTaskCreate(
+    		  ToggleLED_Timer4,                 /* Function pointer */
+    		  "Task1",                          /* Task name - for debugging only*/
+    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+    		  NULL                              /* Task handle */
+      );
+
+    /* USER CODE END RTOS_THREADS */
+
+    /* USER CODE BEGIN RTOS_QUEUES */
+    /* add queues, ... */
+    /* USER CODE END RTOS_QUEUES */
+
+
+    /* Start scheduler */
+    osKernelStart();
+    //  vTaskStartScheduler();
+
+    /* We should never get here as control is now taken by the scheduler */
+
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+    while (1)
+    {
+        /* USER CODE END WHILE */
+
+        /* USER CODE BEGIN 3 */
+
+    }
+    /* USER CODE END 3 */
 
 }//main ends here
 
+void UART_ReceiveData(void)
+{
+    while (1)
+    {
+        printf("%s\n", "in usart rx data");
+        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
+        HAL_UART_Receive(&UartHandle, (uint8_t *) aRxBuffer, RXBUFFERSIZE, 5000);
+        printf("%s\n", aRxBuffer);
+
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
+}
+
+void UART_TransmitData(void)
+{
+    while (1)
+    {
+
+        char *test = "Hello\n";
+        //        printf("%s\n","in usart rx data");
+        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
+        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
+        //        printf("%s\n",aRxBuffer);
+
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
+}
+
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
-void ToggleLED_Task1(void *pvParameters){
-  
-  while (1) {
-      
-//        printf("timer1\n");
+TaskFunction_t ToggleLED_Timer1(void *pvParameters)
+{
+
+    while (1)
+    {
+
+        //      printf("timer1\n");
+        //      printf("%x",9);
+
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
 
-    /*
-    Delay for a period of time. vTaskDelay() places the task into
-    the Blocked state until the period has expired.
-    The delay period is spacified in 'ticks'. We can convert
-    yhis in milisecond with the constant portTICK_RATE_MS.
-    */
-    vTaskDelay(250 / portTICK_RATE_MS);
-  }
 }
 
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
-void ToggleLED_Task2(void *pvParameters){
-  
-  while (1) {
-    
-      HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+TaskFunction_t ToggleLED_Timer2(void *pvParameters)
+{
 
-    /*
-    Delay for a period of time. vTaskDelay() places the task into
-    the Blocked state until the period has expired.
-    The delay period is spacified in 'ticks'. We can convert
-    yhis in milisecond with the constant portTICK_RATE_MS.
-    */
-    vTaskDelay(500 / portTICK_RATE_MS);
-  }
+    while (1)
+    {
+        //      printf("timer2\n");
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(500 / portTICK_RATE_MS);
+    }
 }
 
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
-void ToggleLED_Task3(void *pvParameters){
-  
-  while (1) {
+TaskFunction_t
+ToggleLED_Timer3(void *pvParameters)
+{
 
+    while (1)
+    {
+        //      printf("timer3\n");
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-    
-    /*
-    Delay for a period of time. vTaskDelay() places the task into
-    the Blocked state until the period has expired.
-    The delay period is spacified in 'ticks'. We can convert
-    yhis in milisecond with the constant portTICK_RATE_MS.
-    */
-    vTaskDelay(1000 / portTICK_RATE_MS);
-  }
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
 }
 
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
-void ToggleLED_Task4(void *pvParameters){
-  
-  while (1) {
-      
-    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+TaskFunction_t ToggleLED_Timer4(void *pvParameters)
+{
 
-    /*
-    Delay for a period of time. vTaskDelay() places the task into
-    the Blocked state until the period has expired.
-    The delay period is spacified in 'ticks'. We can convert
-    yhis in milisecond with the constant portTICK_RATE_MS.
-    */
-    vTaskDelay(1500 / portTICK_RATE_MS);
-  }
+    while (1)
+    {
+        //      printf("timer4\n");
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(1500 / portTICK_RATE_MS);
+    }
 }
 
 /** System Clock Configuration
-*/
+ */
 void SystemClock_Config(void)
 {
 
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    RCC_OscInitTypeDef RCC_OscInitStruct;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
-  __PWR_CLK_ENABLE();
+    __PWR_CLK_ENABLE();
 
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 168;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
-  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+    RCC_OscInitStruct.HSICalibrationValue = 16;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+    RCC_OscInitStruct.PLL.PLLM = 8;
+    RCC_OscInitStruct.PLL.PLLN = 168;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 7;
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1
-                              |RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1
+            | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+    HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
-  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+    /* SysTick_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
 /* USART2 init function */
-void MX_USART2_UART_Init(void)
+void MX_UART2_UART_Init(void)
 {
+    /*##-1- Configure the UART peripheral ######################################*/
+    /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
+    /* UART1 configured as follow:
+        - Word Length = 8 Bits
+        - Stop Bit = One Stop bit
+        - Parity = None
+        - BaudRate = 9600 baud
+        - Hardware flow control disabled (RTS and CTS signals) */
+    UartHandle.Instance = USARTx;
 
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart2);
+    UartHandle.Init.BaudRate = 4800;
+    UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
+    UartHandle.Init.StopBits = UART_STOPBITS_1;
+    UartHandle.Init.Parity = UART_PARITY_NONE;
+    UartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    UartHandle.Init.Mode = UART_MODE_TX_RX;
+    UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-}
+    HAL_UART_Init(&UartHandle);
 
-/* USART3 init function */
-void MX_USART3_UART_Init(void)
-{
-
-  huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
-  huart3.Init.WordLength = UART_WORDLENGTH_8B;
-  huart3.Init.StopBits = UART_STOPBITS_1;
-  huart3.Init.Parity = UART_PARITY_NONE;
-  huart3.Init.Mode = UART_MODE_TX_RX;
-  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart3);
 
 }
 
 /** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+ * Analog 
+ * Input 
+ * Output
+ * EVENT_OUT
+ * EXTI
      PC3   ------> I2S2_SD
      PA4   ------> I2S3_WS
      PA5   ------> SPI1_SCK
@@ -355,128 +426,152 @@ void MX_USART3_UART_Init(void)
      PC12   ------> I2S3_SD
      PB6   ------> I2C1_SCL
      PB9   ------> I2C1_SDA
-*/
+ */
 void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct;
+    GPIO_InitTypeDef GPIO_InitStruct;
 
-  /* GPIO Ports Clock Enable */
-  __GPIOE_CLK_ENABLE();
-  __GPIOC_CLK_ENABLE();
-  __GPIOH_CLK_ENABLE();
-  __GPIOA_CLK_ENABLE();
-  __GPIOB_CLK_ENABLE();
-  __GPIOD_CLK_ENABLE();
+    /* GPIO Ports Clock Enable */
+    __GPIOE_CLK_ENABLE();
+    __GPIOC_CLK_ENABLE();
+    __GPIOH_CLK_ENABLE();
+    __GPIOA_CLK_ENABLE();
+    __GPIOB_CLK_ENABLE();
+    __GPIOD_CLK_ENABLE();
 
-  /*Configure GPIO pin : CS_I2C_SPI_Pin */
-  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
+    __USART2_CLK_ENABLE();
+    __USART1_CLK_ENABLE();
 
-  /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PDM_OUT_Pin */
-  GPIO_InitStruct.Pin = PDM_OUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
-  HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : CS_I2C_SPI_Pin */
+    GPIO_InitStruct.Pin = CS_I2C_SPI_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    HAL_GPIO_Init(CS_I2C_SPI_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : B1_Pin */
-  GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
+    GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA4 */
-  GPIO_InitStruct.Pin = GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /*Configure GPIO pin : PDM_OUT_Pin */
+    GPIO_InitStruct.Pin = PDM_OUT_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA5 PA6 PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /*Configure GPIO pin : B1_Pin */
+    GPIO_InitStruct.Pin = B1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BOOT1_Pin */
-  GPIO_InitStruct.Pin = BOOT1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : PA4 */
+    GPIO_InitStruct.Pin = GPIO_PIN_4;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CLK_IN_Pin */
-  GPIO_InitStruct.Pin = CLK_IN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
-  HAL_GPIO_Init(CLK_IN_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pins : PA5 PA6 PA7 */
+    GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin 
-                           Audio_RST_Pin */
-  GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin 
-                          |Audio_RST_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    /*Configure GPIO pin : BOOT1_Pin */
+    GPIO_InitStruct.Pin = BOOT1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC7 I2S3_SCK_Pin PC12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7|I2S3_SCK_Pin|GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    /*Configure GPIO pin : CLK_IN_Pin */
+    GPIO_InitStruct.Pin = CLK_IN_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(CLK_IN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : VBUS_FS_Pin */
-  GPIO_InitStruct.Pin = VBUS_FS_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(VBUS_FS_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin 
+                             Audio_RST_Pin */
+    GPIO_InitStruct.Pin = LD4_Pin | LD3_Pin | LD5_Pin | LD6_Pin
+            | Audio_RST_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OTG_FS_ID_Pin OTG_FS_DM_Pin OTG_FS_DP_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_ID_Pin|OTG_FS_DM_Pin|OTG_FS_DP_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /*Configure GPIO pins : PC7 I2S3_SCK_Pin PC12 */
+    GPIO_InitStruct.Pin = GPIO_PIN_7 | I2S3_SCK_Pin | GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : VBUS_FS_Pin */
+    GPIO_InitStruct.Pin = VBUS_FS_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(VBUS_FS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
-  GPIO_InitStruct.Pin = Audio_SCL_Pin|Audio_SDA_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    /*Configure GPIO pins : OTG_FS_ID_Pin OTG_FS_DM_Pin OTG_FS_DP_Pin */
+    GPIO_InitStruct.Pin = OTG_FS_ID_Pin | OTG_FS_DM_Pin | OTG_FS_DP_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : MEMS_INT2_Pin */
-  GPIO_InitStruct.Pin = MEMS_INT2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
+    GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
+    GPIO_InitStruct.Pin = Audio_SCL_Pin | Audio_SDA_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : MEMS_INT2_Pin */
+    GPIO_InitStruct.Pin = MEMS_INT2_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
+
+    //tx        rx
+    //    GPIO_InitStruct.Pin =  GPIO_PIN_2 | GPIO_PIN_3;
+    //    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    //    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    //    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    //    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+    //    HAL_GPIO_Init( GPIOA, &GPIO_InitStruct);
+
+    /* USART TX  */
+    //  GPIO_InitStruct.Pin = GPIO_PIN_9;  // PA.09 USART1.TX-
+    //  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    //  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+    //  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    //   
+    //  /* USART RX Pin Ayarı */
+    //  GPIO_InitStruct.Pin = GPIO_PIN_10; // PA.10 USART1.RX-
+    //  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    //  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
 }
 
@@ -487,44 +582,44 @@ void MX_GPIO_Init(void)
 /* StartDefaultTask function */
 void StartDefaultTask(void const * argument)
 {
-  /* init code for FATFS */
-  MX_FATFS_Init();
+    /* init code for FATFS */
+    MX_FATFS_Init();
 
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
+    /* USER CODE BEGIN 5 */
+    /* Infinite loop */
+    for (;;)
+    {
+        osDelay(1);
+    }
+    /* USER CODE END 5 */
 }
 
 #ifdef USE_FULL_ASSERT
 
 /**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
-void assert_failed(uint8_t* file, uint32_t line)
+ * @brief Reports the name of the source file and the source line number
+ * where the assert_param error has occurred.
+ * @param file: pointer to the source file name
+ * @param line: assert_param error line source number
+ * @retval None
+ */
+void
+assert_failed(uint8_t* file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-
+    /* USER CODE BEGIN 6 */
+    /* User can add his own implementation to report the file name and line number,
+      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+    /* USER CODE END 6 */
 }
 
 #endif
 
 /**
-  * @}
-  */ 
+ * @}
+ */
 
 /**
-  * @}
-*/ 
+ * @}
+ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
