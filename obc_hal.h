@@ -9,4 +9,6 @@ void HAL_obc_SD_ON();
 
 void HAL_obc_SD_OFF();
 
+void HAL_obc_uart_tx(uint8_t *buf, uint16_t size);
+
 #endif
