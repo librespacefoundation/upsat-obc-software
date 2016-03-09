@@ -1,5 +1,24 @@
 #include "large_data_service.h"
 
+/*report*/
+OBC_returnStateTypedef large_data_start_api(uint8_t sid, tc_tm_pkt pkt) {
+    
+    tc_tm_pkt *pkt_out;
+
+    pkt_out = get_pkt(EXTENDED);
+    if(pkt_out == NULL) { return R_ERROR; }
+    
+    mass_storage_report_api(sid, pkt_out->data[], MAX);
+
+    return R_OK;
+}
+
+/*downlink*/
+OBC_returnStateTypedef large_data_start_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt pkt) {
+
+    return R_OK;
+}
+
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
     OBC_returnStateTypedef res;
 
@@ -31,7 +50,7 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         ld_status.sid = sid;
         ld_status.last_ld_seq = 0;
 
-        mass_storage_store_api(sid, &file, pkt->data[MS_PKT_HDR], &size, &&ld_status.last_ld_seq);
+        mass_storage_store_api(sid, &file, pkt->data[MS_PKT_HDR], &size, &ld_status.last_ld_seq);
 
         ld_status.file = file;
         ld_status.state = RECEIVING;
@@ -79,7 +98,6 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         ld_status.last_ld_seq++;
 
         mass_storage_store_api(ld_status.sid, &ld_status.file, pkt->data[LD_PKT_HDR], &size, &ld_status.last_ld_seq);
-        mass_storage_move_api(ld_status.sid, ld_status.file, 0);
 
         ld_status.state = FREE;
         ld_status.timeout = 0;

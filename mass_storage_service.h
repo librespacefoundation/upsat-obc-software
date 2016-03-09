@@ -15,10 +15,17 @@
 #define SU_SCRIPT_7
 #define EVENT_LOG
 #define FOTOS
-#define SU_LOG
 
 #define DELETE_ALL      0
 #define DELETE_BEFORE   1
+
+struct _MS_data {
+    FATFS test;
+    uint8_t report_fn[MAX];   
+}MS_data;
+
+
+OBC_returnStateTypedef mass_storage_init();
 
 OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt);
 
@@ -28,12 +35,17 @@ OBC_returnStateTypedef mass_storage_delete_api(uint8_t sid, uint32_t to);
 
 OBC_returnStateTypedef mass_storage_report_api(uint8_t sid, uint8_t *buf);
 
-OBC_returnStateTypedef mass_storage_downlink_api(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part);
+OBC_returnStateTypedef mass_storage_downlinkLargeFile_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-OBC_returnStateTypedef mass_storage_store_api(uint8_t sid, uint32_t *file, uint8_t *buf, uint16_t *size, uint16_t *part);
+OBC_returnStateTypedef mass_storage_downlinkLog_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-OBC_returnStateTypedef mass_storage_move_api(uint8_t sid, uint32_t file_from, uint32_t file_to);
+OBC_returnStateTypedef mass_storage_storeLargeFile_api(uint8_t sid, uint32_t *file, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-OBC_returnStateTypedef ms_crt_pkt_report(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+OBC_returnStateTypedef mass_storage_storeLog_api(uint8_t sid, uint8_t *buf, uint16_t *size);
+
+OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn);
+
+OBC_returnStateTypedef mass_storage_getFileContents(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part);
+
 
 #endif
