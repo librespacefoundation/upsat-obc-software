@@ -236,7 +236,7 @@ void UART_TransmitData(void)
         char *test = "Hello\n";
         //        printf("%s\n","in usart rx data");
         //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
+//        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
         //        printf("%s\n",aRxBuffer);
 
         vTaskDelay(250 / portTICK_RATE_MS);
