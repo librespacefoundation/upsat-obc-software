@@ -33,7 +33,7 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
         to = pkt->data[8];
         to = pkt->data[9];
 
-        large_data_start_api(sid, mode, from, to, pkt);
+        large_data_startDownlink_api(sid, mode, from, to, pkt);
 
     } else { return R_ERROR; }
 

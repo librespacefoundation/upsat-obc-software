@@ -19,14 +19,8 @@ struct _ld_status {
 
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_startLog_api(uint8_t sid);
+OBC_returnStateTypedef large_data_startReport_api(uint8_t sid, tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_startLargeFile_api(uint8_t sid);
-
-OBC_returnStateTypedef ld_rx_api(tc_tm_pkt *pkt);
-
-OBC_returnStateTypedef ld_tx_api(tc_tm_pkt *pkt);
-
-OBC_returnStateTypedef ld_crt_pkt(tc_tm_pkt *pkt);
+OBC_returnStateTypedef large_data_startDownlink_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt *pkt);
 
 #endif

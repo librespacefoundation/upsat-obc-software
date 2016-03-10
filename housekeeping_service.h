@@ -13,14 +13,14 @@ extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
 extern OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
 
 struct _obc_status {
-	uint8_t mode;
-	uint8_t batt_curr;
-	uint8_t batt_volt;
-	uint8_t bus_3v3_curr;
-	uint8_t bus_5v_curr;
-	uint8_t temp_eps;
-	uint8_t temp_batt;
-	uint8_t temp_comms;
+    uint8_t mode;
+    uint8_t batt_curr;
+    uint8_t batt_volt;
+    uint8_t bus_3v3_curr;
+    uint8_t bus_5v_curr;
+    uint8_t temp_eps;
+    uint8_t temp_batt;
+    uint8_t temp_comms;
 
 }obc_status;
 

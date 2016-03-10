@@ -122,11 +122,11 @@ union _cnv {
 typedef struct {
     /* packet id */
     //uint8_t ver; /* 3 bits, should be equal to 0 */
-    
+
     //uint8_t data_field_hdr; /* 1 bit, data_field_hdr exists in data = 1 */
     uint16_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. */
     uint8_t type; /* 1 bit, tm = 0, tc = 1 */
-    
+
     /* packet sequence control */
     uint8_t seq_flags; /* 3 bits, definition in TC_SEQ_xPACKET */
     uint16_t seq_count; /* 14 bits, packet counter, should be unique for each app id */

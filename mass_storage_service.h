@@ -48,5 +48,4 @@ OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn);
 
 OBC_returnStateTypedef mass_storage_getFileContents(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-
 #endif

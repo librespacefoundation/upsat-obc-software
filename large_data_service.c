@@ -10,7 +10,7 @@ OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
 }
 
 /*report*/
-OBC_returnStateTypedef large_data_start_api(uint8_t sid, tc_tm_pkt pkt) {
+OBC_returnStateTypedef large_data_startReport_api(uint8_t sid, tc_tm_pkt *pkt) {
     
     tc_tm_pkt *pkt_out;
 
@@ -23,7 +23,7 @@ OBC_returnStateTypedef large_data_start_api(uint8_t sid, tc_tm_pkt pkt) {
 }
 
 /*downlink*/
-OBC_returnStateTypedef large_data_start_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt pkt) {
+OBC_returnStateTypedef large_data_startDownlink_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt *pkt) {
 
     return R_OK;
 }
@@ -38,13 +38,10 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
 
         sid = pkt->data[x];
 
-        if( pkt->dest_id == IAC && sid != FOTOS) {
+        if( pkt->dest_id == IAC && sid != FOTOS) { return R_ERROR; } 
+        else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
             return R_ERROR;
-        } else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
-            return R_ERROR;
-        } else {
-            return R_ERROR;
-        }
+        } else { return R_ERROR; }
 
         ld_status.app_id = pkt->dest_id;
         ld_status.sid = sid;
@@ -63,15 +60,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
-        }
+        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
         ld_seq = pkt->data[x];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
-        }
+        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 
@@ -85,15 +78,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
-        }
+        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
         ld_seq = pkt->data[x];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
-        }
+        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 
@@ -111,13 +100,10 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
 
         sid = pkt->data[x];
 
-        if( pkt->dest_id == IAC && sid != FOTOS) {
+        if( pkt->dest_id == IAC && sid != FOTOS) { return R_ERROR; } 
+        else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
             return R_ERROR;
-        } else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
-            return R_ERROR;
-        } else {
-            return R_ERROR;
-        }
+        } else { return R_ERROR; }
 
         ld_status.app_id = pkt->dest_id;
         ld_status.sid = sid;
@@ -137,15 +123,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
-        }
+        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
         ld_seq = pkt->data[x];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
-        }
+        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 
@@ -161,15 +143,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
-        }
+        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
         ld_seq = pkt->data[x];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
-        }
+        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 
@@ -185,15 +163,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
-        }
+        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
         ld_seq = pkt->data[x];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
-        }
+        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 
@@ -203,9 +177,7 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         ld_status.state = FREE;
         ld_status.timeout = 0;
     
-    } else {
-        return R_ERROR;
-    }
+    } else { return R_ERROR; }
 
     return R_OK;
 }
