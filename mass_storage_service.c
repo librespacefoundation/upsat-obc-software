@@ -4,22 +4,22 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
     sid = pkt->data[0];
 
-    if(pkt->ser_type == TC_MASS_STORAGE_SERVICE &&  pkt->ser_subtype == DISABLE) {
+    if(pkt->ser_subtype == DISABLE) {
 
-    } else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == DELETE) {
+    } else if(pkt->ser_subtype == DELETE) {
 
         to = pkt->data[1];
         to = pkt->data[2];
         to = pkt->data[3];
         to = pkt->data[4];
 
-        mass_storage_delete_api(sid, to,);
+        mass_storage_delete_api(sid, to);
 
-    } else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == REPORT) {
+    } else if(pkt->ser_subtype == REPORT) {
 
         large_data_startReport_api(sid, pkt);
 
-    } else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == DOWNLINK) {
+    } else if(pkt->ser_subtype == DOWNLINK) {
 
         mode = pkt->data[1];
 
@@ -35,9 +35,7 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
         large_data_start_api(sid, mode, from, to, pkt);
 
-    } else {
-        return R_ERROR;
-    }
+    } else { return R_ERROR; }
 
     return R_OK;
 }
@@ -76,80 +74,66 @@ OBC_returnStateTypedef mass_storage_delete_api(uint8_t sid, uint32_t to) {
     return R_OK;
 }
 
-OBC_returnStateTypedef mass_storage_downlinkLogs_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_downlinkLogs_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint8_t *fn) {
 
-    if(sid == LOGS) { 
-        if(*part == 0) {}
-        else {}
+    if(sid != LOGS) { return R_ERROR; }
 
+    /*cp dir belonging to sid*/
+    if(sid ==) { strncp(file,path, MAX_PATH); }
 
-    } else if(sid == FOTO || sid == SU_SCRIPT) {
-
-    }
-
-    if(mode == ALL) {
-
-    } else if(mode == BETWEEN) {
-
-    } else if(mode == TO) {
-
-    } else if(mode == SPECIFIC) {
-
+    /*Find first file, new search*/
+    if(fn == NULL) {
+        if(mode == ALL) { mass_storage_findLog(sid, fn); } 
+        else if(mode == TO) { mass_storage_findLog(sid, fn); }
+        else if(mode == BETWEEN) { 
+            strncp(fn, from, MAX_FNAME); 
+            mass_storage_findLog(sid, fn); 
+        } 
+        else if(mode == SPECIFIC ) { strncp(file, from, MAX_FNAME); }
     }
 
     if(f_open(&fp, file, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return R_ERROR; }
 
-    res = f_read(&fp, buf, *size, (void *)&byteswritten);
-    if((byteswritten == 0) || (res != FR_OK)) { return R_ERROR; } 
-
-    if(sid == FOTO || sid == SU_SCRIPT) {
-        if(len < (*part) * FILE_SIZE) { return R_ERROR; }
-        res = f_lseek(fp, part* FILE_SIZE);
+    if(len < (*part) * FILE_SIZE) { 
+        f_close(&fp);
+        return R_ERROR; 
     }
 
+    res = f_read(&fp, buf, *size, (void *)&byteswritten);
+    if((byteswritten == 0) || (res != FR_OK)) { return R_ERROR; } 
+    *size = byteswritten;
 
     f_close(&fp);
+
+    if((mode == ALL || mode == TO || mode == BETWEEN) && mass_storage_findLog(sid, fn) == R_EOT) { return R_EOT; } 
+    if(mode == to || mode == BETWEEN) { 
+        ret = strtol(fn, NULL, 10);
+        if(ret >= TO) { return R_EOT; }
+    }
+
     return R_OK;
 }
 
-OBC_returnStateTypedef mass_storage_downlinkLargeFile_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_downlinkLargeFile_api(uint8_t sid, uint8_t mode, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part) {
 
-    if(sid == LOGS) { 
-        if(*part == 0) {}
-        else {}
+    if(sid != FOTO) { return R_ERROR; }
 
-
-    } else if(sid == FOTO || sid == SU_SCRIPT) {
-
-    }
-
-    if(mode == ALL) {
-
-    } else if(mode == BETWEEN) {
-
-    } else if(mode == TO) {
-
-    } else if(mode == SPECIFIC) {
-
-    }
+    path + file
 
     if(f_open(&fp, file, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return R_ERROR; }
 
+    if(len < (*part) * FILE_SIZE) { return R_ERROR; }
+    
+    res = f_lseek(fp, part* FILE_SIZE);
+
     res = f_read(&fp, buf, *size, (void *)&byteswritten);
     if((byteswritten == 0) || (res != FR_OK)) { return R_ERROR; } 
+    *size = byteswritten;
 
-    if(sid == FOTO || sid == SU_SCRIPT) {
-        if(len < (*part) * FILE_SIZE) { return R_ERROR; }
-        res = f_lseek(fp, part* FILE_SIZE);
-    }
-
+    if eof return R_EOT
 
     f_close(&fp);
     return R_OK;
-}
-
-OBC_returnStateTypedef mass_storage_getFileContents(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part) {
-
 }
 
 OBC_returnStateTypedef mass_storage_storeLargeFile_api(uint8_t sid, uint32_t *mode, uint8_t *buf, uint16_t *size, uint16_t *part) {
@@ -175,7 +159,13 @@ OBC_returnStateTypedef mass_storage_storeLargeFile_api(uint8_t sid, uint32_t *mo
 
         f_close(&fp);
 
-        if(*mode == LAST_PART) { if(f_rename(temp_fn, file) != FR_OK) { return R_ERROR; } }
+        if(*mode == LAST_PART) 
+        { 
+            if(sid == SU_SCRIPT) { 
+                check checksum
+            }
+            if(f_rename(temp_fn, file) != FR_OK) { return R_ERROR; } 
+        }
     }
     return R_OK;
 }
@@ -209,16 +199,22 @@ OBC_returnStateTypedef mass_storage_storeLog_api(uint8_t sid, uint32_t *mode, ui
     }
     return R_OK;
 }
-
+//add temp file
 OBC_returnStateTypedef mass_storage_report_api(uint8_t sid, uint8_t *buf, uint16_t *size, uint8_t *fn) {
 
     DIR dir;
     uint8_t temp_fn[20];
     uint32_t time_temp = 0;
+    uint8_t start_flag = 0;
 
     if(sid == SU_LOG) {
         path = temp;
     }
+
+    if(*size != 0) { return R_ERROR; }
+
+    if(*fn == NULL) { start_flag = 1; }
+    else { start_flag = 0; }
 
     if (f_opendir(&dir, path) != FR_OK) { return R_ERROR; }
     i = strlen(path);
@@ -228,21 +224,71 @@ OBC_returnStateTypedef mass_storage_report_api(uint8_t sid, uint8_t *buf, uint16
         if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
         if (fno.fname[0] == '.') continue;             /* Ignore dot entry */
 #if _USE_LFN
-        fn = *fno.lfname ? fno.lfname : fno.fname;
+        temp_fn = *fno.lfname ? fno.lfname : fno.fname;
 #else
-        fn = fno.fname;
+        temp_fn = fno.fname;
 #endif
 
-        ret = strtol(fn, NULL, 10);
-        buf((*size)++) = ret;
-        if(cnt++ >= MAX) { 
-            strncp(MS_data.report_fn, fn, MAX); 
-            f_closedir(&dir)
-            return R_EOT; 
+        if(start_flag == 1) {
+            ret = strtol(temp_fn, NULL, 10);
+            buf((*size)++) = ret;            
+
+            if(*size >= MAX) { 
+                strncp(temp_fn, fn, MAX_FNAME);
+                f_closedir(&dir)
+                return R_EOT; 
+            }
+
+        } else if(strncmp(temp_fn,fn, MAX_FNAME) == 0) {
+            start_flag = 1;
         }
+
     }
     f_closedir(&dir)
-    
+ 
+    if(*size == 0) { return R_ERROR; }
+
+    return R_OK;
+}
+
+OBC_returnStateTypedef mass_storage_findLog(sid, fn) {
+
+    DIR dir;
+    uint8_t temp_fn[20];
+    uint32_t time_temp = 0;
+    uint8_t start_flag = 0;
+    uint32_t min = 0;
+
+    if(sid == SU_LOG) {
+        path = temp;
+    }
+
+    ASSERT(*size != 0) { return R_ERROR; }
+
+    for (;;) {
+
+        res = f_readdir(&dir, &fno);                   /* Read a directory item */
+        if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
+        if (fno.fname[0] == '.') continue;             /* Ignore dot entry */
+#if _USE_LFN
+        temp_fn = *fno.lfname ? fno.lfname : fno.fname;
+#else
+        temp_fn = fno.fname;
+#endif
+
+        ret = strtol(temp_fn, NULL, 10);
+        if(fn == NULL && min == 0) { min = ret; }
+        else if(fn == NULL && ret < min) { min = ret; } 
+        else if(fn != NULL && fn < ret && min == 0) { min = ret; }
+        else if(fn != NULL && fn < ret && ret < min) { min = ret; } 
+
+    }
+    f_closedir(&dir)
+ 
+    *fn = min;
+
+    ASSERT(min != 0);
+
     return R_OK;
 }
 
@@ -257,4 +303,3 @@ OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn) {
     sprintf(fn,"%d", time.now());
     return R_OK;
 }
-

@@ -1,5 +1,14 @@
 #include "large_data_service.h"
 
+OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
+    OBC_returnStateTypedef res;
+
+    res = ld_api(pkt);
+    ld_crt_pkt(tc_tm_pkt *pkt, res);
+
+    return R_OK;
+}
+
 /*report*/
 OBC_returnStateTypedef large_data_start_api(uint8_t sid, tc_tm_pkt pkt) {
     
@@ -15,15 +24,6 @@ OBC_returnStateTypedef large_data_start_api(uint8_t sid, tc_tm_pkt pkt) {
 
 /*downlink*/
 OBC_returnStateTypedef large_data_start_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt pkt) {
-
-    return R_OK;
-}
-
-OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
-    OBC_returnStateTypedef res;
-
-    res = ld_api(pkt);
-    ld_crt_pkt(tc_tm_pkt *pkt, res);
 
     return R_OK;
 }

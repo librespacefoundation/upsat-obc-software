@@ -21,7 +21,6 @@
 
 struct _MS_data {
     FATFS test;
-    uint8_t report_fn[MAX];   
 }MS_data;
 
 
@@ -42,6 +41,8 @@ OBC_returnStateTypedef mass_storage_downlinkLog_api(uint8_t sid, uint8_t mode, u
 OBC_returnStateTypedef mass_storage_storeLargeFile_api(uint8_t sid, uint32_t *file, uint8_t *buf, uint16_t *size, uint16_t *part);
 
 OBC_returnStateTypedef mass_storage_storeLog_api(uint8_t sid, uint8_t *buf, uint16_t *size);
+
+OBC_returnStateTypedef mass_storage_load_SU_Script(uint8_t *fn);
 
 OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn);
 
