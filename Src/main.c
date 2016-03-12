@@ -32,6 +32,7 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
@@ -44,15 +45,20 @@
 #include "timers.h"
 #include "semphr.h"
 
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef UartHandle;
+__IO ITStatus UartReady = RESET;
 
 /* Buffer used for reception */
 uint8_t aRxBuffer[RXBUFFERSIZE];
+
+/* Buffer used for transmission */
+uint8_t aTxBuffer[] = " ****UART_TwoBoards_ComIT****";
 
 osThreadId defaultTaskHandle;
 
@@ -61,29 +67,24 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE END PV */
 
-TaskFunction_t ToggleLED_Timer1(void *);
+TaskFunction_t ToggleLED_Timer1(void*);
 TaskFunction_t ToggleLED_Timer2(void*);
 TaskFunction_t ToggleLED_Timer3(void*);
 TaskFunction_t ToggleLED_Timer4(void*);
 
-void UART_ReceiveData(void);
-void UART_TransmitData(void);
+//void UART_ReceiveData(void);
+//void UART_TransmitData(void);
 void MX_UART2_UART_Init(void);
-
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void Error_Handler(void);
+static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
 static void MX_GPIO_Init(void);
 void StartDefaultTask(void const * argument);
 
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE END PFP */
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
 
 int main(void)
 {
@@ -99,68 +100,49 @@ int main(void)
 
     /* Configure the system clock */
     SystemClock_Config();
-
-
-    /* Configure the system clock to 168 MHz */
-    SystemClock_Config();
+    
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     MX_UART2_UART_Init();
-
-    /* USER CODE BEGIN 2 */
-
-    /* USER CODE END 2 */
-
-    /* USER CODE BEGIN RTOS_MUTEX */
-    /* add mutexes, ... */
-    /* USER CODE END RTOS_MUTEX */
-
-    /* USER CODE BEGIN RTOS_SEMAPHORES */
-    /* add semaphores, ... */
-    /* USER CODE END RTOS_SEMAPHORES */
-
-    /* USER CODE BEGIN RTOS_TIMERS */
-    /* start timers, add new ones, ... */
-    /* USER CODE END RTOS_TIMERS */
-
-    /* Create the thread(s) */
-    /* definition and creation of defaultTask */
-
+    
+//    NVIC_EnableIRQ(USART2_IRQn);
+//    NVIC_EnableIRQ(USART3_IRQn);
+//    NVIC_EnableIRQ(USART1_IRQn);
+    
+//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_RXNE);
+//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_TXE);
+//    HAL_NVIC_SetPriority(USART2_IRQn, 2, 0);
+//    HAL_NVIC_EnableIRQ(USART2_IRQn);
+    
     osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-    /* USER CODE BEGIN RTOS_THREADS */
-    /* add threads, ... */
-    setbuf(stdout, NULL);
-
-
     /* Create tasks */
-    xTaskCreate(
-                ToggleLED_Timer1, /* Function pointer */
-                "Task1", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
+//    xTaskCreate(
+//                UART_ReceiveData, /* Function pointer */
+//                "usasrtrx", /* Task name - for debugging only*/
+//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//                NULL /* Task handle */
+//                );
 
-    xTaskCreate(
-                UART_ReceiveData, /* Function pointer */
-                "usasrtrx", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
-
-    xTaskCreate(
-                UART_TransmitData, /* Function pointer */
-                "usasrtrx", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
+//    xTaskCreate(
+//                UART_TransmitData, /* Function pointer */
+//                "usasrtrx", /* Task name - for debugging only*/
+//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//                NULL /* Task handle */
+//                );
+      xTaskCreate(
+               ToggleLED_Timer1, /* Function pointer */
+               "Task1", /* Task name - for debugging only*/
+               configMINIMAL_STACK_SIZE, /* Stack depth in words */
+               (void*) NULL, /* Pointer to tasks arguments (parameter) */
+               tskIDLE_PRIORITY + 2UL, /* Task priority*/
+               NULL /* Task handle */
+      );
 
       xTaskCreate(
     		  ToggleLED_Timer2,                 /* Function pointer */
@@ -189,17 +171,40 @@ int main(void)
     		  NULL                              /* Task handle */
       );
 
-    /* USER CODE END RTOS_THREADS */
-
-    /* USER CODE BEGIN RTOS_QUEUES */
-    /* add queues, ... */
-    /* USER CODE END RTOS_QUEUES */
-
-
     /* Start scheduler */
-    osKernelStart();
-    //  vTaskStartScheduler();
+    //this is the final point for linear code.
+//    osKernelStart();
+    
+    printf("\nINITIALIZING!!\n");
+    /* The board receives the message and sends it back */
+    
+    /*##-2- Put UART peripheral in reception process ###########################*/  
+    if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
+    {
+      Error_Handler();
+    }
+   
+    /*##-3- Wait for the end of the transfer ###################################*/   
+    while (UartReady != SET)
+    {
+        printf("waiting for set\n");
+        printf("%s",aRxBuffer);
+        
+    } 
 
+    /* Reset transmission flag */
+    UartReady = RESET;
+
+    /*##-4- Start the transmission process #####################################*/  
+    /* While the UART in reception process, user can transmit data through 
+       "aTxBuffer" buffer */
+    if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE)!= HAL_OK)
+    {
+      Error_Handler();
+    }
+    else {
+        printf("Transmitted!!\n");
+    }
     /* We should never get here as control is now taken by the scheduler */
 
     /* Infinite loop */
@@ -215,33 +220,50 @@ int main(void)
 
 }//main ends here
 
-void UART_ReceiveData(void)
-{
-    while (1)
-    {
-        printf("%s\n", "in usart rx data");
-        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-        HAL_UART_Receive(&UartHandle, (uint8_t *) aRxBuffer, RXBUFFERSIZE, 5000);
-        printf("%s\n", aRxBuffer);
+//void USART2_IRQHandler(void)
+//{
+//    printf("\n i ncomming\n");
+//}
 
-        vTaskDelay(250 / portTICK_RATE_MS);
-    }
-}
 
-void UART_TransmitData(void)
-{
-    while (1)
-    {
+//void UART_ReceiveData(void)
+//{
+//    while (1)
+//    {
+//        printf("%s\n", "in usart rx data\n");
+////                HAL_UART_Receive_IT( &UartHandle, aRxBuffer ,RXBUFFERSIZE );
+//        HAL_UART_Receive(&UartHandle, (uint8_t *) aRxBuffer, RXBUFFERSIZE, 5000);
+////        aRxBuffer[RXBUFFERSIZE-1]='\0';
+//        printf("%s\n", aRxBuffer);
+//        
+////        for ( int u=0;u<RXBUFFERSIZE-1;u++)
+////        {
+////            printf("%d\n", aRxBuffer[0]);
+////            printf("%d\n", aRxBuffer[1]);
+////            printf("%d\n", aRxBuffer[2]);
+////            printf("%d\n", aRxBuffer[3]);
+////            printf("%d\n", aRxBuffer[4]);
+////            memset(&aRxBuffer[0],0,sizeof(aRxBuffer));
+////        }
+//
+//        vTaskDelay(250 / portTICK_RATE_MS);
+//    }
+//}
 
-        char *test = "Hello\n";
-        //        printf("%s\n","in usart rx data");
-        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-//        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
-        //        printf("%s\n",aRxBuffer);
-
-        vTaskDelay(250 / portTICK_RATE_MS);
-    }
-}
+//void UART_TransmitData(void)
+//{
+//    while (1)
+//    {
+//
+//        char *test = "Hello\n";
+//        //        printf("%s\n","in usart rx data");
+//        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
+////        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
+//        //        printf("%s\n",aRxBuffer);
+//
+//        vTaskDelay(250 / portTICK_RATE_MS);
+//    }
+//}
 
 /**
  * TASK 1: Toggle LED via RTOS Timer
@@ -296,8 +318,7 @@ TaskFunction_t ToggleLED_Timer2(void *pvParameters)
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
-TaskFunction_t
-ToggleLED_Timer3(void *pvParameters)
+TaskFunction_t ToggleLED_Timer3(void *pvParameters)
 {
 
     while (1)
@@ -344,7 +365,6 @@ TaskFunction_t ToggleLED_Timer4(void *pvParameters)
  */
 void SystemClock_Config(void)
 {
-
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
@@ -374,9 +394,96 @@ void SystemClock_Config(void)
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+    /* STM32F405x/407x/415x/417x Revision Z devices: prefetch is supported  */
+    if (HAL_GetREVID() == 0x1001)
+    {
+      /* Enable the Flash prefetch */
+      __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+    }
 
     /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+    /* Set transmission flag: transfer complete */
+    UartReady = SET;
+    printf("\nin TX completion, the buffer has:\n");
+    printf("%s",aRxBuffer);
+    /* Turn LED6 on: Transfer in transmission process is correct */
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
+}
+
+/**
+  * @brief  Rx Transfer completed callback
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report end of IT Rx transfer, and 
+  *         you can add your own implementation.
+  * @retval None
+  */
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+    printf("\nin RX completion, the buffer has:\n");
+    printf("%s",aRxBuffer);
+  /* Set transmission flag: transfer complete */
+  UartReady = SET;
+  
+  /* Turn LED4 on: Transfer in reception process is correct */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
+}
+
+/**
+  * @brief  UART error callbacks
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report transfer error, and you can
+  *         add your own implementation.
+  * @retval None
+  */
+ void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+     printf("\nin error, the buffer has\n");
+    /* Turn LED3 on: Transfer error in reception/transmission process */
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET); 
+    printf("%s",aRxBuffer);
+}
+
+/**
+  * @brief  Compares two buffers.
+  * @param  pBuffer1, pBuffer2: buffers to be compared.
+  * @param  BufferLength: buffer's length
+  * @retval 0  : pBuffer1 identical to pBuffer2
+  *         >0 : pBuffer1 differs from pBuffer2
+  */
+static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
+{
+  while (BufferLength--)
+  {
+    if ((*pBuffer1) != *pBuffer2)
+    {
+      return BufferLength;
+    }
+    pBuffer1++;
+    pBuffer2++;
+  }
+
+  return 0;
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+static void Error_Handler(void)
+{
+  /* Turn LED5 on */
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15,GPIO_PIN_SET);
+    printf("\nERROR\n");
+    while(1)
+    {
+    }
 }
 
 /* USART2 init function */
@@ -398,38 +505,21 @@ void MX_UART2_UART_Init(void)
     UartHandle.Init.Parity = UART_PARITY_NONE;
     UartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     UartHandle.Init.Mode = UART_MODE_TX_RX;
-    UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-
-    HAL_UART_Init(&UartHandle);
-
+    UartHandle.Init.OverSampling = UART_OVERSAMPLING_8;
+    
+    if(HAL_UART_Init(&UartHandle) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    
+//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_RXNE);
+//    HAL_NVIC_SetPriority(USART2_IRQn, 3, 0);
+//    HAL_NVIC_EnableIRQ(USART2_IRQn);
 
 }
 
-/** Configure pins as 
- * Analog 
- * Input 
- * Output
- * EVENT_OUT
- * EXTI
-     PC3   ------> I2S2_SD
-     PA4   ------> I2S3_WS
-     PA5   ------> SPI1_SCK
-     PA6   ------> SPI1_MISO
-     PA7   ------> SPI1_MOSI
-     PB10   ------> I2S2_CK
-     PC7   ------> I2S3_MCK
-     PA9   ------> USB_OTG_FS_VBUS
-     PA10   ------> USB_OTG_FS_ID
-     PA11   ------> USB_OTG_FS_DM
-     PA12   ------> USB_OTG_FS_DP
-     PC10   ------> I2S3_CK
-     PC12   ------> I2S3_SD
-     PB6   ------> I2C1_SCL
-     PB9   ------> I2C1_SDA
- */
 void MX_GPIO_Init(void)
 {
-
     GPIO_InitTypeDef GPIO_InitStruct;
 
     /* GPIO Ports Clock Enable */
@@ -553,26 +643,6 @@ void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(MEMS_INT2_GPIO_Port, &GPIO_InitStruct);
 
-    //tx        rx
-    //    GPIO_InitStruct.Pin =  GPIO_PIN_2 | GPIO_PIN_3;
-    //    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    //    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    //    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    //    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    //    HAL_GPIO_Init( GPIOA, &GPIO_InitStruct);
-
-    /* USART TX  */
-    //  GPIO_InitStruct.Pin = GPIO_PIN_9;  // PA.09 USART1.TX-
-    //  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    //  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-    //  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    //   
-    //  /* USART RX Pin Ayarı */
-    //  GPIO_InitStruct.Pin = GPIO_PIN_10; // PA.10 USART1.RX-
-    //  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    //  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -593,6 +663,15 @@ void StartDefaultTask(void const * argument)
     }
     /* USER CODE END 5 */
 }
+
+/**
+  * @brief  Tx Transfer completed callback
+  * @param  UartHandle: UART handle. 
+  * @note   This example shows a simple way to report end of IT Tx transfer, and 
+  *         you can add your own implementation. 
+  * @retval None
+  */
+
 
 #ifdef USE_FULL_ASSERT
 

@@ -63,13 +63,16 @@
 #define USARTx_RX_GPIO_PORT              GPIOA 
 #define USARTx_RX_AF                     GPIO_AF7_USART2
 
-/* Size of Transmission buffer */
-#define TXBUFFERSIZE                      80
+/* Definition for USARTx's NVIC */
+//#define USARTx_IRQn                      USART2_IRQn
+//#define USARTx_IRQHandler                USART2_IRQHandler
+
+#define TXBUFFERSIZE                      2
 /* Size of Reception buffer */
-#define RXBUFFERSIZE                     TXBUFFERSIZE
-  
+#define RXBUFFERSIZE                      TXBUFFERSIZE
+    
 /* Exported macro ------------------------------------------------------------*/
-#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
+//#define COUNTOF(__BUFFER__)   (sizeof(__BUFFER__) / sizeof(*(__BUFFER__)))
 /* Exported functions ------------------------------------------------------- */
 
 #endif /* __MAIN_H */

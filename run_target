@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#used to make your life easier
+mate-terminal -t "openocd" -e "openocd -f stm32f4discovery.cfg"
+
+mate-terminal -t "arm-none-eabi-gdb" -e "arm-none-eabi-gdb"
