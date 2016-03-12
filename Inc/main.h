@@ -67,7 +67,7 @@
 //#define USARTx_IRQn                      USART2_IRQn
 //#define USARTx_IRQHandler                USART2_IRQHandler
 
-#define TXBUFFERSIZE                      2
+#define TXBUFFERSIZE                      1
 /* Size of Reception buffer */
 #define RXBUFFERSIZE                      TXBUFFERSIZE
     

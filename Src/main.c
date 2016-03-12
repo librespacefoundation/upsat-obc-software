@@ -176,49 +176,82 @@ int main(void)
 //    osKernelStart();
     
     printf("\nINITIALIZING!!\n");
-    /* The board receives the message and sends it back */
-    
-    /*##-2- Put UART peripheral in reception process ###########################*/  
-    if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
-    {
-      Error_Handler();
-    }
-   
-    /*##-3- Wait for the end of the transfer ###################################*/   
-    while (UartReady != SET)
-    {
-        printf("waiting for set\n");
-        printf("%s",aRxBuffer);
-        
-    } 
-
-    /* Reset transmission flag */
-    UartReady = RESET;
-
-    /*##-4- Start the transmission process #####################################*/  
-    /* While the UART in reception process, user can transmit data through 
-       "aTxBuffer" buffer */
-    if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE)!= HAL_OK)
-    {
-      Error_Handler();
-    }
-    else {
-        printf("Transmitted!!\n");
-    }
-    /* We should never get here as control is now taken by the scheduler */
-
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
     while (1)
     {
-        /* USER CODE END WHILE */
+        /*##-2- Put UART peripheral in reception process ###########################*/  
+        if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
+        {
+          Error_Handler();
+        }
 
-        /* USER CODE BEGIN 3 */
+        /*##-3- Wait for the end of the transfer ###################################*/   
+        printf("entering wait, the buffer currently holds: %s\n",aRxBuffer);
+        while (UartReady != SET)
+        {}
+        
+        /* Reset transmission flag */
+        UartReady = RESET;
+
+        /*##-4- Start the transmission process #####################################*/  
+        /* While the UART in reception process, user can transmit data through 
+           "aTxBuffer" buffer */
+        if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aRxBuffer, TXBUFFERSIZE)!= HAL_OK)
+        {
+          Error_Handler();
+        }
+        /* We should never get here as control is now taken by the scheduler */
+
+        /* Infinite loop */
+        /* USER CODE BEGIN WHILE */
+
+            /* USER CODE END WHILE */
+
+            /* USER CODE BEGIN 3 */
 
     }
     /* USER CODE END 3 */
 
 }//main ends here
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+    /* Set transmission flag: transfer complete */
+    printf("\nin TX completion, the buffer has: %s\n",aTxBuffer);
+    /* Turn LED6 on: Transfer in transmission process is correct */
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
+    UartReady = SET;
+}
+
+/**
+  * @brief  Rx Transfer completed callback
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report end of IT Rx transfer, and 
+  *         you can add your own implementation.
+  * @retval None
+  */
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+    printf("\nin RX completion, the buffer has: %s\n",aRxBuffer);
+    /* Set transmission flag: transfer complete */
+    UartReady = SET;
+    /* Turn LED4 on: Transfer in reception process is correct */
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
+}
+
+/**
+  * @brief  UART error callbacks
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report transfer error, and you can
+  *         add your own implementation.
+  * @retval None
+  */
+ void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+     printf("\nIn error, the buffer has: %s\n",aRxBuffer);
+//    /* Turn LED3 on: Transfer error in reception/transmission process */
+//    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET); 
+}
 
 //void USART2_IRQHandler(void)
 //{
@@ -405,50 +438,6 @@ void SystemClock_Config(void)
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-    /* Set transmission flag: transfer complete */
-    UartReady = SET;
-    printf("\nin TX completion, the buffer has:\n");
-    printf("%s",aRxBuffer);
-    /* Turn LED6 on: Transfer in transmission process is correct */
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
-}
-
-/**
-  * @brief  Rx Transfer completed callback
-  * @param  UartHandle: UART handle
-  * @note   This example shows a simple way to report end of IT Rx transfer, and 
-  *         you can add your own implementation.
-  * @retval None
-  */
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
-{
-    printf("\nin RX completion, the buffer has:\n");
-    printf("%s",aRxBuffer);
-  /* Set transmission flag: transfer complete */
-  UartReady = SET;
-  
-  /* Turn LED4 on: Transfer in reception process is correct */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
-}
-
-/**
-  * @brief  UART error callbacks
-  * @param  UartHandle: UART handle
-  * @note   This example shows a simple way to report transfer error, and you can
-  *         add your own implementation.
-  * @retval None
-  */
- void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
-{
-     printf("\nin error, the buffer has\n");
-    /* Turn LED3 on: Transfer error in reception/transmission process */
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET); 
-    printf("%s",aRxBuffer);
-}
-
 /**
   * @brief  Compares two buffers.
   * @param  pBuffer1, pBuffer2: buffers to be compared.
@@ -478,12 +467,7 @@ static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferL
   */
 static void Error_Handler(void)
 {
-  /* Turn LED5 on */
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15,GPIO_PIN_SET);
-    printf("\nERROR\n");
-    while(1)
-    {
-    }
+    printf("\nERROR, to be handled\n");
 }
 
 /* USART2 init function */
