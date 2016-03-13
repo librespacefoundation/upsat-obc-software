@@ -15,29 +15,13 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
         mass_storage_delete_api(sid, to);
 
-    } else if(pkt->ser_subtype == REPORT) {
+    } else if(pkt->ser_subtype == REPORT || pkt->ser_subtype == DOWNLINK) {
 
-        large_data_startReport_api(sid, pkt);
-
-    } else if(pkt->ser_subtype == DOWNLINK) {
-
-        mode = pkt->data[1];
-
-        from = pkt->data[2];
-        from = pkt->data[3];
-        from = pkt->data[4];
-        from = pkt->data[5];
-
-        to = pkt->data[6];
-        to = pkt->data[7];
-        to = pkt->data[8];
-        to = pkt->data[9];
-
-        large_data_startDownlink_api(sid, mode, from, to, pkt);
-
+        large_data_app(pkt);
+        
     } else { return R_ERROR; }
 
-    return R_OK;
+    return R_OK; 
 }
 
 OBC_returnStateTypedef mass_storage_delete_api(uint8_t sid, uint32_t to) {
@@ -52,7 +36,7 @@ OBC_returnStateTypedef mass_storage_delete_api(uint8_t sid, uint32_t to) {
 
     if (f_opendir(&dir, path) != FR_OK) { return R_ERROR; }
     i = strlen(path);
-    for (;;) {
+    for (;;) { // add hard limits
 
         res = f_readdir(&dir, &fno);                   /* Read a directory item */
         if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */

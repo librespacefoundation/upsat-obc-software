@@ -21,6 +21,7 @@
 
 struct _MS_data {
     FATFS test;
+    uint16_t stores_size[MAX_SID];
 }MS_data;
 
 

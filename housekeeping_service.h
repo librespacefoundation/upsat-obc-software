@@ -30,6 +30,8 @@ OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t si
 
 OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
+OBC_returnStateTypedef hk_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
+
 void hk_SCH();
 
 void clear_wod();

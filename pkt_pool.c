@@ -24,13 +24,15 @@ void *get_pkt(uint8_t mode) {
 }
 
 OBC_returnStateTypedef free_pkt(tc_tm_pkt *pkt) {
+
+    ASSERT(pkt != NULL);
+
     for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
         if(&pkt_pool.pkt[i] == pkt) {
             pkt_pool.free[i] = 0;
             return R_OK;
         }
     }
-
     return R_ERROR;
 }
 
@@ -54,6 +56,4 @@ void pkt_pool_GC() {
             // error
         }
     }
-
-    return R_OK;
 }

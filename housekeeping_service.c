@@ -2,6 +2,7 @@
 
 void hk_SCH() {
 
+//temp
  struct tc_tm_pkt pkt;
   
     hk_crt_pkt_TC(&pkt, EPS, 1);
@@ -25,7 +26,10 @@ void clear_wod() {
 }
 
 OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
+
     uint8_t res, did, fid;
+
+    ASSERT(pkt != NULL && pkt->data != NULL);
 
     if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
         hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data[0]);
@@ -43,9 +47,9 @@ OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
         }
     }
 
-    did = pkt->data[0];
-    fid = pkt->data[4];
-    res = power_control_app_api( did, fid);
+ //   did = pkt->data[0];
+ //   fid = pkt->data[4];
+ //   res = power_control_app_api( did, fid);
     return R_OK;
 }
 
@@ -95,5 +99,43 @@ OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t si
         pkt->data[7] = obc_status.temp_batt;
         pkt->data[8] = obc_status.temp_comms;
     }
+    return R_OK;
+}
+
+OBC_returnStateTypedef hk_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer) {
+
+    uint8_t sid;
+    sid = pkt->data[0];
+    buf[10] = sid;
+
+    if(pkt->ser_subtype == 21 ) {
+        buf_pointer += 1;
+    } else if(pkt->ser_subtype == 23) {
+
+        if( sid == 3) {
+            buf[11] = pkt->data[4];
+            buf[12] = pkt->data[3];
+            buf[13] = pkt->data[2];
+            buf[14] = pkt->data[1];
+        }
+        buf_pointer += 6;
+
+    } else if(pkt->ser_subtype == 25) {
+
+        if( sid != 4) { return R_ERROR; }
+
+        buf[11] = pkt->data[1];
+        buf[12] = pkt->data[2];
+        buf[13] = pkt->data[3];
+        buf[14] = pkt->data[4];
+        buf[15] = pkt->data[5];
+        buf[16] = pkt->data[7];
+        buf[17] = pkt->data[8];
+        buf[18] = pkt->data[9];
+
+        buf_pointer += 9;
+
+    } else { return R_ERROR; }
+
     return R_OK;
 }

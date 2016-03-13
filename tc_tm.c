@@ -125,60 +125,17 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     buf[8] = pkt->ser_subtype;
     buf[9] = pkt->dest_id; /*source or destination*/
 
+    buf_pointer = 10;
+
     if(pkt->ser_type == TC_VERIFICATION_SERVICE) {
         //cnv.cnv16[0] = tc_pkt_id;
         //cnv.cnv16[1] = tc_pkt_seq_ctrl;
 
-        buf[10] = pkt->data[0];
-        buf[11] = pkt->data[1];
-        buf[12] = pkt->data[2];
-        buf[13] = pkt->data[3];
-
-        if(pkt->ser_subtype == TC_TM_SER_TC_VER_ACC_SUCC || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_START_SUCC || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_COMP_SUCC ) {
-            buf_pointer = 14;
-        } else if(pkt->ser_subtype == TC_TM_SER_TC_VER_ACC_FAIL || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_START_FAIL|| pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_COMP_FAIL) {
-            buf[14] = pkt->data[4]; 
-            buf_pointer = 15;
-        } else {
-            return R_ERROR;
-        }
+        verification_pack_pkt_api(buf, pkt, &buf_pointer);
 
     } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE ) {
 
-        uint8_t sid;
-        sid = pkt->data[0];
-        buf[10] = sid;
-
-        if(pkt->ser_subtype == 21 ) {
-            buf_pointer = 11;
-        } else if(pkt->ser_subtype == 23) {
-
-            if( sid == 3) {
-                buf[11] = pkt->data[4];
-                buf[12] = pkt->data[3];
-                buf[13] = pkt->data[2];
-                buf[14] = pkt->data[1];
-            }
-            buf_pointer = 16;
-        } else if(pkt->ser_subtype == 25) {
-
-            if( sid != 4) {
-                return R_ERROR;
-            }
-
-            buf[11] = pkt->data[1];
-            buf[12] = pkt->data[2];
-            buf[13] = pkt->data[3];
-            buf[14] = pkt->data[4];
-            buf[15] = pkt->data[5];
-            buf[16] = pkt->data[7];
-            buf[17] = pkt->data[8];
-            buf[18] = pkt->data[9];
-
-            buf_pointer = 19;
-        } else {
-            return R_ERROR;
-        }
+        hk_pack_pkt_api(buf, pkt, &buf_pointer);
 
     } else if(pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE && pkt->ser_subtype == 1) {
 
@@ -189,7 +146,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
         buf[13] = pkt->data[3];
         buf[14] = pkt->data[4];
 
-        buf_pointer = 15;
+        buf_pointer += 5;
 
     } else {
         return R_ERROR;
@@ -204,3 +161,16 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     *size = buf_pointer;
     return R_OK;
 }
+
+OBC_returnStateTypedef crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id) {
+
+    pkt->type = type;
+    pkt->app_id = app_id;
+    pkt->dest_id = dest_id;
+
+    pkt->ser_type = ser_type;
+    pkt->ser_subtype = ser_subtype;
+
+    return R_OK;
+}
+

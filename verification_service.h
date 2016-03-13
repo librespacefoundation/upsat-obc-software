@@ -9,4 +9,6 @@ OBC_returnStateTypedef verify_pkt(tc_tm_pkt *pkt, uint8_t step, uint8_t res);
 
 OBC_returnStateTypedef verify_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t res, uint8_t subtype);
 
+OBC_returnStateTypedef verification_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
+
 #endif

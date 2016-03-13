@@ -95,6 +95,7 @@ R_EOT                   = 8
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
 #define TC_LARGE_DATA_SERVICE           13
 #define TC_MASS_STORAGE_SERVICE         15
+#define TC_TEST_SERVICE                 17
 
 #define OBC     1
 #define EPS     2
@@ -112,6 +113,9 @@ R_EOT                   = 8
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+
+extern OBC_returnStateTypedef verification_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
+extern OBC_returnStateTypedef hk_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
 
 union _cnv {
     uint32_t cnv32;
