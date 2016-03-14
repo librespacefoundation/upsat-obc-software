@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#used to make your life easier
+#used to make your life easier, flash and run in one step.
+#call this script in a Makefile, just after 'all:' target.
 mate-terminal -t "openocd" -e "openocd -f stm32f4discovery.cfg"
 
 mate-terminal -t "arm-none-eabi-gdb" -e "arm-none-eabi-gdb"

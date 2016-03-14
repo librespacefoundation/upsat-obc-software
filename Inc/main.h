@@ -63,11 +63,7 @@
 #define USARTx_RX_GPIO_PORT              GPIOA 
 #define USARTx_RX_AF                     GPIO_AF7_USART2
 
-/* Definition for USARTx's NVIC */
-//#define USARTx_IRQn                      USART2_IRQn
-//#define USARTx_IRQHandler                USART2_IRQHandler
-
-#define TXBUFFERSIZE                      1
+#define TXBUFFERSIZE                      456
 /* Size of Reception buffer */
 #define RXBUFFERSIZE                      TXBUFFERSIZE
     

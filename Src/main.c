@@ -44,21 +44,22 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
-
+#include "../Inc/circular_buffer.h"
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef UartHandle;
-__IO ITStatus UartReady = RESET;
+UART_HandleTypeDef Uart2Handle;
+__IO ITStatus UartReady = SET;
 
 /* Buffer used for reception */
-uint8_t aRxBuffer[RXBUFFERSIZE];
+uint8_t total_buffer[RXBUFFERSIZE];
+//extern CircQueue total_buffer;
 
 /* Buffer used for transmission */
-uint8_t aTxBuffer[] = " ****UART_TwoBoards_ComIT****";
+//uint8_t aTxBuffer[] = " ****UART_TwoBoards_ComIT****";
 
 osThreadId defaultTaskHandle;
 
@@ -71,15 +72,16 @@ TaskFunction_t ToggleLED_Timer1(void*);
 TaskFunction_t ToggleLED_Timer2(void*);
 TaskFunction_t ToggleLED_Timer3(void*);
 TaskFunction_t ToggleLED_Timer4(void*);
+TaskFunction_t UART2_ReceiveData(void*);
+TaskFunction_t UART2_TransmitData(void*);
 
-//void UART_ReceiveData(void);
-//void UART_TransmitData(void);
 void MX_UART2_UART_Init(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void Error_Handler(void);
+//extern void Error_Handler(void);
 static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
 static void MX_GPIO_Init(void);
 void StartDefaultTask(void const * argument);
@@ -88,7 +90,6 @@ void StartDefaultTask(void const * argument);
 
 int main(void)
 {
-
     /* USER CODE BEGIN 1 */
 
     /* USER CODE END 1 */
@@ -97,44 +98,37 @@ int main(void)
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
-
     /* Configure the system clock */
     SystemClock_Config();
-    
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     MX_UART2_UART_Init();
-    
-//    NVIC_EnableIRQ(USART2_IRQn);
-//    NVIC_EnableIRQ(USART3_IRQn);
-//    NVIC_EnableIRQ(USART1_IRQn);
-    
-//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_RXNE);
-//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_TXE);
-//    HAL_NVIC_SetPriority(USART2_IRQn, 2, 0);
-//    HAL_NVIC_EnableIRQ(USART2_IRQn);
-    
+      
     osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
     defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+    /*Buffers initializations*/
+    memset(&total_buffer[0],0,sizeof(total_buffer));
+    
     /* Create tasks */
-//    xTaskCreate(
-//                UART_ReceiveData, /* Function pointer */
-//                "usasrtrx", /* Task name - for debugging only*/
-//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//                NULL /* Task handle */
-//                );
+    xTaskCreate(
+                UART2_ReceiveData, /* Function pointer */
+                "usasrtrx", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
 
 //    xTaskCreate(
-//                UART_TransmitData, /* Function pointer */
+//                UART2_TransmitData, /* Function pointer */
 //                "usasrtrx", /* Task name - for debugging only*/
 //                configMINIMAL_STACK_SIZE, /* Stack depth in words */
 //                (void*) NULL, /* Pointer to tasks arguments (parameter) */
 //                tskIDLE_PRIORITY + 2UL, /* Task priority*/
 //                NULL /* Task handle */
 //                );
+    
       xTaskCreate(
                ToggleLED_Timer1, /* Function pointer */
                "Task1", /* Task name - for debugging only*/
@@ -173,53 +167,47 @@ int main(void)
 
     /* Start scheduler */
     //this is the final point for linear code.
-//    osKernelStart();
+    osKernelStart();
     
-    printf("\nINITIALIZING!!\n");
-    while (1)
-    {
-        /*##-2- Put UART peripheral in reception process ###########################*/  
-        if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
-        {
-          Error_Handler();
-        }
-
-        /*##-3- Wait for the end of the transfer ###################################*/   
-        printf("entering wait, the buffer currently holds: %s\n",aRxBuffer);
-        while (UartReady != SET)
-        {}
-        
-        /* Reset transmission flag */
-        UartReady = RESET;
-
-        /*##-4- Start the transmission process #####################################*/  
-        /* While the UART in reception process, user can transmit data through 
-           "aTxBuffer" buffer */
-        if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aRxBuffer, TXBUFFERSIZE)!= HAL_OK)
-        {
-          Error_Handler();
-        }
-        /* We should never get here as control is now taken by the scheduler */
+//            if(HAL_UART_Receive_IT(&Uart2Handle, (uint8_t *)total_buffer, 455) != HAL_OK)
+//            {
+//              Error_Handler();
+//            }
+//            if(HAL_UART_Transmit_IT(&Uart2Handle, (uint8_t *)total_buffer, 455) != HAL_OK)
+//            {
+//              Error_Handler();
+//            }
+//            if(HAL_UART_Receive(&Uart2Handle, (uint8_t *)total_buffer, 455,5000) != HAL_OK)
+//            {
+//              Error_Handler();
+//            }
+//            printf("%s",total_buffer);
+//            if(HAL_UART_Transmit(&Uart2Handle, (uint8_t *)total_buffer, 455,5000) != HAL_OK)
+//            {
+//              Error_Handler();
+//            }
+            
+        /*  We should never get here as control is now taken by the scheduler */
 
         /* Infinite loop */
         /* USER CODE BEGIN WHILE */
 
-            /* USER CODE END WHILE */
+        /* USER CODE END WHILE */
 
-            /* USER CODE BEGIN 3 */
+        /* USER CODE BEGIN 3 */
 
-    }
-    /* USER CODE END 3 */
+    
+        /* USER CODE END 3 */
 
 }//main ends here
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
     /* Set transmission flag: transfer complete */
-    printf("\nin TX completion, the buffer has: %s\n",aTxBuffer);
+//    printf("\nin TX completion, the buffer has: %s\n",total_buffer);
     /* Turn LED6 on: Transfer in transmission process is correct */
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
-    UartReady = SET;
+//    UartReady = SET;
 }
 
 /**
@@ -232,9 +220,12 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-    printf("\nin RX completion, the buffer has: %s\n",aRxBuffer);
+//    printf("\nRXCMPLT\n");
     /* Set transmission flag: transfer complete */
+//    __HAL_UART_FLUSH_DRREGISTER(UartHandle);
+    printf("%s", total_buffer);
     UartReady = SET;
+//    HAL_UART_Receive_IT(&Uart2Handle, (uint8_t *)total_buffer, 1);
     /* Turn LED4 on: Transfer in reception process is correct */
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
 }
@@ -248,7 +239,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   */
  void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
 {
-     printf("\nIn error, the buffer has: %s\n",aRxBuffer);
+     printf("\nEr is: %d,\n",UartHandle->ErrorCode);
+//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_SET); 
+//     UartReady = SET;
+//     __HAL_UART_DISABLE_IT(UartHandle, UART_IT_ERR);
+//        UartHandle->State = HAL_UART_STATE_READY;
+//     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_RESET); 
 //    /* Turn LED3 on: Transfer error in reception/transmission process */
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET); 
 }
@@ -257,56 +253,50 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 //{
 //    printf("\n i ncomming\n");
 //}
+ 
+TaskFunction_t UART2_ReceiveData(void* pvParameters)
+{
+    while (1)
+    {
+        HAL_UART_Receive(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
+//        printf("\nRCVD: %d\n", total_buffer);
+        
+        for ( int u=0;u<RXBUFFERSIZE;u++)
+        {
+            HAL_UART_Transmit(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
+//            printf("%s", total_buffer[u]);
+//            printf("%d\n", aRxBuffer[1]);
+//            printf("%d\n", aRxBuffer[2]);
+//            printf("%d\n", aRxBuffer[3]);
+//            printf("%d\n", aRxBuffer[4]);
+//            memset(&aRxBuffer[0],0,sizeof(total_buffer));
+        }printf("\n");
 
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
+}
 
-//void UART_ReceiveData(void)
-//{
-//    while (1)
-//    {
-//        printf("%s\n", "in usart rx data\n");
-////                HAL_UART_Receive_IT( &UartHandle, aRxBuffer ,RXBUFFERSIZE );
-//        HAL_UART_Receive(&UartHandle, (uint8_t *) aRxBuffer, RXBUFFERSIZE, 5000);
-////        aRxBuffer[RXBUFFERSIZE-1]='\0';
-//        printf("%s\n", aRxBuffer);
-//        
-////        for ( int u=0;u<RXBUFFERSIZE-1;u++)
-////        {
-////            printf("%d\n", aRxBuffer[0]);
-////            printf("%d\n", aRxBuffer[1]);
-////            printf("%d\n", aRxBuffer[2]);
-////            printf("%d\n", aRxBuffer[3]);
-////            printf("%d\n", aRxBuffer[4]);
-////            memset(&aRxBuffer[0],0,sizeof(aRxBuffer));
-////        }
-//
-//        vTaskDelay(250 / portTICK_RATE_MS);
-//    }
-//}
+TaskFunction_t UART2_TransmitData(void* pvParameters)
+{
+    while (1)
+    {
+        char *test = "Hello\n";
+        //        printf("%s\n","in usart rx data");
+        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
+        HAL_UART_Transmit(&Uart2Handle, (uint8_t *) test, RXBUFFERSIZE-1, 5000);
+        //        printf("%s\n",aRxBuffer);
 
-//void UART_TransmitData(void)
-//{
-//    while (1)
-//    {
-//
-//        char *test = "Hello\n";
-//        //        printf("%s\n","in usart rx data");
-//        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-////        HAL_UART_Transmit(&UartHandle, (uint8_t *) test, RXBUFFERSIZE, 5000);
-//        //        printf("%s\n",aRxBuffer);
-//
-//        vTaskDelay(250 / portTICK_RATE_MS);
-//    }
-//}
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
+}
 
 /**
  * TASK 1: Toggle LED via RTOS Timer
  */
 TaskFunction_t ToggleLED_Timer1(void *pvParameters)
 {
-
     while (1)
     {
-
         //      printf("timer1\n");
         //      printf("%x",9);
 
@@ -330,7 +320,6 @@ TaskFunction_t ToggleLED_Timer1(void *pvParameters)
  */
 TaskFunction_t ToggleLED_Timer2(void *pvParameters)
 {
-
     while (1)
     {
         //      printf("timer2\n");
@@ -353,7 +342,6 @@ TaskFunction_t ToggleLED_Timer2(void *pvParameters)
  */
 TaskFunction_t ToggleLED_Timer3(void *pvParameters)
 {
-
     while (1)
     {
         //      printf("timer3\n");
@@ -376,7 +364,6 @@ TaskFunction_t ToggleLED_Timer3(void *pvParameters)
  */
 TaskFunction_t ToggleLED_Timer4(void *pvParameters)
 {
-
     while (1)
     {
         //      printf("timer4\n");
@@ -436,28 +423,8 @@ void SystemClock_Config(void)
 
     /* SysTick_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
-}
-
-/**
-  * @brief  Compares two buffers.
-  * @param  pBuffer1, pBuffer2: buffers to be compared.
-  * @param  BufferLength: buffer's length
-  * @retval 0  : pBuffer1 identical to pBuffer2
-  *         >0 : pBuffer1 differs from pBuffer2
-  */
-static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
-{
-  while (BufferLength--)
-  {
-    if ((*pBuffer1) != *pBuffer2)
-    {
-      return BufferLength;
-    }
-    pBuffer1++;
-    pBuffer2++;
-  }
-
-  return 0;
+//    SysTick_Config(SystemCoreClock/1000);
+//    HAL_NVIC_EnableIRQ(SysTick_IRQn);
 }
 
 /**
@@ -465,10 +432,6 @@ static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferL
   * @param  None
   * @retval None
   */
-static void Error_Handler(void)
-{
-    printf("\nERROR, to be handled\n");
-}
 
 /* USART2 init function */
 void MX_UART2_UART_Init(void)
@@ -481,25 +444,21 @@ void MX_UART2_UART_Init(void)
         - Parity = None
         - BaudRate = 9600 baud
         - Hardware flow control disabled (RTS and CTS signals) */
-    UartHandle.Instance = USARTx;
-
-    UartHandle.Init.BaudRate = 4800;
-    UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
-    UartHandle.Init.StopBits = UART_STOPBITS_1;
-    UartHandle.Init.Parity = UART_PARITY_NONE;
-    UartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    UartHandle.Init.Mode = UART_MODE_TX_RX;
-    UartHandle.Init.OverSampling = UART_OVERSAMPLING_8;
+    Uart2Handle.Instance = USARTx;
     
-    if(HAL_UART_Init(&UartHandle) != HAL_OK)
+    Uart2Handle.Init.BaudRate = 9600;
+    Uart2Handle.Init.WordLength = UART_WORDLENGTH_8B;
+    Uart2Handle.Init.StopBits = UART_STOPBITS_1;
+    Uart2Handle.Init.Parity = UART_PARITY_NONE;
+    Uart2Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    Uart2Handle.Init.Mode = UART_MODE_TX_RX;
+    Uart2Handle.Init.OverSampling = UART_OVERSAMPLING_16;
+    
+    if(HAL_UART_Init(&Uart2Handle) != HAL_OK)
     {
-      Error_Handler();
+//      Error_Handler();
     }
     
-//    __HAL_UART_ENABLE_IT(&UartHandle, UART_IT_RXNE);
-//    HAL_NVIC_SetPriority(USART2_IRQn, 3, 0);
-//    HAL_NVIC_EnableIRQ(USART2_IRQn);
-
 }
 
 void MX_GPIO_Init(void)

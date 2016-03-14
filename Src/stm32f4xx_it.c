@@ -36,6 +36,8 @@
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_hal_uart.h"
 #include "cmsis_os.h"
+#include <stdlib.h>
+#include "../Inc/circular_buffer.h"
 #include "main.h"
 
 /* USER CODE BEGIN 0 */
@@ -44,7 +46,10 @@
 
 /* External variables --------------------------------------------------------*/
 /* UART handler declared in "main.c" file */
-extern UART_HandleTypeDef UartHandle;
+#define MAXCLISTRING 100
+extern UART_HandleTypeDef Uart2Handle;
+static __IO uint32_t uwTick;
+
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
@@ -59,6 +64,8 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   osSystickHandler();
   HAL_IncTick();
+//  printf("%d\n",HAL_GetTick());
+  
   /* USER CODE BEGIN SysTick_IRQn 1 */
   
   /* USER CODE END SysTick_IRQn 1 */
@@ -187,8 +194,24 @@ void DebugMon_Handler(void)
   */
 void USART2_IRQHandler(void)
 {
-  HAL_UART_IRQHandler(&UartHandle);
+  HAL_UART_IRQHandler(&Uart2Handle);
+
+//    if ( __HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE) != RESET ){
+//        uint8_t data;
+//        
+//    }
+//    printf("\nInirqhandle\n");
+//    printf("\nrxne flag is:%d\n",__HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE));
+//    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/
+//    printf("%d",(Uart2Handle.Instance->DR) );
+//    printf("\nrxne flag is:%d\n",__HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE));
+//    printf("\nThe data are:%d\n",(Uart2Handle.Instance->DR) );
+    
+//  __HAL_UART_FLUSH_DRREGISTER(&Uart2Handle); // Clear the buffer to prevent overrun
+
 }
+
+
 
 
 

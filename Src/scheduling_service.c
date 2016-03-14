@@ -5,7 +5,7 @@
  * Created on March 8, 2016, 9:05 PM
  * This is the implementation of scheduling service as is
  * documented at pages 99-118 of ECSS-E-70-41A document.
- * Service Type 11
+ * Service Type 11 
  */
 
 #include <stdio.h>

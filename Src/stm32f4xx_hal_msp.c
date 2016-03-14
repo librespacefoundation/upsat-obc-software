@@ -82,8 +82,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USER CODE BEGIN USART2_MspInit 1 */
+    /*sets the uart interupt priority, and enables the uart IT*/
     HAL_NVIC_SetPriority(USART2_IRQn, 0, 1);
-    HAL_NVIC_EnableIRQ(USART2_IRQn);
+    HAL_NVIC_EnableIRQ(USART2_IRQn); 
   /* USER CODE END USART2_MspInit 1 */
   }
   else if(huart->Instance==USART3)

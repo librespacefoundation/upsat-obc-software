@@ -753,7 +753,7 @@ HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef *huart, uint8_t *pData, ui
 
       } 
       else
-      {
+      {     
         if(UART_WaitOnFlagUntilTimeout(huart, UART_FLAG_RXNE, RESET, Timeout) != HAL_OK)
         { 
           return HAL_TIMEOUT;
@@ -891,14 +891,17 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
     
     /* Enable the UART Data Register not empty Interrupt */
     __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
-    
+#ifdef BEBUG
     printf("\nHALOK\n");
     printf("%s",pData);
+#endif
     return HAL_OK;
   }
   else
   {
+#ifdef BEBUG
       printf("\nHALbusy\n");
+#endif
     return HAL_BUSY; 
   }
 }
@@ -1154,7 +1157,6 @@ HAL_StatusTypeDef HAL_UART_DMAStop(UART_HandleTypeDef *huart)
   */
 void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
 {
-    printf("\nINIRQHANDLER\n");
   uint32_t tmp1 = 0, tmp2 = 0;
 
   tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_PE);
@@ -1201,15 +1203,15 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
   tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_RXNE);
   /* UART in mode Receiver ---------------------------------------------------*/
   if((tmp1 != RESET) && (tmp2 != RESET))
-  { printf("\nINIRQHANDLERbeforereceive_ITcall\n");
-    UART_Receive_IT(huart); //i have added HAL_
+  { 
+    UART_Receive_IT(huart);
   }
   
   tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_TXE);
   tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_TXE);
   /* UART in mode Transmitter ------------------------------------------------*/
   if((tmp1 != RESET) && (tmp2 != RESET))
-  {printf("\nINIRQHANDLERbeforetransmit_ITcall\n");
+  {
     UART_Transmit_IT(huart);
   }
   
@@ -1225,7 +1227,6 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
   {
     /* Set the UART state ready to be able to start again the process */
     huart->State = HAL_UART_STATE_READY;
-    printf("\nINIRQHANDLERbeforeerrorcall\n");
     HAL_UART_ErrorCallback(huart);
   }  
 }
