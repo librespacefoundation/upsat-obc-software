@@ -10,23 +10,94 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "../Inc/tc_tm.h"
-#include "../Inc/scheduling_service.h"
+#include "FreeRTOS.h"
+#include "tc_tm.h"
+#include "scheduling_service.h"
 #include "housekeeping_service.h"
+#include "portmacro.h"
+#include "stm32f4xx_hal.h"
+
+/*Variable local to the Scheduling service*/
+TickType_t boot_elapsed_ticks;
+
+static __IO uint32_t uwTick; /*from STM32f4xx_hal.c */
+extern UART_HandleTypeDef Uart2Handle; /*from main.c*/
+extern Schedule_pck mem_sche[MAX_STORED_SCHEDULES]; /* from this.h*/
+
+OBC_returnStateTypedef load_schedules()
+{
+    Schedule_pck sp1,sp2,sp3,sp4;
+    sp1.schedule_name="LED1T";
+    sp1.num_of_sche_tel=1;
+    sp1.intrlck_set_id=0;
+    sp1.intrlck_ass_id=0;
+    sp1.assmnt_type = ABSOLUTE;
+    sp1.time = 2000;
+    sp1.timeout = 0;
+    
+    sp2.schedule_name="LED2T";
+    sp2.num_of_sche_tel=1;
+    sp2.intrlck_set_id=0;
+    sp2.intrlck_ass_id=0;
+    sp2.assmnt_type = ABSOLUTE;
+    sp2.time = 4000;
+    sp2.timeout = 0;
+    
+    sp3.schedule_name="LED3T";
+    sp3.num_of_sche_tel=1;
+    sp3.intrlck_set_id=0;
+    sp3.intrlck_ass_id=0;
+    sp3.assmnt_type = ABSOLUTE;
+    sp3.time = 6000;
+    sp3.timeout = 0;
+    
+    sp4.schedule_name="LED3T";
+    sp4.num_of_sche_tel=1;
+    sp4.intrlck_set_id=0;
+    sp4.intrlck_ass_id=0;
+    sp4.assmnt_type = ABSOLUTE;
+    sp4.time = 8000;
+    sp4.timeout = 0;
+    
+    mem_sche[0]=sp1; mem_sche[1]=sp2; mem_sche[2]=sp3; mem_sche[3]=sp4;
+    
+//    for ( int o=0;o<4;o++)
+//    {
+//        printf("\n%d--%s",o,mem_sche[o].schedule_name);
+//    }
+    
+}
 
 /*  Initiates the scheduling service.
  *  Loads the schedules from persistent storage.
  */
-void service_init()
+TaskFunction_t maintain_service_time(void* p)
+{   
+    while(1){
+        update_system_timers();
+        load_schedules();
+//        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)boot_elapsed_ticks, 1,10);
+//        printf("fs:%d\n",boot_elapsed_ticks);
+//        printf("fs:%d\n",HAL_GetTick());
+//        printf("fs:%d\n",uwTick);
+//        HAL_UART_Transmit(&Uart2Handle, uwTick, 2,10);
+    }
+}
+
+/*updates the local variable from systick
+ *plus, other time synchs will be done here.
+ */
+void update_system_timers()
 {
-    
+    boot_elapsed_ticks = HAL_GetTick();
 }
 
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
  */
-OBC_returnStateTypedef insert_at_schedule( Schedule_pck theSchpck ){
+OBC_returnStateTypedef insert_in_schedule( Schedule_pck theSchpck ){
+    
+    
     
     return R_OK;
 }

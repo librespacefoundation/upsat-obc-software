@@ -64,8 +64,8 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   osSystickHandler();
   HAL_IncTick();
-//  printf("%d\n",HAL_GetTick());
-  
+//  printf("fi:%d\n",HAL_GetTick());
+//  HAL_UART_Transmit(&Uart2Handle, (uint8_t *)HAL_GetTick(), 1,10);
   /* USER CODE BEGIN SysTick_IRQn 1 */
   
   /* USER CODE END SysTick_IRQn 1 */

@@ -8,7 +8,7 @@
 #ifndef SCHEDULING_SERVICE_H
 #define SCHEDULING_SERVICE_H
 
-#include "../Inc/tc_tm.h"
+#include "tc_tm.h"
 
 /*declares the maximum available space for on-memory loaded schedule commands*/
 #define MAX_STORED_SCHEDULES 50
@@ -26,6 +26,9 @@ typedef enum {
  * Schedule command structure:
  */
 typedef struct {
+        /*TOBEREMOVED*/
+    char* schedule_name;
+    
         /*Currently not supported*/
     uint8_t sub_schedule_id;
     
@@ -63,6 +66,9 @@ OBC_returnStateTypedef enable_schedule( ScheduleOpts opt  );
 
 /**/
 OBC_returnStateTypedef dd( tc_tm_pkt *pkt );
+
+/*Service initialization, and runtime*/
+TaskFunction_t maintain_service_time(void*p);
 
 
 #endif /* SCHEDULING_SERVICE_H */

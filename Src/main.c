@@ -44,7 +44,8 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
-#include "../Inc/circular_buffer.h"
+#include "circular_buffer.h"
+#include "scheduling_service.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -87,7 +88,12 @@ static void MX_GPIO_Init(void);
 void StartDefaultTask(void const * argument);
 
 //void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle);
-
+//int putcharx(int ch)
+//{
+//    while (__HAL_UART_GET_FLAG(USART2, USART_FLAG_TXE) == RESET);
+//    USART_SendData(USART2, (uint8_t)ch);
+//    return ch;
+//}
 int main(void)
 {
     /* USER CODE BEGIN 1 */
@@ -109,16 +115,16 @@ int main(void)
 
     /*Buffers initializations*/
     memset(&total_buffer[0],0,sizeof(total_buffer));
-    
+//    while(1){}
     /* Create tasks */
-    xTaskCreate(
-                UART2_ReceiveData, /* Function pointer */
-                "usasrtrx", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
+//    xTaskCreate(
+//                UART2_ReceiveData, /* Function pointer */
+//                "usasrtrx", /* Task name - for debugging only*/
+//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//                NULL /* Task handle */
+//                );
 
 //    xTaskCreate(
 //                UART2_TransmitData, /* Function pointer */
@@ -128,43 +134,54 @@ int main(void)
 //                tskIDLE_PRIORITY + 2UL, /* Task priority*/
 //                NULL /* Task handle */
 //                );
-    
-      xTaskCreate(
-               ToggleLED_Timer1, /* Function pointer */
-               "Task1", /* Task name - for debugging only*/
-               configMINIMAL_STACK_SIZE, /* Stack depth in words */
-               (void*) NULL, /* Pointer to tasks arguments (parameter) */
-               tskIDLE_PRIORITY + 2UL, /* Task priority*/
-               NULL /* Task handle */
-      );
+       xTaskCreate(
+                maintain_service_time, /* Function pointer */
+                "scheduling", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
+       
+//      xTaskCreate(
+//               ToggleLED_Timer1, /* Function pointer */
+//               "Task1", /* Task name - for debugging only*/
+//               configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//               (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//               tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//               NULL /* Task handle */
+//      );
+//
+//      xTaskCreate(
+//    		  ToggleLED_Timer2,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer3,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer4,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
 
-      xTaskCreate(
-    		  ToggleLED_Timer2,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
       
-      xTaskCreate(
-    		  ToggleLED_Timer3,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
+//      service_init();
       
-      xTaskCreate(
-    		  ToggleLED_Timer4,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
-
     /* Start scheduler */
     //this is the final point for linear code.
     osKernelStart();
