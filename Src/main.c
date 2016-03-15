@@ -143,23 +143,23 @@ int main(void)
                 NULL /* Task handle */
                 );
        
-//      xTaskCreate(
-//               ToggleLED_Timer1, /* Function pointer */
-//               "Task1", /* Task name - for debugging only*/
-//               configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//               (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//               tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//               NULL /* Task handle */
-//      );
+      xTaskCreate(
+               ToggleLED_Timer1, /* Function pointer */
+               "Task1", /* Task name - for debugging only*/
+               configMINIMAL_STACK_SIZE, /* Stack depth in words */
+               (void*) NULL, /* Pointer to tasks arguments (parameter) */
+               tskIDLE_PRIORITY + 2UL, /* Task priority*/
+               NULL /* Task handle */
+      );
 //
-//      xTaskCreate(
-//    		  ToggleLED_Timer2,                 /* Function pointer */
-//    		  "Task1",                          /* Task name - for debugging only*/
-//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-//    		  NULL                              /* Task handle */
-//      );
+      xTaskCreate(
+    		  ToggleLED_Timer2,                 /* Function pointer */
+    		  "Task1",                          /* Task name - for debugging only*/
+    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+    		  NULL                              /* Task handle */
+      );
 //      
 //      xTaskCreate(
 //    		  ToggleLED_Timer3,                 /* Function pointer */
