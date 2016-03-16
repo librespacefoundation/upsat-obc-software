@@ -87,7 +87,9 @@ R_PKT_ILLEGAL_PKT_STP   = 4,
 R_PKT_ILLEGAL_APP_DATA  = 5,
 R_OK                    = 6,
 R_ERROR                 = 7,
-R_EOT                   = 8
+R_EOT                   = 8,
+R_CRC_ERROR             = 9,
+R_LAST                  = 10
 }OBC_returnStateTypedef;
 
 #define TC_VERIFICATION_SERVICE         1
