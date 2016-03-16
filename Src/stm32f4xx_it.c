@@ -48,6 +48,8 @@
 /* UART handler declared in "main.c" file */
 #define MAXCLISTRING 100
 extern UART_HandleTypeDef Uart2Handle;
+__IO uint32_t seconds = 0;
+
 static __IO uint32_t uwTick;
 
 /******************************************************************************/
@@ -64,7 +66,10 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   osSystickHandler();
   HAL_IncTick();
-//  printf("fi:%d\n",HAL_GetTick());
+  if ( HAL_GetTick()%1000==999){ /*add a second to the system time*/
+      seconds++;
+  }
+  
 //  HAL_UART_Transmit(&Uart2Handle, (uint8_t *)HAL_GetTick(), 1,10);
   /* USER CODE BEGIN SysTick_IRQn 1 */
   
@@ -200,13 +205,7 @@ void USART2_IRQHandler(void)
 //        uint8_t data;
 //        
 //    }
-//    printf("\nInirqhandle\n");
-//    printf("\nrxne flag is:%d\n",__HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE));
-//    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/
-//    printf("%d",(Uart2Handle.Instance->DR) );
-//    printf("\nrxne flag is:%d\n",__HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE));
-//    printf("\nThe data are:%d\n",(Uart2Handle.Instance->DR) );
-    
+//    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/    
 //  __HAL_UART_FLUSH_DRREGISTER(&Uart2Handle); // Clear the buffer to prevent overrun
 
 }

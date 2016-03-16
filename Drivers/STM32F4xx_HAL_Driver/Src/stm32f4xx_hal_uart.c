@@ -891,17 +891,11 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData,
     
     /* Enable the UART Data Register not empty Interrupt */
     __HAL_UART_ENABLE_IT(huart, UART_IT_RXNE);
-#ifdef BEBUG
-    printf("\nHALOK\n");
-    printf("%s",pData);
-#endif
+
     return HAL_OK;
   }
   else
   {
-#ifdef BEBUG
-      printf("\nHALbusy\n");
-#endif
     return HAL_BUSY; 
   }
 }

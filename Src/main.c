@@ -135,7 +135,7 @@ int main(void)
 //                NULL /* Task handle */
 //                );
        xTaskCreate(
-                maintain_service_time, /* Function pointer */
+                init_and_run_schedules, /* Function pointer */
                 "scheduling", /* Task name - for debugging only*/
                 configMINIMAL_STACK_SIZE, /* Stack depth in words */
                 (void*) NULL, /* Pointer to tasks arguments (parameter) */
@@ -198,7 +198,6 @@ int main(void)
 //            {
 //              Error_Handler();
 //            }
-//            printf("%s",total_buffer);
 //            if(HAL_UART_Transmit(&Uart2Handle, (uint8_t *)total_buffer, 455,5000) != HAL_OK)
 //            {
 //              Error_Handler();
@@ -221,7 +220,6 @@ int main(void)
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
     /* Set transmission flag: transfer complete */
-//    printf("\nin TX completion, the buffer has: %s\n",total_buffer);
     /* Turn LED6 on: Transfer in transmission process is correct */
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
 //    UartReady = SET;
@@ -237,11 +235,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-//    printf("\nRXCMPLT\n");
     /* Set transmission flag: transfer complete */
 //    __HAL_UART_FLUSH_DRREGISTER(UartHandle);
-    printf("%s", total_buffer);
-    UartReady = SET;
+//    UartReady = SET;
 //    HAL_UART_Receive_IT(&Uart2Handle, (uint8_t *)total_buffer, 1);
     /* Turn LED4 on: Transfer in reception process is correct */
 //    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
@@ -256,7 +252,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   */
  void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
 {
-     printf("\nEr is: %d,\n",UartHandle->ErrorCode);
 //     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_SET); 
 //     UartReady = SET;
 //     __HAL_UART_DISABLE_IT(UartHandle, UART_IT_ERR);
@@ -268,7 +263,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 //void USART2_IRQHandler(void)
 //{
-//    printf("\n i ncomming\n");
 //}
  
 TaskFunction_t UART2_ReceiveData(void* pvParameters)
@@ -276,18 +270,10 @@ TaskFunction_t UART2_ReceiveData(void* pvParameters)
     while (1)
     {
         HAL_UART_Receive(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
-//        printf("\nRCVD: %d\n", total_buffer);
-        
         for ( int u=0;u<RXBUFFERSIZE;u++)
         {
             HAL_UART_Transmit(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
-//            printf("%s", total_buffer[u]);
-//            printf("%d\n", aRxBuffer[1]);
-//            printf("%d\n", aRxBuffer[2]);
-//            printf("%d\n", aRxBuffer[3]);
-//            printf("%d\n", aRxBuffer[4]);
-//            memset(&aRxBuffer[0],0,sizeof(total_buffer));
-        }printf("\n");
+        }
 
         vTaskDelay(250 / portTICK_RATE_MS);
     }
@@ -298,11 +284,10 @@ TaskFunction_t UART2_TransmitData(void* pvParameters)
     while (1)
     {
         char *test = "Hello\n";
-        //        printf("%s\n","in usart rx data");
+        
         //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
         HAL_UART_Transmit(&Uart2Handle, (uint8_t *) test, RXBUFFERSIZE-1, 5000);
-        //        printf("%s\n",aRxBuffer);
-
+        
         vTaskDelay(250 / portTICK_RATE_MS);
     }
 }
@@ -314,9 +299,6 @@ TaskFunction_t ToggleLED_Timer1(void *pvParameters)
 {
     while (1)
     {
-        //      printf("timer1\n");
-        //      printf("%x",9);
-
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
@@ -339,7 +321,6 @@ TaskFunction_t ToggleLED_Timer2(void *pvParameters)
 {
     while (1)
     {
-        //      printf("timer2\n");
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
@@ -361,7 +342,6 @@ TaskFunction_t ToggleLED_Timer3(void *pvParameters)
 {
     while (1)
     {
-        //      printf("timer3\n");
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
@@ -383,7 +363,6 @@ TaskFunction_t ToggleLED_Timer4(void *pvParameters)
 {
     while (1)
     {
-        //      printf("timer4\n");
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
         //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
@@ -439,7 +418,7 @@ void SystemClock_Config(void)
     }
 
     /* SysTick_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 //    SysTick_Config(SystemCoreClock/1000);
 //    HAL_NVIC_EnableIRQ(SysTick_IRQn);
 }
