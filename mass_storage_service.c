@@ -89,7 +89,7 @@ OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint3
 /*buf: the buffer that the data are copied*/
 /*size: its the size of the buffer, in return it stores the actual bytes written in the buffer */
 /*part: part stores the next file log to be downlinked. after the cp to the buffer it iterates to the next file. in a new search should be 0. */
-OBC_returnStateTypedef mass_storage_downlinkLogs_api(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint32_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint32_t *size, uint16_t *part) {
 
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
@@ -144,7 +144,7 @@ OBC_returnStateTypedef mass_storage_downlinkLogs_api(MS_sid sid, MS_mode mode, u
 /*valid sid is only stores that have fotos.*/
 /*file: is the file to be downlinked*/
 /*size: its the size of the buffer, in return it stores the actual bytes written in the buffer */
-OBC_returnStateTypedef mass_storage_downlinkLargeFile_api(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part) {
+OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part) {
 
     FIL fp;
     uint16_t byteswritten;
@@ -191,7 +191,7 @@ OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t 
 }
 
 
-OBC_returnStateTypedef mass_storage_storeLargeFile_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint16_t *part) {
 
     FILINFO fno;
     FIL fp;
@@ -259,7 +259,7 @@ OBC_returnStateTypedef mass_storage_storeLargeFile_api(MS_sid sid, MS_mode mode,
     return R_OK;
 }
 
-OBC_returnStateTypedef mass_storage_storeLogs_api(MS_sid sid, uint8_t *buf, uint16_t *size) {
+OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size) {
 
     FILINFO fno;
     FIL fp;
@@ -326,12 +326,16 @@ OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_
             cnv32_8(ret, buf[(*size)], buf[(*size)+1], buf[(*size)+2], buf[(*size)+3]);
             *size += sizeof(uint32_t);
 
+            //if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir) return R_ERROR; } 
+
+            //(*fcount)++;
+            //*fsize += fno.fsize;    
+
             if(*size >= MS_MAX_LOG_FILE_SIZE) {
                 *iter = ret;
                 f_closedir(&dir)
                 return R_OK; 
             }
-
         } 
 
     }
@@ -378,7 +382,7 @@ OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid) {
         if(res != FR_OK) { f_close(&fp); return R_ERROR; } 
         if((byteswritten == 0) {
             
-            if((sum2 << 8) | sum1) { return R_OK; }
+            if(((sum2 << 8) | sum1) == 0)  { return R_OK; }
             else {  return R_CRC_ERROR; }
         } 
 
