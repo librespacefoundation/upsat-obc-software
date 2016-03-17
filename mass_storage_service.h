@@ -31,6 +31,8 @@
 #define MS_MAX_LOG_FILE_SIZE    512 //SD byte sectors 
 #define MS_MAX_SU_FILE_SIZE     512 //SD byte sectors 
 #define MS_FILE_SECTOR          512
+#define MS_STORES               3
+#define MS_SU_FSIZE             174
 
 typedef enum {  
 SU_SCRIPT_1         = 1,
@@ -64,7 +66,8 @@ LAST_MODE   = 5
 
 struct _MS_data {
     FATFS test;
-    uint16_t stores_size[MAX_SID];
+    uint16_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
+    uint16_t stores_fcount[3];  /*file count in each store, fotos, su_log, ev_log */
     uint32_t ev_temp_log;
 }MS_data;
 
@@ -77,7 +80,8 @@ struct _MS_data {
 //  unit testing.
 //  system testing.
 //  check for EOF
-//  add global counters for file and size, add code in store and delete.
+//  add global counters for file and size, add check for array limits.
+//  add check for MAX_FILE for loop, hard limit.
 
 OBC_returnStateTypedef mass_storage_init();
 
@@ -107,5 +111,7 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn);
 OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn);
 
 OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn);
+
+OBC_returnStateTypedef mass_storage_getFileSizeCount(MS_sid sid);
 
 #endif

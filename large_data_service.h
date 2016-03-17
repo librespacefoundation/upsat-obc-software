@@ -17,6 +17,10 @@ struct _ld_status {
     uint32_t timeout;
 }LD_status;
 
+//ToDo
+//  assert, require.
+//  finish definitions, types, subtypes, documentation and doc.
+
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
 
 OBC_returnStateTypedef large_data_startReport_api(uint8_t sid, tc_tm_pkt *pkt);

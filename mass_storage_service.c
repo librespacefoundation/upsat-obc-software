@@ -57,7 +57,14 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
 
         ret = strtol(fn, NULL, 10);
         if(to == ALL || ret <= to) {
+
+            if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir) return R_ERROR; } 
+
             if(f_unlink(fn) != FR_OK) { return R_ERROR; }
+
+            MS_data.stores_fcount[sid-SU_SCRIPT_7]--;
+            MS_data.stores_fsize[sid-SU_SCRIPT_7] -= fno.fsize;
+
         }
     }
     f_closedir(&dir)
@@ -231,7 +238,13 @@ OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uin
         if(sid == FOTOS) {
 
             mass_storage_getFileName(path);
-            if(f_rename(path, MS_TMP_FOTOS) != FR_OK) { return R_ERROR; } 
+            if(f_rename(path, MS_TMP_FOTOS) != FR_OK) { return R_ERROR; }
+
+            if(f_stat(path, &fno) != FR_OK) { return R_ERROR; } 
+
+            MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
+            MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
+
         } else if(sid == SU_SCRIPT_1) { 
             if(mass_storage_su_checksum_api(TMP_SU_SCRIPT_1) != R_OK) { return R_ERROR; } 
             if(f_rename(MS_SU_SCRIPT_1, MS_TMP_SU_SCRIPT_1) != FR_OK) { return R_ERROR; }
@@ -400,7 +413,14 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
     REQUIRE(sid == SU_LOG || sid == EVENT_LOG);
 
 
-    if(sid == SU_LOG) { sprintf(fn, "%s//%d", MS_SU_LOG, time.now()); return R_OK; }
+    if(sid == SU_LOG) { 
+
+        MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
+        MS_data.stores_fsize[sid-SU_SCRIPT_7] += MS_SU_FSIZE;
+
+        sprintf(fn, "%s//%d", MS_SU_LOG, time.now()); 
+        return R_OK; 
+    }
 
     if(MS_data.ev_temp_log == 0) { 
         MS_data.ev_temp_log = time.now(); 
@@ -412,7 +432,11 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
 
     if(f_stat(fn, &fno) != FR_OK) { return R_ERROR; } 
 
-    if(fno.fsize >= MS_MAX_FILE_SIZE) { 
+    if(fno.fsize >= MS_MAX_FILE_SIZE) {
+
+        MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
+        MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
+
         MS_data.ev_temp_log = time.now(); 
         sprintf(fn, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
         return R_OK; 
@@ -466,10 +490,48 @@ OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn) {
     return R_OK;
 }
 
+
+OBC_returnStateTypedef mass_storage_getFileSizeCount(MS_sid sid) {
+
+    DIR dir;
+    uint8_t fn[20];
+
+    REQUIRE(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS);
+
+    if(sid == SU_LOG) { strncp(path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == EVENT_LOG) { strncp(path, MS_EVENT_LOG, MS_MAX_PATH); }
+    else if(sid == FOTOS) { strncp(path, MS_FOTOS, MS_MAX_PATH); }
+
+    if (f_opendir(&dir, path) != FR_OK) { return R_ERROR; }
+    for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
+
+        res = f_readdir(&dir, &fno);                   /* Read a directory item */
+        if(res != FR_OK) { f_closedir(&dir); return R_ERROR; }  /* Break on error */
+        else if(fno.fname[0] == 0) { break; }  /* Break on end of dir */
+        if (fno.fname[0] == '.') continue;             /* Ignore dot entry */
+
+        MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
+        MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
+
+    }
+    f_closedir(&dir);
+ 
+    if(min == 0) { return R_EOT; }
+
+    *fn = min;
+
+    return R_OK;
+}
+
 OBC_returnStateTypedef mass_storage_init() {
 
     MS_data.ev_temp_log = 0;
     if(f_mount(&test, SD_Path, 0) != FR_OK) { return R_ERROR; }
+
+    mass_storage_getFileSizeCount(FOTOS);
+    mass_storage_getFileSizeCount(SU_LOG);
+    mass_storage_getFileSizeCount(EVENT_LOG);
+
     return R_OK;
 }
 
