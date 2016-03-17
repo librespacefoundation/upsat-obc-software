@@ -153,6 +153,8 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
+//ToDo
+//  use pkt->len for data?
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 

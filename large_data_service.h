@@ -15,9 +15,20 @@ struct _ld_status {
     uint8_t file;
     uint8_t ld_num;
     uint32_t timeout;
+    uint32_t fcurr;
+    uint32_t fnext;
+    MS_mode mode;
+    from
+    to
 }LD_status;
 
 //ToDo
+//  in tx when to make it FREE
+//  when to change iterator to next.
+//  first tx packet, what header sould be.
+//  check downlink, uplink subtypes.
+//  what happens in timeout.
+//  what happens when new packet arrives, when the state is not free.
 //  assert, require.
 //  finish definitions, types, subtypes, documentation and doc.
 
