@@ -155,6 +155,7 @@ typedef struct {
 
 //ToDo
 //  use pkt->len for data?
+//  when to free the packets.
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 

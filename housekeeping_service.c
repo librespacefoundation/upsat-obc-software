@@ -3,7 +3,7 @@
 void hk_SCH() {
 
 //temp
- struct tc_tm_pkt pkt;
+struct tc_tm_pkt pkt;
   
     hk_crt_pkt_TC(&pkt, EPS, 1);
     route_pkt(&pkt);

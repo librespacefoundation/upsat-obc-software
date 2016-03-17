@@ -10,19 +10,9 @@ OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
 
     else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == REPORT) { large_data_reportTx_api(pkt); } 
     else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == DOWNLINK) { large_data_downlinkTx_api(pkt); } 
-    else if(pkt->ser_subtype == ACC) {
-
-    } else if(pkt->ser_subtype == RETRANSMIT) {
-        sid = pkt->data[0];
-
-        large_data_pkt_api(pkt_out, n, res, IMD_DOWNLINK);
-        large_data_reportTx_api(sid, mode, from, to, pkt); //finish fun
-        //mass_storage_report_api(sid, pkt_out->data[], MAX);
-        route_pkt(temp_pkt);
-        //need to find state for report tx
-    } else if(pkt->ser_subtype == ABORT) {
-
-    }
+    else if(pkt->ser_subtype == ACC) { large_data_intTx_api(pkt); } 
+    else if(pkt->ser_subtype == RETRANSMIT) { large_data_retryTx_api(pkt); } 
+    else if(pkt->ser_subtype == ABORT) { large_data_abortTx_api(pkt); }
 
     return R_ERROR;
 }
@@ -157,19 +147,6 @@ OBC_returnStateTypedef large_data_reportTx_api(tc_tm_pkt *pkt) {
 
     sid = pkt->data[0];
 
-    mode = pkt->data[1];
-
-    //cnv
-    from = pkt->data[2];
-    from = pkt->data[3];
-    from = pkt->data[4];
-    from = pkt->data[5];
-
-    to = pkt->data[6];
-    to = pkt->data[7];
-    to = pkt->data[8];
-    to = pkt->data[9];
-
     REQUIRE(LD_status.state == FREE && app_id == GND) { return R_ERROR; }
     REQUIRE(sid == FOTOS || sid == FOTOS || sid == FOTOS || sid == FOTOS || ){ return R_ERROR; } 
     REQUIRE(mode < LAST_MODE);
@@ -294,9 +271,12 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
     MS_mode mode;
     OBC_returnStateTypedef res;
 
+    ld_num = pkt->data[0];
+
     ASSERT(pkt != NULL && pkt->data != NULL)
     REQUIRE(LD_status.app_id != pkt->dest_id) { return R_ERROR; }
     REQUIRE(LD_status.state == TRANSMITING_DOWNLINK && app_id == GND) { return R_ERROR; }
+    REQUIRE(LD_status.ld_num == ld_num - 1) { return R_ERROR; }
 
     size = MS_somt;
 
@@ -332,52 +312,57 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
 
 OBC_returnStateTypedef large_data_retryTx_api(tc_tm_pkt *pkt) {
 
-    if(ld_status.state == TRANSMITING && pkt->dest_id == GND && pkt->ser_subtype == RETX_DOWNLINK) {
+    uint16_t ld_num;
+    uint16_t app_id;
+    uint16_t size;
+    uint32_t from;
+    uint32_t to;
+    uint32_t size;
+    MS_sid sid;
+    MS_mode mode;
+    OBC_returnStateTypedef res;
 
-        uint32_t file;
-        uint16_t size = MAX_LD_PKT_DATA, part = 0;
-        uint8_t sid;
+    ld_num = pkt->data[0];
 
-        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
+    ASSERT(pkt != NULL && pkt->data != NULL)
+    REQUIRE(LD_status.app_id != pkt->dest_id) { return R_ERROR; }
+    REQUIRE(LD_status.state == TRANSMITING_DOWNLINK && app_id == GND) { return R_ERROR; }
+    REQUIRE(LD_status.ld_num == ld_num) { return R_ERROR; }
 
-        ld_seq = pkt->data[x];
+    size = MS_somt;
 
-        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
+    temp_pkt = get_pkt(EXTENDED);
+    if(temp_pkt == NULL) { return R_ERROR; }
 
-        ld_status.last_ld_seq++;
+    temp_pkt->data[0] = LD_status.ld_num;
 
-        mass_storage_store_api(ld_status.sid, &ld_status.file, pkt->data[LD_PKT_HDR], &size, &ld_status.last_ld_seq);
-        mass_storage_move_api(ld_status.sid, ld_status.file, 0);
+    if(LD_status.txType == DOWNLINK) { 
+        res = mass_storage_downlink_api(LD_status.sid, LD_status.mode, LD_status.from, LD_status.to, temp_pkt->data[3], &size, &LD_status.fnext);
+    } else if(LD_status.txType == REPORT) {
+        res = mass_storage_report_api(LD_status.sid, temp_pkt->data[3], &size, &LD_status.fnext);
+    } //what to do with else
 
-        ld_status.state = FREE;
-        ld_status.timeout = 0;
+    temp_pkt->len = size;
 
+    if(res == R_EOT) {
+        crt_pkt(temp_pkt, OBC, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, LAST_PACKET, dest_id); //what dest_id ?
+    } else {
+
+        crt_pkt(temp_pkt, OBC, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, INT_PACKET, dest_id);
+
+        LD_status.timeout = time.now();
     }
+
+    route_pkt(temp_pkt);
+
+    return R_OK;
 }
 
 OBC_returnStateTypedef large_data_abortTx_api(tc_tm_pkt *pkt) {
 
-    if(ld_status.state == TRANSMITING && pkt->dest_id == GND && pkt->ser_subtype == ABORT_DOWNLINK) {
+    LD_status.state = FREE;
 
-        uint32_t file;
-        uint16_t size = MAX_LD_PKT_DATA, part = 0;
-        uint8_t sid;
-
-        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
-
-        ld_seq = pkt->data[x];
-
-        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
-
-        ld_status.last_ld_seq++;
-
-        mass_storage_store_api(ld_status.sid, &ld_status.file, pkt->data[LD_PKT_HDR], &size, &ld_status.last_ld_seq);
-        mass_storage_move_api(ld_status.sid, ld_status.file, 0);
-
-        ld_status.state = FREE;
-        ld_status.timeout = 0;
-
-    } else { return R_ERROR; }
+    LD_status.timeout = 0;
 
     return R_OK;
 }

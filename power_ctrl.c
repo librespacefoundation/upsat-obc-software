@@ -9,13 +9,13 @@ OBC_returnStateTypedef power_control_app(tc_tm_pkt *pkt) {
     did = pkt->data[0];
     fid = pkt->data[4];
 
-    res = power_control_app_api( did, fid);
+    res = power_control_api( did, fid);
     verify_pkt(pkt, TC_ACK_ACC, res);
     return R_OK;
 }
 
 /*Must use real pins*/
-OBC_returnStateTypedef power_control_app_api( uint8_t did, uint8_t fid) {
+OBC_returnStateTypedef power_control_api( uint8_t did, uint8_t fid) {
 
     if(did == SD1 && fid == TURN_ON) {
         HAL_obc_SD_ON();

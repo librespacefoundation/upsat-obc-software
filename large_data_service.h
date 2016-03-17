@@ -23,7 +23,7 @@ struct _ld_status {
 }LD_status;
 
 //ToDo
-//  in tx when to make it FREE
+//  in tx when to make it FREE, maybe should ack every packet and then send it free.
 //  when to change iterator to next.
 //  first tx packet, what header sould be.
 //  check downlink, uplink subtypes.
