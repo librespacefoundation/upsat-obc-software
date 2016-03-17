@@ -13,9 +13,9 @@ struct _ld_status {
     uint8_t sid;
     uint8_t app_id;
     uint8_t file;
-    uint8_t last_ld_seq;
+    uint8_t ld_num;
     uint32_t timeout;
-} ld_status;
+}LD_status;
 
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
 

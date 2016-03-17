@@ -175,7 +175,7 @@ OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file,
 
 /*it stores files, it is accessed from large data transfer for su scripts & fotos and from for logs*/
 /*Higher level, it is used only for differentiatin from different file modes, large files and logs*/
-OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t *part) {
+OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part) {
 
     OBC_returnStateTypedef res; 
 
@@ -183,7 +183,7 @@ OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t 
     REQUIRE(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS);
 
     if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_storeLogs_api(sid, buf, size); }
-    else if(sid == FOTOS || SU_SCRIPT_1 || SU_SCRIPT_2 || SU_SCRIPT_3 || SU_SCRIPT_4 || SU_SCRIPT_5 || SU_SCRIPT_6 || SU_SCRIPT_7); { res = mass_storage_storeLargeFile_api(sid, mode, buf, size, part); }
+    else if(sid == FOTOS || sid =< SU_SCRIPT_7); { res = mass_storage_storeLargeFile_api(sid, mode, buf, size, part); }
     else { return R_ERROR; }
 
     return res;
@@ -191,7 +191,7 @@ OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t 
 }
 
 
-OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part) {
 
     FILINFO fno;
     FIL fp;
@@ -199,9 +199,9 @@ OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uin
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    ASSERT(buf != NULL && && size != NULL && part != NULL);
+    ASSERT(buf != NULL && && size != NULL);
     ASSERT(*size > 0);
-    REQUIRE(sid == FOTOS || SU_SCRIPT_1 || SU_SCRIPT_2 || SU_SCRIPT_3 || SU_SCRIPT_4 || SU_SCRIPT_5 || SU_SCRIPT_6 || SU_SCRIPT_7);
+    REQUIRE(sid == FOTOS || sid =< SU_SCRIPT_7);
 
     if(sid == FOTOS) { strncp(path, MS_TMP_FOTOS, MS_MAX_PATH); }
     else if(sid == SU_SCRIPT_1) { strncp(path, MS_TMP_SU_SCRIPT_1, MS_MAX_PATH); }
@@ -218,7 +218,7 @@ OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uin
     if(f_open(&fp, path, flags) != FR_OK) { return R_ERROR; }
 
     uint16_t len = f_size(fp);
-    ASSERT(len < (*part) * FILE_SIZE) { f_close(&fp); return R_ERROR; }
+    ASSERT(len < (part) * FILE_SIZE) { f_close(&fp); return R_ERROR; }
     res = f_lseek(fp, len);
 
     res = f_write(&fp, buf, *size, (void *)&byteswritten);
@@ -268,7 +268,7 @@ OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    ASSERT(buf != NULL && && size != NULL && part != NULL);
+    ASSERT(buf != NULL && && size != NULL);
     ASSERT(*size > 0);
 
     if(mass_storage_getLog(sid, path) != R_OK) { return R_ERROR; }

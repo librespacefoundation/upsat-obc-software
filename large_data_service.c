@@ -7,6 +7,8 @@ OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
     if(ld_status.state == FREE && pkt->ser_subtype == FIRST_DOWNLINK) {
         n = pkt->data[0];
         res = large_data_firstRx_api(pkt);
+        if(res == R_OK) { ld_status.state = RECEIVING; }
+
         large_data_verifyPkt_api(temp_pkt, n, pkt->dest_id, res, FIRST_DOWNLINK);
         route_pkt(temp_pkt);
 
@@ -91,28 +93,27 @@ OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt) {
 
     uint32_t file;
     uint16_t size = MAX_LD_PKT_DATA, part = 0;
-    uint8_t sid;
+    uint16_t ld_num;
+    uint16_t app_id;
+    MS_sid sid;
 
-    if(ld_status.state != FREE && (pkt->dest_id != IAC || pkt->dest_id != GND)) { return R_ERROR; } 
+    ASSERT(pkt != NULL && pkt->data != NULL)
 
-    sid = pkt->data[x];
-    ld_status.seq_num = pkt->data[x];
+    sid = pkt->data[1];
+    ld_num = pkt->data[0];
+    app_id = pkt->dest_id;
 
-    if( pkt->dest_id == IAC && sid != FOTOS) { return R_ERROR; } 
-    else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
-        return R_ERROR;
-    } else { return R_ERROR; }
+    REQUIRE(LD_status.state == FREE && (app_id == IAC || app_id == GND)) { return R_ERROR; } 
+    REQUIRE(ld_num == 0);
+    REQUIRE((pkt->app_id == IAC && sid != FOTOS) || (pkt->app_id == GND && (sid =< SU_SCRIPT_7 )) { return R_ERROR; } 
 
-    ld_status.app_id = pkt->dest_id;
-    ld_status.sid = sid;
-    ld_status.last_ld_seq = 0;
+    LD_status.app_id = app_id;
+    LD_status.sid = sid;
+    LD_status.ld_num = ld_num;
 
-    mass_storage_storeLargeFile_api(sid, &file, pkt->data[MS_PKT_HDR], &size, &ld_status.last_ld_seq);
+    mass_storage_store_api(sid, MS_mode mode, pkt->data[MS_PKT_HDR], uint16_t *size, LD_status.ld_num);
 
-    ld_status.file = file;
-    ld_status.state = RECEIVING;
-
-    //ld_status.timeout = time.now();
+    LD_status.timeout = time.now();
     return R_OK;
 }
 
@@ -122,11 +123,11 @@ OBC_returnStateTypedef large_data_intRx_api(tc_tm_pkt *pkt) {
         uint16_t size = MAX_LD_PKT_DATA, part = 0;
         uint8_t sid;
 
-        if(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
+        REQUIRE(ld_status.app_id != pkt->dest_id) { return R_ERROR; }
 
-        ld_seq = pkt->data[x];
+        ld_seq = pkt->data[0];
 
-        if(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
+        REQUIRE(ld_status.last_ld_seq != ld_seq - 1) { return R_ERROR; }
 
         ld_status.last_ld_seq++;
 

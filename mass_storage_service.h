@@ -33,7 +33,6 @@
 #define MS_FILE_SECTOR          512
 
 typedef enum {  
-SU_LOG              = 0,
 SU_SCRIPT_1         = 1,
 SU_SCRIPT_2         = 2,
 SU_SCRIPT_3         = 3,
@@ -41,16 +40,17 @@ SU_SCRIPT_4         = 4,
 SU_SCRIPT_5         = 5,
 SU_SCRIPT_6         = 6,
 SU_SCRIPT_7         = 7,
-EVENT_LOG           = 8,
-FOTOS               = 9,
-TMP_SU_SCRIPT_1     = 10,
-TMP_SU_SCRIPT_2     = 11,
-TMP_SU_SCRIPT_3     = 12,
-TMP_SU_SCRIPT_4     = 13,
-TMP_SU_SCRIPT_5     = 14,
-TMP_SU_SCRIPT_6     = 15,
-TMP_SU_SCRIPT_7     = 16,
-LAST_SID            = 17
+SU_LOG              = 8,
+EVENT_LOG           = 9,
+FOTOS               = 10,
+TMP_SU_SCRIPT_1     = 11,
+TMP_SU_SCRIPT_2     = 12,
+TMP_SU_SCRIPT_3     = 13,
+TMP_SU_SCRIPT_4     = 14,
+TMP_SU_SCRIPT_5     = 15,
+TMP_SU_SCRIPT_6     = 16,
+TMP_SU_SCRIPT_7     = 17,
+LAST_SID            = 18
 }MS_sid;
 
 typedef enum {  
@@ -87,14 +87,14 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to);
 
 OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
 
-OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t *part);
+OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
 
 OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
 OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid);
 
 
-OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint16_t *part);
+OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
 
 OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
 
