@@ -27,6 +27,7 @@ uint8_t nmbr_of_ld_sched = 0;
 
 uint8_t find_schedule_pos();
 OBC_returnStateTypedef insert_in_schedule( Schedule_pck* theSchpck );
+OBC_returnStateTypedef scheduling_status();
 
 extern __IO uint32_t uwTick; /*from STM32f4xx_hal.c */
 //extern __IO uint32_t seconds; /* from stm32f4xx_it.c */
@@ -47,6 +48,7 @@ OBC_returnStateTypedef load_schedules()
     sp1.assmnt_type = ABSOLUTE;
     sp1.release_time = 5;
     sp1.timeout = 0;
+    sp1.enabled = 1;
     
     sp2.num_of_sche_tel=1;
     sp2.intrlck_set_id=0;
@@ -54,6 +56,7 @@ OBC_returnStateTypedef load_schedules()
     sp2.assmnt_type = ABSOLUTE;
     sp2.release_time = 10;
     sp2.timeout = 0;
+    sp2.enabled = 1;
     
     sp3.num_of_sche_tel=1;
     sp3.intrlck_set_id=0;
@@ -61,6 +64,7 @@ OBC_returnStateTypedef load_schedules()
     sp3.assmnt_type = ABSOLUTE;
     sp3.release_time = 15;
     sp3.timeout = 0;
+    sp3.enabled = 1;
     
     sp4.num_of_sche_tel=1;
     sp4.intrlck_set_id=0;
@@ -68,6 +72,7 @@ OBC_returnStateTypedef load_schedules()
     sp4.assmnt_type = ABSOLUTE;
     sp4.release_time = 20;
     sp4.timeout = 0;
+    sp4.enabled = 1;
     
     insert_in_schedule(&sp1);
     insert_in_schedule(&sp2);
@@ -93,7 +98,7 @@ TaskFunction_t init_and_run_schedules(void* p){
     
     while(1){
         update_system_timers();
-        if ( scheduling_enabled ){
+        if ( scheduling_status() ){
             cross_schedules();
         }
     }
@@ -118,6 +123,24 @@ OBC_returnStateTypedef insert_in_schedule( Schedule_pck* theSchpck ){
     }
     return R_OK;
 }
+
+
+OBC_returnStateTypedef scheduling_status(){
+    
+    if (scheduling_enabled){
+        return R_OK;
+    }
+    else{
+        return R_NOK;
+    }
+}
+
+
+OBC_returnStateTypedef edit_schedule_state(uint8_t state){
+//    scheduling_enabled = state;
+}
+
+
 
 /* Removes a given Schedule_pck from the schedule array
  * * Service Subtype 5

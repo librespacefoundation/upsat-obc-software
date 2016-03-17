@@ -89,7 +89,8 @@ typedef enum {
     R_PKT_ILLEGAL_APP_DATA  = 5, 
     R_OK                    = 6, /* related execution OK */
     R_ERROR                 = 7, /* related execution ERROR */
-    R_EOT                   = 8  /* related execution ? */
+    R_EOT                   = 8, /* related execution ? */
+    R_NOK                   = 9
 } OBC_returnStateTypedef;
 
 /*define service types, according to: ECCS-E-70-41A*/

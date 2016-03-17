@@ -10,15 +10,16 @@
 
 #define SCHEDULING_SERVICE_V 0.1
 
-#include "tc_tm.h"
-
-/*declares the maximum available space for on-memory loaded schedule commands*/
+/*Declares the maximum available space for on-memory loaded schedule commands*/
 #define MAX_STORED_SCHEDULES 4
+
+#include "tc_tm.h"
 
 /**/
 typedef enum {
-    ALL=0, SUBSET
-} ScheduleOpts;
+    ALL=0,
+    SUBSET
+}Schedule_options_type;
 
 typedef enum {
     /*The 'release_time' member
@@ -37,12 +38,27 @@ typedef enum {
      * of success of failure of interlocked schedule.
      *  time.*/
     INTERLOCK=3
-}Event_Type;
+}Schedule_time_type;
  
 /* (Page 105-106 of ECSS-E-70-41A document)
  * Schedule command structure:
  */
 typedef struct {
+    
+        /*This is the application id that the telecommand it is destined to.
+         * This info will be extracted from the encapsulated TC packet.
+         */
+    uint8_t app_id;
+    
+        /*This is the sequence count of the telecommand packet.
+         * This info will be extracted (?) from the encapsulated TC packet. (?)
+         */
+    uint8_t seq_count;
+    
+        /*If the specific schedule command is enabled.
+         * Enabled = 1, Disabled = 0.
+         */
+    uint8_t enabled;
     
         /*Currently not supported by this implementation.*
          *For this specific implementation is set to 1 (one)
@@ -75,7 +91,7 @@ typedef struct {
     uint8_t assmnt_type;
     
         /*Determines the release type for the telecommand.*/
-    Event_Type schdl_envt;
+    Schedule_time_type schdl_envt;
     
         /*Absolute or relative time of telecommand execution,
          * this field has meaning relative to schdl_envt member.
@@ -91,7 +107,9 @@ typedef struct {
     
         /*The actual telecommand packet to be scheduled and executed*/
     tc_tm_pkt telecmd_pck;
+    
 }Schedule_pck;
+
 
 typedef enum{
     /*Schedule array is full*/
@@ -112,11 +130,20 @@ typedef enum{
 }Scheduling_Errors;
 
 extern Schedule_pck mem_sche[MAX_STORED_SCHEDULES];
+static scheduling_enabled = 1;
 
-/*Enables / Disables the scheduling execution
- *Enable state = 1 
+/*
+ * Returns R_OK if scheduling is enabled and running.
+ * Returns R_NOK if scheduling is disabled.  
  */
-OBC_returnStateTypedef enable_schedule( ScheduleOpts opt, uint8_t state  );
+OBC_returnStateTypedef scheduling_status();
+
+/* Enables / Disables the scheduling execution as a service.
+ * Enable state = 1
+ * Disable state = 0
+ * Return R_OK, on successful state alteration.
+ */
+OBC_returnStateTypedef edit_schedule_state(tc_tm_pkt* spacket);
 
 /*Service initialization, and runtime*/
 TaskFunction_t init_and_run_schedules(void*p);
