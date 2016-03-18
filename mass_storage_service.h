@@ -76,12 +76,13 @@ struct _MS_data {
 //  check if sprintf is ok for the job
 //  check various equations
 //  assert, require.
-//  finish definitions, types, subtypes, documentation and doc.
+//  finish definitions, documentation and doc.
 //  unit testing.
 //  system testing.
 //  check for EOF
 //  add global counters for file and size, add check for array limits.
 //  add check for MAX_FILE for loop, hard limit.
+//  maybe file paths should be const variable instead of definitions.
 
 OBC_returnStateTypedef mass_storage_init();
 

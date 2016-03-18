@@ -13,12 +13,12 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
     if(pkt->ser_subtype == DISABLE) {
 
-    } else if(pkt->ser_subtype == DELETE) {
+    } else if(pkt->ser_subtype == TC_MS_DELETE) {
 
         cnv8_32(pkt->data[1], pkt->data[2], pkt->data[3], pkt->data[4], &to);
         mass_storage_delete_api(sid, to);
 
-    } else if(pkt->ser_subtype == REPORT || pkt->ser_subtype == DOWNLINK) {
+    } else if(pkt->ser_subtype == TC_MS_REPORT || pkt->ser_subtype == TC_MS_DOWNLINK) {
 
         large_data_app(pkt);
         

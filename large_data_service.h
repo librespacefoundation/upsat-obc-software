@@ -17,6 +17,7 @@ struct _ld_status {
     uint32_t timeout;
     uint32_t fcurr;
     uint32_t fnext;
+    uint8_t txType;
     MS_mode mode;
     from
     to
@@ -31,6 +32,9 @@ struct _ld_status {
 //  what happens when new packet arrives, when the state is not free.
 //  assert, require.
 //  finish definitions, types, subtypes, documentation and doc.
+//  check sequence numbers.
+//  implement timeout and abort.
+//  finish timeout.
 
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
 

@@ -99,6 +99,28 @@ R_LAST                  = 10
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
 
+#define TC_LD_FIRST_DOWNLINK            1
+#define TC_LD_FIRST_UPLINK              9
+#define TC_LD_INT_DOWNLINK              2
+#define TC_LD_INT_UPLINK                10
+#define TC_LD_LAST_DOWNLINK             3
+#define TC_LD_LAST_UPLINK               11
+#define TC_LD_ACK_DOWNLINK              5
+#define TC_LD_ACK_UPLINK                14
+#define TC_LD_REPEAT_DOWNLINK           6
+#define TC_LD_REPEAT_UPLINK             15
+#define TC_LD_REPEATED_DOWNLINK         7
+#define TC_LD_REPEATED_UPLINK           12
+#define TC_LD_ABORT_DOWNLINK            4
+#define TC_LD_ABORT_UPLINK              13
+#define TC_LD_STANDALONE_DOWNLINK       17
+#define TC_LD_STANDALONE_UPLINK         18
+
+
+#define TC_MS_DOWNLINK                  9
+#define TC_MS_DELETE                    11
+#define TC_MS_REPORT                    12
+
 #define OBC     1
 #define EPS     2
 #define ADCS    3
