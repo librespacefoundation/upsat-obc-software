@@ -24,21 +24,24 @@ TickType_t boot_elapsed_ticks;
 
 /*Number of loaded schedules*/
 uint8_t nmbr_of_ld_sched = 0;
+uint8_t schedule_arr_full = 0;
+
 
 uint8_t find_schedule_pos();
-OBC_returnStateTypedef insert_in_schedule( Schedule_pck* theSchpck );
-OBC_returnStateTypedef scheduling_status();
+SchedulingAPIStates insert_stc_in_schedule( Schedule_pck* sch_mem_pool,
+                                            Schedule_pck* theSchpck );
+SchedulingAPIStates scheduling_status();
 
 extern __IO uint32_t uwTick; /*from STM32f4xx_hal.c */
-//extern __IO uint32_t seconds; /* from stm32f4xx_it.c */
 
 extern UART_HandleTypeDef Uart2Handle; /*from main.c*/
-Schedule_pck mem_sche[MAX_STORED_SCHEDULES]; /* from this.h*/
+
+Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
 
 /*  Initiates the scheduling service.
  *  Loads the schedules from persistent storage.
  */
-OBC_returnStateTypedef load_schedules()
+SchedulingAPIStates load_schedules()
 {
     Schedule_pck sp1,sp2,sp3,sp4;
     
@@ -74,10 +77,10 @@ OBC_returnStateTypedef load_schedules()
     sp4.timeout = 0;
     sp4.enabled = 1;
     
-    insert_in_schedule(&sp1);
-    insert_in_schedule(&sp2);
-    insert_in_schedule(&sp3);
-    insert_in_schedule(&sp4);
+    insert_stc_in_schedule(mem_schedule,&sp1);
+    insert_stc_in_schedule(mem_schedule,&sp2);
+    insert_stc_in_schedule(mem_schedule,&sp3);
+    insert_stc_in_schedule(mem_schedule,&sp4);
 }
 
 void cross_schedules(){
@@ -114,38 +117,75 @@ void update_system_timers(){
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
  */
-OBC_returnStateTypedef insert_in_schedule( Schedule_pck* theSchpck ){        
-    uint8_t pos = find_schedule_pos();
-    mem_sche[pos] = *theSchpck;
-    nmbr_of_ld_sched++;
-    if (nmbr_of_ld_sched >= MAX_STORED_SCHEDULES){
-        nmbr_of_ld_sched--;
+SchedulingAPIStates insert_stc_in_schedule( Schedule_pck* sch_mem_pool, 
+                                            Schedule_pck* theSchpck ){        
+    
+    /*check if schedule array is already full*/
+//    if ( nmbr_of_ld_sched == (MAX_STORED_SCHEDULES -1) ){
+    if ( schedule_arr_full ){  
+        /*TODO: Here to create a telemetry saying "i'm full"*/
+        return SCHEDULE_FULL;
     }
-    return R_OK;
+    /*Check sub-schedule id*/
+    if ( theSchpck->sub_schedule_id !=1 ){
+        return SSCH_ID_INVALID;
+    }
+    /*Check number of tc in schpck id*/
+    if ( theSchpck->num_of_sche_tel !=1 ){
+        return NMR_OF_TC_INVALID;
+    }
+    /*Check interlock set id*/
+    if ( theSchpck->intrlck_set_id !=0  ){
+        return INTRL_ID_INVALID;
+    }
+    /*Check interlock assessment id*/
+    if ( theSchpck->intrlck_ass_id !=1 ){
+        return ASS_INTRL_ID_INVALID;
+    }
+    /*Check release time type id*/
+    if ( theSchpck->schdl_envt != ABSOLUTE ){
+        return RLS_TIMET_ID_INVALID;
+    }
+    /*Check time value*/
+//    if (   ){
+//        return TIME_SPEC_INVALID;
+//    }
+    /*Check execution time out*/
+//    if (  ){
+//       return INTRL_LOGIC_ERROR; 
+//    }
+    
+    uint8_t pos = find_schedule_pos(sch_mem_pool);
+    /*Copy the packet into the array*/
+//    mem_schedule[pos] = *theSchpck;
+    sch_mem_pool[pos] = *theSchpck;
+    nmbr_of_ld_sched++;
+    if ( nmbr_of_ld_sched == MAX_STORED_SCHEDULES ){
+        /*schedule array has become full*/
+        schedule_arr_full = 1;
+    }
+    return NO_ERROR;
 }
 
-
-OBC_returnStateTypedef scheduling_status(){
+SchedulingAPIStates scheduling_status(){
     
     if (scheduling_enabled){
-        return R_OK;
+        return !NO_ERROR;
     }
     else{
-        return R_NOK;
+        return NO_ERROR;
     }
 }
 
 
-OBC_returnStateTypedef edit_schedule_state(uint8_t state){
+//OBC_returnStateTypedef edit_schedule_state(uint8_t state){
 //    scheduling_enabled = state;
-}
-
-
+//}
 
 /* Removes a given Schedule_pck from the schedule array
  * * Service Subtype 5
  */
-OBC_returnStateTypedef remove_from_schedule( Schedule_pck theSchpck ){
+SchedulingAPIStates remove_from_schedule( Schedule_pck theSchpck ){
     
     return R_OK;
 } 
@@ -153,16 +193,28 @@ OBC_returnStateTypedef remove_from_schedule( Schedule_pck theSchpck ){
 /* Remove Schedule_pck from schedule over a time period (OTP)
  * * Service Subtype 6
  */
-OBC_returnStateTypedef remove_from_scheduleOTP( Schedule_pck theSchpck ){
+SchedulingAPIStates remove_from_scheduleOTP( Schedule_pck theSchpck ){
     
     
     return R_OK;
 }
 
+/* Reset the schedule memory pool.
+ * Marks every schedule struct as invalid and eligible for allocation.
+ * 
+ */
+SchedulingAPIStates reset_schedule(Schedule_pck* sche_mem_pool){
+    uint8_t pos = 0;
+    while( pos<MAX_STORED_SCHEDULES ){
+        sche_mem_pool[pos++].valid = 0;
+    }
+    return NO_ERROR;
+}
+
 /* Time shifts all Schedule_pcks on the Schedule 
  * * Service Subtype 15
  */
-OBC_returnStateTypedef time_shift_all_schedule( Schedule_pck theSchpck ){
+SchedulingAPIStates time_shift_all_schedule( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -170,7 +222,7 @@ OBC_returnStateTypedef time_shift_all_schedule( Schedule_pck theSchpck ){
 /* Time shifts selected Schedule_pcks on the Schedule 
  * * Service Subtype 7
  */
-OBC_returnStateTypedef time_shift_sel_schedule( Schedule_pck theSchpck ){
+SchedulingAPIStates time_shift_sel_schedule( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -178,7 +230,7 @@ OBC_returnStateTypedef time_shift_sel_schedule( Schedule_pck theSchpck ){
 /* Time shifts selected telecommands over a time period on the Schedule 
  * * Service Subtype 8
  */
-OBC_returnStateTypedef time_shift_sel_scheduleOTP( Schedule_pck theSchpck ){
+SchedulingAPIStates time_shift_sel_scheduleOTP( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -186,7 +238,7 @@ OBC_returnStateTypedef time_shift_sel_scheduleOTP( Schedule_pck theSchpck ){
 /* Reports detailed info about every telecommand the Schedule 
  * * Service Subtype 16
  */
-OBC_returnStateTypedef report_detailed( Schedule_pck theSchpck ){
+SchedulingAPIStates report_detailed( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -194,7 +246,7 @@ OBC_returnStateTypedef report_detailed( Schedule_pck theSchpck ){
 /* Reports detailed info about a subset of telecommands from the Schedule 
  * * Service Subtype 9
  */
-OBC_returnStateTypedef report_detailed_subset( Schedule_pck theSchpck ){
+SchedulingAPIStates report_detailed_subset( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -202,7 +254,7 @@ OBC_returnStateTypedef report_detailed_subset( Schedule_pck theSchpck ){
 /* 
  * * Service Subtype 10
  *
-OBC_returnStateTypedef report_( Schedule_pck theSchpck ){
+SchedulingAPIStates report_( Schedule_pck theSchpck ){
     
     return R_OK;
 }*/
@@ -210,7 +262,7 @@ OBC_returnStateTypedef report_( Schedule_pck theSchpck ){
 /* Reports summary info of all telecommands from the Schedule 
  * * Service Subtype 17
  */
-OBC_returnStateTypedef report_summary_all( Schedule_pck theSchpck ){
+SchedulingAPIStates report_summary_all( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -218,7 +270,7 @@ OBC_returnStateTypedef report_summary_all( Schedule_pck theSchpck ){
 /* Reports summary info of a subset of telecommands from the Schedule 
  * * Service Subtype 12
  */
-OBC_returnStateTypedef report_summary_subset( Schedule_pck theSchpck ){
+SchedulingAPIStates report_summary_subset( Schedule_pck theSchpck ){
     
     return R_OK;
 }
@@ -226,7 +278,7 @@ OBC_returnStateTypedef report_summary_subset( Schedule_pck theSchpck ){
 /* Reports summary info of all telecommands from the Schedule 
  * * Service Subtype 
  *
-OBC_returnStateTypedef ( Schedule_pck theSchpck ){
+SchedulingAPIStates ( Schedule_pck theSchpck ){
     
     return R_OK;
 }*/
@@ -234,12 +286,23 @@ OBC_returnStateTypedef ( Schedule_pck theSchpck ){
 /* Find an index position in the Schedule_pck array to
  * insert the Scheduling packet.
  */
-uint8_t find_schedule_pos()
+uint8_t find_schedule_pos(Schedule_pck* sche_mem_pool)
 {
     if ( nmbr_of_ld_sched == 0){
         return 0;
     }
     else{
-        return nmbr_of_ld_sched;
+        uint8_t pos=0;
+        while( sche_mem_pool[pos++].valid == 1 ){
+//            pos++;
+            if (pos >= MAX_STORED_SCHEDULES){
+                return SCHEDULE_FULL;
+            }
+            else{
+                nmbr_of_ld_sched++;
+                return --pos;
+            }
+        }
+//        return nmbr_of_ld_sched;
     }
 }

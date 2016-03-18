@@ -113,7 +113,7 @@ typedef enum {
 
 #define TURN_OFF    0
 #define TURN_ON     1
-#define TCTMRESET       2 /*RESET exists in a HAL. set/reset*/
+#define TCTMRESET   2 /*RESET exists in a HAL. set/reset*/
 
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];
