@@ -111,8 +111,10 @@ R_LAST                  = 10
 #define TC_LD_REPEAT_UPLINK             15
 #define TC_LD_REPEATED_DOWNLINK         7
 #define TC_LD_REPEATED_UPLINK           12
-#define TC_LD_ABORT_DOWNLINK            4
-#define TC_LD_ABORT_UPLINK              13
+#define TC_LD_ABORT_SE_DOWNLINK         4
+#define TC_LD_ABORT_SE_UPLINK           13
+#define TC_LD_ABORT_RE_DOWNLINK         8
+#define TC_LD_ABORT_RE_UPLINK           16
 #define TC_LD_STANDALONE_DOWNLINK       17
 #define TC_LD_STANDALONE_UPLINK         18
 
@@ -178,6 +180,11 @@ typedef struct {
 //ToDo
 //  use pkt->len for data?
 //  when to free the packets.
+//  definitions of subtypes.
+//  modify route & verification.
+//  add function management service.
+//  add serial.
+//  add pack functions in each service.
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
