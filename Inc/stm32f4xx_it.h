@@ -39,11 +39,6 @@
  extern "C" {
 #endif 
 
-/* Counts the seconds that has 
- * passed from a reset/boot of the uCtrl
- * 
- */
-extern __IO uint32_t seconds;
      
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/

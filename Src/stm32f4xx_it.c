@@ -31,14 +31,15 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <stdlib.h>
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_hal_uart.h"
 #include "cmsis_os.h"
-#include <stdlib.h>
-#include "../Inc/circular_buffer.h"
+#include "circular_buffer.h"
 #include "main.h"
+#include "timekeeping.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -48,7 +49,6 @@
 /* UART handler declared in "main.c" file */
 #define MAXCLISTRING 100
 extern UART_HandleTypeDef Uart2Handle;
-__IO uint32_t seconds = 0;
 
 static __IO uint32_t uwTick;
 

@@ -124,32 +124,7 @@ typedef struct {
     
 }Schedule_pck;
 
-typedef enum{
-    /*see the 'h' error on page 107*/
-    NO_ERROR = 0,
-    /*Schedule array is full*/
-    SCHEDULE_FULL,
-    /*Subschedule ID invalid*/
-    SSCH_ID_INVALID,
-    /*Number of telecommands invalid*/
-    NMR_OF_TC_INVALID,        
-    /*Interlock ID invalid*/
-    INTRL_ID_INVALID,
-    /*Assess Interlock ID invalid*/
-    ASS_INTRL_ID_INVALID,
-    /*relese time type ID invalid*/
-    RLS_TIMET_ID_INVALID,        
-    DEST_APID_INVALID,
-    TIME_INVALID,
-    TIME_SPEC_INVALID,
-    /*The release time of telecommand is in the execution window
-     *of its interlocking telecommand.
-     */
-    INTRL_LOGIC_ERROR
-}SchedulingAPIStates;
-
 extern Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
-
 /* Defines the state of the Scheduling service,
  * if enabled the release of TC is running.
  * Enable = 1
@@ -157,25 +132,41 @@ extern Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
  */
 static scheduling_enabled = 1;
 
+/*Service initialization, and runtime*/
+TaskFunction_t init_and_run_schedules(void*p);
+
 /*
- * Returns !NO_ERROR if scheduling is enabled and running.
- * Returns NO_ERROR if scheduling is disabled.  
+ * Returns R_OK if scheduling is enabled and running.
+ * Returns R_NOK if scheduling is disabled.  
  */
-SchedulingAPIStates scheduling_status();
+OBC_returnStateTypedef scheduling_stateAPI();
 
 /* Enables / Disables the scheduling execution as a service.
  * Enable state = 1
  * Disable state = 0
  * Return R_OK, on successful state alteration.
  */
-SchedulingAPIStates edit_schedule_state(tc_tm_pkt* spacket);
+OBC_returnStateTypedef edit_schedule_stateAPI(tc_tm_pkt* spacket);
 
-SchedulingAPIStates reset_schedule(Schedule_pck* sche_mem_pool);
+OBC_returnStateTypedef reset_scheduleAPI(Schedule_pck* sche_mem_pool);
 
-/*Service initialization, and runtime*/
-TaskFunction_t init_and_run_schedules(void*p);
+/* Inserts a given Schedule_pck on the schedule array
+ * Service Subtype 4
+ */
+OBC_returnStateTypedef insert_stc_in_scheduleAPI(Schedule_pck* sch_mem_pool,
+                                                  Schedule_pck* theSchpck );
 
-void update_system_timers();
+/* Removes a given Schedule_pck from the schedule array
+ * * Service Subtype 5
+ */
+OBC_returnStateTypedef remove_stc_from_scheduleAPI( Schedule_pck theSchpck );
+
+/* Remove Schedule_pck from schedule over a time period (OTP)
+ * * Service Subtype 6
+ */
+OBC_returnStateTypedef remove_from_scheduleOTPAPI( Schedule_pck theSchpck );
+
+
 
 #endif /* SCHEDULING_SERVICE_H */
 
