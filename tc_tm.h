@@ -236,6 +236,7 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
 };
 
 //ToDo
+//  function management set time.
 //  finalize TC_MAX_PKT_SIZE
 //  what to do with verification service, after route or after its service.
 //  OBC_returnStateTypedef renaming to UPS_OK?
