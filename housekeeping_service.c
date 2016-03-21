@@ -26,7 +26,7 @@ void clear_wod() {
 
 OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
 
-    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
 
     if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
         hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data);
@@ -49,7 +49,7 @@ OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
 
 OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
-    C_ASSERT(app_id < LAST_APP_ID) { return R_ERROR; }
+    if(!C_ASSERT(app_id < LAST_APP_ID) == true)  { return R_ERROR; }
 
     pkt->ser_subtype = TC_HK_REPORT_PARAMETERS;
 
