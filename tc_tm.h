@@ -144,12 +144,6 @@ GND             = 6,
 LAST_APP_ID     = 7
 }TC_TM_app_id;
 
-#define SD1     1
-
-#define TURN_OFF    0
-#define TURN_ON     1
-#define RESET       2
-
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
 
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
@@ -219,6 +213,8 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
 };
 
 //ToDo
+//  what to do with verification service, after route or after its service.
+//  OBC_returnStateTypedef renaming to UPS_OK?
 //  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm

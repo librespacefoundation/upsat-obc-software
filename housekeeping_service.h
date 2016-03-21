@@ -26,7 +26,7 @@ struct _obc_status {
 
 //ToDo
 //  finish sid
-//  when the get packet happens
+//  when the get packet happens in crt pkt
 
 OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt);
 

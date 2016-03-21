@@ -41,6 +41,9 @@ OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_
     ASSERT(pkt != NULL && pkt->data != NULL);
     ASSERT(res < LAST_CODE);
 
+    out = get_pkt(NORMAL)
+    if(!C_ASSERT(out != NULL) == true) { return R_ERROR; }
+
     subtype = TC_VR_ACCEPTANCE_SUCCESS;
 
     cnv.cnv16[0] = pkt->app_id;
