@@ -24,23 +24,29 @@ typedef enum {
 }Schedule_options_type;
 
 typedef enum {
-    /*The 'release_time' member
+    /* The 'release_time' member
      * specified on the Scheduling_pck is absolute to OBC time.*/
     ABSOLUTE=0, 
-    /*The 'release_time' member
+    /* The 'release_time' member
      * specified on the Scheduling_pck is relative to the schedule's
      * activation time.*/
     SCHEDULE=1, 
-    /*The 'release_time' member
+    /* The 'release_time' member
      * specified on the Scheduling_pck is relative to the sub-schedule's
      * activation time.*/
     SUBSCHEDULE=2, 
-    /*The 'release_time' member
+    /* The 'release_time' member
      * specified on the Scheduling_pck is relative to the notification time
      * of success of failure of interlocked schedule.
      *  time.*/
-    INTERLOCK=3
-}Schedule_time_type;
+    INTERLOCK=3,
+    /* The 'release_time' member
+     * specified on the Scheduling_pck is relative to the seconds passed from
+     * QB50 epoch (01/01/2000 00:00:00 UTC).
+     *  time.*/        
+    QB50EPC=4
+            
+}Scheduling_event_time_type;
  
 /* (Page 105-106 of ECSS-E-70-41A document)
  * Schedule command structure:
@@ -92,20 +98,22 @@ typedef struct {
          */
     uint8_t assmnt_type;
     
-        /*Determines the release type for the telecommand.*/
-    Schedule_time_type schdl_envt;
+        /* Determines the release type for the telecommand.
+         * 
+         */
+    Scheduling_event_time_type schdl_envt;
     
         /* Absolute or relative time of telecommand execution,
          * this field has meaning relative to schdl_envt member.
          */
-    uint64_t release_time;
+    uint32_t release_time;
     
         /* This is a delta time which when added to the release time of the scheduled telecommand, the command
          * is expected to complete execution.
          * Timeout execution is only set if telecommand sets interlocks, so for our
          * current implementation will be always 0 (zero)
          */
-    uint64_t timeout;
+    uint32_t timeout;
     
         /* The actual telecommand packet to be scheduled and executed
          * 
@@ -120,11 +128,10 @@ typedef struct {
          */
     uint8_t valid;
     
-    
-    
 }Schedule_pck;
 
 extern Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
+
 /* Defines the state of the Scheduling service,
  * if enabled the release of TC is running.
  * Enable = 1
@@ -132,7 +139,9 @@ extern Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
  */
 static scheduling_enabled = 1;
 
-/*Service initialization, and runtime*/
+/* Service initialization and runtime function 
+ * 
+ */
 TaskFunction_t init_and_run_schedules(void*p);
 
 /*
@@ -148,6 +157,10 @@ OBC_returnStateTypedef scheduling_stateAPI();
  */
 OBC_returnStateTypedef edit_schedule_stateAPI(tc_tm_pkt* spacket);
 
+/* Reset the schedule memory pool.
+ * Marks every schedule struct as invalid and eligible for allocation.
+ * 
+ */
 OBC_returnStateTypedef reset_scheduleAPI(Schedule_pck* sche_mem_pool);
 
 /* Inserts a given Schedule_pck on the schedule array
@@ -166,7 +179,13 @@ OBC_returnStateTypedef remove_stc_from_scheduleAPI( Schedule_pck theSchpck );
  */
 OBC_returnStateTypedef remove_from_scheduleOTPAPI( Schedule_pck theSchpck );
 
-
+/* Time shifts all Schedule_pcks on the Schedule.
+ * int32_t secs parameter can be positive or negative seconds value.
+ * If positive the seconds are added to the Schedule's TC time, 
+ * if negative the seconds are substracted from the Schedule's TC time value. 
+ * Service Subtype 15.
+ */
+OBC_returnStateTypedef time_shift_all_schedulesAPI( Schedule_pck* sch_mem_pool, int32_t secs );
 
 #endif /* SCHEDULING_SERVICE_H */
 

@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+//#include <time.h>
 #include "FreeRTOS.h"
 #include "tc_tm.h"
 #include "scheduling_service.h"
@@ -17,6 +18,9 @@
 #include "portmacro.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_it.h"
+#include "timekeeping.h"
+
+UART_HandleTypeDef Uart2Handle;
 
 /*Variable local to the Scheduling service*/
 
@@ -25,7 +29,6 @@ TickType_t boot_elapsed_ticks;
 /*Number of loaded schedules*/
 uint8_t nmbr_of_ld_sched = 0;
 uint8_t schedule_arr_full = 0;
-
 
 uint8_t find_schedule_pos();
 
@@ -41,7 +44,7 @@ OBC_returnStateTypedef load_schedules()
     sp1.num_of_sche_tel=1;
     sp1.intrlck_set_id=0;
     sp1.intrlck_ass_id=0;
-    sp1.assmnt_type = ABSOLUTE;
+    sp1.assmnt_type = 1;
     sp1.release_time = 5;
     sp1.timeout = 0;
     sp1.enabled = 1;
@@ -49,7 +52,7 @@ OBC_returnStateTypedef load_schedules()
     sp2.num_of_sche_tel=1;
     sp2.intrlck_set_id=0;
     sp2.intrlck_ass_id=0;
-    sp2.assmnt_type = ABSOLUTE;
+    sp2.assmnt_type = 1;
     sp2.release_time = 10;
     sp2.timeout = 0;
     sp2.enabled = 1;
@@ -57,7 +60,7 @@ OBC_returnStateTypedef load_schedules()
     sp3.num_of_sche_tel=1;
     sp3.intrlck_set_id=0;
     sp3.intrlck_ass_id=0;
-    sp3.assmnt_type = ABSOLUTE;
+    sp3.assmnt_type = 1;
     sp3.release_time = 15;
     sp3.timeout = 0;
     sp3.enabled = 1;
@@ -65,7 +68,7 @@ OBC_returnStateTypedef load_schedules()
     sp4.num_of_sche_tel=1;
     sp4.intrlck_set_id=0;
     sp4.intrlck_ass_id=0;
-    sp4.assmnt_type = ABSOLUTE;
+    sp4.assmnt_type = 1;
     sp4.release_time = 20;
     sp4.timeout = 0;
     sp4.enabled = 1;
@@ -91,15 +94,38 @@ void cross_schedules(){
 TaskFunction_t init_and_run_schedules(void* p){   
     
     load_schedules();
-    
-    while(1){
+        time_t current_time;
+//        char* c_time_string;
+        while(1){
         
-        if ( scheduling_stateAPI() ){
-            cross_schedules();
-        }
+//        /* Obtain current time. */
+//        current_time = time(NULL);
+//
+//        if (current_time == ((time_t)-1))
+//        {
+////            printf(stderr, "Failure to obtain the current time.\n");
+////            exit(EXIT_FAILURE);
+//        }
+//
+//        /* Convert to local time format. */
+//        c_time_string = ctime(&current_time);
+//
+//        if (c_time_string == NULL)
+//        {
+////            printf(stderr, "Failure to convert the current time.\n");
+////            exit(EXIT_FAILURE);
+//        }
+//        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
+//        /* Print to stdout. ctime() has already added a terminating newline character. */
+////         printf("%s", c_time_string);
+////        exit(EXIT_SUCCESS);
+//        
+////        if ( scheduling_stateAPI() ){
+////            cross_schedules();
+////        }
+//         HAL_Delay(100);
     }
 }
-
 
 OBC_returnStateTypedef insert_stc_in_scheduleAPI( Schedule_pck* sch_mem_pool, 
                                             Schedule_pck* theSchpck ){        
@@ -152,13 +178,13 @@ OBC_returnStateTypedef insert_stc_in_scheduleAPI( Schedule_pck* sch_mem_pool,
 }
 
 OBC_returnStateTypedef scheduling_stateAPI(){
-    
-    if (scheduling_enabled){
-        return R_OK;
-    }
-    else{
-        return R_NOK;
-    }
+//    if (scheduling_enabled){
+//        return R_OK;
+//    }
+//    else{
+//        return R_NOK;
+//    }
+    return (scheduling_enabled ? R_OK : R_NOK);
 }
 
 //OBC_returnStateTypedef edit_schedule_state(uint8_t state){
@@ -170,22 +196,27 @@ OBC_returnStateTypedef remove_stc_from_scheduleAPI( Schedule_pck theSchpck ){
     return R_OK;
 } 
 
-/* Reset the schedule memory pool.
- * Marks every schedule struct as invalid and eligible for allocation.
- * 
- */
-OBC_returnStateTypedef reset_scheduleAPI(Schedule_pck* sche_mem_pool){
+OBC_returnStateTypedef reset_scheduleAPI(Schedule_pck* sch_mem_pool){
     uint8_t pos = 0;
     while( pos<MAX_STORED_SCHEDULES ){
-        sche_mem_pool[pos++].valid = 0;
+        sch_mem_pool[pos++].valid = 0;
     }
     return R_OK;
 }
 
-/* Time shifts all Schedule_pcks on the Schedule 
- * * Service Subtype 15
- */
-OBC_returnStateTypedef time_shift_all_schedule( Schedule_pck theSchpck ){
+OBC_returnStateTypedef time_shift_all_schedulesAPI(Schedule_pck* sch_mem_pool, int32_t secs ){
+    
+    uint8_t pos = 0;
+    while( pos<MAX_STORED_SCHEDULES ){
+        if (sch_mem_pool[pos].schdl_envt == ABSOLUTE ){
+            /*convert the secs to utc and add them or remove them from the time field.*/
+            
+        }
+        else
+        if(sch_mem_pool[pos].schdl_envt == QB50EPC ){
+            /*add them or remove them from the time field. Error if */
+        }
+    }
     
     return R_OK;
 }

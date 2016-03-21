@@ -46,6 +46,7 @@
 #include "semphr.h"
 #include "circular_buffer.h"
 #include "scheduling_service.h"
+#include "timekeeping.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -134,14 +135,23 @@ int main(void)
 //                tskIDLE_PRIORITY + 2UL, /* Task priority*/
 //                NULL /* Task handle */
 //                );
-//       xTaskCreate(
-//                init_and_run_schedules, /* Function pointer */
-//                "scheduling", /* Task name - for debugging only*/
-//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//                NULL /* Task handle */
-//                );
+       xTaskCreate(
+                init_and_run_time, /* Function pointer */
+                "timing", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
+       
+       xTaskCreate(
+                init_and_run_schedules, /* Function pointer */
+                "scheduling", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
        
       xTaskCreate(
                ToggleLED_Timer1, /* Function pointer */
@@ -181,7 +191,7 @@ int main(void)
 
       
 //      service_init();
-      
+//      HAL_UART_Transmit(&Uart2Handle, (uint8_t *)"Init", 25,5000);
     /* Start scheduler */
     //this is the final point for linear code.
     osKernelStart();

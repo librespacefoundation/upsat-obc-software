@@ -49,7 +49,6 @@
 /* UART handler declared in "main.c" file */
 #define MAXCLISTRING 100
 extern UART_HandleTypeDef Uart2Handle;
-
 static __IO uint32_t uwTick;
 
 /******************************************************************************/
@@ -67,7 +66,7 @@ void SysTick_Handler(void)
   osSystickHandler();
   HAL_IncTick();
   if ( HAL_GetTick()%1000==999){ /*add a second to the system time*/
-      seconds++;
+      boot_seconds++;
   }
   
 //  HAL_UART_Transmit(&Uart2Handle, (uint8_t *)HAL_GetTick(), 1,10);

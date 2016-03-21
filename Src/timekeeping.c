@@ -5,19 +5,98 @@
  *      Author: nchronas
  */
 
-
+#include "FreeRTOS.h"
 #include "timekeeping.h"
+#include "stm32f4xx_it.h"
+#include "stm32f4xx_hal.h"
 
-volatile uint32_t seconds = 0;
+//#include "time.h"
+
+UART_HandleTypeDef Uart2Handle;
+
+volatile uint32_t boot_seconds = 0;
+volatile uint32_t qb50_seconds = 0;
+
+OBCTime_Type obc_gmt_boot_time;
+OBCTime_Type obc_gmt_time;
+/* 
+ * 
+ */
+TaskFunction_t init_and_run_time(void* p){   
+    
+    /*TODO: Update the time from RTC*/
+    obc_gmt_boot_time.tm_year = 2016;
+    obc_gmt_boot_time.tm_weeday = 4;
+    obc_gmt_boot_time.tm_monthday = 21;
+    obc_gmt_boot_time.tm_month = 2;
+    obc_gmt_boot_time.tm_hour = 21;
+    obc_gmt_boot_time.tm_min = 0b1011;
+    obc_gmt_boot_time.tm_sec=0;
+    
+    obc_gmt_time = obc_gmt_boot_time;
+    
+    /*TODO: maybe log here the boot time*/
+    
+//    while(1){
+//        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 4 ,5000);
+//        HAL_Delay(500);
+//    }
+    
+}
 
 uint32_t get_seconds_from_last_bootAPI(){
-    return seconds;
+    return boot_seconds;
 }
 
 OBC_returnStateTypedef set_seconds_from_last_bootAPI(uint32_t secs){
-    seconds = secs;
+    boot_seconds = secs;
     return R_OK;
 }
+
+
+OBC_returnStateTypedef calculate_qb50_seconds(OBCTime_Type* gmt_time){
+    
+    uint32_t years_from_2000_to_seconds = (gmt_time->tm_year - 2000)*31556926;  /*1 year (365.24 days) 31556926 seconds*/
+    uint32_t this_years_month_to_seconds = (gmt_time->tm_month)*2629743;        /*1 month (30.44 days) 2629743 seconds*/
+    uint32_t these_days_to_sec = (gmt_time->tm_monthday-1)*86400;               /*1 day 86400 seconds*/
+    uint32_t hours_to_secs = (gmt_time->tm_hour)*3600;                          /*1 hour 3600 seconds*/
+    uint32_t minutes_to_secs = (gmt_time->tm_min)*60;                           /*1 minute 60 seconds*/
+    
+    qb50_seconds = years_from_2000_to_seconds+
+                    this_years_month_to_seconds+
+                    these_days_to_sec+
+                    hours_to_secs+
+                    minutes_to_secs+ (gmt_time->tm_sec);
+    
+    return R_OK;
+}
+
+////seconds from start of current day
+//        double double_seconds = Double.parseDouble( this._gps_message_splitted[1].split(":")[1]);
+//        
+//        int rem;
+//        int hours = (int) ( double_seconds / 3600 );
+//            rem = (int) (double_seconds % 3600);
+//         
+//        int minutes = rem / 60 ;
+//        rem = rem % 60;
+//        int seconds = rem;
+//        
+//        this._test_cal.set(Calendar.HOUR_OF_DAY, hours);
+//        this._test_cal.set(Calendar.MINUTE, minutes);
+//        this._test_cal.set(Calendar.SECOND, seconds);
+//        
+//        String hour = String.format( "%1$TH:%1$TM:%1$TS", _test_cal );
+//        this._gps_time_field.setText(hour);
+//    }
+    
+//  Human readable time 	Seconds
+//  1 hour                  3600 seconds
+//  1 day                   86400 seconds
+//  1 week                  604800 seconds
+//  1 month   (30.44 days) 	2629743 seconds
+//  1 year   (365.24 days)  31556926 seconds
+
 
 //void update_time() {
 //	obc.time.elapsed++;
