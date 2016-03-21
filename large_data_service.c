@@ -45,7 +45,7 @@ OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt) {
     if(!C_ASSERT(app_id == IAC_APP_ID || app_id == GND_APP_ID) == true)                                             { return R_ERROR; }
     if(!C_ASSERT(ld_num == 0) == true)                                                                              { return R_ERROR; }
     if(!C_ASSERT(size > 0) == true)                                                                                 { return R_ERROR; } 
-    if(!C_ASSERT((app_id == IAC_APP_ID && sid == FOTOS) || (app_id == GND_APP_ID && (sid <= SU_SCRIPT_7 )) == true) { return R_ERROR; } 
+    if(!C_ASSERT((app_id == IAC_APP_ID && sid == FOTOS) || (app_id == GND_APP_ID && sid <= SU_SCRIPT_7 )) == true) { return R_ERROR; } 
 
     large_data_state();
     LD_status.app_id = app_id;
@@ -361,7 +361,7 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
 
     if(LD_status.lpacket_flag == true) {
         LD_status.lpacket_flag = false;
-        LD_status.state = FREE;
+        LD_status.state = LD_STATE_FREE;
         LD_status.started = time_now();
         LD_status.timeout = 0;
 

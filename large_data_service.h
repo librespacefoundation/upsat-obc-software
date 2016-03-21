@@ -20,15 +20,7 @@ LD_STATE_REPORT         = 4,
 LD_STATE_DOWNLINK       = 5,
 LAST_STATE              = 6
 }LD_states;
-typedef enum {  
-OBC_APP_ID      = 1,
-EPS_APP_ID      = 2,
-ADCS_APP_ID     = 3,
-COMMS_APP_ID    = 4,
-IAC_APP_ID      = 5,
-GND_APP_ID      = 6,
-LAST_APP_ID     = 7
-}TC_TM_app_id;
+
 struct _ld_status {
     LD_states state;        /*service state machine, state variable*/
     uint8_t sid;            /*sid */
