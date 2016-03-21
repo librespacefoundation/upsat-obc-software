@@ -5,9 +5,9 @@ OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
     OBC_returnStateTypedef res;
     uint16_t id;
 
-    C_ASSERT(pkt != NULL && pkt->data != NULL) { free_pkt(pkt); return R_ERROR; }
-    C_ASSERT(pkt->type == TC || pkt->type == TM) { free_pkt(pkt); return R_ERROR; }
-    C_ASSERT(pkt->app_id < LAST_APP_ID && pkt->dest_id < LAST_APP_ID) { free_pkt(pkt); return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)                         { free_pkt(pkt); return R_ERROR; }
+    if(!C_ASSERT(pkt->type == TC || pkt->type == TM) == true)                       { free_pkt(pkt); return R_ERROR; }
+    if(!C_ASSERT(pkt->app_id < LAST_APP_ID && pkt->dest_id < LAST_APP_ID) == true)  { free_pkt(pkt); return R_ERROR; }
 
     if(pkt->type == TC)         { id = pkt->app_id; } 
     else if(pkt->type == TM)    { id = pkt->dest_id; }
@@ -76,12 +76,12 @@ OBC_returnStateTypedef import_eps_pkt() {
 
     res = HAL_eps_uart_rx(&c, 1, 10);
     if( res == R_OK ) {
-        res_deframe = HLDLC_deframe(buf, &cnt, c, &size_in);
+        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
         if(res_deframe == R_EOT) {
             
-            pkt = get_pkt(NORMAL)
+            pkt = get_pkt(NORMAL);
             if(!C_ASSERT(pkt != NULL) == true) { return R_ERROR; }
-            res_unpack = unpack_pkt(buf, pkt, size_in);
+            res_unpack = unpack_pkt(buf, pkt, size);
             if(res_unpack == R_OK) { res_route = route_pkt(pkt); } 
             else {
                 //verify_pkt(&pkt_in, TC_ACK_ACC, res_route);

@@ -5,6 +5,9 @@
 
 #include "tc_tm.h"
 
+//temp
+#define TEST_ARRAY 1024
+
 extern OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt);
 extern OBC_returnStateTypedef power_control_app(tc_tm_pkt *pkt);
 extern OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt);
