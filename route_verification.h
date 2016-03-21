@@ -41,4 +41,8 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
 
 OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
 
+OBC_returnStateTypedef import_eps_pkt();
+
+OBC_returnStateTypedef export_eps_pkt(tc_tm_pkt *pkt);
+
 #endif
