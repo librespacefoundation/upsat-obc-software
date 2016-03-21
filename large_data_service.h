@@ -9,10 +9,30 @@
 #define LD_PKT_DATA             512
 #define LD_PKT_DATA_HDR_SIZE    3
 
+#define LD_TX_TYPE_REPORT       1
+#define LD_TX_TYPE_DOWNLINK     2
+
+typedef enum {
+LD_STATE_FREE           = 1,
+LD_STATE_RECEIVING      = 2,
+LD_STATE_TRANSMITING    = 3,
+LD_STATE_REPORT         = 4,
+LD_STATE_DOWNLINK       = 5,
+LAST_STATE              = 6
+}LD_states;
+typedef enum {  
+OBC_APP_ID      = 1,
+EPS_APP_ID      = 2,
+ADCS_APP_ID     = 3,
+COMMS_APP_ID    = 4,
+IAC_APP_ID      = 5,
+GND_APP_ID      = 6,
+LAST_APP_ID     = 7
+}TC_TM_app_id;
 struct _ld_status {
-    uint8_t state;          /*service state machine, state variable*/
+    LD_states state;        /*service state machine, state variable*/
     uint8_t sid;            /*sid */
-    uint8_t app_id;         /*destination app id*/
+    TC_TM_app_id app_id;    /*destination app id*/
     uint8_t ld_num;         /**/
     uint32_t timeout;       /**/
     uint32_t fcurr;         /**/
@@ -24,6 +44,8 @@ struct _ld_status {
     uint32_t from;          /**/
     uint32_t to;            /**/
 }LD_status;
+
+extern void *get_pkt(uint8_t mode);
 
 //ToDo
 //  check again if app_id and dest_id are ok.

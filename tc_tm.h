@@ -95,7 +95,8 @@ R_ERROR                 = 7,
 R_EOT                   = 8,
 R_CRC_ERROR             = 9,
 R_PKT_ILLEGAL_ACK       = 10,
-R_LAST                  = 11
+R_ALREADY_SERVICING     = 11,
+R_LAST                  = 12
 }OBC_returnStateTypedef;
 
 #define TC_VERIFICATION_SERVICE         1
