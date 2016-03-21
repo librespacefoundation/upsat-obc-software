@@ -174,6 +174,36 @@ ADCS_SD_DEV_ID  = 9,
 LAST_DEV_ID     = 10
 }FM_dev_id;
 
+typedef enum {  
+SU_SCRIPT_1         = 1,
+SU_SCRIPT_2         = 2,
+SU_SCRIPT_3         = 3,
+SU_SCRIPT_4         = 4,
+SU_SCRIPT_5         = 5,
+SU_SCRIPT_6         = 6,
+SU_SCRIPT_7         = 7,
+SU_LOG              = 8,
+EVENT_LOG           = 9,
+FOTOS               = 10,
+TMP_SU_SCRIPT_1     = 11,
+TMP_SU_SCRIPT_2     = 12,
+TMP_SU_SCRIPT_3     = 13,
+TMP_SU_SCRIPT_4     = 14,
+TMP_SU_SCRIPT_5     = 15,
+TMP_SU_SCRIPT_6     = 16,
+TMP_SU_SCRIPT_7     = 17,
+LAST_SID            = 18
+}MS_sid;
+
+typedef enum {  
+ALL         = 0,
+TO          = 1,
+BETWEEN     = 2,
+SPECIFIC    = 3,
+LAST_PART   = 4,
+LAST_MODE   = 5
+}MS_mode;
+
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
 
 union _cnv {
@@ -236,6 +266,7 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
 };
 
 //ToDo
+//  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
 //  what to do with verification service, after route or after its service.

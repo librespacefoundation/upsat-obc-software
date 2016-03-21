@@ -34,36 +34,6 @@
 #define MS_STORES               3
 #define MS_SU_FSIZE             174
 
-typedef enum {  
-SU_SCRIPT_1         = 1,
-SU_SCRIPT_2         = 2,
-SU_SCRIPT_3         = 3,
-SU_SCRIPT_4         = 4,
-SU_SCRIPT_5         = 5,
-SU_SCRIPT_6         = 6,
-SU_SCRIPT_7         = 7,
-SU_LOG              = 8,
-EVENT_LOG           = 9,
-FOTOS               = 10,
-TMP_SU_SCRIPT_1     = 11,
-TMP_SU_SCRIPT_2     = 12,
-TMP_SU_SCRIPT_3     = 13,
-TMP_SU_SCRIPT_4     = 14,
-TMP_SU_SCRIPT_5     = 15,
-TMP_SU_SCRIPT_6     = 16,
-TMP_SU_SCRIPT_7     = 17,
-LAST_SID            = 18
-}MS_sid;
-
-typedef enum {  
-ALL         = 0,
-TO          = 1,
-BETWEEN     = 2,
-SPECIFIC    = 3,
-LAST_PART   = 4,
-LAST_MODE   = 5
-}MS_mode;
-
 struct _MS_data {
     FATFS test;
     uint16_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
