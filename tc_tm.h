@@ -73,9 +73,12 @@
 
 #define MAX_PKT_DATA    20
 #define MAX_EX_PKT_DATA 512
+
 #define MAX_APP_ID      20
 #define MAX_SERVICES    20
 #define MAX_SUBTYPES    26
+
+#define TC_MAX_PKT_SIZE 515 //random
 
 #define TC 1
 #define TM 0
@@ -208,6 +211,7 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
 };
 
 //ToDo
+//  finalize TC_MAX_PKT_SIZE
 //  what to do with verification service, after route or after its service.
 //  OBC_returnStateTypedef renaming to UPS_OK?
 //  add reset counter, reset source finder.

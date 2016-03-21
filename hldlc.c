@@ -5,7 +5,7 @@ OBC_returnStateTypedef HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t 
 
     if(!C_ASSERT(c != NULL && buf != NULL && buf != NULL) == true)  { return R_ERROR; }
     if(!C_ASSERT(cnt == 0 && c != HLDLC_START_FLAG) == true)        { return R_ERROR; } //error is when its true
-    if(!C_ASSERT(cnt =< MAX_PKT) == true)                           { return R_ERROR; } //hard limits, check
+    if(!C_ASSERT(cnt =< TC_MAX_PKT_SIZE) == true)                   { return R_ERROR; } //hard limits, check
 
     if(*cnt != 0 && c == HLDLC_START_FLAG) {
         *cnt = 0;
