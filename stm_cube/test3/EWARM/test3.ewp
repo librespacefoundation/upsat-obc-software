@@ -1172,6 +1172,9 @@
       <name>$PROJ_DIR$\..\..\..\service_utilities.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\tc_tm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\tc_tm.h</name>
     </file>
     <file>

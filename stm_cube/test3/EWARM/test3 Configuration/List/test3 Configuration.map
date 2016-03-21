@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.50.2.10312/W32 for ARM                22/Mar/2016  00:17:59
+# IAR ELF Linker V7.50.2.10312/W32 for ARM                22/Mar/2016  00:32:29
 # Copyright 2007-2015 IAR Systems AB.
 #
 #    Output file  =  
@@ -105,6 +105,8 @@
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\tasks.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
+#        Configuration\Obj\tc_tm.o"
+#        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\test_service.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\timers.o"
@@ -119,195 +121,6 @@
 #        --semihosting --entry __iar_program_start --vfe
 #
 ###############################################################################
-
-*******************************************************************************
-*** MESSAGES
-***
-
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\hldlc.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\hldlc.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \hldlc.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\housekeeping_service.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\housekeeping_service.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \housekeeping_service.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\large_data_service.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\large_data_service.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \large_data_service.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\main.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\main.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \main.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\mass_storage_service.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\mass_storage_service.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \mass_storage_service.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\obc_hal.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\obc_hal.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \obc_hal.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\pkt_pool.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\pkt_pool.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \pkt_pool.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\power_ctrl.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\power_ctrl.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \power_ctrl.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\route_verification.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\route_verification.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \route_verification.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\service_utilities.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\service_utilities.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \service_utilities.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\test_service.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\test_service.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \test_service.o"
-Error[Li006]: duplicate definitions for "services_verification_OBC_TC"; in "G:\
-          Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM
-          \test3 Configuration\Obj\function_management_service.o", and "G:\User
-          s\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\tes
-          t3 Configuration\Obj\verification_service.o"
-Error[Li006]: duplicate definitions for "services_verification_TC_TM"; in "G:\U
-          sers\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\
-          test3 Configuration\Obj\function_management_service.o", and "G:\Users
-          \nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test
-          3 Configuration\Obj\verification_service.o"
-Error[Li006]: duplicate definitions for "time_now"; in "G:\Users\nanimo\Documen
-          ts\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration
-          \Obj\function_management_service.o", and "G:\Users\nanimo\Documents\G
-          itHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj
-          \verification_service.o"
-Error[Li005]: no definition for "tst_debugging" [referenced from G:\Users\nanim
-          o\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
-          Configuration\Obj\route_verification.o]
-
 
 *******************************************************************************
 *** RUNTIME MODEL ATTRIBUTES
@@ -333,7 +146,7 @@ __dlib_dynamic_initialization = normal
   .intvec             ro code  0x08000000   0x188  startup_stm32f407xx.o [1]
                              - 0x08000188   0x188
 
-"P1":                                      0x4eb7
+"P1":                                      0x4ebb
   .text               ro code  0x08000188  0x1166  xprintffull.o [3]
   .text               ro code  0x080012ee    0x20  xmbtowc.o [3]
   .text               ro code  0x0800130e     0xa  xsprout.o [3]
@@ -386,25 +199,25 @@ __dlib_dynamic_initialization = normal
   .text               ro code  0x08004b04    0x18  obc_hal.o [1]
   .text               ro code  0x08004b1c    0xa4  hldlc.o [1]
   .text               ro code  0x08004bc0    0x38  pkt_pool.o [1]
-  .text               ro code  0x08004bf8    0xa4  sd_diskio.o [1]
-  .text               ro code  0x08004c9c    0x68  bsp_driver_sd.o [1]
-  .text               ro code  0x08004d04    0x50  system_stm32f4xx.o [1]
-  .text               ro code  0x08004d54    0x40  zero_init3.o [5]
-  .text               ro code  0x08004d94    0x38  packbits_init_single.o [5]
-  .text               ro code  0x08004dcc    0x28  data_init.o [5]
-  .text               ro code  0x08004df4    0x22  fpinit_M.o [4]
-  .iar.init_table     const    0x08004e18    0x20  - Linker created -
-  .text               ro code  0x08004e38    0x1a  cmain.o [5]
-  .text               ro code  0x08004e52     0x4  low_level_init.o [3]
-  .text               ro code  0x08004e56     0x4  exit.o [3]
-  .text               ro code  0x08004e5c     0xa  cexit.o [5]
-  .text               ro code  0x08004e68    0x14  exit.o [6]
-  .text               ro code  0x08004e7c    0x18  stm32f4xx_it.o [1]
-  .rodata             const    0x08004e94    0x14  sd_diskio.o [1]
-  .text               ro code  0x08004ea8    0x10  startup_stm32f407xx.o [1]
-  .rodata             const    0x08004eb8     0xc  main.o [1]
-  .text               ro code  0x08004ec4     0xc  cstartup_M.o [5]
-  .text               ro code  0x08004ed0     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08004bf8     0x4  tc_tm.o [1]
+  .text               ro code  0x08004bfc    0xa4  sd_diskio.o [1]
+  .text               ro code  0x08004ca0    0x68  bsp_driver_sd.o [1]
+  .text               ro code  0x08004d08    0x50  system_stm32f4xx.o [1]
+  .text               ro code  0x08004d58    0x40  zero_init3.o [5]
+  .text               ro code  0x08004d98    0x38  packbits_init_single.o [5]
+  .text               ro code  0x08004dd0    0x28  data_init.o [5]
+  .text               ro code  0x08004df8    0x22  fpinit_M.o [4]
+  .iar.init_table     const    0x08004e1c    0x20  - Linker created -
+  .text               ro code  0x08004e3c    0x1a  cmain.o [5]
+  .text               ro code  0x08004e56     0x4  low_level_init.o [3]
+  .text               ro code  0x08004e5a     0x4  exit.o [3]
+  .text               ro code  0x08004e60     0xa  cexit.o [5]
+  .text               ro code  0x08004e6c    0x14  exit.o [6]
+  .text               ro code  0x08004e80    0x18  stm32f4xx_it.o [1]
+  .rodata             const    0x08004e98    0x14  sd_diskio.o [1]
+  .text               ro code  0x08004eac    0x10  startup_stm32f407xx.o [1]
+  .rodata             const    0x08004ebc     0xc  main.o [1]
+  .text               ro code  0x08004ec8     0xc  cstartup_M.o [5]
   .text               ro code  0x08004ed4     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08004ed8     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08004edc     0x4  startup_stm32f407xx.o [1]
@@ -489,10 +302,11 @@ __dlib_dynamic_initialization = normal
   .text               ro code  0x08005018     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x0800501c     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08005020     0x4  startup_stm32f407xx.o [1]
-  .rodata             const    0x08005024     0x0  zero_init3.o [5]
-  .rodata             const    0x08005024     0x0  packbits_init_single.o [5]
-  Initializer bytes   const    0x08005024    0x1b  <for P2-1>
-                             - 0x0800503f  0x4eb7
+  .text               ro code  0x08005024     0x4  startup_stm32f407xx.o [1]
+  .rodata             const    0x08005028     0x0  zero_init3.o [5]
+  .rodata             const    0x08005028     0x0  packbits_init_single.o [5]
+  Initializer bytes   const    0x08005028    0x1b  <for P2-1>
+                             - 0x08005043  0x4ebb
 
 "P2", part 1 of 3:                          0x1a9
   P2-1                         0x20000000   0x1a9  <Init block>
@@ -538,7 +352,7 @@ Zero (__iar_zero_init3)
 
 Copy/packbits (__iar_packbits_init_single3)
     1 source range, total size 0x1b (6% of destination):
-          0x08005024    0x1b
+          0x08005028    0x1b
     1 destination range, total size 0x1a9:
           0x20000000   0x1a9
 
@@ -577,8 +391,9 @@ G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 C
     stm32f4xx_ll_sdmmc.o        180
     system_stm32f4xx.o           80        1        4
     tasks.o                   1 328        9      296
+    tc_tm.o                       4
     -------------------------------------------------
-    Total:                   12 212       42   17 409
+    Total:                   12 216       42   17 409
 
 command line: [2]
     -------------------------------------------------
@@ -644,7 +459,7 @@ shb_l.a: [6]
     Gaps                         34        2
     Linker created                        33    1 536
 -----------------------------------------------------
-    Grand Total:             20 450       93   19 209
+    Grand Total:             20 454       93   19 209
 
 
 *******************************************************************************
@@ -653,15 +468,15 @@ shb_l.a: [6]
 
 Entry                      Address    Size  Type      Object
 -----                      -------    ----  ----      ------
-.iar.init_table$$Base   0x08004e18           --   Gb  - Linker created -
-.iar.init_table$$Limit  0x08004e38           --   Gb  - Linker created -
-?main                   0x08004e39          Code  Gb  cmain.o [5]
+.iar.init_table$$Base   0x08004e1c           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x08004e3c           --   Gb  - Linker created -
+?main                   0x08004e3d          Code  Gb  cmain.o [5]
 APBAHBPrescTable        0x080036b4    0x10  Data  Gb  stm32f4xx_hal_rcc.o [1]
-BSP_SD_GetCardInfo      0x08004cf3     0x8  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_GetStatus        0x08004ced     0x6  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_Init             0x08004c9d    0x22  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_ReadBlocks       0x08004cbf     0xe  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_WriteBlocks      0x08004ccd     0xc  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_GetCardInfo      0x08004cf7     0x8  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_GetStatus        0x08004cf1     0x6  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_Init             0x08004ca1    0x22  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_ReadBlocks       0x08004cc3     0xe  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_WriteBlocks      0x08004cd1     0xc  Code  Gb  bsp_driver_sd.o [1]
 CSTACK$$Base            0x200001b0           --   Gb  - Linker created -
 CSTACK$$Limit           0x200005b0           --   Gb  - Linker created -
 FATFS_LinkDriver        0x08004afb     0x4  Code  Gb  ff_gen_drv.o [1]
@@ -717,15 +532,15 @@ MX_FATFS_Init           0x0800499d    0x10  Code  Gb  fatfs.o [1]
 MX_GPIO_Init            0x080046e9   0x15c  Code  Lc  main.o [1]
 NVIC_SetPriority        0x08002f19    0x1a  Code  Lc  stm32f4xx_hal_cortex.o [1]
 PendSV_Handler          0x0800453d          Code  Gb  portasm.o [1]
-Region$$Table$$Base     0x08004e18           --   Gb  - Linker created -
-Region$$Table$$Limit    0x08004e38           --   Gb  - Linker created -
+Region$$Table$$Base     0x08004e1c           --   Gb  - Linker created -
+Region$$Table$$Limit    0x08004e3c           --   Gb  - Linker created -
 SDCardInfo              0x20004a60    0x58  Data  Gb  main.o [1]
 SDIO_DataConfig         0x08002e69    0x24  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetCommandResponse
                         0x08002e4f     0x6  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetPowerState      0x08002e25     0x8  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetResponse        0x08002e55    0x14  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
-SDIO_IRQHandler         0x08004e87     0x6  Code  Gb  stm32f4xx_it.o [1]
+SDIO_IRQHandler         0x08004e8b     0x6  Code  Gb  stm32f4xx_it.o [1]
 SDIO_Init               0x08002de9    0x26  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_PowerState_ON      0x08002e1b     0x4  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_ReadFIFO           0x08002e0f     0x2  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
@@ -733,28 +548,28 @@ SDIO_SendCommand        0x08002e2d    0x22  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_WriteFIFO          0x08002e11     0xa  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SD_CmdResp1Error        0x08002aa7    0xce  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_CmdResp2Error        0x08002b75    0x30  Code  Lc  stm32f4xx_hal_sd.o [1]
-SD_Driver               0x08004e94    0x14  Data  Gb  sd_diskio.o [1]
+SD_Driver               0x08004e98    0x14  Data  Gb  sd_diskio.o [1]
 SD_Initialize_Cards     0x080027fd   0x10a  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_IsCardProgramming    0x08002bad   0x136  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_Path                 0x20004afc     0x4  Data  Gb  fatfs.o [1]
 SD_PowerON              0x08002915   0x168  Code  Lc  stm32f4xx_hal_sd.o [1]
-SD_initialize           0x08004bf9     0xe  Code  Gb  sd_diskio.o [1]
-SD_ioctl                0x08004c51    0x48  Code  Gb  sd_diskio.o [1]
-SD_read                 0x08004c21     0xc  Code  Gb  sd_diskio.o [1]
-SD_status               0x08004c07     0xc  Code  Gb  sd_diskio.o [1]
-SD_write                0x08004c2d     0xa  Code  Gb  sd_diskio.o [1]
+SD_initialize           0x08004bfd     0xe  Code  Gb  sd_diskio.o [1]
+SD_ioctl                0x08004c55    0x48  Code  Gb  sd_diskio.o [1]
+SD_read                 0x08004c25     0xc  Code  Gb  sd_diskio.o [1]
+SD_status               0x08004c0b     0xc  Code  Gb  sd_diskio.o [1]
+SD_write                0x08004c31     0xa  Code  Gb  sd_diskio.o [1]
 SVC_Handler             0x08004595          Code  Gb  portasm.o [1]
 StartDefaultTask        0x080048ad    0x2c  Code  Gb  main.o [1]
 Stat                    0x200001a8     0x1  Data  Lc  sd_diskio.o [1]
-SysTick_Handler         0x08004e7d     0x4  Code  Gb  stm32f4xx_it.o [1]
+SysTick_Handler         0x08004e81     0x4  Code  Gb  stm32f4xx_it.o [1]
 SystemClock_Config      0x08004647    0xa2  Code  Gb  main.o [1]
 SystemCoreClock         0x2000000c     0x4  Data  Gb  system_stm32f4xx.o [1]
-SystemInit              0x08004d05    0x3a  Code  Gb  system_stm32f4xx.o [1]
+SystemInit              0x08004d09    0x3a  Code  Gb  system_stm32f4xx.o [1]
 UART_Receive_IT         0x08003a69    0xa0  Code  Lc  stm32f4xx_hal_uart.o [1]
 UART_SetConfig          0x08003b09    0xe0  Code  Lc  stm32f4xx_hal_uart.o [1]
 UART_WaitOnFlagUntilTimeout
                         0x080039cf    0x8a  Code  Lc  stm32f4xx_hal_uart.o [1]
-USART2_IRQHandler       0x08004e81     0x6  Code  Gb  stm32f4xx_it.o [1]
+USART2_IRQHandler       0x08004e85     0x6  Code  Gb  stm32f4xx_it.o [1]
 _EncodingSb_Mbtowc      0x08001ee3    0x30  Code  Gb  xencoding_sb.o [3]
 _EncodingSb_Wctomb      0x08001ec9    0x1a  Code  Gb  xencoding_sb.o [3]
 _GenldFull              0x0800105b   0x24c  Code  Lc  xprintffull.o [3]
@@ -786,10 +601,10 @@ __aeabi_memset4         0x08004501          Code  Gb  ABImemset48.o [5]
 __aeabi_memset8         0x08004501          Code  Gb  ABImemset48.o [5]
 __aeabi_ui2d            0x080018a1          Code  Gb  I32ToDbl.o [4]
 __aeabi_uldivmod        0x08001591          Code  Gb  I64DivMod.o [5]
-__cmain                 0x08004e39          Code  Gb  cmain.o [5]
+__cmain                 0x08004e3d          Code  Gb  cmain.o [5]
 __data_Aldata           0x20004b00     0x8  Data  Gb  xxmemxmalloc.o [3]
 __data_GetMemChunk      0x08001f29    0x2c  Code  Gb  xgetmemchunk.o [3]
-__exit                  0x08004e69    0x14  Code  Gb  exit.o [6]
+__exit                  0x08004e6d    0x14  Code  Gb  exit.o [6]
 __iar_Dnorm             0x0800167f    0x42  Code  Gb  xdnorm.o [4]
 __iar_Dscale            0x08001721   0x114  Code  Gb  xdscale.o [4]
 __iar_Locale_lconv_init
@@ -801,15 +616,15 @@ __iar_Memset8_word      0x08004509          Code  Gb  ABImemset48.o [5]
 __iar_Strchr            0x08001319          Code  Gb  strchr.o [5]
 __iar_d2uiz             0x0800186d          Code  Gb  DblToI32.o [4]
 __iar_dadd              0x08001f59          Code  Gb  DblAdd.o [4]
-__iar_data_init3        0x08004dcd    0x28  Code  Gb  data_init.o [5]
+__iar_data_init3        0x08004dd1    0x28  Code  Gb  data_init.o [5]
 __iar_dlib_perthread_access
                         0x0800202d     0x2  Code  Gb  xtls.o [3]
 __iar_dsub              0x080018d1          Code  Gb  DblSub.o [4]
 __iar_dsubStart         0x080018e3          Code  Gb  DblSub.o [4]
-__iar_init_vfp          0x08004df5          Code  Gb  fpinit_M.o [4]
+__iar_init_vfp          0x08004df9          Code  Gb  fpinit_M.o [4]
 __iar_packbits_init_single3
-                        0x08004d95    0x38  Code  Gb  packbits_init_single.o [5]
-__iar_program_start     0x08004ec5          Code  Gb  cstartup_M.o [5]
+                        0x08004d99    0x38  Code  Gb  packbits_init_single.o [5]
+__iar_program_start     0x08004ec9          Code  Gb  cstartup_M.o [5]
 __iar_ui2d              0x080018a5          Code  Gb  I32ToDbl.o [4]
 __iar_unaligned___aeabi_memcpy
                         0x08001499          Code  Gb  ABImemcpy_unaligned.o [5]
@@ -817,16 +632,16 @@ __iar_unaligned___aeabi_memcpy4
                         0x080014b9          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy8
                         0x080014b9          Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_zero_init3        0x08004d55    0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x08004e53     0x4  Code  Gb  low_level_init.o [3]
+__iar_zero_init3        0x08004d59    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x08004e57     0x4  Code  Gb  low_level_init.o [3]
 __vector_table          0x08000000          Data  Gb  startup_stm32f407xx.o [1]
-_call_main              0x08004e45          Code  Gb  cmain.o [5]
-_exit                   0x08004e5d          Code  Gb  cexit.o [5]
-_main                   0x08004e4f          Code  Gb  cmain.o [5]
+_call_main              0x08004e49          Code  Gb  cmain.o [5]
+_exit                   0x08004e61          Code  Gb  cexit.o [5]
+_main                   0x08004e53          Code  Gb  cmain.o [5]
 defaultTaskHandle       0x20004a50     0x4  Data  Gb  main.o [1]
 disk                    0x20004a54     0xc  Data  Gb  ff_gen_drv.o [1]
 div                     0x08001ea5     0xe  Code  Gb  div.o [3]
-exit                    0x08004e57     0x4  Code  Gb  exit.o [3]
+exit                    0x08004e5b     0x4  Code  Gb  exit.o [3]
 free                    0x08001511    0x7a  Code  Gb  xxmemxfree.o [3]
 get_pkt                 0x08004bc1    0x34  Code  Gb  pkt_pool.o [1]
 hsd                     0x200049f0    0x60  Data  Gb  main.o [1]
@@ -865,6 +680,7 @@ retSD                   0x20004af8     0x1  Data  Gb  fatfs.o [1]
 sprintf                 0x080049b5    0x34  Code  Gb  sprintf.o [3]
 strchr                  0x08001319          Code  Gb  strchr.o [5]
 strlen                  0x08001331          Code  Gb  strlen.o [5]
+tst_debugging           0x08004bf9     0x4  Code  Gb  tc_tm.o [1]
 ucHeap                  0x200007c8  0x3c00  Data  Lc  heap_4.o [1]
 ucMaxSysCallPriority    0x20000000     0x1  Data  Lc  port.o [1]
 ulMaxPRIGROUPValue      0x20000008     0x4  Data  Lc  port.o [1]
@@ -923,9 +739,9 @@ xYieldPending           0x20000070     0x4  Data  Lc  tasks.o [1]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-  20 450 bytes of readonly  code memory
+  20 454 bytes of readonly  code memory
       93 bytes of readonly  data memory
   19 209 bytes of readwrite data memory
 
-Errors: 37
+Errors: none
 Warnings: none

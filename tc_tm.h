@@ -244,9 +244,9 @@ typedef struct {
 }tc_tm_pkt;
 
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
-const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
+extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 
-const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
 //  check that cnv functions are used correctly
@@ -276,5 +276,7 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //stub
 uint32_t time_now();
+
+uint8_t tst_debugging();
 
 #endif

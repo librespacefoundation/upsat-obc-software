@@ -79,3 +79,7 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
 uint32_t time_now() {
     return 0;
 }
+
+uint8_t tst_debugging() {
+    return 1;
+}
