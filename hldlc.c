@@ -26,8 +26,8 @@ OBC_returnStateTypedef HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t 
 /* it should return the status*/
 OBC_returnStateTypedef HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
 
-    if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL)   { return R_ERROR; }
-    if(!C_ASSERT(*cnt < size)                               { return R_ERROR; } //check
+    if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return R_ERROR; }
+    if(!C_ASSERT(*cnt < size) == true)                               { return R_ERROR; } //check
 
     if(*cnt == 0) {
         *c = HLDLC_START_FLAG;
