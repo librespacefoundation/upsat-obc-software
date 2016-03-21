@@ -40,14 +40,14 @@ void cnv8_16(uint8_t *from, uint16_t *to) {
 
     cnv.cnv8[0] = from[0];
     cnv.cnv8[1] = from[1];
-    *to = cnv.cnv16;
+    *to = cnv.cnv16[0];
 }
 
 uint8_t checkSum(const uint8_t *data, uint16_t size) {
 
     uint8_t CRC = 0;
 
-    ASSERT(data != NULL && size != 0);
+    if(!C_ASSERT(data != NULL && size != 0) == true) { return R_ERROR; }
 
     for(int i=0; i<=size; i++){
         CRC = CRC ^ data[i];
@@ -98,44 +98,44 @@ OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint
     pkt->ser_subtype = buf[8];
     pkt->dest_id = buf[9];
 
-    REQUIRE(app_id_verification[pkt->app_id] != 1) { 
+    if(!C_ASSERT(app_id_verification[pkt->app_id] != 1) == true) {
         return R_PKT_ILLEGAL_APPID; 
     }
 
-    REQUIRE(pkt->len != size - 7) { 
+    if(!C_ASSERT(pkt->len != size - 7) == true) {
         return R_PKT_INV_LEN; 
     }
     pkt->len -= 4;
 
-    REQUIRE(tmp_crc[0] != tmp_crc[1]) { 
+    if(!C_ASSERT(tmp_crc[0] != tmp_crc[1]) == true) {
         return R_PKT_INC_CRC; 
     }
 
-    REQUIRE(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) { 
+    if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) { 
         return R_PKT_ILLEGAL_PKT_TP; 
     }
 
-    REQUIRE(ver != 0) { 
+    if(!C_ASSERT(ver != 0) == true) {
         return R_ERROR; 
     }
 
-    REQUIRE(tc_pus != 1) {
+    if(!C_ASSERT(tc_pus != 1) == true) {
         return R_ERROR;
     }
 
-    REQUIRE(ccsds_sec_hdr != 0) {
+    if(!C_ASSERT(ccsds_sec_hdr != 0) == true) {
         return R_ERROR;
     }
 
-    REQUIRE(pkt->type != TC && pkt->type != TM) {
+    if(!C_ASSERT(pkt->type != TC && pkt->type != TM) == true) {
         return R_ERROR;
     }
 
-    REQUIRE(dfield_hdr != 1) {
+    if(!C_ASSERT(dfield_hdr != 1) == true) {
         return R_ERROR;
     }
 
-    REQUIRE(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) {
+    if(!C_ASSERT(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) == true) {
         return R_ERROR;
     }
 
@@ -153,8 +153,8 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     union _cnv cnv;
     uint8_t buf_pointer;
 
-    ASSERT(buf != NULL && pkt != NULL && pkt->data != NULL  && size != NULL);
-    REQUIRE(*size == 0);
+    if(!C_ASSERT(buf != NULL && pkt != NULL && pkt->data != NULL  && size != NULL) == true) { return R_ERROR; }
+    if(!C_ASSERT(*size == 0) == true)                                                       { return R_ERROR; }
 
     cnv.cnv16[0] = pkt->app_id;
 
@@ -181,7 +181,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     buf_pointer = 10;
 
     for(int i = 0; i < pkt->len; i++) {
-        buf[buf_pointer++] = pkt-pkt->data[i];
+        buf[buf_pointer++] = pkt->data[i];
     }
 
     pkt->len += ECSS_DATA_HEADER_SIZE;
@@ -198,10 +198,10 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
 OBC_returnStateTypedef crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id) {
 
-    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; }
-    C_ASSERT(app_id < LAST_APP_ID && dest_id < LAST_APP_ID ) { return R_ERROR; }
-    C_ASSERT(type == TC || type == TM) { return R_ERROR; }
-    C_ASSERT(ack == TC_ACK_NO || ack == TC_ACK_ACC) { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)                 { return R_ERROR; }
+    if(!C_ASSERT(app_id < LAST_APP_ID && dest_id < LAST_APP_ID ) == true)   { return R_ERROR; }
+    if(!C_ASSERT(type == TC || type == TM) == true)                         { return R_ERROR; }
+    if(!C_ASSERT(ack == TC_ACK_NO || ack == TC_ACK_ACC) == true)            { return R_ERROR; }
 
     pkt->type = type;
     pkt->app_id = app_id;

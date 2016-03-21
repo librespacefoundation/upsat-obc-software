@@ -50,7 +50,7 @@ OBC_returnStateTypedef pkt_pool_INIT() {
 
 void pkt_pool_GC() {
 
-    for(uint8_t i = start; i < MAX_POOL_PKT; i++) {
+    for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
         if(pkt_pool.free[i] == 1 && pkt_pool.time[i] - time_now() > PKT_TIMEOUT) {
             //pkt_pool.free[i] = 0;
             // error

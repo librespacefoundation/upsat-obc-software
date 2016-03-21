@@ -74,6 +74,8 @@
 #define MAX_PKT_DATA    20
 #define MAX_EX_PKT_DATA 512
 
+#define ECSS_DATA_HEADER_SIZE 4 //need to check
+
 #define MAX_APP_ID      20
 #define MAX_SERVICES    20
 #define MAX_SUBTYPES    26
