@@ -8,7 +8,7 @@
 //ToDo
 //  improve return types
 
-extern UART_HandleTypeDef huart;
+extern UART_HandleTypeDef huart2;
 
 void HAL_obc_SD_ON();
 

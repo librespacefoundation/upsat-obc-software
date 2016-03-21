@@ -370,7 +370,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    serial_app(huart2, tx_flag);
+    import_eps_pkt();
     osDelay(1);
   }
   /* USER CODE END 5 */ 

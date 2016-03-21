@@ -1192,6 +1192,12 @@
   <group>
     <name>obc</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\function_management_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\function_management_service.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\hldlc.c</name>
     </file>
     <file>
@@ -1204,10 +1210,28 @@
       <name>$PROJ_DIR$\..\..\..\housekeeping_service.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\large_data_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\large_data_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\mass_storage_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\mass_storage_service.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\obc_hal.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\obc_hal.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\pkt_pool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\pkt_pool.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\power_ctrl.c</name>
@@ -1222,16 +1246,19 @@
       <name>$PROJ_DIR$\..\..\..\route_verification.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\serial.c</name>
+      <name>$PROJ_DIR$\..\..\..\service_utilities.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\serial.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\tc_tm.c</name>
+      <name>$PROJ_DIR$\..\..\..\service_utilities.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\tc_tm.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\test_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\test_service.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\verification_service.c</name>

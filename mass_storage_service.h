@@ -2,6 +2,7 @@
 #define MASS_STORAGE_SERVICE_H
 
 #include <stdint.h>
+#include "fatfs.h"
 
 #include "tc_tm.h"
 
@@ -40,8 +41,6 @@ struct _MS_data {
     uint16_t stores_fcount[3];  /*file count in each store, fotos, su_log, ev_log */
     uint32_t ev_temp_log;
 }MS_data;
-
-extern typedef *FATFS; 
 
 //ToDo
 //  error checking in return values of fatfs

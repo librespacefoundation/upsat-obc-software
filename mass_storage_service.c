@@ -16,7 +16,9 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
     } else if(pkt->ser_subtype == TC_MS_DELETE) {
 
-        cnv8_32(pkt->data[1], pkt->data[2], pkt->data[3], pkt->data[4], &to);
+        uint32_t to;
+
+        cnv8_32(pkt->data[1], &to);
         mass_storage_delete_api(sid, to);
 
     } else if(pkt->ser_subtype == TC_MS_REPORT || pkt->ser_subtype == TC_MS_DOWNLINK) {
@@ -59,7 +61,7 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
         ret = strtol(fn, NULL, 10);
         if(to == ALL || ret <= to) {
 
-            if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir) return R_ERROR; } 
+            if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir); return R_ERROR; } 
 
             if(f_unlink(fn) != FR_OK) { return R_ERROR; }
 
@@ -68,7 +70,7 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
 
         }
     }
-    f_closedir(&dir)
+    f_closedir(&dir);
     
     return R_OK;
 }
@@ -79,8 +81,8 @@ OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint3
 
     OBC_returnStateTypedef res; 
 
-    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL)       { return R_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) { return R_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)       { return R_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return R_ERROR; }
 
     if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_downlinkLogs(sid, mode, from, to, buf, size, part); }
     else if(sid == FOTOS) { res = mass_storage_downlinkLargeFile(sid, from, buf, size, part); }
@@ -118,7 +120,7 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
         if(mode == ALL) { res = mass_storage_findLog(sid, part); } 
         else if(mode == TO) { res = mass_storage_findLog(sid, part); }
         else if(mode == BETWEEN) { 
-            *part = from
+            *part = from;
             res = mass_storage_findLog(sid, part); 
         } 
         else if(mode == SPECIFIC ) { res = R_OK; }
@@ -129,12 +131,12 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
 
     if(!C_ASSERT(*part > 0) == true) { return R_ERROR; }
 
-    sprintf(path, "%s//%d", path, part); }
+    sprintf(path, "%s//%d", path, part);
 
     if(f_open(&fp, path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return R_ERROR; }
 
     uint16_t len = f_size(fp);
-    if(!C_ASSERT(len < (*part) * MS_FILE_SECTOR) { f_close(&fp); return R_ERROR; }
+    if(!C_ASSERT(len < (*part) * MS_FILE_SECTOR) == true){ f_close(&fp); return R_ERROR; }
 
     res = f_read(&fp, buf, *size, (void *)&byteswritten);
     if((byteswritten == 0) || (res != FR_OK)) {  f_close(&fp); return R_ERROR; } 
