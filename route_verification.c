@@ -12,23 +12,23 @@ OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
     if(pkt->type == TC)         { id = pkt->app_id; } 
     else if(pkt->type == TM)    { id = pkt->dest_id; }
 
-    if(id == OBC && pkt->ser_type == TC_HOUSEKEEPING_SERVICE) {
+    if(id == OBC_APP_ID && pkt->ser_type == TC_HOUSEKEEPING_SERVICE) {
         //C_ASSERT(pkt->ser_subtype == 21 || pkt->ser_subtype == 23) { free_pkt(pkt); return R_ERROR; }
         res = hk_app(pkt);
         verification_service_app(pkt, res);
-    } else if(id == OBC && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE) {
+    } else if(id == OBC_APP_ID && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE) {
         res = power_control_app(pkt);
-    } else if(id == OBC && pkt->ser_type == TC_LARGE_DATA_SERVICE) {
+    } else if(id == OBC_APP_ID && pkt->ser_type == TC_LARGE_DATA_SERVICE) {
         res = large_data_app(pkt);
-    } else if(id == OBC && pkt->ser_type == TC_MASS_STORAGE_SERVICE) {
+    } else if(id == OBC_APP_ID && pkt->ser_type == TC_MASS_STORAGE_SERVICE) {
         //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return R_ERROR; }
         res = mass_storage_app(pkt);
     } 
-    else if(id == EPS)      { export_eps_pkt(pkt); } 
-    else if(id == ADCS)     { export_eps_pkt(pkt); }
-    else if(id == COMMS)    { export_eps_pkt(pkt); } 
-    else if(id == IAC)      { export_eps_pkt(pkt); } 
-    else if(id == GND)      { export_eps_pkt(pkt); } 
+    else if(id == EPS_APP_ID)      { export_eps_pkt(pkt); } 
+    else if(id == ADCS_APP_ID)     { export_eps_pkt(pkt); }
+    else if(id == COMMS_APP_ID)    { export_eps_pkt(pkt); } 
+    else if(id == IAC_APP_ID)      { export_eps_pkt(pkt); } 
+    else if(id == GND_APP_ID)      { export_eps_pkt(pkt); } 
 
     free_pkt(pkt);
     return R_OK;

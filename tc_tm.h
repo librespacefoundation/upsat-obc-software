@@ -139,6 +139,10 @@ R_LAST                  = 11
 #define TC_CT_PERFORM_TEST              1
 #define TC_CT_REPORT_TEST               2
 
+/*memory pool packet modes*/
+#define NORMAL      1
+#define EXTENDED    2
+
 typedef enum {  
 OBC_APP_ID      = 1,
 EPS_APP_ID      = 2,
