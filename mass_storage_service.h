@@ -41,6 +41,8 @@ struct _MS_data {
     uint32_t ev_temp_log;
 }MS_data;
 
+extern typedef *FATFS; 
+
 //ToDo
 //  error checking in return values of fatfs
 //  check if sprintf is ok for the job

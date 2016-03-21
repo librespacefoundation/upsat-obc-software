@@ -56,7 +56,7 @@ OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt) {
 
     mass_storage_store_api(sid, 0, pkt->data[LD_PKT_DATA_HDR_SIZE], &size, LD_status.ld_num);
 
-    LD_status.timeout = time.now();
+    LD_status.timeout = time_now();
     //return R_OK;
 
     large_data_verifyPkt_api(temp_pkt, LD_status.ld_num, LD_status.app_id);
