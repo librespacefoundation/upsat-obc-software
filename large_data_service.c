@@ -45,7 +45,7 @@ OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt) {
     if(!C_ASSERT(app_id == IAC || app_id == GND) == true)                                               { return R_ERROR; }
     if(!C_ASSERT(ld_num == 0) == true)                                                                  { return R_ERROR; }
     if(!C_ASSERT(size > 0) == true)                                                                     { return R_ERROR; } 
-    if(!C_ASSERT((app_id == IAC && sid == FOTOS) || (app_id == GND && (sid =< SU_SCRIPT_7 )) == true)   { return R_ERROR; } 
+    if(!C_ASSERT((app_id == IAC && sid == FOTOS) || (app_id == GND && (sid <= SU_SCRIPT_7 )) == true)   { return R_ERROR; } 
 
     large_data_state();
     LD_status.app_id = app_id;
@@ -69,6 +69,7 @@ OBC_returnStateTypedef large_data_intRx_api(tc_tm_pkt *pkt) {
 
     uint16_t ld_num;
     uint16_t size;
+    TC_TM_app_id app_id;
     MS_sid sid;
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)             { return R_ERROR; }
@@ -90,7 +91,7 @@ OBC_returnStateTypedef large_data_intRx_api(tc_tm_pkt *pkt) {
 
     mass_storage_store_api(sid, 0, pkt->data[LD_PKT_DATA_HDR_SIZE], &size, LD_status.ld_num);
 
-    LD_status.timeout = time.now();
+    LD_status.timeout = time_now();
     //return R_OK;
     tc_tm_pkt *temp_pkt;
 
@@ -104,6 +105,7 @@ OBC_returnStateTypedef large_data_lastRx_api(tc_tm_pkt *pkt) {
 
     uint16_t ld_num;
     uint16_t size;
+    TC_TM_app_id app_id;
     MS_sid sid;
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)             { return R_ERROR; }
@@ -143,6 +145,7 @@ OBC_returnStateTypedef large_data_retryRx_api(tc_tm_pkt *pkt) {
 
     uint16_t ld_num;
     uint16_t size;
+    TC_TM_app_id app_id;
     MS_sid sid;
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)             { return R_ERROR; }
@@ -164,7 +167,7 @@ OBC_returnStateTypedef large_data_retryRx_api(tc_tm_pkt *pkt) {
 
     mass_storage_store_api(sid, 0, pkt->data[LD_PKT_DATA_HDR_SIZE], &size, LD_status.ld_num);
 
-    LD_status.timeout = time.now();
+    LD_status.timeout = time_now();
     //return R_OK;
     tc_tm_pkt *temp_pkt;
 
@@ -192,11 +195,11 @@ OBC_returnStateTypedef large_data_standaloneRx_api(tc_tm_pkt *pkt) {
     if(!C_ASSERT(app_id == GND) == true)                            { return R_ERROR; }
     if(!C_ASSERT(ld_num == 0) == true)                              { return R_ERROR; }
     if(!C_ASSERT(size > 0) == true)                                 { return R_ERROR; }
-    if(!C_ASSERT(app_id == GND && (sid =< SU_SCRIPT_7 )) == true)   { return R_ERROR; }
+    if(!C_ASSERT(app_id == GND && (sid <= SU_SCRIPT_7 )) == true)   { return R_ERROR; }
 
     mass_storage_store_api(sid, LAST_PART, pkt->data[LD_PKT_DATA_HDR_SIZE], &size, 0);
 
-    LD_status.timeout = time.now();
+    LD_status.timeout = time_now();
     //return R_OK;
     tc_tm_pkt *temp_pkt;
 
@@ -252,13 +255,13 @@ OBC_returnStateTypedef large_data_reportTx_api(tc_tm_pkt *pkt) {
         LD_status.app_id = app_id;
         LD_status.sid = sid;
         LD_status.ld_num = 1;
-        LD_status.lpacket_flag = FALSE;
+        LD_status.lpacket_flag = false;
 
         LD_status.state = TRANSMITING;
         LD_status.txType = REPORT;
-        LD_status.started = time.now();
+        LD_status.started = time_now();
 
-        LD_status.timeout = time.now();
+        LD_status.timeout = time_now();
     }
 
     large_data_updatePkt(temp_pkt, size, subtype);
@@ -274,7 +277,6 @@ OBC_returnStateTypedef large_data_downlinkTx_api(tc_tm_pkt *pkt) {
     uint16_t size;
     uint32_t from;
     uint32_t to;
-    uint32_t size;
     uint8_t subtype;
     MS_sid sid;
     MS_mode mode;
@@ -320,13 +322,13 @@ OBC_returnStateTypedef large_data_downlinkTx_api(tc_tm_pkt *pkt) {
         LD_status.from = from;
         LD_status.to = to;
         LD_status.ld_num = 1;
-        LD_status.lpacket_flag = FALSE;
+        LD_status.lpacket_flag = false;
 
         LD_status.state = TRANSMITING;
         LD_status.txType = DOWNLINK;
-        LD_status.started = time.now();
+        LD_status.started = time_now();
 
-        LD_status.timeout = time.now();
+        LD_status.timeout = time_now();
     }
 
     large_data_updatePkt(temp_pkt, size, subtype);
@@ -342,7 +344,6 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
     uint16_t size;
     uint32_t from;
     uint32_t to;
-    uint16_t size;
     uint32_t fcurr;
     uint8_t subtype;
     MS_sid sid;
@@ -352,15 +353,15 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
 
     ld_num = pkt->data[0];
 
-    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)                 { return R_ERROR; }
-    if(!C_ASSERT(LD_status.app_id != pkt->dest_id) == true)                 { return R_ERROR; }
-    if(!C_ASSERT(LD_status.state == TRANSMITING && app_id == GND) == true)  { return R_ERROR; }
-    if(!C_ASSERT(LD_status.ld_num == ld_num - 1) == true)                   { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)                             { return R_ERROR; }
+    if(!C_ASSERT(LD_status.app_id != pkt->dest_id) == true)                             { return R_ERROR; }
+    if(!C_ASSERT(LD_status.state == TRANSMITING && LD_status.app_id == GND) == true)    { return R_ERROR; }
+    if(!C_ASSERT(LD_status.ld_num == ld_num - 1) == true)                               { return R_ERROR; }
 
-    if(LD_status.lpacket_flag == TRUE) {
-        LD_status.lpacket_flag = FALSE;
+    if(LD_status.lpacket_flag == true) {
+        LD_status.lpacket_flag = false;
         LD_status.state = FREE;
-        LD_status.started = time.now();
+        LD_status.started = time_now();
         LD_status.timeout = 0;
 
         return R_OK;
@@ -379,7 +380,7 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
     } //what to do with else
 
     if(res == R_EOT) {
-        LD_status.lpacket_flag = TRUE;
+        LD_status.lpacket_flag = true;
         subtype = TC_LD_LAST_DOWNLINK;
     } else {
         subtype = TC_LD_INT_DOWNLINK;
@@ -388,7 +389,7 @@ OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt) {
     }
 
     large_data_updatePkt(temp_pkt, size, subtype);
-    LD_status.timeout = time.now();
+    LD_status.timeout = time_now();
     route_pkt(temp_pkt);
 
     return R_OK;
