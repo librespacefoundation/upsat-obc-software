@@ -149,6 +149,27 @@ GND_APP_ID      = 6,
 LAST_APP_ID     = 7
 }TC_TM_app_id;
 
+typedef enum {
+P_OFF       = 0,
+P_ON        = 1,
+P_RESET     = 2,
+SET_TIME    = 3,
+LAST_FUN_ID = 4
+}FM_fun_id;
+
+typedef enum {
+OBC_DEV_ID      = 1,
+EPS_DEV_ID      = 2,
+ADCS_DEV_ID     = 3,
+COMMS_DEV_ID    = 4,
+IAC_DEV_ID      = 5,
+SU_DEV_ID       = 6,
+GPS_DEV_ID      = 7,
+OBC_SD_DEV_ID   = 8,
+ADCS_SD_DEV_ID  = 9,
+LAST_DEV_ID     = 10
+}FM_dev_id;
+
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
 
 union _cnv {

@@ -9,6 +9,6 @@ extern void HAL_obc_SD_ON();
 
 extern void HAL_obc_SD_OFF();
 
-OBC_returnStateTypedef power_control_api(uint8_t did, uint8_t fid);
+OBC_returnStateTypedef power_control_api(FM_dev_id did, FM_fun_id fid);
 
 #endif
