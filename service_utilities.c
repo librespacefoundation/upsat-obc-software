@@ -111,7 +111,7 @@ OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint
         return R_PKT_INC_CRC; 
     }
 
-    if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) { 
+    if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) == true) { 
         return R_PKT_ILLEGAL_PKT_TP; 
     }
 
