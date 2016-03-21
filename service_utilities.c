@@ -1,11 +1,5 @@
 #include "service_utilities.h"
 
-union _cnv {
-    uint32_t cnv32;
-    uint16_t cnv16[2];
-    uint8_t cnv8[4];
-};
-
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
 

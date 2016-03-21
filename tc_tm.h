@@ -234,4 +234,9 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
 //  use pkt->len for data?
 //  add pack functions in each service.
 
+//stub
+uint32_t time_now() {
+    return 0;
+}
+
 #endif
