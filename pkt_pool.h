@@ -20,6 +20,8 @@ struct _pkt_pool{
     uint8_t data_EXT[MAX_POOL_EXT_PKT][MAX_EX_PKT_DATA];
 }pkt_pool;
 
+extern uint32_t time_now();
+
 void *get_pkt(uint8_t mode);
 
 OBC_returnStateTypedef free_pkt(tc_tm_pkt *pkt);

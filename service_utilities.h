@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "tc_tm.h"
 
+extern uint32_t time_now();
+
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
 OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);

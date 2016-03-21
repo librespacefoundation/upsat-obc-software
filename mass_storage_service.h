@@ -42,6 +42,8 @@ struct _MS_data {
     uint32_t ev_temp_log;
 }MS_data;
 
+extern uint32_t time_now();
+
 //ToDo
 //  error checking in return values of fatfs
 //  check if sprintf is ok for the job
@@ -74,7 +76,7 @@ OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uin
 
 OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
 
-OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint32_t *size, uint16_t *part);
+OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
 
 OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part);
 

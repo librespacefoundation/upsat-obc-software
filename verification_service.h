@@ -2,13 +2,13 @@
 #define __VERIFICATION_SERVICE_H
 
 #include <stdint.h>
-
 #include "tc_tm.h"
 
 //ToDo
 //  check verify_pkt
 
 extern void *get_pkt(uint8_t mode);
+extern uint32_t time_now();
 
 OBC_returnStateTypedef verification_app(tc_tm_pkt *pkt, OBC_returnStateTypedef res); 
 

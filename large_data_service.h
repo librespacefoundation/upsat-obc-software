@@ -38,6 +38,7 @@ struct _ld_status {
 }LD_status;
 
 extern void *get_pkt(uint8_t mode);
+extern uint32_t time_now();
 
 //ToDo
 //  check again if app_id and dest_id are ok.

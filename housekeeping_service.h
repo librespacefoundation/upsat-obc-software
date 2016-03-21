@@ -2,13 +2,9 @@
 #define __HOUSEKEEPING_SERVICE_H
 
 #include <stdint.h>
-
 #include "tc_tm.h"
 
-extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-extern const uint8_t app_id_verification[MAX_APP_ID];
-extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
-
+extern uint32_t time_now();
 extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
 extern OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
 

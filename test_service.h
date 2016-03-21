@@ -6,6 +6,7 @@
 #include "tc_tm.h"
 
 extern void *get_pkt(uint8_t mode);
+extern uint32_t time_now();
 
 OBC_returnStateTypedef test_app(tc_tm_pkt *pkt);
 

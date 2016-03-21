@@ -34,8 +34,10 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 /*if to is 0: it deletes every file of the sid else it deletes every file which time is lower then the time denoted in to*/
 OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
 
+    FRESULT res;
+    FILINFO fno;
     DIR dir;
-    uint8_t temp_fn[20];
+    uint8_t *fn;
     uint32_t time_temp = 0;
     uint8_t path[MS_MAX_PATH];
 
@@ -58,7 +60,7 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
         fn = fno.fname;
 #endif
 
-        ret = strtol(fn, NULL, 10);
+        uint32_t ret = strtol(fn, NULL, 10);
         if(to == ALL || ret <= to) {
 
             if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir); return R_ERROR; } 
@@ -99,8 +101,10 @@ OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint3
 /*buf: the buffer that the data are copied*/
 /*size: its the size of the buffer, in return it stores the actual bytes written in the buffer */
 /*part: part stores the next file log to be downlinked. after the cp to the buffer it iterates to the next file. in a new search should be 0. */
-OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint32_t *size, uint16_t *part) {
+OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part) {
 
+    FIL fp;
+    FRESULT res;
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
@@ -135,7 +139,7 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
 
     if(f_open(&fp, path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return R_ERROR; }
 
-    uint16_t len = f_size(fp);
+    uint16_t len = f_size(&fp);
     if(!C_ASSERT(len < (*part) * MS_FILE_SECTOR) == true){ f_close(&fp); return R_ERROR; }
 
     res = f_read(&fp, buf, *size, (void *)&byteswritten);
@@ -157,6 +161,7 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
 OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part) {
 
     FIL fp;
+    FRESULT res;
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
@@ -167,10 +172,10 @@ OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file,
 
     if(f_open(&fp, path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return R_ERROR; }
 
-    uint16_t len = f_size(fp);
+    uint16_t len = f_size(&fp);
     if(!C_ASSERT(len < (*part) * MS_FILE_SECTOR) == true) { f_close(&fp); return R_ERROR; }
     
-    res = f_lseek(fp, part* MS_FILE_SECTOR);
+    res = f_lseek(&fp, ((*part)*MS_FILE_SECTOR));
 
     res = f_read(&fp, buf, *size, (void *)&byteswritten);
     if((byteswritten == 0) || (res != FR_OK)) { f_close(&fp); return R_ERROR; } 
@@ -189,11 +194,11 @@ OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t 
 
     OBC_returnStateTypedef res; 
 
-    if(!C_ASSERT(buf != NULL && && size != NULL && part != NULL) == true)       { return R_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)       { return R_ERROR; }
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return R_ERROR; }
 
     if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_storeLogs_api(sid, buf, size); }
-    else if(sid == FOTOS || sid =< SU_SCRIPT_7); { res = mass_storage_storeLargeFile_api(sid, mode, buf, size, part); }
+    else if(sid == FOTOS || sid <= SU_SCRIPT_7) { res = mass_storage_storeLargeFile_api(sid, mode, buf, size, part); }
     else { return R_ERROR; }
 
     return res;
@@ -204,12 +209,13 @@ OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t 
 OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part) {
 
     FILINFO fno;
+    FRESULT res;
     FIL fp;
     BYTE flags;
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    if(!C_ASSERT(buf != NULL && && size != NULL) == true)       { return R_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL) == true)          { return R_ERROR; }
     if(!C_ASSERT(*size > 0) == true)                            { return R_ERROR; }
     if(!C_ASSERT(sid == FOTOS || sid <= SU_SCRIPT_7) == true)   { return R_ERROR; }
 
@@ -222,14 +228,14 @@ OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uin
     else if(sid == SU_SCRIPT_6) { strncp(path, MS_TMP_SU_SCRIPT_6, MS_MAX_PATH); }
     else if(sid == SU_SCRIPT_7) { strncp(path, MS_TMP_SU_SCRIPT_7, MS_MAX_PATH); }
 
-    if(*part == 0) { flags = (FA_CREATE_ALWAYS | FA_WRITE); } 
+    if(part == 0) { flags = (FA_CREATE_ALWAYS | FA_WRITE); } 
     else { flags = (FA_CREATE_ALWAYS | FA_WRITE); }
 
     if(f_open(&fp, path, flags) != FR_OK) { return R_ERROR; }
 
-    uint16_t len = f_size(fp);
-    if(!C_ASSERT(len < (part) * FILE_SIZE) == true) { f_close(&fp); return R_ERROR; }
-    res = f_lseek(fp, len);
+    uint16_t len = f_size(&fp);
+    if(!C_ASSERT(len < (part * MS_FILE_SECTOR)) == true) { f_close(&fp); return R_ERROR; }
+    res = f_lseek(&fp, len);
 
     res = f_write(&fp, buf, *size, (void *)&byteswritten);
     if((byteswritten == 0) || (res != FR_OK)) { f_close(&fp); return R_ERROR; }
@@ -284,7 +290,7 @@ OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    if(!C_ASSERT(buf != NULL && && size != NULL) == true)   { return R_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL) == true)      { return R_ERROR; }
     if(!C_ASSERT(*size > 0) == true)                        { return R_ERROR; }
 
     if(mass_storage_getLog(sid, path) != R_OK) { return R_ERROR; }
@@ -292,7 +298,7 @@ OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t
     if(f_open(&fp, path, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK) { return R_ERROR; }
 
     /*appending*/
-    res = f_lseek(fp, f_size(fp));
+    res = f_lseek(&fp, f_size(&fp));
     /* Write data to the text file */
     res = f_write(&fp, buf, *size, (void *)&byteswritten);
     if((byteswritten == 0) || (res != FR_OK)) {  f_close(&fp); return R_ERROR; } 
@@ -306,7 +312,10 @@ OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t
 OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter) {
 
     DIR dir;
-    uint8_t temp_fn[20];
+    FILINFO fno;
+    FRESULT res;
+    uint32_t ret;
+    uint8_t *fn;
     uint32_t time_temp = 0;
     uint8_t start_flag = 0;
     uint8_t path[MS_MAX_PATH];
@@ -330,12 +339,12 @@ OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_
         else if(fno.fname[0] == 0) { f_closedir(&dir); return R_EOT;}  /* Break on end of dir */
         if (fno.fname[0] == '.') { continue; }             /* Ignore dot entry */
 #if _USE_LFN
-        temp_fn = *fno.lfname ? fno.lfname : fno.fname;
+        fn = *fno.lfname ? fno.lfname : fno.fname;
 #else
-        temp_fn = fno.fname;
+        fn = fno.fname;
 #endif
 
-        ret = strtol(temp_fn, NULL, 10);
+        ret = strtol(fn, NULL, 10);
         if(start_flag = 0 && *iter == ret) { start_flag = 1; }
         if(start_flag == 1) {
 
@@ -349,13 +358,13 @@ OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_
 
             if(*size >= MS_MAX_LOG_FILE_SIZE) {
                 *iter = ret;
-                f_closedir(&dir)
+                f_closedir(&dir);
                 return R_OK; 
             }
         } 
 
     }
-    f_closedir(&dir)
+    f_closedir(&dir);
  
     if(!C_ASSERT(*size != 0) == true) { return R_ERROR; }
 
@@ -364,6 +373,8 @@ OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_
 
 OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid) {
 
+    FIL fp;
+    FRESULT res;
     uint8_t path[MS_MAX_PATH];
     uint16_t byteswritten;
 
@@ -396,7 +407,7 @@ OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid) {
         
         res = f_read(&fp, &c, 1, (void *)&byteswritten);
         if(res != FR_OK) { f_close(&fp); return R_ERROR; } 
-        if((byteswritten == 0) {
+        if(byteswritten == 0) {
             
             if(((sum2 << 8) | sum1) == 0)  { return R_OK; }
             else {  return R_CRC_ERROR; }
@@ -412,6 +423,8 @@ OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid) {
 
 OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
 
+    FILINFO fno;
+
     if(!C_ASSERT(fn != NULL) == true)                           { return R_ERROR; }
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)    { return R_ERROR; }
 
@@ -421,12 +434,12 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
         MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
         MS_data.stores_fsize[sid-SU_SCRIPT_7] += MS_SU_FSIZE;
 
-        sprintf(fn, "%s//%d", MS_SU_LOG, time.now()); 
+        sprintf(fn, "%s//%d", MS_SU_LOG, time_now()); 
         return R_OK; 
     }
 
     if(MS_data.ev_temp_log == 0) { 
-        MS_data.ev_temp_log = time.now(); 
+        MS_data.ev_temp_log = time_now(); 
         sprintf(fn, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
         return R_OK; 
     }
@@ -435,7 +448,7 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
 
     if(f_stat(fn, &fno) != FR_OK) { return R_ERROR; } 
 
-    if(fno.fsize >= MS_MAX_FILE_SIZE) {
+    if(fno.fsize >= MS_MAX_LOG_FILE_SIZE) {
 
         MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
         MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
@@ -451,7 +464,11 @@ OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn) {
 OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn) {
 
     DIR dir;
-    uint8_t temp_fn[20];
+    FRESULT res;
+    FILINFO fno;
+    uint32_t ret;
+    uint8_t path[MS_MAX_PATH];
+    uint8_t *temp_fn;
     uint32_t time_temp = 0;
     uint8_t start_flag = 0;
     uint32_t min = 0;
@@ -461,8 +478,6 @@ OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn) {
 
     if(sid == SU_LOG)           { strncp(path, MS_SU_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncp(path, MS_EVENT_LOG, MS_MAX_PATH); }
-
-    if(!C_ASSERT(*size != 0) { return R_ERROR; }
 
     if (f_opendir(&dir, path) != FR_OK) { return R_ERROR; }
     for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
@@ -478,10 +493,10 @@ OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn) {
 #endif
 
         ret = strtol(temp_fn, NULL, 10);
-        if(fn == 0 && min == 0) { min = ret; }
-        else if(fn == 0 && ret < min) { min = ret; } 
-        else if(fn != 0 && fn < ret && min == 0) { min = ret; }
-        else if(fn != 0 && fn < ret && ret < min) { min = ret; } 
+        if(*fn == 0 && min == 0) { min = ret; }
+        else if(*fn == 0 && ret < min) { min = ret; } 
+        else if(*fn != 0 && *fn < ret && min == 0) { min = ret; }
+        else if(*fn != 0 && *fn < ret && ret < min) { min = ret; } 
 
     }
     f_closedir(&dir);
@@ -497,7 +512,12 @@ OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn) {
 OBC_returnStateTypedef mass_storage_getFileSizeCount(MS_sid sid) {
 
     DIR dir;
-    uint8_t fn[20];
+    uint8_t *fn;
+    FRESULT res;
+    FILINFO fno;
+    uint32_t ret;
+    uint8_t path[MS_MAX_PATH];
+    uint32_t min = 0;
 
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return R_ERROR; }
 
@@ -529,7 +549,7 @@ OBC_returnStateTypedef mass_storage_getFileSizeCount(MS_sid sid) {
 OBC_returnStateTypedef mass_storage_init() {
 
     MS_data.ev_temp_log = 0;
-    if(f_mount(&test, SD_Path, 0) != FR_OK) { return R_ERROR; }
+    if(f_mount(&MS_data.test, SD_Path, 0) != FR_OK) { return R_ERROR; }
 
     mass_storage_getFileSizeCount(FOTOS);
     mass_storage_getFileSizeCount(SU_LOG);
