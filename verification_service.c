@@ -31,8 +31,8 @@ OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_
     uint8_t subtype;
     union _cnv cnv;
 
-    if(!CASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
-    if(!CASSERT(res < R_LAST) == true) { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
+    if(!C_ASSERT(res < R_LAST) == true) { return R_ERROR; }
 
     out = get_pkt(NORMAL);
     if(!C_ASSERT(out != NULL) == true) { return R_ERROR; }
@@ -55,7 +55,7 @@ OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_
         out->len = 5;
     }
 
-    crt_pkt(out, pkt->dest_id;, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->app_id;);
+    crt_pkt(out, pkt->dest_id, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->app_id);
 
     return R_OK;
 }
