@@ -1,19 +1,12 @@
 #include "verification_service.h"
 
-#define TC_ACK_NO           0x00
-#define TC_ACK_ACC          0x01
-#define TC_ACK_EXE_START    0x02
-#define TC_ACK_EXE_PROG     0x04
-#define TC_ACK_EXE_COMP     0x08
-#define TC_ACK_ALL          0x0F
-
 OBC_returnStateTypedef verification_app(tc_tm_pkt *pkt, OBC_returnStateTypedef res) {
 
-    C_ASSERT(res < LAST_CODE) { return R_ERROR; } 
-    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; } 
+    if(!C_ASSERT(res < R_LAST) == true)                     { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
 
-    C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) { return R_ERROR; } 
-    C_ASSERT(pkt->type == TC) { return R_ERROR; } 
+    if(!C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) == true) { return R_ERROR; } 
+    if(!C_ASSERT(pkt->type == TC) == true) { return R_ERROR; } 
 
     if(pkt->ack == TC_ACK_NO) { return R_OK; } 
     else if(pkt->ack == TC_ACK_ACC) {
@@ -38,10 +31,10 @@ OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_
     uint8_t subtype;
     union _cnv cnv;
 
-    ASSERT(pkt != NULL && pkt->data != NULL);
-    ASSERT(res < LAST_CODE);
+    if(!CASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
+    if(!CASSERT(res < R_LAST) == true) { return R_ERROR; }
 
-    out = get_pkt(NORMAL)
+    out = get_pkt(NORMAL);
     if(!C_ASSERT(out != NULL) == true) { return R_ERROR; }
 
     subtype = TC_VR_ACCEPTANCE_SUCCESS;

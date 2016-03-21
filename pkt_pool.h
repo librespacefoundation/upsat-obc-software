@@ -4,9 +4,6 @@
 #include <stdint.h>
 #include "tc_tm.h"
 
-#define NORMAL      1
-#define EXTENDED    2
-
 #define PKT_TIMEOUT 1000 /*in seconds*/
 
 #define MAX_POOL_NRM_PKT    8

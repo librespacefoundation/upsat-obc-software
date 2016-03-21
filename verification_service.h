@@ -8,8 +8,10 @@
 //ToDo
 //  check verify_pkt
 
-OBC_returnStateTypedef verification_app(tc_tm_pkt *pkt, uint8_t res);
+extern void *get_pkt(uint8_t mode);
 
-OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t res);
+OBC_returnStateTypedef verification_app(tc_tm_pkt *pkt, OBC_returnStateTypedef res); 
+
+OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_returnStateTypedef res);
 
 #endif
