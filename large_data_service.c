@@ -52,7 +52,7 @@ OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt) {
     LD_status.sid = sid;
     LD_status.ld_num = ld_num;
     LD_status.state = LD_STATE_RECEIVING;
-    LD_status.started = time.now();
+    LD_status.started = time_now();
 
     mass_storage_store_api(sid, 0, pkt->data[LD_PKT_DATA_HDR_SIZE], &size, LD_status.ld_num);
 

@@ -14,7 +14,7 @@ OBC_returnStateTypedef crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, ui
 
 void cnv32_8(const uint32_t from, uint8_t *to);
 
-void cnv16_8(const uint16_t from, uint8_t *to);
+void cnv16_8(uint16_t from, uint8_t *to);
 
 void cnv8_32(uint8_t *from, uint32_t *to);
 

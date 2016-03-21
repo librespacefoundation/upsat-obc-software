@@ -12,7 +12,7 @@ void cnv32_8(const uint32_t from, uint8_t *to) {
     to[3] = cnv.cnv8[3];
 }
 
-void cnv16_8(const uint16_t from, uint8_t *to) {
+void cnv16_8(uint16_t from, uint8_t *to) {
 
     union _cnv cnv;
 
@@ -98,7 +98,7 @@ OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint
     pkt->ser_subtype = buf[8];
     pkt->dest_id = buf[9];
 
-    if(!C_ASSERT(app_id_verification[pkt->app_id] != 1) == true) {
+    if(!C_ASSERT(pkt->app_id < LAST_APP_ID) == true) {
         return R_PKT_ILLEGAL_APPID; 
     }
 

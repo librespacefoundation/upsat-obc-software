@@ -268,6 +268,8 @@ const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = {
     { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} }
 };
 
+const uint8_t app_id_verification[MAX_APP_ID] = { 0, 1, 0, 0, 0, 0 };
+
 //ToDo
 //  check that cnv functions are used correctly
 //  function management set time.
