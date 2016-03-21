@@ -12,8 +12,8 @@ OBC_returnStateTypedef function_management_app(tc_tm_pkt *pkt) {
     fun_id = pkt->data[0];
     cnv8_32(pkt->data[1], val);
 
-    C_ASSERT(fun_id < LAST_FID) { return R_ERROR; }
-    C_ASSERT(dev_id == OBC_SD)  { return R_ERROR; }
+    C_ASSERT(fun_id < LAST_FID)         { return R_ERROR; }
+    C_ASSERT(dev_id == OBC_SD_DEV_ID)   { return R_ERROR; }
 
     ASSERT(pkt != NULL && pkt->data != NULL);
 

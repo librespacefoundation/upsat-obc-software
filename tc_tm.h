@@ -1,7 +1,9 @@
 #ifndef TC_TM_H
 #define TC_TM_H
 
+#include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
@@ -135,23 +137,16 @@ R_LAST                  = 11
 #define TC_CT_REPORT_TEST               2
 
 typedef enum {  
-OBC             = 1,
-EPS             = 2,
-ADCS            = 3,
-COMMS           = 4,
-IAC             = 5,
-GND             = 6,
+OBC_APP_ID      = 1,
+EPS_APP_ID      = 2,
+ADCS_APP_ID     = 3,
+COMMS_APP_ID    = 4,
+IAC_APP_ID      = 5,
+GND_APP_ID      = 6,
 LAST_APP_ID     = 7
 }TC_TM_app_id;
 
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
-
-extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-extern const uint8_t app_id_verification[MAX_APP_ID];
-extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
-
-extern OBC_returnStateTypedef verification_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
-extern OBC_returnStateTypedef hk_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
 
 union _cnv {
     uint32_t cnv32;

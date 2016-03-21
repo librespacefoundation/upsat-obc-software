@@ -1,15 +1,15 @@
 #include "power_ctrl.h"
 
 /*Must use real pins*/
-OBC_returnStateTypedef power_control_api( uint8_t did, uint8_t fid) {
+OBC_returnStateTypedef power_control_api(FM_dev_id did, FM_fun_id fid) {
 
-    if(did == SD1 && fid == TURN_ON) {
+    if(did == OBC_SD_DEV_ID && fid == TURN_ON) {
         HAL_obc_SD_ON();
         return R_OK; 
-    } else if(did == SD1 && fid == TURN_OFF) {
+    } else if(did == OBC_SD_DEV_ID && fid == TURN_OFF) {
         HAL_obc_SD_OFF();
         return R_OK;
-    } else if(did == SD1 && fid == RESET) {
+    } else if(did == OBC_SD_DEV_ID && fid == RESET) {
         HAL_obc_SD_OFF();
         //delay
         HAL_obc_SD_ON();
