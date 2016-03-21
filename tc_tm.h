@@ -299,9 +299,4 @@ uint32_t time_now() {
     return 0;
 }
 
-//stub
-void tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e) {
-    
-}
-
 #endif
