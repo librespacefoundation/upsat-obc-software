@@ -12,11 +12,11 @@ void cnv32_8(const uint32_t from, uint8_t *to) {
     to[3] = cnv.cnv8[3];
 }
 
-void cnv16_8(uint16_t from, uint8_t *to) {
+void cnv16_8(const uint16_t from, uint8_t *to) {
 
     union _cnv cnv;
 
-    cnv.cnv16 = from;
+    cnv.cnv16[0] = from;
     to[0] = cnv.cnv8[0];
     to[1] = cnv.cnv8[1];
 
