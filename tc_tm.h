@@ -1,5 +1,5 @@
-#ifndef __TC_TM_H
-#define __TC_TM_H
+#ifndef TC_TM_H
+#define TC_TM_H
 
 #include <stdint.h>
 
@@ -89,7 +89,8 @@ R_OK                    = 6,
 R_ERROR                 = 7,
 R_EOT                   = 8,
 R_CRC_ERROR             = 9,
-R_LAST                  = 10
+R_PKT_ILLEGAL_ACK       = 10,
+R_LAST                  = 11
 }OBC_returnStateTypedef;
 
 #define TC_VERIFICATION_SERVICE         1
@@ -98,6 +99,14 @@ R_LAST                  = 10
 #define TC_LARGE_DATA_SERVICE           13
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
+
+#define TC_VR_ACCEPTANCE_SUCCESS        1
+#define TC_VR_ACCEPTANCE_FAILURE        2
+
+#define TC_HK_REPORT_PARAMETERS         21
+#define TC_HK_PARAMETERS_REPORT         23
+
+#define TC_FM_PERFORM_FUNCTION          1
 
 #define TC_LD_FIRST_DOWNLINK            1
 #define TC_LD_FIRST_UPLINK              9
@@ -118,23 +127,30 @@ R_LAST                  = 10
 #define TC_LD_STANDALONE_DOWNLINK       17
 #define TC_LD_STANDALONE_UPLINK         18
 
-
 #define TC_MS_DOWNLINK                  9
 #define TC_MS_DELETE                    11
 #define TC_MS_REPORT                    12
 
-#define OBC     1
-#define EPS     2
-#define ADCS    3
-#define COMMS   4
-#define IAC     5
-#define GND     6
+#define TC_CT_PERFORM_TEST              1
+#define TC_CT_REPORT_TEST               2
+
+typedef enum {  
+OBC             = 1,
+EPS             = 2,
+ADCS            = 3,
+COMMS           = 4,
+IAC             = 5,
+GND             = 6,
+LAST_APP_ID     = 7
+}TC_TM_app_id;
 
 #define SD1     1
 
 #define TURN_OFF    0
 #define TURN_ON     1
 #define RESET       2
+
+#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
 
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];
@@ -154,7 +170,7 @@ typedef struct {
     //uint8_t ver; /* 3 bits, should be equal to 0 */
 
     //uint8_t data_field_hdr; /* 1 bit, data_field_hdr exists in data = 1 */
-    uint16_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. */
+    uint8_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. should be 11 bits only 8 are used though */
     uint8_t type; /* 1 bit, tm = 0, tc = 1 */
 
     /* packet sequence control */
@@ -177,21 +193,50 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
+/*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
+const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = { 
+/*       0       1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16      17      18      19      20      21      22      23      24      25 */
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {1, 0}, {1, 0}, {1, 0}, {1, 0}, {0, 0}, {0, 0}, {1, 0}, {1, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} }, /*TC_VERIFICATION_SERVICE*/
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 1}, {0, 0}, {1, 0}, {0, 0}, {1, 0} }, /*TC_HOUSEKEEPING_SERVICE*/
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} }, /*TC_FUNCTION_MANAGEMENT_SERVICE*/
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 1}, {0, 1}, {0, 0}, {0, 0}, {0, 1}, {1, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 1}, {0, 1}, {1, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} }, /*TC_MASS_STORAGE_SERVICE*/
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} },
+    { {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0} }
+};
+
 //ToDo
-//  use pkt->len for data?
+//  add reset counter, reset source finder.
+//  add event log book function
+//  test assertion definition for stm
+//  finish assertions
+//  add assertions in each service for its subtype
+//  architecture overview
+//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
+//  add definitions for packet len calculations
+//  use packet len instead of individual service pack, for pack.
 //  when to free the packets.
 //  definitions of subtypes.
 //  modify route & verification.
 //  add function management service.
 //  add serial.
+//  use cnv functions.
+
+//finished
+//  use pkt->len for data?
 //  add pack functions in each service.
-
-uint8_t checkSum(const uint8_t *data, uint16_t size);
-
-OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
-
-OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
-
-OBC_returnStateTypedef crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
 
 #endif

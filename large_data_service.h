@@ -6,7 +6,8 @@
 #include "tc_tm.h"
 #include "mass_storage_service.h"
 
-#define MAX_LD_PKT_DATA MAX_EX_PKT_DATA - LD_PKT_HDR
+#define LD_PKT_DATA             512
+#define LD_PKT_DATA_HDR_SIZE    3
 
 struct _ld_status {
     uint8_t state;          /*service state machine, state variable*/
@@ -28,10 +29,14 @@ struct _ld_status {
 //  check again if app_id and dest_id are ok.
 //  assert, require.
 //  finish definitions, types, subtypes, documentation and doc.
-//  finish segmentation
-//  add pack in pack
+//  check again if finished segmentation
 
 //Finito
+//  check types definitions
+//  add function definition in .h
+//  check size and packet len. reconfigure for pkt len instead of pack.
+//  check definition of n.
+//  add pack in pack
 //  what happens when new packet arrives, when the state is not free.
 //  when to change iterator to next.
 //  first tx packet, what header sould be.
@@ -42,10 +47,38 @@ struct _ld_status {
 //  check sequence numbers.
 //  in tx when to make it FREE, maybe should ack every packet and then send it free.
 
+OBC_returnStateTypedef large_data_timeout();
+
 OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_startReport_api(uint8_t sid, tc_tm_pkt *pkt);
+OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_startDownlink_api(uint8_t sid, uint8_t mode, uint32_t from, uint32_t to, tc_tm_pkt *pkt);
+OBC_returnStateTypedef large_data_intRx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_lastRx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_retryRx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_standaloneRx_api(tc_tm_pkt *pkt);
+
+
+OBC_returnStateTypedef large_data_reportTx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_downlinkTx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt);
+
+OBC_returnStateTypedef large_data_retryTx_api(tc_tm_pkt *pkt);
+
+
+OBC_returnStateTypedef large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subtype);
+
+OBC_returnStateTypedef large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, uint16_t dest_id);
+
+OBC_returnStateTypedef large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id);
+
+OBC_returnStateTypedef large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype);
+
+OBC_returnStateTypedef large_data_abort(tc_tm_pkt *pkt);
 
 #endif

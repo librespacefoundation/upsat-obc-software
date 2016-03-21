@@ -4,12 +4,13 @@
 /*report downlink is handled from large data transfer.*/
 OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 
-    ASSERT(pkt != NULL && pkt->data != NULL);
-    REQUIRE(pkt->ser_type == TC_MASS_STORAGE_SERVICE);
+    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; }
+    C_ASSERT(pkt->ser_type == TC_MASS_STORAGE_SERVICE) { return R_ERROR; }
+    C_ASSERT(pkt->ser_subtype == DISABLE || pkt->ser_subtype == TC_MS_DELETE || pkt->ser_subtype == TC_MS_REPORT || pkt->ser_subtype == TC_MS_DOWNLINK) { return R_ERROR; }
 
     MS_sid sid = pkt->data[0];
 
-    REQUIRE(sid < LAST_SID);
+    C_ASSERT(sid < LAST_SID);
 
     if(pkt->ser_subtype == DISABLE) {
 
@@ -36,7 +37,7 @@ OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to) {
     uint32_t time_temp = 0;
     uint8_t path[MS_MAX_PATH];
 
-    REQUIRE(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS);
+    C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) { return R_ERROR; }
 
     if(sid == SU_LOG) { strncp(path, MS_SU_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG) { strncp(path, EVENT_LOG, MS_MAX_PATH); }
@@ -78,8 +79,8 @@ OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint3
 
     OBC_returnStateTypedef res; 
 
-    ASSERT(buf != NULL && size != NULL && part != NULL);
-    REQUIRE(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS);
+    C_ASSERT(buf != NULL && size != NULL && part != NULL) { return R_ERROR; }
+    C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) { return R_ERROR; }
 
     if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_downlinkLogs(sid, mode, from, to, buf, size, part); }
     else if(sid == FOTOS) { res = mass_storage_downlinkLargeFile(sid, from, buf, size, part); }
@@ -101,10 +102,10 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    ASSERT(buf != NULL && size != NULL && size != NULL && part != NULL);
-    ASSERT(*size > 0);
-    REQUIRE(sid == SU_LOG || sid == EVENT_LOG);
-    REQUIRE(mode < LAST_MODE);
+    ASSERT(buf != NULL && size != NULL && size != NULL && part != NULL) { return R_ERROR; }
+    ASSERT(*size > 0) { return R_ERROR; }
+    REQUIRE(sid == SU_LOG || sid == EVENT_LOG) { return R_ERROR; }
+    REQUIRE(mode < LAST_MODE) { return R_ERROR; }
 
     /*cp dir belonging to sid*/
     if(sid == SU_LOG) { strncp(path, MS_SU_LOG, MS_MAX_PATH); }
@@ -126,7 +127,7 @@ OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint3
         else if(res != R_OK) { return R_ERROR; }
     } 
 
-    ASSERT(*part > 0);
+    ASSERT(*part > 0) { return R_ERROR; }
 
     sprintf(path, "%s//%d", path, part); }
 
@@ -157,8 +158,8 @@ OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file,
     uint16_t byteswritten;
     uint8_t path[MS_MAX_PATH];
 
-    ASSERT(buf != NULL && size != NULL && part != NULL);
-    REQUIRE(sid == FOTOS);
+    ASSERT(buf != NULL && size != NULL && part != NULL) { return R_ERROR; }
+    REQUIRE(sid == FOTOS) { return R_ERROR; }
 
     sprintf(path,"%s//%d" MS_FOTOS, file);
 

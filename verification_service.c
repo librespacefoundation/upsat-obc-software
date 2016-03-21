@@ -1,38 +1,47 @@
 #include "verification_service.h"
 
-OBC_returnStateTypedef verify_pkt(tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
-/*this is TEMP*/
-tc_tm_pkt out;
+#define TC_ACK_NO           0x00
+#define TC_ACK_ACC          0x01
+#define TC_ACK_EXE_START    0x02
+#define TC_ACK_EXE_PROG     0x04
+#define TC_ACK_EXE_COMP     0x08
+#define TC_ACK_ALL          0x0F
 
-    ASSERT(res < LAST_CODE);
-    ASSERT(pkt != NULL);
-    ASSERT(pkt->data != NULL);
+OBC_returnStateTypedef verification_app(tc_tm_pkt *pkt, OBC_returnStateTypedef res) {
 
-    REQUIRE(pkt->ack == TC_ACK_ALL || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_START));
-    REQUIRE(pkt->type == TC); //check if this checks out
+    C_ASSERT(res < LAST_CODE) { return R_ERROR; } 
+    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; } 
+
+    C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) { return R_ERROR; } 
+    C_ASSERT(pkt->type == TC) { return R_ERROR; } 
 
     if(pkt->ack == TC_ACK_NO) { return R_OK; } 
-    else if(pkt->ack == TC_ACK_ACC && step == TC_ACK_ACC) {
-        verify_crt_pkt(pkt, &out, res, 1);
-        return R_OK;
-    } else if(pkt->ack == TC_ACK_EXE_COMP && step == TC_ACK_EXE_COMP) {
-        verify_crt_pkt(pkt, &out, res, 7);
-        return R_OK; 
+    else if(pkt->ack == TC_ACK_ACC) {
+
+        tc_tm_pkt *temp_pkt;
+
+        verification_crt_pkt(pkt, temp_pkt, res);
+        route_pkt(temp_pkt);
+    } else if(pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) {
+        
+        tc_tm_pkt *temp_pkt;
+
+        verification_crt_pkt(pkt, temp_pkt, R_PKT_ILLEGAL_ACK);
+        route_pkt(temp_pkt);
     }
 
-    return R_ERROR;
+    return R_OK;
 }
 
-OBC_returnStateTypedef verify_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t res, uint8_t subtype) {
+OBC_returnStateTypedef verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, OBC_returnStateTypedef res) {
 
+    uint8_t subtype;
     union _cnv cnv;
 
     ASSERT(pkt != NULL && pkt->data != NULL);
     ASSERT(res < LAST_CODE);
 
-    out->type = TM;
-    out->app_id = pkt->dest_id; 
-    out->dest_id = pkt->app_id;
+    subtype = TC_VR_ACCEPTANCE_SUCCESS;
 
     cnv.cnv16[0] = pkt->app_id;
     out->data[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
@@ -42,32 +51,15 @@ OBC_returnStateTypedef verify_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t re
     out->data[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
     out->data[3] = cnv.cnv8[0];
 
-    out->ser_type = TC_VERIFICATION_SERVICE;
+    out->len = 4;
 
     if(res != R_OK) {
         out->data[4] = res;
-        subtype++;
+        subtype = TC_VR_ACCEPTANCE_FAILURE;
+        out->len = 5;
     }
-    out->ser_subtype = subtype;
 
-    return R_OK;
-}
-
-OBC_returnStateTypedef verification_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer) {
-
-    ASSERT(pkt != NULL && buf != NULL && buf_pointer != NULL && pkt->data != NULL);
-
-    buf[10] = pkt->data[0];
-    buf[11] = pkt->data[1];
-    buf[12] = pkt->data[2];
-    buf[13] = pkt->data[3];
-
-    if(pkt->ser_subtype == TC_TM_SER_TC_VER_ACC_SUCC || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_START_SUCC || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_COMP_SUCC ) {
-        buf_pointer += 4;
-    } else if(pkt->ser_subtype == TC_TM_SER_TC_VER_ACC_FAIL || pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_START_FAIL|| pkt->ser_subtype == TC_TM_SER_TC_VER_EXEC_COMP_FAIL) {
-        buf[14] = pkt->data[4]; 
-        buf_pointer += 5;
-    } else { return R_ERROR; }
+    crt_pkt(out, pkt->dest_id;, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->app_id;);
 
     return R_OK;
 }

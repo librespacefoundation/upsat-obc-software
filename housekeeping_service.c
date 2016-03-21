@@ -2,8 +2,7 @@
 
 void hk_SCH() {
 
-//temp
-struct tc_tm_pkt pkt;
+    tc_tm_pkt pkt;
   
     hk_crt_pkt_TC(&pkt, EPS, 1);
     route_pkt(&pkt);
@@ -27,14 +26,12 @@ void clear_wod() {
 
 OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
 
-    uint8_t res, did, fid;
+    C_ASSERT(pkt != NULL && pkt->data != NULL) { return R_ERROR; }
 
-    ASSERT(pkt != NULL && pkt->data != NULL);
-
-    if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
-        hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data[0]);
+    if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
+        hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data);
         route_pkt(pkt);
-    } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 23) {
+    } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         if(pkt->app_id == EPS) {
             obc_status.batt_curr = pkt->data[1];
             obc_status.batt_volt = pkt->data[2];
@@ -47,48 +44,33 @@ OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
         }
     }
 
- //   did = pkt->data[0];
- //   fid = pkt->data[4];
- //   res = power_control_app_api( did, fid);
     return R_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
-    pkt->type = TC;
-    pkt->app_id = app_id; 
-    pkt->dest_id = OBC;
+    C_ASSERT(app_id < LAST_APP_ID) { return R_ERROR; }
+
+    pkt->ser_subtype = TC_HK_REPORT_PARAMETERS;
+
+    crt_pkt(pkt, app_id, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_LD_ACK_UPLINK, OBC);
 
     pkt->data[0] = sid;
-
-    pkt->ser_type = TC_HOUSEKEEPING_SERVICE;
-
-    pkt->ser_subtype = 21;
+    pkt->len = 1;
 
     return R_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
-    union _cnv cnv;
-
-    pkt->type = TC;
-    pkt->app_id = OBC; 
-    pkt->dest_id = app_id;
+OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
     pkt->data[0] = sid;
-
-    pkt->ser_type = TC_HOUSEKEEPING_SERVICE;
 
     if(sid == 3) {
-        pkt->ser_subtype = 21;
 
         //cnv.cnv32 = time.now();
-        pkt->data[1] = cnv.cnv8[3];
-        pkt->data[2] = cnv.cnv8[2];
-        pkt->data[3] = cnv.cnv8[1];
-        pkt->data[4] = cnv.cnv8[0];
+        cnv32_8(time.now(), pkt->data[1]);
+        pkt->len = 5;
     } else if(sid == 4) {
-        pkt->ser_subtype = 25;
 
         pkt->data[1] = obc_status.mode;
         pkt->data[2] = obc_status.batt_curr;
@@ -98,44 +80,10 @@ OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t si
         pkt->data[6] = obc_status.temp_eps;
         pkt->data[7] = obc_status.temp_batt;
         pkt->data[8] = obc_status.temp_comms;
+        pkt->len = 9;
     }
-    return R_OK;
-}
 
-OBC_returnStateTypedef hk_pack_pkt_api(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer) {
-
-    uint8_t sid;
-    sid = pkt->data[0];
-    buf[10] = sid;
-
-    if(pkt->ser_subtype == 21 ) {
-        buf_pointer += 1;
-    } else if(pkt->ser_subtype == 23) {
-
-        if( sid == 3) {
-            buf[11] = pkt->data[4];
-            buf[12] = pkt->data[3];
-            buf[13] = pkt->data[2];
-            buf[14] = pkt->data[1];
-        }
-        buf_pointer += 6;
-
-    } else if(pkt->ser_subtype == 25) {
-
-        if( sid != 4) { return R_ERROR; }
-
-        buf[11] = pkt->data[1];
-        buf[12] = pkt->data[2];
-        buf[13] = pkt->data[3];
-        buf[14] = pkt->data[4];
-        buf[15] = pkt->data[5];
-        buf[16] = pkt->data[7];
-        buf[17] = pkt->data[8];
-        buf[18] = pkt->data[9];
-
-        buf_pointer += 9;
-
-    } else { return R_ERROR; }
+    crt_pkt(pkt, OBC, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_HK_PARAMETERS_REPORT, app_id);
 
     return R_OK;
 }

@@ -1,29 +1,28 @@
 #include "route_verification.h"
 
 OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
+
+    OBC_returnStateTypedef res;
     uint16_t id;
 
-    if(pkt->type == TC) {
-        id = pkt->app_id;
-    } else if(pkt->type == TM) {
-        id = pkt->dest_id;
-    } else {
-        return R_ERROR;
-    }
+    C_ASSERT(pkt != NULL && pkt->data != NULL) { free_pkt(pkt); return R_ERROR; }
+    C_ASSERT(pkt->type == TC || pkt->type == TM) { free_pkt(pkt); return R_ERROR; }
+    C_ASSERT(pkt->app_id < LAST_APP_ID && pkt->dest_id < LAST_APP_ID) { free_pkt(pkt); return R_ERROR; }
 
-    if(id == OBC && pkt->ser_type == TC_HOUSEKEEPING_SERVICE && (pkt->ser_subtype == 21 || pkt->ser_subtype == 23)) {
-        hk_app(pkt);
-    } else if(id == OBC && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE && pkt->ser_subtype == 1) {
-        uint8_t fid = pkt->data[0];
-        if(fid == 1 || fid == 2 || fid == 3 ){
-            power_control_app(pkt);
-        } else {
-            return R_ERROR;
-        }
+    if(pkt->type == TC)         { id = pkt->app_id; } 
+    else if(pkt->type == TM)    { id = pkt->dest_id; }
+
+    if(id == OBC && pkt->ser_type == TC_HOUSEKEEPING_SERVICE) {
+        //C_ASSERT(pkt->ser_subtype == 21 || pkt->ser_subtype == 23) { free_pkt(pkt); return R_ERROR; }
+        res = hk_app(pkt);
+        verification_service_app(pkt, res);
+    } else if(id == OBC && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE) {
+        res = power_control_app(pkt);
     } else if(id == OBC && pkt->ser_type == TC_LARGE_DATA_SERVICE) {
-        large_data_app(pkt);
-    } else if(id == OBC && pkt->ser_type == TC_MASS_STORAGE_SERVICE && (pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13)) {
-        mass_storage_app(pkt);
+        res = large_data_app(pkt);
+    } else if(id == OBC && pkt->ser_type == TC_MASS_STORAGE_SERVICE) {
+        //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return R_ERROR; }
+        res = mass_storage_app(pkt);
     } else if(id == EPS) {
     } else if(id == ADCS) {
 
@@ -31,11 +30,10 @@ OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
     } else if(id == IAC) {
 
     } else if(id == GND) {
-        
-    } else {
-        return R_ERROR;
+
     }
 
+    free_pkt(pkt);
     return R_OK;
 }
 
