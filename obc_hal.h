@@ -14,8 +14,8 @@ void HAL_obc_SD_ON();
 
 void HAL_obc_SD_OFF();
 
-void HAL_obc_uart_tx(uint8_t *buf, uint16_t size);
+void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
-OBC_returnStateTypedef HAL_eps_uart_rx(uint8_t c);
+OBC_returnStateTypedef HAL_eps_uart_rx(uint8_t *c);
 
 #endif

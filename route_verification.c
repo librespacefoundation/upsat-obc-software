@@ -15,9 +15,9 @@ OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt) {
     if(id == OBC_APP_ID && pkt->ser_type == TC_HOUSEKEEPING_SERVICE) {
         //C_ASSERT(pkt->ser_subtype == 21 || pkt->ser_subtype == 23) { free_pkt(pkt); return R_ERROR; }
         res = hk_app(pkt);
-        verification_service_app(pkt, res);
+        verification_app(pkt, res);
     } else if(id == OBC_APP_ID && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE) {
-        res = power_control_app(pkt);
+        res = function_management_app(pkt);
     } else if(id == OBC_APP_ID && pkt->ser_type == TC_LARGE_DATA_SERVICE) {
         res = large_data_app(pkt);
     } else if(id == OBC_APP_ID && pkt->ser_type == TC_MASS_STORAGE_SERVICE) {
@@ -67,7 +67,6 @@ OBC_returnStateTypedef import_eps_pkt() {
 
     tc_tm_pkt *pkt;
     uint8_t c = 0;
-    uint16_t size = 0;
     uint16_t cnt = 0;
     uint16_t cnt_out = 0;
     uint8_t buf[TEST_ARRAY];
@@ -77,14 +76,14 @@ OBC_returnStateTypedef import_eps_pkt() {
     OBC_returnStateTypedef res_unpack;
     OBC_returnStateTypedef res_route; 
 
-    res = HAL_eps_uart_rx(&c, 1, 10);
+    res = HAL_eps_uart_rx(&c);
     if( res == R_OK ) {
-        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
+        res_deframe = HLDLC_deframe(buf, &cnt, c);
         if(res_deframe == R_EOT) {
             
             pkt = get_pkt(NORMAL);
             if(!C_ASSERT(pkt != NULL) == true) { return R_ERROR; }
-            res_unpack = unpack_pkt(buf, pkt, size);
+            res_unpack = unpack_pkt(buf, pkt, cnt);
             if(res_unpack == R_OK) { res_route = route_pkt(pkt); } 
             else {
                 //verify_pkt(&pkt_in, TC_ACK_ACC, res_route);

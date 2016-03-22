@@ -1,9 +1,9 @@
 #ifndef MASS_STORAGE_SERVICE_H
 #define MASS_STORAGE_SERVICE_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include "fatfs.h"
-
 #include "tc_tm.h"
 
 #define MS_SU_LOG          "/SU_LOG"

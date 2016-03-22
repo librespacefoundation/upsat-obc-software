@@ -362,7 +362,8 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
    uint8_t tx_flag = 0;
    uint8_t uart_temp[20];
-
+   pkt_pool_INIT();
+   mass_storage_init();
    sprintf(uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
    
