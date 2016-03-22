@@ -249,6 +249,7 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  there is no support for verification for obc, do we need that?
 //  should we move all utilities functions, like pack, route etc in one big function file?
 //  check that cnv functions are used correctly
