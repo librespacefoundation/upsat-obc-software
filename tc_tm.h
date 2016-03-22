@@ -249,6 +249,8 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  there is no support for verification for obc, do we need that?
+//  should we move all utilities functions, like pack, route etc in one big function file?
 //  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
