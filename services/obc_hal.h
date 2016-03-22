@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
-#include "../Inc/services.h"
+#include "services.h"
 
 void HAL_obc_SD_ON();
 

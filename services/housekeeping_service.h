@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "../Inc/services.h"
+#include "services.h"
 
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];

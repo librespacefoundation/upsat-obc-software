@@ -2,7 +2,7 @@
 #define __HLDLC_H
 
 #include <stdint.h>
-#include "../Inc/services.h"
+#include "services.h"
 
 #define HLDLC_START_FLAG        0x7E
 #define HLDLC_CONTROL_FLAG      0x7D

@@ -180,10 +180,10 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
 //    }
     
     uint8_t pos = find_schedule_pos(sch_mem_pool);
-    if (!C_ASSERT(pos<SC_MAX_STORED_SCHEDULES)==true){
-        //prob on pos.
-        return SATR_ERROR;
-    }
+//    if (!C_ASSERT(pos<SC_MAX_STORED_SCHEDULES)==true){
+//        //prob on pos.
+//        return SATR_ERROR;
+//    }
         
     /*Copy the packet into the array*/
 //    mem_schedule[pos] = *theSchpck;
@@ -248,19 +248,19 @@ SAT_returnState time_shift_sel_schedule(SC_pkt* sch_mem_pool, uint8_t apid, uint
     
     uint8_t pos = 0;
     while( pos<SC_MAX_STORED_SCHEDULES ){
-        if( sch_mem_pool[pos].app_id == apid && 
-            sch_mem_pool[pos].seq_count == seqcount)
-        {
-            /*this is the schedule to be timeshifted. shiftit*/
-            if (sch_mem_pool[pos].sch_evt == ABSOLUTE ){
-            /*convert the secs to utc and add them or remove them from the time field.*/
-            
-        }
-            else
-            if(sch_mem_pool[pos].sch_evt == QB50EPC ){
-                /*add them or remove them from the time field. Error if */
-            }
-        }
+//        if( sch_mem_pool[pos].app_id == apid && 
+//            sch_mem_pool[pos].seq_count == seqcount)
+//        {
+//            /*this is the schedule to be timeshifted. shiftit*/
+//            if (sch_mem_pool[pos].sch_evt == ABSOLUTE ){
+//            /*convert the secs to utc and add them or remove them from the time field.*/
+//            
+//        }
+//            else
+//            if(sch_mem_pool[pos].sch_evt == QB50EPC ){
+//                /*add them or remove them from the time field. Error if */
+//            }
+//        }
     }
     return SATR_OK;
 }

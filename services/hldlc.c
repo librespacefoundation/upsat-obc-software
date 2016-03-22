@@ -1,4 +1,4 @@
-#include "../Inc/hldlc.h"
+#include "hldlc.h"
 
 /* it should return the status*/
 SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, uint8_t c, uint16_t *size) {

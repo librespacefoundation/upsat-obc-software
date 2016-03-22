@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "../Inc/services.h"
+#include "services.h"
 
 extern SAT_returnState hk_app(tc_tm_pkt *pkt);
 extern SAT_returnState power_control_app(tc_tm_pkt *pkt);
