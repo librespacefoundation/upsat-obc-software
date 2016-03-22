@@ -2,8 +2,7 @@
 #define __POWER_CTRL_H
 
 #include <stdint.h>
-
-#include "tc_tm.h"
+#include "services.h"
 
 extern void HAL_obc_SD_ON();
 extern void HAL_obc_SD_OFF();

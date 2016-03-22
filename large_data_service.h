@@ -2,8 +2,7 @@
 #define MASS_STORAGE_SERVICE_H
 
 #include <stdint.h>
-
-#include "tc_tm.h"
+#include "services.h"
 #include "mass_storage_service.h"
 
 #define LD_PKT_DATA             512

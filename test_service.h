@@ -2,8 +2,7 @@
 #define TEST_SERVICE_H
 
 #include <stdint.h>
-
-#include "tc_tm.h"
+#include "services.h"
 
 extern void *get_pkt(uint8_t mode);
 extern uint32_t time_now();

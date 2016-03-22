@@ -1,4 +1,4 @@
-#include "tc_tm.h"
+#include "services.h"
 
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = { 

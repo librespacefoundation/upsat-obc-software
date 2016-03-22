@@ -2,7 +2,7 @@
 #define __HOUSEKEEPING_SERVICE_H
 
 #include <stdint.h>
-#include "tc_tm.h"
+#include "services.h"
 
 extern uint32_t time_now();
 extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
