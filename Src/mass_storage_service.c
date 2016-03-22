@@ -1,6 +1,6 @@
 #include "../Inc/mass_storage_service.h"
 
-OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
+SAT_returnState mass_storage_app(tc_tm_pkt *pkt) {
 
 	union _cnv cnv;
 	uint8_t sid, mode;
@@ -9,7 +9,7 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 		sid = pkt->data[0];
 		mode = pkt->ser_subtype;
 		mass_storage_mode_api(sid, mode);
-		return R_OK;
+		return SATR_OK;
 	} else if(pkt->ser_subtype == 11 ) {
 		sid = pkt->data[4];
 		// check endianess
@@ -19,6 +19,6 @@ OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt) {
 		cnv.cnv8[3] = pkt->data[3];
 		mode = pkt->ser_subtype;
 		mass_storage_delete_api(sid, cnv.cnv32);
-		return R_OK;
+		return SATR_OK;
 	}
 }

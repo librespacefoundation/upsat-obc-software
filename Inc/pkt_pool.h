@@ -2,7 +2,7 @@
 #define __PKT_POOL_H
 
 #include <stdint.h>
-#include "../Inc/tc_tm.h"
+#include "../Inc/services.h"
 
 #define NORMAL		1
 #define EXTENDED	2
@@ -25,9 +25,9 @@ struct _pkt_pool{
 
 void *get_pkt(uint8_t mode);
 
-OBC_returnStateTypedef free_pkt(tc_tm_pkt *pkt);
+SAT_returnState free_pkt(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef pkt_pool_INIT();
+SAT_returnState pkt_pool_INIT();
 
 void pkt_pool_GC();
 

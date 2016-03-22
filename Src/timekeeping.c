@@ -30,17 +30,17 @@ TaskFunction_t init_and_run_time(void* p){
     obc_gmt_boot_time.tm_monthday = 21;
     obc_gmt_boot_time.tm_month = 2;
     obc_gmt_boot_time.tm_hour = 21;
-    obc_gmt_boot_time.tm_min = 0b1011;
-    obc_gmt_boot_time.tm_sec=0;
+    obc_gmt_boot_time.tm_min = 53;
+    obc_gmt_boot_time.tm_sec=23;
     
     obc_gmt_time = obc_gmt_boot_time;
     
     /*TODO: maybe log here the boot time*/
     
-//    while(1){
-//        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 4 ,5000);
-//        HAL_Delay(500);
-//    }
+    while(1){
+        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 1 ,5000);
+        HAL_Delay(500);
+    }
     
 }
 
@@ -48,13 +48,13 @@ uint32_t get_seconds_from_last_bootAPI(){
     return boot_seconds;
 }
 
-OBC_returnStateTypedef set_seconds_from_last_bootAPI(uint32_t secs){
+SAT_returnState set_seconds_from_last_bootAPI(uint32_t secs){
     boot_seconds = secs;
-    return R_OK;
+    return SATR_OK;
 }
 
 
-OBC_returnStateTypedef calculate_qb50_seconds(OBCTime_Type* gmt_time){
+SAT_returnState calculate_qb50_seconds(OBCTime_Type* gmt_time){
     
     uint32_t years_from_2000_to_seconds = (gmt_time->tm_year - 2000)*31556926;  /*1 year (365.24 days) 31556926 seconds*/
     uint32_t this_years_month_to_seconds = (gmt_time->tm_month)*2629743;        /*1 month (30.44 days) 2629743 seconds*/
@@ -68,7 +68,7 @@ OBC_returnStateTypedef calculate_qb50_seconds(OBCTime_Type* gmt_time){
                     hours_to_secs+
                     minutes_to_secs+ (gmt_time->tm_sec);
     
-    return R_OK;
+    return SATR_OK;
 }
 
 ////seconds from start of current day

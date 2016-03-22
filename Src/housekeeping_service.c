@@ -24,7 +24,7 @@ void clear_wod() {
 		obc_status.temp_comms = 0;
 }
 
-OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
+SAT_returnState hk_app(tc_tm_pkt *pkt) {
 	uint8_t res, did, fid;
 
 	if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
@@ -46,10 +46,10 @@ OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
 	did = pkt->data[0];
 	fid = pkt->data[4];
 	res = power_control_app_api( did, fid);
-	return R_OK;
+	return SATR_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 
 	pkt->type = TC;
 	pkt->app_id = app_id; 
@@ -61,10 +61,10 @@ OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t si
 
 	pkt->ser_subtype = 21;
 
-	return R_OK;
+	return SATR_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
 	union _cnv cnv;
 
 	pkt->type = TC;
@@ -95,5 +95,5 @@ OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t si
 		pkt->data[7] = obc_status.temp_batt;
 		pkt->data[8] = obc_status.temp_comms;
 	}
-	return R_OK;
+	return SATR_OK;
 }

@@ -84,32 +84,32 @@ typedef enum {
     /* General Error State Codes
      * from 0-9
      */
-    R_PKT_ILLEGAL_APPID     = 0,
-    R_PKT_INV_LEN           = 1,
-    R_PKT_INC_CRC           = 2,
-    R_PKT_ILLEGAL_PKT_TP    = 3,
-    R_PKT_ILLEGAL_PKT_STP   = 4,
-    R_PKT_ILLEGAL_APP_DATA  = 5, 
-    R_OK                    = 6, /* related execution OK */
-    R_ERROR                 = 7, /* related execution ERROR */
-    R_EOT                   = 8, /* related execution ? */
-    R_NOK                   = 9, /* related execution Not OK, general error */
+    SATR_PKT_ILLEGAL_APPID     = 0,
+    SATR_PKT_INV_LEN           = 1,
+    SATR_PKT_INC_CRC           = 2,
+    SATR_PKT_ILLEGAL_PKT_TP    = 3,
+    SATR_PKT_ILLEGAL_PKT_STP   = 4,
+    SATR_PKT_ILLEGAL_APP_DATA  = 5, 
+    SATR_OK                    = 6, /* related execution OK */
+    SATR_ERROR                 = 7, /* related execution ERROR */
+    SATR_EOT                   = 8, /* related execution ? */
+    SATR_NOK                   = 9, /* related execution Not OK, general error */
     /* Scheduling Service Error State Codes
      * from 
      */
-    R_SCHEDULE_FULL         = 10, /* Schedule array is full */
-    R_SSCH_ID_INVALID       = 11, /* Subschedule ID invalid */
-    R_NMR_OF_TC_INVALID     = 12, /* Number of telecommands invalid */
-    R_INTRL_ID_INVALID      = 13, /* Interlock ID invalid */
-    R_ASS_INTRL_ID_INVALID  = 14, /* Assess Interlock ID invalid */
-    R_RLS_TIMET_ID_INVALID  = 15, /* relese time type ID invalid */
-    R_DEST_APID_INVALID     = 16, /* Destination APID in embedded TC is invalids */
-    R_TIME_INVALID          = 17, /* Release time of TC is invalid */
-    R_TIME_SPEC_INVALID     = 18, /* Release time of TC is specified in a invalid representation*/
-    R_INTRL_LOGIC_ERROR     = 19  /* The release time of telecommand is in the execution window
+    SATR_SCHEDULE_FULL         = 10, /* Schedule array is full */
+    SATR_SSCH_ID_INVALID       = 11, /* Subschedule ID invalid */
+    SATR_NMR_OF_TC_INVALID     = 12, /* Number of telecommands invalid */
+    SATR_INTRL_ID_INVALID      = 13, /* Interlock ID invalid */
+    SATR_ASS_INTRL_ID_INVALID  = 14, /* Assess Interlock ID invalid */
+    SATR_RLS_TIMET_ID_INVALID  = 15, /* relese time type ID invalid */
+    SATR_DEST_APID_INVALID     = 16, /* Destination APID in embedded TC is invalids */
+    SATR_TIME_INVALID          = 17, /* Release time of TC is invalid */
+    SATR_TIME_SPEC_INVALID     = 18, /* Release time of TC is specified in a invalid representation*/
+    SATR_INTRL_LOGIC_ERROR     = 19  /* The release time of telecommand is in the execution window
                                    * of its interlocking telecommand.
                                    */
-} OBC_returnStateTypedef;
+} SAT_returnState;
 
 /*define service types, according to: ECCS-E-70-41A*/
 #define TC_VERIFICATION_SERVICE         1
@@ -174,8 +174,8 @@ typedef struct {
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
-OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
+SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 
-OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
+SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
 #endif

@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 
-#include "../Inc/tc_tm.h"
+#include "../Inc/services.h"
 
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t app_id_verification[MAX_APP_ID];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
-extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
-extern OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
+extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
+extern SAT_returnState power_control_app_api(uint8_t did, uint8_t fid);
 
 struct _obc_status {
 	uint8_t mode;
@@ -24,11 +24,11 @@ struct _obc_status {
 
 }obc_status;
 
-OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt);
+SAT_returnState hk_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
-OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
 void hk_SCH();
 

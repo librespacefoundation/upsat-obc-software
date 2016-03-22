@@ -1,6 +1,6 @@
 #include "../Inc/serial.h"
 
-OBC_returnStateTypedef serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
+SAT_returnState serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 	uint8_t buf_in[TEST_ARRAY], buf_out[TEST_ARRAY];
 	struct tc_tm_pkt pkt_in, pkt_out;
 	uint8_t buf_frm_in[TEST_ARRAY], buf_frm_out[TEST_ARRAY];
@@ -16,7 +16,7 @@ OBC_returnStateTypedef serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 		do {
 			res_out = HLDLC_frame( &c_out, buf_out, &cnt_out, size_out);
 			buf_frm_out[i++] = c_out;	
-		} while( res_out != R_EOT || res_out != R_ERROR);
+		} while( res_out != SATR_EOT || res_out != SATR_ERROR);
 
 		HAL_UART_Transmit(&huart, buf_frm_out, i, 10);
 	}
@@ -24,9 +24,9 @@ OBC_returnStateTypedef serial_app(UART_HandleTypeDef huart, uint8_t tx_flag) {
 	res_uart = HAL_UART_Receive(&huart, &c_in, 1, 10);
 	if( res_uart == HAL_OK ) {
 		res_in = HLDLC_deframe(buf_in, &cnt_in, c_in, &size_in);
-		if(res_in == R_EOT) {
+		if(res_in == SATR_EOT) {
 			res2_in = unpack_pkt(buf_in, &pkt_in, size_in);
-			if(res2_in == R_OK) {
+			if(res2_in == SATR_OK) {
 				res2_in=route_pkt(&pkt_in);
 			} else {
 				verify_pkt(&pkt_in, TC_ACK_ACC, res2_in);

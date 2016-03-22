@@ -13,15 +13,15 @@
 /* Declares the maximum available space for 
  * on-memory loaded schedule commands
  */
-#define MAX_STORED_SCHEDULES 15
+#define SC_MAX_STORED_SCHEDULES 15
 
-#include "tc_tm.h"
+#include "services.h"
 
 /**/
 typedef enum {
     ALL=0,
     SUBSET
-}Schedule_options_type;
+}SC_options_type;
 
 typedef enum {
     /* The 'release_time' member
@@ -44,9 +44,13 @@ typedef enum {
      * specified on the Scheduling_pck is relative to the seconds passed from
      * QB50 epoch (01/01/2000 00:00:00 UTC).
      *  time.*/        
-    QB50EPC=4
+    QB50EPC=4,
+    /*
+     * 
+     */        
+    LAST_EVENTTIME=5
             
-}Scheduling_event_time_type;
+}SC_event_time_type;
  
 /* (Page 105-106 of ECSS-E-70-41A document)
  * Schedule command structure:
@@ -56,14 +60,15 @@ typedef struct {
         /* This is the application id that the telecommand it is destined to.
          * This info will be extracted from the encapsulated TC packet.
          */
-    uint8_t app_id;
+//    TC_TM_app_id app_id;
     
         /* This is the sequence count of the telecommand packet.
          * This info will be extracted (?) from the encapsulated TC packet. (?)
          */
-    uint8_t seq_count;
+    uint16_t seq_count;
     
         /* If the specific schedule command is enabled.
+         * This is to be changed by Subtype1,2 calls.
          * Enabled = 1, Disabled = 0.
          */
     uint8_t enabled;
@@ -78,7 +83,7 @@ typedef struct {
          * For this specific implementation is set to 1 (one) Telecommand
          * per Schedule.
          */
-    uint8_t num_of_sche_tel;
+    uint8_t num_of_sch_tc;
     
         /* The number of interlock id to be set by this telecommand.
          * For this specific implementation is set to 0 (zero)
@@ -101,7 +106,7 @@ typedef struct {
         /* Determines the release type for the telecommand.
          * 
          */
-    Scheduling_event_time_type schdl_envt;
+    SC_event_time_type sch_evt;
     
         /* Absolute or relative time of telecommand execution,
          * this field has meaning relative to schdl_envt member.
@@ -118,19 +123,20 @@ typedef struct {
         /* The actual telecommand packet to be scheduled and executed
          * 
          */
-    tc_tm_pkt telecmd_pck;
+    tc_tm_pkt tc_pck;
         
         /* Declares a schedule valid or invalid.
-         * If a schedule is noted as invalid, it can be replaced 
+         * If a schedule is noted as !valid, it can be replaced 
          * by a new one.
          * When a schedule goes for execution, 
          * automatically becomes invalid.
+         * Valid=1, Invalid=0
          */
     uint8_t valid;
     
-}Schedule_pck;
+}SC_pkt;
 
-extern Schedule_pck mem_schedule[MAX_STORED_SCHEDULES];
+extern SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
 
 /* Defines the state of the Scheduling service,
  * if enabled the release of TC is running.
@@ -144,40 +150,45 @@ static scheduling_enabled = 1;
  */
 TaskFunction_t init_and_run_schedules(void*p);
 
+/* To serve as unique entry point to the Service.
+ * To be called from route_packet. 
+ */
+SAT_returnState scheduling_app(tc_tm_pkt* spacket);
+
 /*
  * Returns R_OK if scheduling is enabled and running.
  * Returns R_NOK if scheduling is disabled.  
  */
-OBC_returnStateTypedef scheduling_stateAPI();
+SAT_returnState scheduling_state_api();
 
 /* Enables / Disables the scheduling execution as a service.
  * Enable state = 1
  * Disable state = 0
  * Return R_OK, on successful state alteration.
  */
-OBC_returnStateTypedef edit_schedule_stateAPI(tc_tm_pkt* spacket);
+SAT_returnState edit_schedule_stateAPI(tc_tm_pkt* spacket);
 
 /* Reset the schedule memory pool.
  * Marks every schedule struct as invalid and eligible for allocation.
  * 
  */
-OBC_returnStateTypedef reset_scheduleAPI(Schedule_pck* sche_mem_pool);
+SAT_returnState reset_scheduleAPI(SC_pkt* sche_mem_pool);
 
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
  */
-OBC_returnStateTypedef insert_stc_in_scheduleAPI(Schedule_pck* sch_mem_pool,
-                                                  Schedule_pck* theSchpck );
+SAT_returnState insert_stc_in_scheduleAPI(SC_pkt* sch_mem_pool,
+                                          SC_pkt* theSchpck );
 
 /* Removes a given Schedule_pck from the schedule array
  * * Service Subtype 5
  */
-OBC_returnStateTypedef remove_stc_from_scheduleAPI( Schedule_pck theSchpck );
+SAT_returnState remove_stc_from_scheduleAPI( SC_pkt theSchpck );
 
 /* Remove Schedule_pck from schedule over a time period (OTP)
  * * Service Subtype 6
  */
-OBC_returnStateTypedef remove_from_scheduleOTPAPI( Schedule_pck theSchpck );
+SAT_returnState remove_from_scheduleOTPAPI( SC_pkt theSchpck );
 
 /* Time shifts all Schedule_pcks on the Schedule.
  * int32_t secs parameter can be positive or negative seconds value.
@@ -185,7 +196,7 @@ OBC_returnStateTypedef remove_from_scheduleOTPAPI( Schedule_pck theSchpck );
  * if negative the seconds are substracted from the Schedule's TC time value. 
  * Service Subtype 15.
  */
-OBC_returnStateTypedef time_shift_all_schedulesAPI( Schedule_pck* sch_mem_pool, int32_t secs );
+SAT_returnState time_shift_all_schedulesAPI( SC_pkt* sch_mem_pool, int32_t secs );
 
 #endif /* SCHEDULING_SERVICE_H */
 

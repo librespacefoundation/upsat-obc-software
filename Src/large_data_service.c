@@ -1,15 +1,15 @@
 #include "../Inc/large_data_service.h"
 
-OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt) {
-    OBC_returnStateTypedef res;
+SAT_returnState large_data_app(tc_tm_pkt *pkt) {
+    SAT_returnState res;
 
     res = ld_api(pkt);
     ld_crt_pkt(tc_tm_pkt *pkt, res);
 
-    return R_OK;
+    return SATR_OK;
 }
 
-OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
+SAT_returnState ld_api(tc_tm_pkt *pkt) {
 
     if(ld_status.state == FREE && (pkt->dest_id == IAC || pkt->dest_id == GND) && pkt->ser_subtype == FIRST_DOWNLINK) {
 
@@ -20,11 +20,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         sid = pkt->data[x];
 
         if( pkt->dest_id == IAC && sid != FOTOS) {
-            return R_ERROR;
+            return SATR_ERROR;
         } else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
-            return R_ERROR;
+            return SATR_ERROR;
         } else {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.app_id = pkt->dest_id;
@@ -45,13 +45,13 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint8_t sid;
 
         if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_seq = pkt->data[x];
 
         if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.last_ld_seq++;
@@ -67,13 +67,13 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint8_t sid;
 
         if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_seq = pkt->data[x];
 
         if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.last_ld_seq++;
@@ -94,11 +94,11 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         sid = pkt->data[x];
 
         if( pkt->dest_id == IAC && sid != FOTOS) {
-            return R_ERROR;
+            return SATR_ERROR;
         } else if(  pkt->dest_id == GND && (sid != SU_SCRIPT_1 || sid != SU_SCRIPT_2 || sid != SU_SCRIPT_3 || sid != SU_SCRIPT_4 || sid != SU_SCRIPT_5 || sid != SU_SCRIPT_6 || sid != SU_SCRIPT_7)) {
-            return R_ERROR;
+            return SATR_ERROR;
         } else {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.app_id = pkt->dest_id;
@@ -120,13 +120,13 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint8_t sid;
 
         if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_seq = pkt->data[x];
 
         if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.last_ld_seq++;
@@ -144,13 +144,13 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint8_t sid;
 
         if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_seq = pkt->data[x];
 
         if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.last_ld_seq++;
@@ -168,13 +168,13 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         uint8_t sid;
 
         if(ld_status.app_id != pkt->dest_id) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_seq = pkt->data[x];
 
         if(ld_status.last_ld_seq != ld_seq - 1) {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
         ld_status.last_ld_seq++;
@@ -186,8 +186,8 @@ OBC_returnStateTypedef ld_api(tc_tm_pkt *pkt) {
         ld_status.timeout = 0;
     
     } else {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
-    return R_OK;
+    return SATR_OK;
 }

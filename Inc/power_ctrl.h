@@ -3,15 +3,15 @@
 
 #include <stdint.h>
 
-#include "../Inc/tc_tm.h"
+#include "../Inc/services.h"
 #include "../Inc/verification_service.h"
 
 extern void HAL_obc_SD_ON();
 
 extern void HAL_obc_SD_OFF();
 
-OBC_returnStateTypedef power_control_app(tc_tm_pkt *pkt);
+SAT_returnState power_control_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
+SAT_returnState power_control_app_api(uint8_t did, uint8_t fid);
 
 #endif

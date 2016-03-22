@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#include "../Inc/tc_tm.h"
+#include "../Inc/services.h"
 
-extern OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt);
-extern OBC_returnStateTypedef power_control_app(tc_tm_pkt *pkt);
-extern OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt);
+extern SAT_returnState hk_app(tc_tm_pkt *pkt);
+extern SAT_returnState power_control_app(tc_tm_pkt *pkt);
+extern SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
 
 const uint8_t app_id_verification[MAX_APP_ID] = { 0, 1, 0, 0, 0, 0 };
 
@@ -60,6 +60,6 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
+SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 #endif

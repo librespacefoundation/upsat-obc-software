@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "../Inc/tc_tm.h"
+#include "../Inc/services.h"
 
 #define SU_LOG
 #define SU_SCRIPT_1
@@ -20,20 +20,20 @@
 #define DELETE_ALL      0
 #define DELETE_BEFORE   1
 
-OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt);
+SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef mass_storage_mode_api(uint8_t sid, uint8_t mode);
+SAT_returnState mass_storage_mode_api(uint8_t sid, uint8_t mode);
 
-OBC_returnStateTypedef mass_storage_delete_api(uint8_t sid, uint32_t to);
+SAT_returnState mass_storage_delete_api(uint8_t sid, uint32_t to);
 
-OBC_returnStateTypedef mass_storage_report_api(uint8_t sid, uint8_t *buf);
+SAT_returnState mass_storage_report_api(uint8_t sid, uint8_t *buf);
 
-OBC_returnStateTypedef mass_storage_downlink_api(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part);
+SAT_returnState mass_storage_downlink_api(uint8_t sid, uint32_t file, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-OBC_returnStateTypedef mass_storage_store_api(uint8_t sid, uint32_t *file, uint8_t *buf, uint16_t *size, uint16_t *part);
+SAT_returnState mass_storage_store_api(uint8_t sid, uint32_t *file, uint8_t *buf, uint16_t *size, uint16_t *part);
 
-OBC_returnStateTypedef mass_storage_move_api(uint8_t sid, uint32_t file_from, uint32_t file_to);
+SAT_returnState mass_storage_move_api(uint8_t sid, uint32_t file_from, uint32_t file_to);
 
-OBC_returnStateTypedef ms_crt_pkt_report(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
+SAT_returnState ms_crt_pkt_report(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid);
 
 #endif

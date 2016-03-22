@@ -1,4 +1,4 @@
-#include "tc_tm.h"
+#include "services.h"
 #include "route_verification.h"
 
 uint8_t checkSum(const uint8_t *data, uint16_t size) {
@@ -12,7 +12,7 @@ uint8_t checkSum(const uint8_t *data, uint16_t size) {
 }
 
 /*Must check for endianess*/
-OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size) {
+SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size) {
     union _cnv cnv;
     uint8_t tmp_crc[2];
 
@@ -51,55 +51,55 @@ OBC_returnStateTypedef unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint
     pkt->dest_id = buf[9];
 
     if(app_id_verification[pkt->app_id] != 1) {
-        return R_PKT_ILLEGAL_APPID;
+        return SATR_PKT_ILLEGAL_APPID;
     }
 
     if ( pkt->len != size - 7 ) {
-        return R_PKT_INV_LEN;
+        return SATR_PKT_INV_LEN;
     }
 
     if(tmp_crc[0] != tmp_crc[1]) {
-        return R_PKT_INC_CRC;
+        return SATR_PKT_INC_CRC;
     }
 
     if(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) {
-        return R_PKT_ILLEGAL_PKT_TP;
+        return SATR_PKT_ILLEGAL_PKT_TP;
     }
 
     if(ver != 0) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     if(tc_pus != 1) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     if(ccsds_sec_hdr != 0) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     if(pkt->type != TC && pkt->type != TM) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     if(dfield_hdr != 1) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     if(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     for(int i = 0; i < pkt->len-4; i++) {
         pkt->data[i] = buf[10+i];
     }
 
-    return R_OK;
+    return SATR_OK;
 }
 
 
 /*buf: buffer to store the data to be sent, pkt: the data to be stored in the buffer, size: size of the array*/
-OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
+SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
     union _cnv cnv;
     uint8_t buf_pointer;
@@ -119,7 +119,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     } else if(pkt->type == TC) {
         buf[6] = ( ECSS_SEC_HDR_FIELD_FLG << 7 | ECSS_PUS_VER << 4 | pkt->ack);
     } else {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     buf[7] = pkt->ser_type;
@@ -141,7 +141,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
             buf[14] = pkt->data[4]; 
             buf_pointer = 15;
         } else {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
     } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE ) {
@@ -164,7 +164,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
         } else if(pkt->ser_subtype == 25) {
 
             if( sid != 4) {
-                return R_ERROR;
+                return SATR_ERROR;
             }
 
             buf[11] = pkt->data[1];
@@ -178,7 +178,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
             buf_pointer = 19;
         } else {
-            return R_ERROR;
+            return SATR_ERROR;
         }
 
     } else if(pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE && pkt->ser_subtype == 1) {
@@ -193,7 +193,7 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
         buf_pointer = 15;
 
     } else {
-        return R_ERROR;
+        return SATR_ERROR;
     }
 
     /*check if this is correct*/
@@ -203,5 +203,5 @@ OBC_returnStateTypedef pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
     buf[buf_pointer] = checkSum(buf, buf_pointer-1);
     *size = buf_pointer;
-    return R_OK;
+    return SATR_OK;
 }

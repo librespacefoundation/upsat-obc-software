@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //#include <time.h>
-#include "tc_tm.h"
+#include "services.h"
 
 typedef struct{
     uint8_t tm_sec;       /* seconds, range 0 to 59          */
@@ -19,7 +19,7 @@ typedef struct{
     uint8_t tm_hour;      /* hours, range 0 to 23             */
     uint8_t tm_monthday;  /* day of the month, range 1 to 31  */
     uint8_t tm_month;     /* month, range 0 to 11             */
-    uint16_t tm_year;      /* The number of years since 1970  */
+    uint16_t tm_year;     /* The number of years since 1970  */
     uint8_t tm_weeday;    /* day of the week, range 0 to 6    */
     uint8_t tm_yearday;   /* day in the year, range 0 to 365  */
     uint8_t tm_isdst;     /* daylight saving time             */
@@ -64,11 +64,11 @@ TaskFunction_t init_and_run_time(void*p);
 /* Sets the system's seconds from current boot.
  * This call is always successful, returns R_OK.
  */
-OBC_returnStateTypedef set_seconds_from_last_bootAPI(uint32_t secs);
+SAT_returnState set_seconds_from_last_bootAPI(uint32_t secs);
 
 /* Calculates the seconds passed from 
  * 01/01/2000 00:00:00 UTC.
  */
-OBC_returnStateTypedef calculate_qb50_seconds(OBCTime_Type* gmt_time);
+SAT_returnState calculate_qb50_seconds(OBCTime_Type* gmt_time);
 
 #endif /* APPLICATION_USER_TIMEKEEPING_H_ */
