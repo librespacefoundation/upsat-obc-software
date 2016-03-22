@@ -86,20 +86,20 @@
 #define TM 0
 
 typedef enum {  
-R_PKT_ILLEGAL_APPID     = 0,
-R_PKT_INV_LEN           = 1,
-R_PKT_INC_CRC           = 2,
-R_PKT_ILLEGAL_PKT_TP    = 3,
-R_PKT_ILLEGAL_PKT_STP   = 4,
-R_PKT_ILLEGAL_APP_DATA  = 5,
-R_OK                    = 6,
-R_ERROR                 = 7,
-R_EOT                   = 8,
-R_CRC_ERROR             = 9,
-R_PKT_ILLEGAL_ACK       = 10,
-R_ALREADY_SERVICING     = 11,
-R_LAST                  = 12
-}OBC_returnStateTypedef;
+SATR_PKT_ILLEGAL_APPID     = 0,
+SATR_PKT_INV_LEN           = 1,
+SATR_PKT_INC_CRC           = 2,
+SATR_PKT_ILLEGAL_PKT_TP    = 3,
+SATR_PKT_ILLEGAL_PKT_STP   = 4,
+SATR_PKT_ILLEGAL_APP_DATA  = 5,
+SATR_OK                    = 6,
+SATR_ERROR                 = 7,
+SATR_EOT                   = 8,
+SATR_CRC_ERROR             = 9,
+SATR_PKT_ILLEGAL_ACK       = 10,
+SATR_ALREADY_SERVICING     = 11,
+SATR_LAST                  = 12
+}SAT_returnState;
 
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
@@ -227,7 +227,7 @@ typedef struct {
     uint8_t seq_flags; /* 3 bits, definition in TC_SEQ_xPACKET */
     uint16_t seq_count; /* 14 bits, packet counter, should be unique for each app id */
 
-    uint16_t len; /* 16 bits, C = (Number of octets in packet data field) - 1 */
+    uint16_t len; /* 16 bits, C = (Number of octets in packet data field) - 1, on struct is the size of data without the headers. on array is with the headers */
 
     uint8_t ack; /* 4 bits, definition in TC_ACK_xxxx 0 if its a TM */
     uint8_t ser_type; /* 8 bit, service type */
@@ -235,9 +235,9 @@ typedef struct {
 
     /*optional*/
     //uint8_t pckt_sub_cnt; /* 8 bits*/
-    uint16_t dest_id;
+    uint16_t dest_id;   /*on TC is the source id, on TM its the destination id*/
 
-    uint8_t *data; /* variable data, this should be fixed array */
+    uint8_t *data; /* variable data, this should be fixed array, normal or extended */
 /*  uint8_t padding;  x bits, padding for word alligment */
 
 //  uint16_t crc; /* CRC or checksum, mission specific*/
@@ -249,6 +249,7 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  there is no support for verification for obc, do we need that?
 //  should we move all utilities functions, like pack, route etc in one big function file?
