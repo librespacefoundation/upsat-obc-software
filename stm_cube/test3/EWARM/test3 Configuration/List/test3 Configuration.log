@@ -17616,7 +17616,6 @@ Marking from fragment #1883 .debug_info (83 main.o)
   Marking symbol .text_16                                (38 main.o)
   Marking symbol .debug_info7                            (62 main.o)
   Marking symbol .debug_info7                            (62 main.o)
-  Marking symbol .debug_info7                            (62 main.o)
   Marking symbol .debug_loc93                            (99 main.o)
 Marking from fragment #1891 .debug_loc (93 main.o)
 Marking from fragment #1821 .debug_info (7 main.o)
@@ -21028,12 +21027,12 @@ Unused fragments:
                                  0x19c      0xe
                                  0x1aa     0x1a
                                  0x1c4     0x12
-                                 0x1d6     0x1e
-                                 0x1f4      0x4
-                                 0x1f8     0x20
-                                 0x218     0x4c
-                                 0x264     0x24
-                                 0x288      0xc
+                                 0x1d6     0x3e
+                                 0x214      0x4
+                                 0x218     0x20
+                                 0x238     0x4c
+                                 0x284     0x24
+                                 0x2a8      0xc
   __DLIB_PERTHREAD          11     0x0      0x0  large_data_service.o
   __DLIB_PERTHREAD_init     12     0x0      0x0  large_data_service.o
   __DLIB_PERTHREAD          10     0x0      0x0  list.o

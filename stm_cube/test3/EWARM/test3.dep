@@ -298,6 +298,7 @@
       <file>$PROJ_DIR$\test3 Configuration\Obj\event_groups.__cstat.et</file>
       <file>$PROJ_DIR$\test3 Configuration\Obj\fatfs.__cstat.et</file>
       <file>$PROJ_DIR$\test3 Configuration\Obj\stm32f4xx_hal_rcc.__cstat.et</file>
+      <file>$PROJ_DIR$\test3 Configuration\List\test3 Configuration.log</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\..\Src\bsp_driver_sd.c</name>
@@ -461,6 +462,10 @@
       </outputs>
       <inputs>
         <tool>
+          <name>BICOMP</name>
+          <file> 45 42 168 258 288 164 144 172 245 268 47 156 85 128 171 161 115 48 138 80 62 86 270 158 140 28 124 46 287 66 123 104 165 152 93 35 263 170 29 91 261 101 274 264 271 269 262 266 131 122 14 134 151 253 243 155</file>
+        </tool>
+        <tool>
           <name>ICCARM</name>
           <file> 115 128 171 66 45 164 91 42 48 47 245 172 264 271 138 80 101 269 62 144 274 261 29 161 28 268 170 123 168 104 262 165 152 266 86 93 270 35 131 263 85 287 156 122 124 151 288 46 253 243 158 155 14 258 134 140</file>
         </tool>
@@ -606,7 +611,7 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 72 76</file>
+          <file> 72 76 292</file>
         </tool>
       </outputs>
     </file>
@@ -615,7 +620,7 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 76</file>
+          <file> 76 292</file>
         </tool>
       </outputs>
       <inputs>
@@ -1415,7 +1420,7 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 47 48 223 264 180 237 245 271 161 28 221 172 138 80 268</file>
+          <file> 47 245 48 223 264 180 237 271 161 28 221 172 138 80 268</file>
         </tool>
         <tool>
           <name>ICCARM</name>
@@ -1666,10 +1671,6 @@
         </tool>
       </inputs>
     </file>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
-    </forcedrebuild>
   </configuration>
 </project>
 

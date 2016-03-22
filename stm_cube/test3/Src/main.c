@@ -61,6 +61,8 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+extern OBC_returnStateTypedef mass_storage_init();
+extern OBC_returnStateTypedef pkt_pool_INIT();
 
 /* USER CODE END PFP */
 
@@ -360,7 +362,6 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
-   uint8_t tx_flag = 0;
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    mass_storage_init();

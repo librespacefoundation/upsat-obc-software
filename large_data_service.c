@@ -446,7 +446,7 @@ OBC_returnStateTypedef large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid
     if(!C_ASSERT(pkt != NULL) == true) { return R_ERROR; }
     crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, 0, dest_id); //what dest_id ?
 
-    cnv16_8(n, pkt->data[0]);
+    cnv16_8(n, &pkt->data[0]);
     pkt->data[2] = sid;
 
     return R_OK;
@@ -458,7 +458,7 @@ OBC_returnStateTypedef large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t
     if(!C_ASSERT(pkt != NULL) == true) { return R_ERROR; }
     crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, TC_LD_ACK_UPLINK, dest_id);
 
-    cnv16_8(n, pkt->data[0]);
+    cnv16_8(n, &pkt->data[0]);
 
     pkt->len = 2;
 
@@ -492,12 +492,12 @@ OBC_returnStateTypedef large_data_timeout() {
 
     tc_tm_pkt *temp_pkt;
 
-    if(LD_status.state = LD_STATE_TRANSMITING) {
+    if(LD_status.state == LD_STATE_TRANSMITING) {
         large_data_abortPkt_api(temp_pkt, LD_status.app_id, TC_LD_ABORT_SE_DOWNLINK); 
         route_pkt(temp_pkt);
         return R_OK; 
     }
-    else if(LD_status.state = LD_STATE_RECEIVING) {
+    else if(LD_status.state == LD_STATE_RECEIVING) {
         large_data_abortPkt_api(temp_pkt, LD_status.app_id, TC_LD_ABORT_RE_UPLINK); 
         route_pkt(temp_pkt);
         return R_OK; 
