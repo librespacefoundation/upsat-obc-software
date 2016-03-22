@@ -147,64 +147,64 @@ typedef enum {
 #define EXTENDED    2
 
 typedef enum {  
-OBC_APP_ID      = 1,
-EPS_APP_ID      = 2,
-ADCS_APP_ID     = 3,
-COMMS_APP_ID    = 4,
-IAC_APP_ID      = 5,
-GND_APP_ID      = 6,
-LAST_APP_ID     = 7
+    OBC_APP_ID      = 1,
+    EPS_APP_ID      = 2,
+    ADCS_APP_ID     = 3,
+    COMMS_APP_ID    = 4,
+    IAC_APP_ID      = 5,
+    GND_APP_ID      = 6,
+    LAST_APP_ID     = 7
 }TC_TM_app_id;
 
 typedef enum {
-P_OFF       = 0,
-P_ON        = 1,
-P_RESET     = 2,
-SET_TIME    = 3,
-LAST_FUN_ID = 4
+    P_OFF       = 0,
+    P_ON        = 1,
+    P_RESET     = 2,
+    SET_TIME    = 3,
+    LAST_FUN_ID = 4
 }FM_fun_id;
 
 typedef enum {
-OBC_DEV_ID      = 1,
-EPS_DEV_ID      = 2,
-ADCS_DEV_ID     = 3,
-COMMS_DEV_ID    = 4,
-IAC_DEV_ID      = 5,
-SU_DEV_ID       = 6,
-GPS_DEV_ID      = 7,
-OBC_SD_DEV_ID   = 8,
-ADCS_SD_DEV_ID  = 9,
-LAST_DEV_ID     = 10
+    OBC_DEV_ID      = 1,
+    EPS_DEV_ID      = 2,
+    ADCS_DEV_ID     = 3,
+    COMMS_DEV_ID    = 4,
+    IAC_DEV_ID      = 5,
+    SU_DEV_ID       = 6,
+    GPS_DEV_ID      = 7,
+    OBC_SD_DEV_ID   = 8,
+    ADCS_SD_DEV_ID  = 9,
+    LAST_DEV_ID     = 10
 }FM_dev_id;
 
 typedef enum {  
-SU_SCRIPT_1         = 1,
-SU_SCRIPT_2         = 2,
-SU_SCRIPT_3         = 3,
-SU_SCRIPT_4         = 4,
-SU_SCRIPT_5         = 5,
-SU_SCRIPT_6         = 6,
-SU_SCRIPT_7         = 7,
-SU_LOG              = 8,
-EVENT_LOG           = 9,
-FOTOS               = 10,
-TMP_SU_SCRIPT_1     = 11,
-TMP_SU_SCRIPT_2     = 12,
-TMP_SU_SCRIPT_3     = 13,
-TMP_SU_SCRIPT_4     = 14,
-TMP_SU_SCRIPT_5     = 15,
-TMP_SU_SCRIPT_6     = 16,
-TMP_SU_SCRIPT_7     = 17,
-LAST_SID            = 18
+    SU_SCRIPT_1         = 1,
+    SU_SCRIPT_2         = 2,
+    SU_SCRIPT_3         = 3,
+    SU_SCRIPT_4         = 4,
+    SU_SCRIPT_5         = 5,
+    SU_SCRIPT_6         = 6,
+    SU_SCRIPT_7         = 7,
+    SU_LOG              = 8,
+    EVENT_LOG           = 9,
+    FOTOS               = 10,
+    TMP_SU_SCRIPT_1     = 11,
+    TMP_SU_SCRIPT_2     = 12,
+    TMP_SU_SCRIPT_3     = 13,
+    TMP_SU_SCRIPT_4     = 14,
+    TMP_SU_SCRIPT_5     = 15,
+    TMP_SU_SCRIPT_6     = 16,
+    TMP_SU_SCRIPT_7     = 17,
+    LAST_SID            = 18
 }MS_sid;
 
 typedef enum {  
-ALL         = 0,
-TO          = 1,
-BETWEEN     = 2,
-SPECIFIC    = 3,
-LAST_PART   = 4,
-LAST_MODE   = 5
+    ALL         = 0,
+    TO          = 1,
+    BETWEEN     = 2,
+    SPECIFIC    = 3,
+    LAST_PART   = 4,
+    LAST_MODE   = 5
 }MS_mode;
 
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
@@ -249,6 +249,7 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  add seq count in pack and global memory.
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  there is no support for verification for obc, do we need that?
