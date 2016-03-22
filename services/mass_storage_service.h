@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "fatfs.h"
 #include "services.h"
 
@@ -40,9 +41,15 @@ struct _MS_data {
     uint16_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
     uint16_t stores_fcount[3];  /*file count in each store, fotos, su_log, ev_log */
     uint32_t ev_temp_log;
-}MS_data;
+};
+
+extern struct _MS_data MS_data;
+
+extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
 extern uint32_t time_now();
+extern void cnv8_32(uint8_t *from, uint32_t *to);
+extern void cnv32_8(const uint32_t from, uint8_t *to);
 
 //ToDo
 //  error checking in return values of fatfs

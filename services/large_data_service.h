@@ -1,5 +1,5 @@
-#ifndef MASS_STORAGE_SERVICE_H
-#define MASS_STORAGE_SERVICE_H
+#ifndef LARGE_DATA_SERVICE_H
+#define LARGE_DATA_SERVICE_H
 
 #include <stdint.h>
 #include "services.h"
@@ -43,6 +43,8 @@ extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, ui
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 extern void cnv16_8(uint16_t from, uint8_t *to);
+extern void cnv8_16(uint8_t *from, uint16_t *to);
+
 
 //ToDo
 //  check again if app_id and dest_id are ok.
@@ -89,6 +91,7 @@ SAT_returnState large_data_intTx_api(tc_tm_pkt *pkt);
 
 SAT_returnState large_data_retryTx_api(tc_tm_pkt *pkt);
 
+SAT_returnState large_data_abort_api(tc_tm_pkt *pkt);
 
 SAT_returnState large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subtype);
 
@@ -97,7 +100,5 @@ SAT_returnState large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, u
 SAT_returnState large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id);
 
 SAT_returnState large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype);
-
-SAT_returnState large_data_abort(tc_tm_pkt *pkt);
 
 #endif

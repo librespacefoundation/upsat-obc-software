@@ -69,7 +69,7 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) 
     if(sid == 3) {
 
         //cnv.cnv32 = time.now();
-        cnv32_8(time_now(), pkt->data[1]);
+        cnv32_8(time_now(), &pkt->data[1]);
         pkt->len = 5;
     } else if(sid == 4) {
 

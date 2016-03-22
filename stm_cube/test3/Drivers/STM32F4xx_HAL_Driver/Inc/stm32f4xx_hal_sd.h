@@ -274,9 +274,9 @@ typedef enum
   */ 
 typedef enum
 {
-  SD_TRANSFESATR_OK    = 0,  /*!< Transfer success      */
+  SD_TRANSFER_OK    = 0,  /*!< Transfer success      */
   SD_TRANSFER_BUSY  = 1,  /*!< Transfer is occurring */
-  SD_TRANSFESATR_ERROR = 2   /*!< Transfer failed       */
+  SD_TRANSFER_ERROR = 2   /*!< Transfer failed       */
 
 }HAL_SD_TransferStateTypedef;
 /** 

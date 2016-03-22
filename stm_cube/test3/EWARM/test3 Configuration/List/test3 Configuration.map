@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.50.2.10312/W32 for ARM                22/Mar/2016  11:13:05
+# IAR ELF Linker V7.50.2.10312/W32 for ARM                23/Mar/2016  00:30:48
 # Copyright 2007-2015 IAR Systems AB.
 #
 #    Output file  =  
@@ -57,11 +57,11 @@
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\queue.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
-#        Configuration\Obj\route_verification.o"
-#        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\sd_diskio.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\service_utilities.o"
+#        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
+#        Configuration\Obj\services.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\startup_stm32f407xx.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
@@ -104,8 +104,6 @@
 #        Configuration\Obj\system_stm32f4xx.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\tasks.o"
-#        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
-#        Configuration\Obj\tc_tm.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
 #        Configuration\Obj\test_service.o"
 #        "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3
@@ -150,7 +148,7 @@ __dlib_dynamic_initialization = normal
   .intvec             ro code  0x08000000   0x188  startup_stm32f407xx.o [1]
                              - 0x08000188   0x188
 
-"P1":                                      0x5f0b
+"P1":                                      0x5f53
   .text               ro code  0x08000188  0x1166  xprintffull.o [3]
   .text               ro code  0x080012ee    0x20  xmbtowc.o [3]
   .text               ro code  0x0800130e     0xa  xsprout.o [3]
@@ -202,49 +200,31 @@ __dlib_dynamic_initialization = normal
   .text               ro code  0x08005544   0x350  main.o [1]
   .text               ro code  0x08005894    0x18  fatfs.o [1]
   .text               ro code  0x080058ac    0x6c  pkt_pool.o [1]
-  .text               ro code  0x08005918   0x130  mass_storage_service.o [1]
-  .text               ro code  0x08005a48    0x34  sprintf.o [3]
-  .text               ro code  0x08005a7c    0xcc  route_verification.o [1]
-  .text               ro code  0x08005b48    0x44  ff_gen_drv.o [1]
-  .text               ro code  0x08005b8c     0x4  tc_tm.o [1]
-  .text               ro code  0x08005b90    0x18  obc_hal.o [1]
-  .text               ro code  0x08005ba8    0xa4  hldlc.o [1]
-  .text               ro code  0x08005c4c    0xa4  sd_diskio.o [1]
-  .text               ro code  0x08005cf0    0x68  bsp_driver_sd.o [1]
-  .text               ro code  0x08005d58    0x50  system_stm32f4xx.o [1]
-  .text               ro code  0x08005da8    0x40  zero_init3.o [5]
-  .text               ro code  0x08005de8    0x38  packbits_init_single.o [5]
-  .text               ro code  0x08005e20    0x28  data_init.o [5]
-  .text               ro code  0x08005e48    0x22  fpinit_M.o [4]
-  .iar.init_table     const    0x08005e6c    0x20  - Linker created -
-  .text               ro code  0x08005e8c    0x1a  cmain.o [5]
-  .text               ro code  0x08005ea6     0x4  low_level_init.o [3]
-  .text               ro code  0x08005eaa     0x4  exit.o [3]
-  .text               ro code  0x08005eb0     0xa  cexit.o [5]
-  .text               ro code  0x08005ebc    0x14  exit.o [6]
-  .text               ro code  0x08005ed0    0x18  stm32f4xx_it.o [1]
-  .rodata             const    0x08005ee8    0x14  sd_diskio.o [1]
-  .text               ro code  0x08005efc    0x10  startup_stm32f407xx.o [1]
-  .rodata             const    0x08005f0c     0xc  main.o [1]
-  .text               ro code  0x08005f18     0xc  cstartup_M.o [5]
-  .text               ro code  0x08005f24     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f28     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f2c     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f30     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f34     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f38     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f3c     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f40     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f44     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f48     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f4c     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f50     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f54     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f58     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f5c     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f60     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f64     0x4  startup_stm32f407xx.o [1]
-  .text               ro code  0x08005f68     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08005918   0x138  mass_storage_service.o [1]
+  .text               ro code  0x08005a50    0x34  sprintf.o [3]
+  .text               ro code  0x08005a84   0x100  service_utilities.o [1]
+  .text               ro code  0x08005b84    0x44  ff_gen_drv.o [1]
+  .text               ro code  0x08005bc8     0x4  services.o [1]
+  .text               ro code  0x08005bcc    0x18  obc_hal.o [1]
+  .text               ro code  0x08005be4    0xb0  hldlc.o [1]
+  .text               ro code  0x08005c94    0xa4  sd_diskio.o [1]
+  .text               ro code  0x08005d38    0x68  bsp_driver_sd.o [1]
+  .text               ro code  0x08005da0    0x50  system_stm32f4xx.o [1]
+  .text               ro code  0x08005df0    0x40  zero_init3.o [5]
+  .text               ro code  0x08005e30    0x38  packbits_init_single.o [5]
+  .text               ro code  0x08005e68    0x28  data_init.o [5]
+  .text               ro code  0x08005e90    0x22  fpinit_M.o [4]
+  .iar.init_table     const    0x08005eb4    0x20  - Linker created -
+  .text               ro code  0x08005ed4    0x1a  cmain.o [5]
+  .text               ro code  0x08005eee     0x4  low_level_init.o [3]
+  .text               ro code  0x08005ef2     0x4  exit.o [3]
+  .text               ro code  0x08005ef8     0xa  cexit.o [5]
+  .text               ro code  0x08005f04    0x14  exit.o [6]
+  .text               ro code  0x08005f18    0x18  stm32f4xx_it.o [1]
+  .rodata             const    0x08005f30    0x14  sd_diskio.o [1]
+  .text               ro code  0x08005f44    0x10  startup_stm32f407xx.o [1]
+  .rodata             const    0x08005f54     0xc  main.o [1]
+  .text               ro code  0x08005f60     0xc  cstartup_M.o [5]
   .text               ro code  0x08005f6c     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08005f70     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08005f74     0x4  startup_stm32f407xx.o [1]
@@ -312,10 +292,28 @@ __dlib_dynamic_initialization = normal
   .text               ro code  0x0800606c     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08006070     0x4  startup_stm32f407xx.o [1]
   .text               ro code  0x08006074     0x4  startup_stm32f407xx.o [1]
-  .rodata             const    0x08006078     0x0  zero_init3.o [5]
-  .rodata             const    0x08006078     0x0  packbits_init_single.o [5]
-  Initializer bytes   const    0x08006078    0x1b  <for P2-1>
-                             - 0x08006093  0x5f0b
+  .text               ro code  0x08006078     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x0800607c     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006080     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006084     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006088     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x0800608c     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006090     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006094     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x08006098     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x0800609c     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060a0     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060a4     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060a8     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060ac     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060b0     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060b4     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060b8     0x4  startup_stm32f407xx.o [1]
+  .text               ro code  0x080060bc     0x4  startup_stm32f407xx.o [1]
+  .rodata             const    0x080060c0     0x0  zero_init3.o [5]
+  .rodata             const    0x080060c0     0x0  packbits_init_single.o [5]
+  Initializer bytes   const    0x080060c0    0x1b  <for P2-1>
+                             - 0x080060db  0x5f53
 
 "P2", part 1 of 3:                          0x1a9
   P2-1                         0x20000000   0x1a9  <Init block>
@@ -365,7 +363,7 @@ Zero (__iar_zero_init3)
 
 Copy/packbits (__iar_packbits_init_single3)
     1 source range, total size 0x1b (6% of destination):
-          0x08006078    0x1b
+          0x080060c0    0x1b
     1 destination range, total size 0x1a9:
           0x20000000   0x1a9
 
@@ -385,17 +383,18 @@ G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 C
     ff.o                      1 244                32
     ff_gen_drv.o                 68                12
     heap_4.o                    428            15 384
-    hldlc.o                     164
+    hldlc.o                     176
     list.o                      142
     main.o                      848       12      252
-    mass_storage_service.o      304               580
+    mass_storage_service.o      312               580
     obc_hal.o                    24
     pkt_pool.o                  108             1 436
     port.o                      488                12
     portasm.o                   168
     queue.o                   1 492                64
-    route_verification.o        204
     sd_diskio.o                 164       20        1
+    service_utilities.o         256
+    services.o                    4
     startup_stm32f407xx.o       748
     stm32f4xx_hal.o             124                 4
     stm32f4xx_hal_cortex.o      216
@@ -409,9 +408,8 @@ G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 C
     syscall.o                    68
     system_stm32f4xx.o           80        1        4
     tasks.o                   1 912        9      296
-    tc_tm.o                       4
     -------------------------------------------------
-    Total:                   16 394       42   18 085
+    Total:                   16 466       42   18 085
 
 command line: [2]
     -------------------------------------------------
@@ -477,7 +475,7 @@ shb_l.a: [6]
     Gaps                         32        2
     Linker created                        33    1 536
 -----------------------------------------------------
-    Grand Total:             24 630       93   19 885
+    Grand Total:             24 702       93   19 885
 
 
 *******************************************************************************
@@ -486,19 +484,19 @@ shb_l.a: [6]
 
 Entry                      Address    Size  Type      Object
 -----                      -------    ----  ----      ------
-.iar.init_table$$Base   0x08005e6c           --   Gb  - Linker created -
-.iar.init_table$$Limit  0x08005e8c           --   Gb  - Linker created -
-?main                   0x08005e8d          Code  Gb  cmain.o [5]
+.iar.init_table$$Base   0x08005eb4           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x08005ed4           --   Gb  - Linker created -
+?main                   0x08005ed5          Code  Gb  cmain.o [5]
 APBAHBPrescTable        0x080036b4    0x10  Data  Gb  stm32f4xx_hal_rcc.o [1]
-BSP_SD_GetCardInfo      0x08005d47     0x8  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_GetStatus        0x08005d41     0x6  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_Init             0x08005cf1    0x22  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_ReadBlocks       0x08005d13     0xe  Code  Gb  bsp_driver_sd.o [1]
-BSP_SD_WriteBlocks      0x08005d21     0xc  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_GetCardInfo      0x08005d8f     0x8  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_GetStatus        0x08005d89     0x6  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_Init             0x08005d39    0x22  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_ReadBlocks       0x08005d5b     0xe  Code  Gb  bsp_driver_sd.o [1]
+BSP_SD_WriteBlocks      0x08005d69     0xc  Code  Gb  bsp_driver_sd.o [1]
 CSTACK$$Base            0x200001b0           --   Gb  - Linker created -
 CSTACK$$Limit           0x200005b0           --   Gb  - Linker created -
-FATFS_LinkDriver        0x08005b83     0x4  Code  Gb  ff_gen_drv.o [1]
-FATFS_LinkDriverEx      0x08005b49    0x3a  Code  Gb  ff_gen_drv.o [1]
+FATFS_LinkDriver        0x08005bbf     0x4  Code  Gb  ff_gen_drv.o [1]
+FATFS_LinkDriverEx      0x08005b85    0x3a  Code  Gb  ff_gen_drv.o [1]
 FatFs                   0x20004da0     0x4  Data  Lc  ff.o [1]
 Files                   0x20004d70    0x18  Data  Lc  ff.o [1]
 Fsid                    0x20004d9c     0x2  Data  Lc  ff.o [1]
@@ -544,25 +542,25 @@ HAL_UART_RxCpltCallback
 HAL_UART_Transmit       0x08004983    0x90  Code  Gb  stm32f4xx_hal_uart.o [1]
 HAL_UART_TxCpltCallback
                         0x08004c1d     0x2  Code  Wk  stm32f4xx_hal_uart.o [1]
-HAL_eps_uart_rx         0x08005b91    0x12  Code  Gb  obc_hal.o [1]
+HAL_eps_uart_rx         0x08005bcd    0x12  Code  Gb  obc_hal.o [1]
 HEAP$$Base              0x200005b0           --   Gb  - Linker created -
 HEAP$$Limit             0x200007b0           --   Gb  - Linker created -
-HLDLC_deframe           0x08005ba9    0x20  Code  Gb  hldlc.o [1]
+HLDLC_deframe           0x08005be5    0x20  Code  Gb  hldlc.o [1]
 LoadInt                 0x080007d7    0x6e  Code  Lc  xprintffull.o [3]
 MS_data                 0x20004964   0x244  Data  Gb  mass_storage_service.o [1]
 MX_FATFS_Init           0x08005895    0x10  Code  Gb  fatfs.o [1]
 MX_GPIO_Init            0x08005649   0x15c  Code  Lc  main.o [1]
 NVIC_SetPriority        0x08002f19    0x1a  Code  Lc  stm32f4xx_hal_cortex.o [1]
 PendSV_Handler          0x0800429d          Code  Gb  portasm.o [1]
-Region$$Table$$Base     0x08005e6c           --   Gb  - Linker created -
-Region$$Table$$Limit    0x08005e8c           --   Gb  - Linker created -
+Region$$Table$$Base     0x08005eb4           --   Gb  - Linker created -
+Region$$Table$$Limit    0x08005ed4           --   Gb  - Linker created -
 SDCardInfo              0x20004c98    0x58  Data  Gb  main.o [1]
 SDIO_DataConfig         0x08002e69    0x24  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetCommandResponse
                         0x08002e4f     0x6  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetPowerState      0x08002e25     0x8  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_GetResponse        0x08002e55    0x14  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
-SDIO_IRQHandler         0x08005edb     0x6  Code  Gb  stm32f4xx_it.o [1]
+SDIO_IRQHandler         0x08005f23     0x6  Code  Gb  stm32f4xx_it.o [1]
 SDIO_Init               0x08002de9    0x26  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_PowerState_ON      0x08002e1b     0x4  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_ReadFIFO           0x08002e0f     0x2  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
@@ -570,28 +568,28 @@ SDIO_SendCommand        0x08002e2d    0x22  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SDIO_WriteFIFO          0x08002e11     0xa  Code  Gb  stm32f4xx_ll_sdmmc.o [1]
 SD_CmdResp1Error        0x08002aa7    0xce  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_CmdResp2Error        0x08002b75    0x30  Code  Lc  stm32f4xx_hal_sd.o [1]
-SD_Driver               0x08005ee8    0x14  Data  Gb  sd_diskio.o [1]
+SD_Driver               0x08005f30    0x14  Data  Gb  sd_diskio.o [1]
 SD_Initialize_Cards     0x080027fd   0x10a  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_IsCardProgramming    0x08002bad   0x136  Code  Lc  stm32f4xx_hal_sd.o [1]
 SD_Path                 0x20004d98     0x4  Data  Gb  fatfs.o [1]
 SD_PowerON              0x08002915   0x168  Code  Lc  stm32f4xx_hal_sd.o [1]
-SD_initialize           0x08005c4d     0xe  Code  Gb  sd_diskio.o [1]
-SD_ioctl                0x08005ca5    0x48  Code  Gb  sd_diskio.o [1]
-SD_read                 0x08005c75     0xc  Code  Gb  sd_diskio.o [1]
-SD_status               0x08005c5b     0xc  Code  Gb  sd_diskio.o [1]
-SD_write                0x08005c81     0xa  Code  Gb  sd_diskio.o [1]
+SD_initialize           0x08005c95     0xe  Code  Gb  sd_diskio.o [1]
+SD_ioctl                0x08005ced    0x48  Code  Gb  sd_diskio.o [1]
+SD_read                 0x08005cbd     0xc  Code  Gb  sd_diskio.o [1]
+SD_status               0x08005ca3     0xc  Code  Gb  sd_diskio.o [1]
+SD_write                0x08005cc9     0xa  Code  Gb  sd_diskio.o [1]
 SVC_Handler             0x080042f5          Code  Gb  portasm.o [1]
 StartDefaultTask        0x0800580d    0x34  Code  Gb  main.o [1]
 Stat                    0x200001a8     0x1  Data  Lc  sd_diskio.o [1]
-SysTick_Handler         0x08005ed1     0x4  Code  Gb  stm32f4xx_it.o [1]
+SysTick_Handler         0x08005f19     0x4  Code  Gb  stm32f4xx_it.o [1]
 SystemClock_Config      0x080055a7    0xa2  Code  Gb  main.o [1]
 SystemCoreClock         0x2000000c     0x4  Data  Gb  system_stm32f4xx.o [1]
-SystemInit              0x08005d59    0x3a  Code  Gb  system_stm32f4xx.o [1]
+SystemInit              0x08005da1    0x3a  Code  Gb  system_stm32f4xx.o [1]
 UART_Receive_IT         0x08004cbd    0xa0  Code  Lc  stm32f4xx_hal_uart.o [1]
 UART_SetConfig          0x08004d5d    0xe0  Code  Lc  stm32f4xx_hal_uart.o [1]
 UART_WaitOnFlagUntilTimeout
                         0x08004c23    0x8a  Code  Lc  stm32f4xx_hal_uart.o [1]
-USART2_IRQHandler       0x08005ed5     0x6  Code  Gb  stm32f4xx_it.o [1]
+USART2_IRQHandler       0x08005f1d     0x6  Code  Gb  stm32f4xx_it.o [1]
 _EncodingSb_Mbtowc      0x08001ee3    0x30  Code  Gb  xencoding_sb.o [3]
 _EncodingSb_Wctomb      0x08001ec9    0x1a  Code  Gb  xencoding_sb.o [3]
 _GenldFull              0x0800105b   0x24c  Code  Lc  xprintffull.o [3]
@@ -623,10 +621,10 @@ __aeabi_memset4         0x08004261          Code  Gb  ABImemset48.o [5]
 __aeabi_memset8         0x08004261          Code  Gb  ABImemset48.o [5]
 __aeabi_ui2d            0x080018a1          Code  Gb  I32ToDbl.o [4]
 __aeabi_uldivmod        0x08001591          Code  Gb  I64DivMod.o [5]
-__cmain                 0x08005e8d          Code  Gb  cmain.o [5]
+__cmain                 0x08005ed5          Code  Gb  cmain.o [5]
 __data_Aldata           0x20004da4     0x8  Data  Gb  xxmemxmalloc.o [3]
 __data_GetMemChunk      0x08001f29    0x2c  Code  Gb  xgetmemchunk.o [3]
-__exit                  0x08005ebd    0x14  Code  Gb  exit.o [6]
+__exit                  0x08005f05    0x14  Code  Gb  exit.o [6]
 __iar_Dnorm             0x0800167f    0x42  Code  Gb  xdnorm.o [4]
 __iar_Dscale            0x08001721   0x114  Code  Gb  xdscale.o [4]
 __iar_Locale_lconv_init
@@ -638,15 +636,15 @@ __iar_Memset8_word      0x08004269          Code  Gb  ABImemset48.o [5]
 __iar_Strchr            0x08001319          Code  Gb  strchr.o [5]
 __iar_d2uiz             0x0800186d          Code  Gb  DblToI32.o [4]
 __iar_dadd              0x08001f59          Code  Gb  DblAdd.o [4]
-__iar_data_init3        0x08005e21    0x28  Code  Gb  data_init.o [5]
+__iar_data_init3        0x08005e69    0x28  Code  Gb  data_init.o [5]
 __iar_dlib_perthread_access
                         0x0800202d     0x2  Code  Gb  xtls.o [3]
 __iar_dsub              0x080018d1          Code  Gb  DblSub.o [4]
 __iar_dsubStart         0x080018e3          Code  Gb  DblSub.o [4]
-__iar_init_vfp          0x08005e49          Code  Gb  fpinit_M.o [4]
+__iar_init_vfp          0x08005e91          Code  Gb  fpinit_M.o [4]
 __iar_packbits_init_single3
-                        0x08005de9    0x38  Code  Gb  packbits_init_single.o [5]
-__iar_program_start     0x08005f19          Code  Gb  cstartup_M.o [5]
+                        0x08005e31    0x38  Code  Gb  packbits_init_single.o [5]
+__iar_program_start     0x08005f61          Code  Gb  cstartup_M.o [5]
 __iar_ui2d              0x080018a5          Code  Gb  I32ToDbl.o [4]
 __iar_unaligned___aeabi_memcpy
                         0x08001499          Code  Gb  ABImemcpy_unaligned.o [5]
@@ -654,12 +652,12 @@ __iar_unaligned___aeabi_memcpy4
                         0x080014b9          Code  Gb  ABImemcpy_unaligned.o [5]
 __iar_unaligned___aeabi_memcpy8
                         0x080014b9          Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_zero_init3        0x08005da9    0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x08005ea7     0x4  Code  Gb  low_level_init.o [3]
+__iar_zero_init3        0x08005df1    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x08005eef     0x4  Code  Gb  low_level_init.o [3]
 __vector_table          0x08000000          Data  Gb  startup_stm32f407xx.o [1]
-_call_main              0x08005e99          Code  Gb  cmain.o [5]
-_exit                   0x08005eb1          Code  Gb  cexit.o [5]
-_main                   0x08005ea3          Code  Gb  cmain.o [5]
+_call_main              0x08005ee1          Code  Gb  cmain.o [5]
+_exit                   0x08005ef9          Code  Gb  cexit.o [5]
+_main                   0x08005eeb          Code  Gb  cmain.o [5]
 check_fs                0x08004f5b    0x62  Code  Lc  ff.o [1]
 clear_lock              0x08004e73    0x1e  Code  Lc  ff.o [1]
 defaultTaskHandle       0x20004c94     0x4  Data  Gb  main.o [1]
@@ -669,7 +667,7 @@ disk_read               0x0800539d     0xc  Code  Gb  diskio.o [1]
 disk_status             0x0800536d    0x12  Code  Gb  diskio.o [1]
 disk_write              0x080053a9     0xc  Code  Gb  diskio.o [1]
 div                     0x08001ea5     0xe  Code  Gb  div.o [3]
-exit                    0x08005eab     0x4  Code  Gb  exit.o [3]
+exit                    0x08005ef3     0x4  Code  Gb  exit.o [3]
 f_mount                 0x08005291    0x80  Code  Gb  ff.o [1]
 ff_cre_syncobj          0x08005329    0x1e  Code  Gb  syscall.o [1]
 ff_del_syncobj          0x08005347     0xa  Code  Gb  syscall.o [1]
@@ -681,7 +679,7 @@ get_ldnumber            0x08004f1d    0x3e  Code  Lc  ff.o [1]
 get_pkt                 0x080058ad    0x34  Code  Gb  pkt_pool.o [1]
 hsd                     0x20004c34    0x60  Data  Gb  main.o [1]
 huart2                  0x20004cf0    0x40  Data  Gb  main.o [1]
-import_eps_pkt          0x08005a7d    0x52  Code  Gb  route_verification.o [1]
+import_eps_pkt          0x08005a85    0x4e  Code  Gb  service_utilities.o [1]
 inHandlerMode           0x080053d5     0xc  Code  Lc  cmsis_os.o [1]
 localeconv              0x08001e73    0x16  Code  Gb  localeconv.o [3]
 lock_fs                 0x08004e4d     0x8  Code  Lc  ff.o [1]
@@ -728,11 +726,11 @@ pxOverflowDelayedTaskList
 pxPortInitialiseStack   0x08003e3d    0x22  Code  Gb  port.o [1]
 pxReadyTasksLists       0x20004ba8    0x8c  Data  Lc  tasks.o [1]
 retSD                   0x20004d94     0x1  Data  Gb  fatfs.o [1]
-sprintf                 0x08005a49    0x34  Code  Gb  sprintf.o [3]
+sprintf                 0x08005a51    0x34  Code  Gb  sprintf.o [3]
 strchr                  0x08001319          Code  Gb  strchr.o [5]
 strlen                  0x08001331          Code  Gb  strlen.o [5]
 sync_window             0x08004e91    0x48  Code  Lc  ff.o [1]
-tst_debugging           0x08005b8d     0x4  Code  Gb  tc_tm.o [1]
+tst_debugging           0x08005bc9     0x4  Code  Gb  services.o [1]
 ucHeap                  0x200007c8  0x3c00  Data  Lc  heap_4.o [1]
 ucMaxSysCallPriority    0x20000000     0x1  Data  Lc  port.o [1]
 ulMaxPRIGROUPValue      0x20000008     0x4  Data  Lc  port.o [1]
@@ -814,7 +812,7 @@ xYieldPending           0x20000070     0x4  Data  Lc  tasks.o [1]
 [5] = rt7M_tl.a
 [6] = shb_l.a
 
-  24 630 bytes of readonly  code memory
+  24 702 bytes of readonly  code memory
       93 bytes of readonly  data memory
   19 885 bytes of readwrite data memory
 

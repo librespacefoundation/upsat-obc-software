@@ -1,4 +1,4 @@
-"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\services\verification_service.c"
+"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\services\services.c"
 -std=c99
 -ferror-limit=100
 -I

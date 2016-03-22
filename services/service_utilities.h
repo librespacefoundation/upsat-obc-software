@@ -24,6 +24,7 @@ extern SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 extern SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c);
 extern SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size);
 
+extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 //ToDo
