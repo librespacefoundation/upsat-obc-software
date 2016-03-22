@@ -12,11 +12,11 @@ void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
     HAL_UART_Transmit(&huart2, buf, size, 10);
 }
 
-OBC_returnStateTypedef HAL_eps_uart_rx(uint8_t *c) {
+SAT_returnState HAL_eps_uart_rx(uint8_t *c) {
 
-    OBC_returnStateTypedef res;
+    SAT_returnState res;
 
     res = HAL_UART_Receive(&huart2, c, 1, 10);
 
-    return R_OK;
+    return SATR_OK;
 }

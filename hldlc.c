@@ -1,53 +1,53 @@
 #include "hldlc.h"
 
 /* it should return the status*/
-OBC_returnStateTypedef HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
+SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
 
-    if(!C_ASSERT(c != NULL && buf != NULL && buf != NULL) == true)  { return R_ERROR; }
-    if(!C_ASSERT(*cnt == 0 && c != HLDLC_START_FLAG) == true)       { return R_ERROR; } //error is when its true
-    if(!C_ASSERT(*cnt <= TC_MAX_PKT_SIZE) == true)                  { return R_ERROR; } //hard limits, check
+    if(!C_ASSERT(c != NULL && buf != NULL && buf != NULL) == true)  { return SATR_ERROR; }
+    if(!C_ASSERT(*cnt == 0 && c != HLDLC_START_FLAG) == true)       { return SATR_ERROR; } //error is when its true
+    if(!C_ASSERT(*cnt <= TC_MAX_PKT_SIZE) == true)                  { return SATR_ERROR; } //hard limits, check
 
     if(*cnt != 0 && c == HLDLC_START_FLAG) {
         *cnt = 0;
-        return R_EOT;
+        return SATR_EOT;
     } else if(cnt != 0 && buf[(*cnt)-1] == HLDLC_CONTROL_FLAG) {
         if(c == 0x5E) { buf[*cnt-1] = HLDLC_START_FLAG; }
         else if(c == 0x5D) { buf[*cnt-1] = HLDLC_CONTROL_FLAG; }
-        else { return R_ERROR; }
-        return R_OK;
+        else { return SATR_ERROR; }
+        return SATR_OK;
     } else {
         buf[*cnt] = c;
         (*cnt)++;
-        return R_OK;
+        return SATR_OK;
     }
-    return R_ERROR;
+    return SATR_ERROR;
 }
 
 /* it should return the status*/
-OBC_returnStateTypedef HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
+SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
 
-    if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return R_ERROR; }
-    if(!C_ASSERT(*cnt < size) == true)                               { return R_ERROR; } //check
+    if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return SATR_ERROR; }
+    if(!C_ASSERT(*cnt < size) == true)                               { return SATR_ERROR; } //check
 
     if(*cnt == 0) {
         *c = HLDLC_START_FLAG;
         (*cnt)++;
-        return R_OK;
+        return SATR_OK;
     } else if(*cnt > size) {
         *c = HLDLC_START_FLAG;
-        return R_EOT;
+        return SATR_EOT;
     } else if(cnt != 0 && buf[(*cnt)-1] == HLDLC_START_FLAG) {
         *c = HLDLC_CONTROL_FLAG;
         buf[(*cnt)-1] = 0x5E;
-        return R_OK;
+        return SATR_OK;
     } else if(cnt != 0 &&  buf[(*cnt)-1] == HLDLC_CONTROL_FLAG) {
         *c = HLDLC_CONTROL_FLAG;
         buf[(*cnt)-1] = 0x5D;
-        return R_OK;
+        return SATR_OK;
     } else {
         *c = buf[(*cnt)-1] ;
         (*cnt)++;
-        return R_OK;
+        return SATR_OK;
     }
-    return R_ERROR;
+    return SATR_ERROR;
 }

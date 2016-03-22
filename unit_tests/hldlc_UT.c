@@ -48,7 +48,7 @@ int main() {
  	do {
  		check = HLDLC_frame( &c, in, &cnt_in, size);
  		out[cnt_out++] = c;
- 	} while( check != R_EOT);
+ 	} while( check != SATR_EOT);
 
 
  	for(int i =0; i < res_size; i++ ) {
@@ -98,7 +98,7 @@ int main() {
     do {
         check = HLDLC_frame( &c, in, &cnt_in, size);
         out[cnt_out++] = c;
-    } while( check != R_EOT);
+    } while( check != SATR_EOT);
     
     
     for(int i =0; i < res_size; i++ ) {

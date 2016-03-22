@@ -233,7 +233,7 @@
 #define SD_OCR_CARD_ECC_DISABLED        ((uint32_t)0x00004000)
 #define SD_OCR_ERASE_RESET              ((uint32_t)0x00002000)
 #define SD_OCR_AKE_SEQ_ERROR            ((uint32_t)0x00000008)
-#define SD_OCR_ERRORBITS                ((uint32_t)0xFDFFE008)
+#define SD_OCSATR_ERRORBITS                ((uint32_t)0xFDFFE008)
 
 /** 
   * @brief  Masks for R6 Response 
@@ -1244,7 +1244,7 @@ HAL_SD_ErrorTypedef HAL_SD_CheckWriteOperation(SD_HandleTypeDef *hsd, uint32_t T
   }
   
   /* Wait until write is complete */
-  while(HAL_SD_GetStatus(hsd) != SD_TRANSFER_OK)
+  while(HAL_SD_GetStatus(hsd) != SD_TRANSFESATR_OK)
   {    
   }
 
@@ -2169,11 +2169,11 @@ HAL_SD_TransferStateTypedef HAL_SD_GetStatus(SD_HandleTypeDef *hsd)
   /* Find SD status according to card state*/
   if (cardstate == SD_CARD_TRANSFER)
   {
-    return SD_TRANSFER_OK;
+    return SD_TRANSFESATR_OK;
   }
   else if(cardstate == SD_CARD_ERROR)
   {
-    return SD_TRANSFER_ERROR;
+    return SD_TRANSFESATR_ERROR;
   }
   else
   {
@@ -2811,7 +2811,7 @@ static HAL_SD_ErrorTypedef SD_CmdResp1Error(SD_HandleTypeDef *hsd, uint8_t SD_CM
   /* We have received response, retrieve it for analysis  */
   response_r1 = SDIO_GetResponse(SDIO_RESP1);
   
-  if((response_r1 & SD_OCR_ERRORBITS) == SD_ALLZERO)
+  if((response_r1 & SD_OCSATR_ERRORBITS) == SD_ALLZERO)
   {
     return errorstate;
   }
@@ -3387,7 +3387,7 @@ static HAL_SD_ErrorTypedef SD_IsCardProgramming(SD_HandleTypeDef *hsd, uint8_t *
   /* Find out card status */
   *pStatus = (uint8_t)((responseR1 >> 9) & 0x0000000F);
   
-  if((responseR1 & SD_OCR_ERRORBITS) == SD_ALLZERO)
+  if((responseR1 & SD_OCSATR_ERRORBITS) == SD_ALLZERO)
   {
     return errorstate;
   }

@@ -39,8 +39,8 @@ struct _ld_status {
 extern void *get_pkt(uint8_t mode);
 extern uint32_t time_now();
 
-extern OBC_returnStateTypedef crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
-extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
+extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
+extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 extern void cnv16_8(uint16_t from, uint8_t *to);
 
@@ -66,38 +66,38 @@ extern void cnv16_8(uint16_t from, uint8_t *to);
 //  check sequence numbers.
 //  in tx when to make it FREE, maybe should ack every packet and then send it free.
 
-OBC_returnStateTypedef large_data_timeout();
+SAT_returnState large_data_timeout();
 
-OBC_returnStateTypedef large_data_app(tc_tm_pkt *pkt);
+SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_firstRx_api(tc_tm_pkt *pkt);
+SAT_returnState large_data_firstRx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_intRx_api(tc_tm_pkt *pkt);
+SAT_returnState large_data_intRx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_lastRx_api(tc_tm_pkt *pkt);
+SAT_returnState large_data_lastRx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_retryRx_api(tc_tm_pkt *pkt);
+SAT_returnState large_data_retryRx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_standaloneRx_api(tc_tm_pkt *pkt);
-
-
-OBC_returnStateTypedef large_data_reportTx_api(tc_tm_pkt *pkt);
-
-OBC_returnStateTypedef large_data_downlinkTx_api(tc_tm_pkt *pkt);
-
-OBC_returnStateTypedef large_data_intTx_api(tc_tm_pkt *pkt);
-
-OBC_returnStateTypedef large_data_retryTx_api(tc_tm_pkt *pkt);
+SAT_returnState large_data_standaloneRx_api(tc_tm_pkt *pkt);
 
 
-OBC_returnStateTypedef large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subtype);
+SAT_returnState large_data_reportTx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, uint16_t dest_id);
+SAT_returnState large_data_downlinkTx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id);
+SAT_returnState large_data_intTx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype);
+SAT_returnState large_data_retryTx_api(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef large_data_abort(tc_tm_pkt *pkt);
+
+SAT_returnState large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subtype);
+
+SAT_returnState large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, uint16_t dest_id);
+
+SAT_returnState large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id);
+
+SAT_returnState large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype);
+
+SAT_returnState large_data_abort(tc_tm_pkt *pkt);
 
 #endif

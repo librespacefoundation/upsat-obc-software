@@ -391,14 +391,14 @@ void StartDefaultTask(void const * argument)
   uint8_t rtext[100];                                   /* File read buffer */
 
   /* Register the file system object to the FatFs module */
-  if(f_mount(&SD_Driver, SD_Path, 0) != FR_OK)
+  if(f_mount(&SD_Driver, SD_Path, 0) != FSATR_OK)
   {
     /* FatFs Initialization Error */
   }
   else
   {
       /* Create and Open a new text file object with write access */
-      if(f_open(&MyFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+      if(f_open(&MyFile, "STM32.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FSATR_OK)
       {
         /* 'STM32.TXT' file Open for write Error */
       }
@@ -407,7 +407,7 @@ void StartDefaultTask(void const * argument)
         /* Write data to the text file */
         res = f_write(&MyFile, wtext, sizeof(wtext), (void *)&byteswritten);
 
-        if((byteswritten == 0) || (res != FR_OK))
+        if((byteswritten == 0) || (res != FSATR_OK))
         {
           /* 'STM32.TXT' file Write or EOF Error */
         }

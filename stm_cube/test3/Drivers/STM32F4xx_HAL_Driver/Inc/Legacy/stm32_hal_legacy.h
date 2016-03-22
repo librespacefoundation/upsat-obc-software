@@ -496,7 +496,7 @@
 #define NOR_StatusTypedef              HAL_NOR_StatusTypeDef
 #define NOR_SUCCESS                    HAL_NOR_STATUS_SUCCESS
 #define NOR_ONGOING                    HAL_NOR_STATUS_ONGOING
-#define NOR_ERROR                      HAL_NOR_STATUS_ERROR
+#define NOSATR_ERROR                      HAL_NOR_STATUS_ERROR
 #define NOR_TIMEOUT                    HAL_NOR_STATUS_TIMEOUT
 
 #define __NOR_WRITE                    NOR_WRITE
@@ -1091,7 +1091,7 @@
 #define __HAL_ADC_IS_CONVERSION_ONGOING_REGULAR          ADC_IS_CONVERSION_ONGOING_REGULAR
 #define __HAL_ADC_IS_CONVERSION_ONGOING_INJECTED         ADC_IS_CONVERSION_ONGOING_INJECTED
 #define __HAL_ADC_IS_CONVERSION_ONGOING                  ADC_IS_CONVERSION_ONGOING
-#define __HAL_ADC_CLEAR_ERRORCODE                        ADC_CLEAR_ERRORCODE
+#define __HAL_ADC_CLEASATR_ERRORCODE                        ADC_CLEASATR_ERRORCODE
 
 #define __HAL_ADC_GET_RESOLUTION                         ADC_GET_RESOLUTION
 #define __HAL_ADC_JSQR_RK                                ADC_JSQR_RK

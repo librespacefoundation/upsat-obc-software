@@ -61,8 +61,8 @@ void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-extern OBC_returnStateTypedef mass_storage_init();
-extern OBC_returnStateTypedef pkt_pool_INIT();
+extern SAT_returnState mass_storage_init();
+extern SAT_returnState pkt_pool_INIT();
 
 /* USER CODE END PFP */
 

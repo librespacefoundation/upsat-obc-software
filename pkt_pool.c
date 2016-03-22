@@ -23,20 +23,20 @@ void *get_pkt(uint8_t mode) {
     return NULL;
 }
 
-OBC_returnStateTypedef free_pkt(tc_tm_pkt *pkt) {
+SAT_returnState free_pkt(tc_tm_pkt *pkt) {
 
-    if(!C_ASSERT(pkt != NULL) == true) { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
 
     for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
         if(&pkt_pool.pkt[i] == pkt) {
             pkt_pool.free[i] = true;
-            return R_OK;
+            return SATR_OK;
         }
     }
-    return R_ERROR;
+    return SATR_ERROR;
 }
 
-OBC_returnStateTypedef pkt_pool_INIT() {
+SAT_returnState pkt_pool_INIT() {
 
     for(uint8_t i = 0; i < MAX_POOL_NRM_PKT; i++) {
         pkt_pool.pkt[i].data = pkt_pool.data_NRM[i];
@@ -45,7 +45,7 @@ OBC_returnStateTypedef pkt_pool_INIT() {
     for(uint8_t i = 0; i < MAX_POOL_EXT_PKT; i++) {
         pkt_pool.pkt[i+EXT_POOL_PKT_START].data = pkt_pool.data_EXT[i];
     }
-    return R_OK;
+    return SATR_OK;
 }
 
 void pkt_pool_GC() {

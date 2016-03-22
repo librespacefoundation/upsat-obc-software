@@ -7,7 +7,7 @@
 
 int main() {
 
-	OBC_returnStateTypedef res;
+	SAT_returnState res;
 	struct tc_tm_pkt *temp[MAX_POOL_PKT + 1];
 
 	for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
@@ -28,7 +28,7 @@ int main() {
 
 	for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
 		res = free_pkt(temp[i]);
-		if(res != R_OK) {
+		if(res != SATR_OK) {
 			printf("ERROR in free %d\n",i);
 		} else {
 			printf("OK in free %d\n",i);
@@ -36,7 +36,7 @@ int main() {
 	}
 
 	res = free_pkt(temp[MAX_POOL_PKT]);
-	if(res != R_ERROR) {
+	if(res != SATR_ERROR) {
 		printf("ERROR in last get\n");
 	} else {
 		printf("OK in last get\n");

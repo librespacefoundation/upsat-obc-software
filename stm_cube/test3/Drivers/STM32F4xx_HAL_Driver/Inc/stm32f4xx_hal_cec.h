@@ -94,7 +94,7 @@ typedef struct
                                               
                                               It supersedes BREGEN and LBPEGEN bits for a broadcast message error handling. It can take two values:
                                               
-                                              1) CEC_BROADCASTERROR_ERRORBIT_GENERATION.
+                                              1) CEC_BROADCASTERROSATR_ERRORBIT_GENERATION.
                                                  a) BRE detection: error-bit generation on the CEC line if BRESTP=CEC_RX_STOP_ON_BRE 
                                                     and BREGEN=CEC_BRE_ERRORBIT_NO_GENERATION.
                                                  b) LBPE detection: error-bit generation on the CEC line 
@@ -245,7 +245,7 @@ typedef struct
 /** @defgroup CEC_BroadCastMsgErrorBitGen  CEC Error Bit Generation on Broadcast message
   * @{
   */ 
-#define CEC_BROADCASTERROR_ERRORBIT_GENERATION     ((uint32_t)0x00000000)
+#define CEC_BROADCASTERROSATR_ERRORBIT_GENERATION     ((uint32_t)0x00000000)
 #define CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION  ((uint32_t)CEC_CFGR_BRDNOGEN)
 /**
   * @}
@@ -618,7 +618,7 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 #define IS_CEC_LBPEERRORBITGEN(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_LBPE_ERRORBIT_NO_GENERATION) || \
                                                  ((__ERRORBITGEN__) == CEC_LBPE_ERRORBIT_GENERATION))
                                                  
-#define IS_CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_BROADCASTERROR_ERRORBIT_GENERATION) || \
+#define IS_CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION(__ERRORBITGEN__) (((__ERRORBITGEN__) == CEC_BROADCASTERROSATR_ERRORBIT_GENERATION) || \
                                                                        ((__ERRORBITGEN__) == CEC_BROADCASTERROR_NO_ERRORBIT_GENERATION))
                                                                        
 #define IS_CEC_SFTOP(__SFTOP__)          (((__SFTOP__) == CEC_SFT_START_ON_TXSOM) || \

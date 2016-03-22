@@ -9,6 +9,6 @@ extern uint32_t time_now();
 //ToDo
 //  maybe make dev id = app id
 
-OBC_returnStateTypedef function_management_app(tc_tm_pkt *pkt);
+SAT_returnState function_management_app(tc_tm_pkt *pkt);
 
 #endif

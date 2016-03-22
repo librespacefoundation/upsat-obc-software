@@ -54,7 +54,7 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
 //  what to do with verification service, after route or after its service.
-//  OBC_returnStateTypedef renaming to UPS_OK?
+//  SAT_returnState renaming to UPS_OK?
 //  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm

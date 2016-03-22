@@ -86,19 +86,19 @@
 #define TM 0
 
 typedef enum {  
-SATR_PKT_ILLEGAL_APPID     = 0,
-SATR_PKT_INV_LEN           = 1,
-SATR_PKT_INC_CRC           = 2,
-SATR_PKT_ILLEGAL_PKT_TP    = 3,
-SATR_PKT_ILLEGAL_PKT_STP   = 4,
-SATR_PKT_ILLEGAL_APP_DATA  = 5,
-SATR_OK                    = 6,
-SATR_ERROR                 = 7,
-SATR_EOT                   = 8,
-SATR_CRC_ERROR             = 9,
-SATR_PKT_ILLEGAL_ACK       = 10,
-SATR_ALREADY_SERVICING     = 11,
-SATR_LAST                  = 12
+    SATR_PKT_ILLEGAL_APPID     = 0,
+    SATR_PKT_INV_LEN           = 1,
+    SATR_PKT_INC_CRC           = 2,
+    SATR_PKT_ILLEGAL_PKT_TP    = 3,
+    SATR_PKT_ILLEGAL_PKT_STP   = 4,
+    SATR_PKT_ILLEGAL_APP_DATA  = 5,
+    SATR_OK                    = 6,
+    SATR_ERROR                 = 7,
+    SATR_EOT                   = 8,
+    SATR_CRC_ERROR             = 9,
+    SATR_PKT_ILLEGAL_ACK       = 10,
+    SATR_ALREADY_SERVICING     = 11,
+    SATR_LAST                  = 12
 }SAT_returnState;
 
 #define TC_VERIFICATION_SERVICE         1
@@ -257,7 +257,7 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
 //  what to do with verification service, after route or after its service.
-//  OBC_returnStateTypedef renaming to UPS_OK?
+//  SAT_returnState renaming to UPS_OK?
 //  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm

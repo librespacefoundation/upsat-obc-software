@@ -24,9 +24,9 @@ void clear_wod() {
         obc_status.temp_comms = 0;
 }
 
-OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
+SAT_returnState hk_app(tc_tm_pkt *pkt) {
 
-    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return R_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
         uint8_t sid = pkt->data[0];
@@ -45,12 +45,12 @@ OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt) {
         }
     }
 
-    return R_OK;
+    return SATR_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
-    if(!C_ASSERT(app_id < LAST_APP_ID) == true)  { return R_ERROR; }
+    if(!C_ASSERT(app_id < LAST_APP_ID) == true)  { return SATR_ERROR; }
 
     pkt->ser_subtype = TC_HK_REPORT_PARAMETERS;
 
@@ -59,10 +59,10 @@ OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_
     pkt->data[0] = sid;
     pkt->len = 1;
 
-    return R_OK;
+    return SATR_OK;
 }
 
-OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
     pkt->data[0] = sid;
 
@@ -86,5 +86,5 @@ OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_
 
     crt_pkt(pkt, OBC_APP_ID, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_HK_PARAMETERS_REPORT, app_id);
 
-    return R_OK;
+    return SATR_OK;
 }

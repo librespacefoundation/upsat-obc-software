@@ -57,35 +57,35 @@ extern uint32_t time_now();
 //  add check for MAX_FILE for loop, hard limit.
 //  maybe file paths should be const variable instead of definitions.
 
-OBC_returnStateTypedef mass_storage_init();
+SAT_returnState mass_storage_init();
 
-OBC_returnStateTypedef mass_storage_app(tc_tm_pkt *pkt);
+SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef mass_storage_delete_api(MS_sid sid, uint32_t to);
+SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to);
 
-OBC_returnStateTypedef mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
+SAT_returnState mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
 
-OBC_returnStateTypedef mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
+SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
 
-OBC_returnStateTypedef mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
+SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
-OBC_returnStateTypedef mass_storage_su_checksum_api(MS_sid sid);
+SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
 
 
-OBC_returnStateTypedef mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
+SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
 
-OBC_returnStateTypedef mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
+SAT_returnState mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
 
-OBC_returnStateTypedef mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
+SAT_returnState mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
 
-OBC_returnStateTypedef mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part);
+SAT_returnState mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_t *buf, uint16_t *size, uint32_t *part);
 
-OBC_returnStateTypedef mass_storage_getLog(MS_sid sid, uint8_t *fn);
+SAT_returnState mass_storage_getLog(MS_sid sid, uint8_t *fn);
 
-OBC_returnStateTypedef mass_storage_findLog(MS_sid sid, uint32_t *fn);
+SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn);
 
-OBC_returnStateTypedef mass_storage_getFileName(uint8_t *fn);
+SAT_returnState mass_storage_getFileName(uint8_t *fn);
 
-OBC_returnStateTypedef mass_storage_getFileSizeCount(MS_sid sid);
+SAT_returnState mass_storage_getFileSizeCount(MS_sid sid);
 
 #endif

@@ -5,8 +5,8 @@
 #include "services.h"
 
 extern uint32_t time_now();
-extern OBC_returnStateTypedef route_pkt(tc_tm_pkt *pkt);
-extern OBC_returnStateTypedef power_control_app_api(uint8_t did, uint8_t fid);
+extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
+extern SAT_returnState power_control_app_api(uint8_t did, uint8_t fid);
 
 struct _obc_status {
     uint8_t mode;
@@ -24,11 +24,11 @@ struct _obc_status {
 //  finish sid
 //  when the get packet happens in crt pkt
 
-OBC_returnStateTypedef hk_app(tc_tm_pkt *pkt);
+SAT_returnState hk_app(tc_tm_pkt *pkt);
 
-OBC_returnStateTypedef hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
 
-OBC_returnStateTypedef hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
 
 void hk_SCH();
 
