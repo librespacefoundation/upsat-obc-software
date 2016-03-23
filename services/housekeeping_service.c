@@ -1,99 +1,90 @@
-#include "../Inc/housekeeping_service.h"
+#include "housekeeping_service.h"
 
 void hk_SCH() {
 
-  struct tc_tm_pkt pkt;
+    tc_tm_pkt pkt;
   
-	hk_crt_pkt_TC(&pkt, EPS, 1);
-	route_pkt(&pkt);
-	hk_crt_pkt_TC(&pkt, COMMS, 1);
-	route_pkt(&pkt);
-	//delay(59) sec;
-	hk_crt_pkt_TM(&pkt, GND, 4);
-	route_pkt(&pkt);
-	clear_wod();
+    hk_crt_pkt_TC(&pkt, EPS_APP_ID, 1);
+    route_pkt(&pkt);
+    hk_crt_pkt_TC(&pkt, COMMS_APP_ID, 1);
+    route_pkt(&pkt);
+    //delay(59) sec;
+    hk_crt_pkt_TM(&pkt, GND_APP_ID, 4);
+    route_pkt(&pkt);
+    clear_wod();
 }
 
 void clear_wod() {
-		obc_status.batt_curr = 0;
-		obc_status.batt_volt = 0;
-		obc_status.bus_3v3_curr = 0;
-		obc_status.bus_5v_curr = 0;
-		obc_status.temp_eps = 0;
-		obc_status.temp_batt = 0;
-		obc_status.temp_comms = 0;
+        obc_status.batt_curr = 0;
+        obc_status.batt_volt = 0;
+        obc_status.bus_3v3_curr = 0;
+        obc_status.bus_5v_curr = 0;
+        obc_status.temp_eps = 0;
+        obc_status.temp_batt = 0;
+        obc_status.temp_comms = 0;
 }
 
 SAT_returnState hk_app(tc_tm_pkt *pkt) {
-	uint8_t res, did, fid;
 
-	if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 21) {
-		hk_crt_pkt_TM(pkt, pkt->dest_id, pkt->data[0]);
-		route_pkt(pkt);
-	} else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == 23) {
-		if(pkt->app_id == EPS) {
-			obc_status.batt_curr = pkt->data[1];
-			obc_status.batt_volt = pkt->data[2];
-			obc_status.bus_3v3_curr = pkt->data[3];
-			obc_status.bus_5v_curr = pkt->data[4];
-			obc_status.temp_eps = pkt->data[5];
-			obc_status.temp_batt = pkt->data[6];
-		} else if(pkt->app_id == COMMS) {
-			obc_status.temp_comms = pkt->data[1];
-		}
-	}
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
-	did = pkt->data[0];
-	fid = pkt->data[4];
-	res = power_control_app_api( did, fid);
-	return SATR_OK;
+    if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
+        uint8_t sid = pkt->data[0];
+        hk_crt_pkt_TM(pkt, pkt->dest_id, sid);
+        route_pkt(pkt);
+    } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
+        if(pkt->app_id == EPS_APP_ID) {
+            obc_status.batt_curr = pkt->data[1];
+            obc_status.batt_volt = pkt->data[2];
+            obc_status.bus_3v3_curr = pkt->data[3];
+            obc_status.bus_5v_curr = pkt->data[4];
+            obc_status.temp_eps = pkt->data[5];
+            obc_status.temp_batt = pkt->data[6];
+        } else if(pkt->app_id == COMMS_APP_ID) {
+            obc_status.temp_comms = pkt->data[1];
+        }
+    }
+
+    return SATR_OK;
 }
 
-SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
-	pkt->type = TC;
-	pkt->app_id = app_id; 
-	pkt->dest_id = OBC;
+    if(!C_ASSERT(app_id < LAST_APP_ID) == true)  { return SATR_ERROR; }
 
-	pkt->data[0] = sid;
+    pkt->ser_subtype = TC_HK_REPORT_PARAMETERS;
 
-	pkt->ser_type = TC_HOUSEKEEPING_SERVICE;
+    crt_pkt(pkt, app_id, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_LD_ACK_UPLINK, OBC_APP_ID);
 
-	pkt->ser_subtype = 21;
+    pkt->data[0] = sid;
+    pkt->len = 1;
 
-	return SATR_OK;
+    return SATR_OK;
 }
 
-SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, uint16_t app_id, uint8_t sid) {
-	union _cnv cnv;
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) {
 
-	pkt->type = TC;
-	pkt->app_id = OBC; 
-	pkt->dest_id = app_id;
+    pkt->data[0] = sid;
 
-	pkt->data[0] = sid;
+    if(sid == 3) {
 
-	pkt->ser_type = TC_HOUSEKEEPING_SERVICE;
+        //cnv.cnv32 = time.now();
+        cnv32_8(time_now(), pkt->data[1]);
+        pkt->len = 5;
+    } else if(sid == 4) {
 
-	if(sid == 3) {
-		pkt->ser_subtype = 21;
+        pkt->data[1] = obc_status.mode;
+        pkt->data[2] = obc_status.batt_curr;
+        pkt->data[3] = obc_status.batt_volt;
+        pkt->data[4] = obc_status.bus_3v3_curr;
+        pkt->data[5] = obc_status.bus_5v_curr;
+        pkt->data[6] = obc_status.temp_eps;
+        pkt->data[7] = obc_status.temp_batt;
+        pkt->data[8] = obc_status.temp_comms;
+        pkt->len = 9;
+    }
 
-		//cnv.cnv32 = time.now();
-		pkt->data[1] = cnv.cnv8[3];
-		pkt->data[2] = cnv.cnv8[2];
-		pkt->data[3] = cnv.cnv8[1];
-		pkt->data[4] = cnv.cnv8[0];
-	} else if(sid == 4) {
-		pkt->ser_subtype = 25;
+    crt_pkt(pkt, OBC_APP_ID, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_HK_PARAMETERS_REPORT, app_id);
 
-		pkt->data[1] = obc_status.mode;
-		pkt->data[2] = obc_status.batt_curr;
-		pkt->data[3] = obc_status.batt_volt;
-		pkt->data[4] = obc_status.bus_3v3_curr;
-		pkt->data[5] = obc_status.bus_5v_curr;
-		pkt->data[6] = obc_status.temp_eps;
-		pkt->data[7] = obc_status.temp_batt;
-		pkt->data[8] = obc_status.temp_comms;
-	}
-	return SATR_OK;
+    return SATR_OK;
 }

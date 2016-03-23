@@ -1,53 +1,61 @@
-#include "../Inc/verification_service.h"
+#include "verification_service.h"
 
-SAT_returnState verify_pkt(tc_tm_pkt *pkt, uint8_t step, uint8_t res) {
-/*this is TEMP*/
-tc_tm_pkt out;
+SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res) {
 
-	if(pkt->type != TC ) {
-		return SATR_ERROR;
-	}
+    if(!C_ASSERT(res < SATR_LAST) == true)                     { return SATR_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
-	if(pkt->ack == TC_ACK_NO) {
-		return SATR_OK;
-	} else if(pkt->ack == TC_ACK_ACC && step == TC_ACK_ACC) {
-		verify_crt_pkt(pkt, &out, res, 1);
-        return SATR_OK;
-	} else if(pkt->ack == TC_ACK_EXE_COMP && step == TC_ACK_EXE_COMP) {
-		verify_crt_pkt(pkt, &out, res, 7);
-        return SATR_OK;
-	} else if(pkt->ack == TC_ACK_ALL || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_START) {
-		return SATR_ERROR;
-	} else {
-		return SATR_ERROR;
-	}
+    if(!C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) == true) { return SATR_ERROR; } 
+    if(!C_ASSERT(pkt->type == TC) == true) { return SATR_ERROR; } 
 
-	return SATR_ERROR;
+    if(pkt->ack == TC_ACK_NO) { return SATR_OK; } 
+    else if(pkt->ack == TC_ACK_ACC) {
+
+        tc_tm_pkt *temp_pkt;
+
+        verification_crt_pkt(pkt, temp_pkt, res);
+        route_pkt(temp_pkt);
+    } else if(pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) {
+        
+        tc_tm_pkt *temp_pkt;
+
+        verification_crt_pkt(pkt, temp_pkt, SATR_PKT_ILLEGAL_ACK);
+        route_pkt(temp_pkt);
+    }
+
+    return SATR_OK;
 }
 
-SAT_returnState verify_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, uint8_t res, uint8_t subtype) {
+SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, SAT_returnState res) {
 
-	union _cnv cnv;
+    uint8_t subtype;
+    union _cnv cnv;
 
-	out->type = TM;
-	out->app_id = pkt->dest_id; 
-	out->dest_id = pkt->app_id;
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(res < SATR_LAST) == true) { return SATR_ERROR; }
 
-	cnv.cnv16[0] = pkt->app_id;
-	out->data[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
-	out->data[1] = cnv.cnv8[0];
-	
-	cnv.cnv16[0] = pkt->seq_count;
-	out->data[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
-	out->data[3] = cnv.cnv8[0];
+    out = get_pkt(NORMAL);
+    if(!C_ASSERT(out != NULL) == true) { return SATR_ERROR; }
 
-	out->ser_type = TC_VERIFICATION_SERVICE;
-      
-	if(res != SATR_OK) {
-		out->data[4] = res;
-		subtype++;
-	}
-	out->ser_subtype = subtype;
+    subtype = TC_VR_ACCEPTANCE_SUCCESS;
 
-	return SATR_OK;
+    cnv.cnv16[0] = pkt->app_id;
+    out->data[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
+    out->data[1] = cnv.cnv8[0];
+
+    cnv.cnv16[0] = pkt->seq_count;
+    out->data[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
+    out->data[3] = cnv.cnv8[0];
+
+    out->len = 4;
+
+    if(res != SATR_OK) {
+        out->data[4] = res;
+        subtype = TC_VR_ACCEPTANCE_FAILURE;
+        out->len = 5;
+    }
+
+    crt_pkt(out, pkt->dest_id, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->app_id);
+
+    return SATR_OK;
 }
