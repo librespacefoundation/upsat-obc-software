@@ -16,6 +16,6 @@ void HAL_obc_SD_OFF();
 
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
-SAT_returnState HAL_eps_uart_rx(uint8_t *c);
+extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
 
 #endif

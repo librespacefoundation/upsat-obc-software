@@ -1,4 +1,4 @@
-s#include "service_utilities.h"
+#include "service_utilities.h"
 
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
@@ -45,15 +45,15 @@ void cnv8_16(uint8_t *from, uint16_t *to) {
 
 uint8_t checkSum(const uint8_t *data, uint16_t size) {
 
-    uint8_t CRC = 0;
+    uint8_t CRC_OBC = 0;
 
     if(!C_ASSERT(data != NULL && size != 0) == true) { return SATR_ERROR; }
 
     for(int i=0; i<=size; i++){
-        CRC = CRC ^ data[i];
+        CRC_OBC = CRC_OBC ^ data[i];
     }
 
-    return CRC;
+    return CRC_OBC;
 }
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt) {

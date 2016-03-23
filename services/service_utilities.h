@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include "services.h"
+#include "pkt_pool.h"
+#include "obc_hal.h"
 
 //temp
 #define TEST_ARRAY 1024

@@ -135,23 +135,23 @@ int main(void)
 //                tskIDLE_PRIORITY + 2UL, /* Task priority*/
 //                NULL /* Task handle */
 //                );
-       xTaskCreate(
-                init_and_run_time, /* Function pointer */
-                "timing", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
+//       xTaskCreate(
+//                init_and_run_time, /* Function pointer */
+//                "timing", /* Task name - for debugging only*/
+//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//                NULL /* Task handle */
+//                );
        
-       xTaskCreate(
-                init_and_run_schedules, /* Function pointer */
-                "scheduling", /* Task name - for debugging only*/
-                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-                NULL /* Task handle */
-                );
+//       xTaskCreate(
+//                init_and_run_schedules, /* Function pointer */
+//                "scheduling", /* Task name - for debugging only*/
+//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+//                NULL /* Task handle */
+//                );
        
       xTaskCreate(
                ToggleLED_Timer1, /* Function pointer */

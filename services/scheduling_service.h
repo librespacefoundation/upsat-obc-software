@@ -18,10 +18,10 @@
 #include "services.h"
 
 /**/
-typedef enum {
-    ALL=0,
-    SUBSET
-}SC_options_type;
+//typedef enum {
+//    ALL=0,
+//    SUBSET
+//}SC_options_type;
 
 typedef enum {
     /* The 'release_time' member

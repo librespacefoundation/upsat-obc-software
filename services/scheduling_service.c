@@ -204,7 +204,7 @@ SAT_returnState scheduling_stateAPI(){
 //    else{
 //        return R_NOK;
 //    }
-    return (scheduling_enabled ? SATR_OK : SATR_NOK);
+    return (scheduling_enabled ? SATR_OK : SATR_ERROR);
 }
 
 //OBC_returnStateTypedef edit_schedule_state(uint8_t state){

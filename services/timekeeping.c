@@ -5,14 +5,14 @@
  *      Author: nchronas
  */
 
-#include "FreeRTOS.h"
+//#include "FreeRTOS.h"
 #include "timekeeping.h"
-#include "stm32f4xx_it.h"
-#include "stm32f4xx_hal.h"
+//#include "stm32f4xx_it.h"
+//#include "stm32f4xx_hal.h"
 
 //#include "time.h"
-
-UART_HandleTypeDef Uart2Handle;
+//
+//UART_HandleTypeDef Uart2Handle;
 
 volatile uint32_t boot_seconds = 0;
 volatile uint32_t qb50_seconds = 0;
@@ -22,27 +22,27 @@ OBCTime_Type obc_gmt_time;
 /* 
  * 
  */
-TaskFunction_t init_and_run_time(void* p){   
-    
-    /*TODO: Update the time from RTC*/
-    obc_gmt_boot_time.tm_year = 2016;
-    obc_gmt_boot_time.tm_weeday = 4;
-    obc_gmt_boot_time.tm_monthday = 21;
-    obc_gmt_boot_time.tm_month = 2;
-    obc_gmt_boot_time.tm_hour = 21;
-    obc_gmt_boot_time.tm_min = 53;
-    obc_gmt_boot_time.tm_sec=23;
-    
-    obc_gmt_time = obc_gmt_boot_time;
-    
-    /*TODO: maybe log here the boot time*/
-    
-    while(1){
-        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 1 ,5000);
-        HAL_Delay(500);
-    }
-    
-}
+//TaskFunction_t init_and_run_time(void* p){   
+//    
+//    /*TODO: Update the time from RTC*/
+//    obc_gmt_boot_time.tm_year = 2016;
+//    obc_gmt_boot_time.tm_weeday = 4;
+//    obc_gmt_boot_time.tm_monthday = 21;
+//    obc_gmt_boot_time.tm_month = 2;
+//    obc_gmt_boot_time.tm_hour = 21;
+//    obc_gmt_boot_time.tm_min = 53;
+//    obc_gmt_boot_time.tm_sec=23;
+//    
+//    obc_gmt_time = obc_gmt_boot_time;
+//    
+//    /*TODO: maybe log here the boot time*/
+//    
+//    while(1){
+//        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 1 ,5000);
+//        HAL_Delay(500);
+//    }
+//    
+//}
 
 uint32_t get_seconds_from_last_bootAPI(){
     return boot_seconds;
