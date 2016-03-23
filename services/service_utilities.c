@@ -174,7 +174,6 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 
     pkt->seq_flags = buf[2] >> 6;
 
-    pkt->seq_count = cnv.cnv16[0];
     cnv8_16((uint8_t*)&buf[2], &pkt->seq_count);
     pkt->seq_count &= 0x3FFF;
 
@@ -188,7 +187,7 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 
     pkt->ser_type = buf[7];
     pkt->ser_subtype = buf[8];
-    pkt->dest_id = buf[9];
+    pkt->dest_id = (TC_TM_app_id)buf[9];
 
     if(!C_ASSERT(pkt->app_id < LAST_APP_ID) == true) {
         return SATR_PKT_ILLEGAL_APPID; 

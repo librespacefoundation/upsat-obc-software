@@ -1,7 +1,7 @@
 #include "obc_hal.h"
 
 void HAL_obc_delay(uint32_t sec) {
-	oSDelay(sec);
+	osDelay(sec);
 }
 
 void HAL_obc_SD_ON() {
