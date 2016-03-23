@@ -53,7 +53,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
     return SATR_OK;
 }
 
-hk_crt_free_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
+SAT_returnState hk_crt_free_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
 
     pkt = get_pkt(NORMAL);
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
@@ -70,7 +70,7 @@ SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 
     crt_pkt(pkt, app_id, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_LD_ACK_UPLINK, OBC_APP_ID);
 
-    pkt->data[0] = (char*)sid;
+    pkt->data[0] = (char)sid;
     pkt->len = 1;
 
     return SATR_OK;
