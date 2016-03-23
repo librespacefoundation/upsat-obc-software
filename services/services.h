@@ -98,7 +98,8 @@ typedef enum {
     SATR_CRC_ERROR             = 9,
     SATR_PKT_ILLEGAL_ACK       = 10,
     SATR_ALREADY_SERVICING     = 11,
-    SATR_LAST                  = 12
+    SATR_MS_MAX_FILES          = 12,
+    SATR_LAST                  = 13
 }SAT_returnState;
 
 #define TC_VERIFICATION_SERVICE         1
@@ -265,17 +266,14 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
+//  update verification lookup table
 //  add verification steps in each service.
 //  assert for 0 in modes, ids when applicable.
 //  verify HK_struct_id modes
-//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
-//  there is no support for verification for obc, do we need that?
-//  should we move all utilities functions, like pack, route etc in one big function file?
 //  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
-//  what to do with verification service, after route or after its service.
-//  SAT_returnState renaming to UPS_OK?
 //  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm
@@ -285,7 +283,10 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  add definitions for packet len calculations
 
 //finished
-
+//  there is no support for verification for obc, do we need that?
+//  SAT_returnState renaming to UPS_OK?
+//  what to do with verification service, after route or after its service.
+//  should we move all utilities functions, like pack, route etc in one big function file?
 //  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  when to free the packets.
 //  definitions of subtypes.

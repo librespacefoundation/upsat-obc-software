@@ -41,6 +41,7 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
     DIR dir;
     uint8_t *fn;
     uint8_t path[MS_MAX_PATH];
+    uint16_t i;
 
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
 
@@ -49,7 +50,7 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
 
     if (f_opendir(&dir, (char*)path) != FR_OK) { return SATR_ERROR; } //add more error checking
-    for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
+    for (i = 0; i < MS_MAX_FILES; i++) {
 
         res = f_readdir(&dir, &fno);                   /* Read a directory item */
         if(res != FR_OK) { f_closedir(&dir); return SATR_ERROR; }  /* Break on error */
@@ -74,6 +75,8 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
         }
     }
     f_closedir(&dir);
+
+    if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
     
     return SATR_OK;
 }
@@ -318,6 +321,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     uint8_t *fn;
     uint8_t start_flag = 0;
     uint8_t path[MS_MAX_PATH];
+    uint16_t i;
 
     if(!C_ASSERT(buf != NULL && size != NULL && iter != NULL) == true)          { return SATR_ERROR; }
     if(!C_ASSERT(*size == 0) == true)                                           { return SATR_ERROR; }
@@ -331,7 +335,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     else { start_flag = 0; }
 
     if (f_opendir(&dir, (char*)path) != FR_OK) { return SATR_ERROR; }
-    for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
+    for (i = 0; i < MS_MAX_FILES; i++) {
 
         res = f_readdir(&dir, &fno);                   /* Read a directory item */
         if(res != FR_OK) { f_closedir(&dir); return SATR_ERROR; }  /* Break on error */
@@ -366,6 +370,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     f_closedir(&dir);
  
     if(!C_ASSERT(*size != 0) == true) { return SATR_ERROR; }
+    if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
 
     return SATR_OK;
 }
@@ -376,6 +381,7 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
     FRESULT res;
     uint8_t path[MS_MAX_PATH];
     uint16_t byteswritten;
+    uint16_t i;
 
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
@@ -402,7 +408,7 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
 
     if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
 
-    for(uint16_t i = 0; i < MS_MAX_SU_FILE_SIZE; i++) {
+    for(i = 0; i < MS_MAX_SU_FILE_SIZE; i++) {
         
         res = f_read(&fp, &c, 1, (void *)&byteswritten);
         if(res != FR_OK) { f_close(&fp); return SATR_ERROR; } 
@@ -417,6 +423,8 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
     }
 
     f_close(&fp);
+
+	if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
 
     return SATR_OK;
 }
@@ -470,6 +478,7 @@ SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn) {
     uint8_t path[MS_MAX_PATH];
     uint8_t *temp_fn;
     uint32_t min = 0;
+    uint16_t i;
 
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
     if(!C_ASSERT(fn != NULL) == true)                           { return SATR_ERROR; }
@@ -478,7 +487,7 @@ SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn) {
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
 
     if (f_opendir(&dir,(char*) path) != FR_OK) { return SATR_ERROR; }
-    for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
+    for (i = 0; i < MS_MAX_FILES; i++) {
 
         res = f_readdir(&dir, &fno);                   /* Read a directory item */
         if(res != FR_OK) { f_closedir(&dir); return SATR_ERROR; }  /* Break on error */
@@ -503,6 +512,8 @@ SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn) {
 
     *fn = min;
 
+	if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
+
     return SATR_OK;
 }
 
@@ -513,6 +524,7 @@ SAT_returnState mass_storage_getFileSizeCount(MS_sid sid) {
     FRESULT res;
     FILINFO fno;
     uint8_t path[MS_MAX_PATH];
+    uint16_t i;
 
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
 
@@ -534,6 +546,8 @@ SAT_returnState mass_storage_getFileSizeCount(MS_sid sid) {
     }
     f_closedir(&dir);
  
+	if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
+
     return SATR_OK;
 }
 

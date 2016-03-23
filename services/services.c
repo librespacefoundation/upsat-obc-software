@@ -49,32 +49,6 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-//ToDo
-//  check that cnv functions are used correctly
-//  function management set time.
-//  finalize TC_MAX_PKT_SIZE
-//  what to do with verification service, after route or after its service.
-//  SAT_returnState renaming to UPS_OK?
-//  add reset counter, reset source finder.
-//  add event log book function
-//  test assertion definition for stm
-//  finish assertions
-//  add assertions in each service for its subtype
-//  architecture overview
-//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
-//  add definitions for packet len calculations
-//  use packet len instead of individual service pack, for pack.
-//  when to free the packets.
-//  definitions of subtypes.
-//  modify route & verification.
-//  add function management service.
-//  add serial.
-//  use cnv functions.
-
-//finished
-//  use pkt->len for data?
-//  add pack functions in each service.
-
 //stub
 uint32_t time_now() {
     return 0;
