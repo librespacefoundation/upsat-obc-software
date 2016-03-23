@@ -540,7 +540,7 @@ SAT_returnState mass_storage_getFileSizeCount(MS_sid sid) {
 SAT_returnState mass_storage_init() {
 
     MS_data.ev_temp_log = 0;
-    if(f_mount(&MS_data.test, SD_Path, 0) != FR_OK) { return SATR_ERROR; }
+    if(f_mount(&MS_data.test, MS_SD_PATH, 0) != FR_OK) { return SATR_ERROR; }
 
     mass_storage_getFileSizeCount(FOTOS);
     mass_storage_getFileSizeCount(SU_LOG);
