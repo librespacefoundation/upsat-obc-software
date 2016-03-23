@@ -1,4 +1,4 @@
-"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\obc_hal.c"
+"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\services\hal\stm32\obc_hal.c"
 -std=c99
 -ferror-limit=100
 -I

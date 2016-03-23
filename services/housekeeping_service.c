@@ -30,7 +30,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
 
     if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
         uint8_t sid = pkt->data[0];
-        hk_crt_pkt_TM(pkt, pkt->dest_id, sid);
+        hk_crt_pkt_TM(pkt, (TC_TM_app_id)pkt->dest_id, sid);
         route_pkt(pkt);
     } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         if(pkt->app_id == EPS_APP_ID) {
@@ -69,7 +69,7 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid) 
     if(sid == 3) {
 
         //cnv.cnv32 = time.now();
-        cnv32_8(time_now(), pkt->data[1]);
+        cnv32_8(time_now(), &pkt->data[1]);
         pkt->len = 5;
     } else if(sid == 4) {
 

@@ -8,6 +8,13 @@
 #ifndef SCHEDULING_SERVICE_H
 #define SCHEDULING_SERVICE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "services.h"
+#include "housekeeping_service.h"
+#include "timekeeping.h"
+
 #define SCHEDULING_SERVICE_V 0.1
 
 /* Declares the maximum available space for 
@@ -148,7 +155,7 @@ static scheduling_enabled = 1;
 /* Service initialization and runtime function 
  * 
  */
-TaskFunction_t init_and_run_schedules(void*p);
+//TaskFunction_t init_and_run_schedules(void*p);
 
 /* To serve as unique entry point to the Service.
  * To be called from route_packet. 

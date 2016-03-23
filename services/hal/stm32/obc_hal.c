@@ -14,7 +14,9 @@ void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
 
 SAT_returnState HAL_eps_uart_rx(uint8_t *c) {
 
-    SAT_returnState res;
+  //need to make the change from the two different typedefs
+    SAT_returnState response;
+    HAL_StatusTypeDef res;
 
 //    res = HAL_UART_Receive(&huart2, c, 1, 10);
 

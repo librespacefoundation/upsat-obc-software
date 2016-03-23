@@ -5,14 +5,7 @@
  *      Author: nchronas
  */
 
-//#include "FreeRTOS.h"
 #include "timekeeping.h"
-//#include "stm32f4xx_it.h"
-//#include "stm32f4xx_hal.h"
-
-//#include "time.h"
-//
-//UART_HandleTypeDef Uart2Handle;
 
 volatile uint32_t boot_seconds = 0;
 volatile uint32_t qb50_seconds = 0;

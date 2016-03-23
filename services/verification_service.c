@@ -11,15 +11,19 @@ SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res) {
     if(pkt->ack == TC_ACK_NO) { return SATR_OK; } 
     else if(pkt->ack == TC_ACK_ACC) {
 
-        tc_tm_pkt *temp_pkt;
+        tc_tm_pkt *temp_pkt = 0;
 
         verification_crt_pkt(pkt, temp_pkt, res);
+        if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
+
         route_pkt(temp_pkt);
     } else if(pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) {
-        
-        tc_tm_pkt *temp_pkt;
+
+        tc_tm_pkt *temp_pkt = 0;
 
         verification_crt_pkt(pkt, temp_pkt, SATR_PKT_ILLEGAL_ACK);
+        if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
+
         route_pkt(temp_pkt);
     }
 

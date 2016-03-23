@@ -72,7 +72,7 @@
 #define DSI_ERROR_ECC_MASK (DSI_ISR1_ECCSE | DSI_ISR1_ECCME)
 #define DSI_ERROR_CRC_MASK DSI_ISR1_CRCE
 #define DSI_ERROR_PSE_MASK DSI_ISR1_PSE
-#define DSI_ERROSATR_EOT_MASK DSI_ISR1_EOTPE
+#define DSI_ERROR_EOT_MASK DSI_ISR1_EOTPE
 #define DSI_ERROR_OVF_MASK DSI_ISR1_LPWRE
 #define DSI_ERROR_GEN_MASK (DSI_ISR1_GCWRE | DSI_ISR1_GPWRE | DSI_ISR1_GPTXE | DSI_ISR1_GPRDE | DSI_ISR1_GPRXE)
 /**
@@ -371,10 +371,10 @@ HAL_StatusTypeDef HAL_DSI_ConfigErrorMonitor(DSI_HandleTypeDef *hdsi, uint32_t A
     hdsi->Instance->IER[1] |= DSI_ERROR_PSE_MASK;
   }
   
-  if(ActiveErrors & HAL_DSI_ERROSATR_EOT)
+  if(ActiveErrors & HAL_DSI_ERROR_EOT)
   {
     /* Enable the interrupt generation on selected errors */
-    hdsi->Instance->IER[1] |= DSI_ERROSATR_EOT_MASK;
+    hdsi->Instance->IER[1] |= DSI_ERROR_EOT_MASK;
   }
   
   if(ActiveErrors & HAL_DSI_ERROR_OVF)
@@ -521,9 +521,9 @@ void HAL_DSI_IRQHandler(DSI_HandleTypeDef *hdsi)
       hdsi->ErrorCode |= HAL_DSI_ERROR_PSE;
     }
     
-    if(ErrorStatus1 & DSI_ERROSATR_EOT_MASK)
+    if(ErrorStatus1 & DSI_ERROR_EOT_MASK)
     {
-      hdsi->ErrorCode |= HAL_DSI_ERROSATR_EOT;
+      hdsi->ErrorCode |= HAL_DSI_ERROR_EOT;
     }
     
     if(ErrorStatus1 & DSI_ERROR_OVF_MASK)

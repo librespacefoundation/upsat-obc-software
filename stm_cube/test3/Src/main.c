@@ -36,7 +36,7 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
-#include "route_verification.h"
+#include "services/service_utilities.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -365,7 +365,7 @@ void StartDefaultTask(void const * argument)
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    mass_storage_init();
-   sprintf(uart_temp, "Hello\n");
+   sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
    
   /* Infinite loop */

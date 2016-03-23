@@ -825,7 +825,7 @@ typedef struct
 #define HAL_DSI_ERROR_ECC  ((uint32_t)0x00000010) /*!< ECC errors                  */
 #define HAL_DSI_ERROR_CRC  ((uint32_t)0x00000020) /*!< CRC error                   */
 #define HAL_DSI_ERROR_PSE  ((uint32_t)0x00000040) /*!< Packet Size error           */
-#define HAL_DSI_ERROSATR_EOT  ((uint32_t)0x00000080) /*!< End Of Transmission error   */
+#define HAL_DSI_ERROR_EOT  ((uint32_t)0x00000080) /*!< End Of Transmission error   */
 #define HAL_DSI_ERROR_OVF  ((uint32_t)0x00000100) /*!< FIFO overflow error         */
 #define HAL_DSI_ERROR_GEN  ((uint32_t)0x00000200) /*!< Generic FIFO related errors */
 /**

@@ -126,13 +126,9 @@ SAT_returnState import_eps_pkt() {
     tc_tm_pkt *pkt;
     uint8_t c = 0;
     uint16_t cnt = 0;
-    uint16_t cnt_out = 0;
     uint8_t buf[TEST_ARRAY];
-    uint8_t buf_out[TEST_ARRAY];
     SAT_returnState res;    
-    SAT_returnState res_deframe; 
-    SAT_returnState res_unpack;
-    SAT_returnState res_route; 
+    SAT_returnState res_deframe;
 
     res = HAL_eps_uart_rx(&c);
     if( res == SATR_OK ) {

@@ -98,7 +98,6 @@ typedef enum {
     SATR_CRC_ERROR             = 9,
     SATR_PKT_ILLEGAL_ACK       = 10,
     SATR_ALREADY_SERVICING     = 11,
-    
     /* Scheduling Service Error State Codes
     * from 
     */
@@ -219,7 +218,8 @@ typedef enum {
     BETWEEN     = 2,
     SPECIFIC    = 3,
     LAST_PART   = 4,
-    LAST_MODE   = 5
+    NO_MODE     = 5,
+    LAST_MODE   = 6
 }MS_mode;
 
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 

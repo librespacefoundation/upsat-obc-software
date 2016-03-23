@@ -1,4 +1,4 @@
-"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\mass_storage_service.c"
+"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\services\mass_storage_service.c"
 -std=c99
 -ferror-limit=100
 -I

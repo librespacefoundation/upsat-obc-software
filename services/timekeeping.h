@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <time.h>
 #include "services.h"
 
 typedef struct{

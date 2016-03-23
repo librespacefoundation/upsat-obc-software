@@ -6,26 +6,10 @@
  * This is the implementation of scheduling service as is
  * documented at pages 99-118 of ECSS-E-70-41A document.
  * Service Type 11 
+ * (some restrictions apply)
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-//#include <time.h>
-#include "FreeRTOS.h"
-#include "services.h"
 #include "scheduling_service.h"
-#include "housekeeping_service.h"
-#include "portmacro.h"
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_it.h"
-#include "timekeeping.h"
-
-UART_HandleTypeDef Uart2Handle;
-
-/*Variable local to the Scheduling service*/
-
-TickType_t boot_elapsed_ticks;
 
 /*TODO: becomes a 'state' struct oh .h*/
 /*Number of loaded schedules*/
@@ -93,49 +77,49 @@ void cross_schedules(){
 /*
  *
  */
-TaskFunction_t init_and_run_schedules(void* p){   
-    
-    load_schedules();
-        time_t current_time;
-
-        /* Cross schedules array, 
-         * in every pass check if the specific schedule 
-         * if enabled,
-         *      if it is then check if its relative or absolute and check the time.
-         *      if time >= release time, then execute it. (?? what if time has passed?)
-         * else !enabled
-         *      if time>= release time, then mark it as !valid
-         */
-        
-        while(1){
-//        /* Obtain current time. */
-//        current_time = time(NULL);
+//TaskFunction_t init_and_run_schedules(void* p){   
+//    
+//    load_schedules();
+//        time_t current_time;
 //
-//        if (current_time == ((time_t)-1))
-//        {
-////            printf(stderr, "Failure to obtain the current time.\n");
-////            exit(EXIT_FAILURE);
-//        }
-//
-//        /* Convert to local time format. */
-//        c_time_string = ctime(&current_time);
-//
-//        if (c_time_string == NULL)
-//        {
-////            printf(stderr, "Failure to convert the current time.\n");
-////            exit(EXIT_FAILURE);
-//        }
-//        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
-//        /* Print to stdout. ctime() has already added a terminating newline character. */
-////         printf("%s", c_time_string);
-////        exit(EXIT_SUCCESS);
+//        /* Cross schedules array, 
+//         * in every pass check if the specific schedule 
+//         * if enabled,
+//         *      if it is then check if its relative or absolute and check the time.
+//         *      if time >= release time, then execute it. (?? what if time has passed?)
+//         * else !enabled
+//         *      if time>= release time, then mark it as !valid
+//         */
 //        
-////        if ( scheduling_stateAPI() ){
-////            cross_schedules();
+//        while(1){
+////        /* Obtain current time. */
+////        current_time = time(NULL);
+////
+////        if (current_time == ((time_t)-1))
+////        {
+//////            printf(stderr, "Failure to obtain the current time.\n");
+//////            exit(EXIT_FAILURE);
 ////        }
-         HAL_Delay(100);
-    }
-}
+////
+////        /* Convert to local time format. */
+////        c_time_string = ctime(&current_time);
+////
+////        if (c_time_string == NULL)
+////        {
+//////            printf(stderr, "Failure to convert the current time.\n");
+//////            exit(EXIT_FAILURE);
+////        }
+////        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
+////        /* Print to stdout. ctime() has already added a terminating newline character. */
+//////         printf("%s", c_time_string);
+//////        exit(EXIT_SUCCESS);
+////        
+//////        if ( scheduling_stateAPI() ){
+//////            cross_schedules();
+//////        }
+//         HAL_Delay(100);
+//    }
+//}
 
 SAT_returnState scheduling_app(tc_tm_pkt* spacket){
     return SATR_OK;

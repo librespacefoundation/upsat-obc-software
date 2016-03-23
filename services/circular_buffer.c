@@ -1,10 +1,7 @@
 #include "circular_buffer.h"
 
 /**
-  * @brief  
-  * @param  
-  * @param  
-  * @retval
+  * 
   */
 static uint8_t cirq_buffer_full( CircQueue* theq  )
 {
@@ -12,10 +9,7 @@ static uint8_t cirq_buffer_full( CircQueue* theq  )
 }
 
 /**
-  * @brief  
-  * @param  
-  * @param  
-  * @retval
+  * 
   */
 static uint8_t cirq_buffer_empty( CircQueue* theq )
 {
@@ -23,10 +17,7 @@ static uint8_t cirq_buffer_empty( CircQueue* theq )
 }
 
 /**
-  * @brief  
-  * @param  
-  * @param  
-  * @retval
+  * 
   */
 static uint8_t Enqueue( CircQueue* theq, uint8_t data)
 {
@@ -40,10 +31,7 @@ static uint8_t Enqueue( CircQueue* theq, uint8_t data)
 }
 
 /**
-  * @brief  
-  * @param  
-  * @param  
-  * @retval
+  * 
   */
 static uint8_t Dequeue( CircQueue* theq, uint8_t* data)
 {
@@ -57,11 +45,11 @@ static uint8_t Dequeue( CircQueue* theq, uint8_t* data)
 }
 
 /**
-  * @brief  Compares two buffers.
-  * @param  pBuffer1, pBuffer2: buffers to be compared.
-  * @param  BufferLength: buffer's length
-  * @retval 0  : pBuffer1 identical to pBuffer2
-  *         >0 : pBuffer1 differs from pBuffer2
+  * Compares two buffers.
+  * pBuffer1, pBuffer2: buffers to be compared.
+  * BufferLength: buffer's length
+  * 0  : pBuffer1 identical to pBuffer2
+  * 0 : pBuffer1 differs from pBuffer2
   */
 static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
 {
