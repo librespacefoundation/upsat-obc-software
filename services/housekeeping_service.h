@@ -20,8 +20,9 @@ struct _obc_status {
     uint8_t temp_eps;
     uint8_t temp_batt;
     uint8_t temp_comms;
+};
 
-}obc_status;
+extern struct _obc_status obc_status;
 
 //ToDo
 //  finish sid

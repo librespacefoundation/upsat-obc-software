@@ -1,5 +1,7 @@
 #include "housekeeping_service.h"
 
+struct _obc_status obc_status;
+
 void hk_SCH() {
 
     tc_tm_pkt pkt;

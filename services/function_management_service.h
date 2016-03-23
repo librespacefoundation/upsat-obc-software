@@ -9,6 +9,7 @@ extern SAT_returnState power_control_api(FM_dev_id did, FM_fun_id fid);
 extern void cnv8_32(uint8_t *from, uint32_t *to);
 
 //ToDo
+//	add timemanagement.
 //  maybe make dev id = app id
 
 SAT_returnState function_management_app(tc_tm_pkt *pkt);
