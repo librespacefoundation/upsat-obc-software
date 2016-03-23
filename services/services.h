@@ -156,6 +156,14 @@ typedef enum {
     LAST_APP_ID     = 7
 }TC_TM_app_id;
 
+typedef enum {  
+    HEALTH_REP      = 1,
+    EX_HEALTH_REP   = 2,
+    EVENTS_REP      = 3,
+    WOD_REP         = 4,
+    LAST_STRUCT_ID  = 5
+}HK_struct_id;
+
 typedef enum {
     P_OFF       = 0,
     P_ON        = 1,
@@ -178,24 +186,24 @@ typedef enum {
 }FM_dev_id;
 
 typedef enum {  
-    SU_SCRIPT_1         = 1,
-    SU_SCRIPT_2         = 2,
-    SU_SCRIPT_3         = 3,
-    SU_SCRIPT_4         = 4,
-    SU_SCRIPT_5         = 5,
-    SU_SCRIPT_6         = 6,
-    SU_SCRIPT_7         = 7,
-    SU_LOG              = 8,
-    EVENT_LOG           = 9,
-    FOTOS               = 10,
-    TMP_SU_SCRIPT_1     = 11,
-    TMP_SU_SCRIPT_2     = 12,
-    TMP_SU_SCRIPT_3     = 13,
-    TMP_SU_SCRIPT_4     = 14,
-    TMP_SU_SCRIPT_5     = 15,
-    TMP_SU_SCRIPT_6     = 16,
-    TMP_SU_SCRIPT_7     = 17,
-    LAST_SID            = 18
+    SU_SCRIPT_1     = 1,
+    SU_SCRIPT_2     = 2,
+    SU_SCRIPT_3     = 3,
+    SU_SCRIPT_4     = 4,
+    SU_SCRIPT_5     = 5,
+    SU_SCRIPT_6     = 6,
+    SU_SCRIPT_7     = 7,
+    SU_LOG          = 8,
+    EVENT_LOG       = 9,
+    FOTOS           = 10,
+    TMP_SU_SCRIPT_1 = 11,
+    TMP_SU_SCRIPT_2 = 12,
+    TMP_SU_SCRIPT_3 = 13,
+    TMP_SU_SCRIPT_4 = 14,
+    TMP_SU_SCRIPT_5 = 15,
+    TMP_SU_SCRIPT_6 = 16,
+    TMP_SU_SCRIPT_7 = 17,
+    LAST_SID        = 18
 }MS_sid;
 
 typedef enum {  
@@ -250,6 +258,8 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  assert for 0 in modes, ids when applicable.
+//  verify HK_struct_id modes
 //  add seq count in pack and global memory.
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works

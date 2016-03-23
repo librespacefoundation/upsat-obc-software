@@ -5,6 +5,7 @@
 #include "services.h"
 
 extern uint32_t time_now();
+extern void *get_pkt(uint8_t mode);
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 extern SAT_returnState power_control_api(FM_dev_id did, FM_fun_id fid);
 
@@ -25,15 +26,20 @@ struct _obc_status {
 extern struct _obc_status obc_status;
 
 //ToDo
+//	verify sid reports
 //  finish sid
-//  when the get packet happens in crt pkt
+
+//finished
 //  sid to enum
+//  when the get packet happens in crt pkt
 
 SAT_returnState hk_app(tc_tm_pkt *pkt);
 
-SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid);
 
-SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t sid);
+SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid);
+
+SAT_returnState hk_crt_free_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid);
 
 void hk_SCH();
 
