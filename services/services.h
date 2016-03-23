@@ -266,6 +266,7 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  sort definitions relating to file system and packet sizes etc.
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  update verification lookup table
 //  add verification steps in each service.
