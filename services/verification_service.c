@@ -1,8 +1,7 @@
 #include "verification_service.h"
 
-SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res) {
+SAT_returnState verification_app(tc_tm_pkt *pkt) {
 
-    if(!C_ASSERT(res < SATR_LAST) == true)                     { return SATR_ERROR; }
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     if(!C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_EXE_START || pkt->ack == TC_ACK_EXE_PROG || pkt->ack == TC_ACK_EXE_COMP || pkt->ack == TC_ACK_ALL) == true) { return SATR_ERROR; } 
@@ -13,7 +12,7 @@ SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res) {
 
         tc_tm_pkt *temp_pkt = 0;
 
-        verification_crt_pkt(pkt, temp_pkt, res);
+        verification_crt_pkt(pkt, temp_pkt, pkt->verification_state);
         if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
         route_pkt(temp_pkt);

@@ -17,7 +17,7 @@ extern void cnv16_8(const uint16_t from, uint8_t *to);
 extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
-SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res); 
+SAT_returnState verification_app(tc_tm_pkt *pkt); 
 
 SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, SAT_returnState res);
 

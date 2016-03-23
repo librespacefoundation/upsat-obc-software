@@ -247,6 +247,13 @@ typedef struct {
     TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
     uint8_t *data; /* variable data, this should be fixed array, normal or extended */
+
+    /*this is not part of the header. it is used from the software and the verification service,
+     *when the packet wants ack. 
+     *the type is SAT_returnState and it either stores R_OK or has the error code (failure reason).
+     *it is initiazed as R_ERROR and the service should be responsible to make it R_OK or put the coresponding error.     
+     */
+    SAT_returnState verification_state; 
 /*  uint8_t padding;  x bits, padding for word alligment */
 
 //  uint16_t crc; /* CRC or checksum, mission specific*/
@@ -258,10 +265,10 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  add verification steps in each service.
 //  assert for 0 in modes, ids when applicable.
 //  verify HK_struct_id modes
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
-//  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  there is no support for verification for obc, do we need that?
 //  should we move all utilities functions, like pack, route etc in one big function file?
 //  check that cnv functions are used correctly
@@ -278,6 +285,8 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  add definitions for packet len calculations
 
 //finished
+
+//  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  when to free the packets.
 //  definitions of subtypes.
 //  modify route & verification.

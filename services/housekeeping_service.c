@@ -10,7 +10,7 @@ void hk_SCH() {
     route_pkt(&pkt);
     hk_crt_pkt_TC(&pkt, COMMS_APP_ID, HEALTH_REP);
     route_pkt(&pkt);
-    //delay(59) sec;
+    HAL_obc_delay(59);
     hk_crt_pkt_TM(&pkt, GND_APP_ID, WOD_REP);
     route_pkt(&pkt);
     clear_wod();
@@ -39,6 +39,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
         route_pkt(pkt);
+
     } else if(pkt->app_id == EPS_APP_ID && pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         obc_status.batt_curr = pkt->data[1];
         obc_status.batt_volt = pkt->data[2];
@@ -46,8 +47,13 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         obc_status.bus_5v_curr = pkt->data[4];
         obc_status.temp_eps = pkt->data[5];
         obc_status.temp_batt = pkt->data[6];
+
+        pkt->verification_state = R_OK;
+
     } else if(pkt->app_id == COMMS_APP_ID && pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         obc_status.temp_comms = pkt->data[1];
+
+        pkt->verification_state = R_OK;
     }
 
     return SATR_OK;

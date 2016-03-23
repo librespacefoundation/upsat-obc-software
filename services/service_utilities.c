@@ -92,7 +92,7 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
     else if(id == IAC_APP_ID)      { export_eps_pkt(pkt); } 
     else if(id == GND_APP_ID)      { export_eps_pkt(pkt); } 
 
-    verification_app(pkt, res);
+    verification_app(pkt);
     free_pkt(pkt);
     return SATR_OK;
 }
@@ -137,16 +137,18 @@ SAT_returnState import_eps_pkt() {
     uint8_t buf[TEST_ARRAY];
     SAT_returnState res;    
     SAT_returnState res_deframe;
+    SAT_returnState res_unpack;
 
     res = HAL_eps_uart_rx(&c);
     if( res == SATR_OK ) {
         res_deframe = HLDLC_deframe(buf, &cnt, c);
         if(res_deframe == SATR_EOT) {
             
+            //if(cnt > )
             pkt = get_pkt(NORMAL);
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            unpack_pkt(buf, pkt, cnt);
-            route_pkt(pkt);  
+            if(unpack_pkt(buf, pkt, cnt) == SATR_OK) { route_pkt(pkt); } 
+            else { verification_app(pkt); free_pkt(pkt); }
         }
     }
 
@@ -189,44 +191,56 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
     pkt->ser_subtype = buf[8];
     pkt->dest_id = (TC_TM_app_id)buf[9];
 
+    pkt->verification_state = SATR_ERROR;
+
     if(!C_ASSERT(pkt->app_id < LAST_APP_ID) == true) {
+        pkt->verification_state = SATR_PKT_ILLEGAL_APPID;
         return SATR_PKT_ILLEGAL_APPID; 
     }
 
     if(!C_ASSERT(pkt->len != size - 7) == true) {
+        pkt->verification_state = SATR_PKT_INV_LEN;
         return SATR_PKT_INV_LEN; 
     }
     pkt->len -= 4;
 
     if(!C_ASSERT(tmp_crc[0] != tmp_crc[1]) == true) {
+        pkt->verification_state = SATR_PKT_INC_CRC;
         return SATR_PKT_INC_CRC; 
     }
 
     if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) == true) { 
+        pkt->verification_state = SATR_PKT_ILLEGAL_PKT_TP;
         return SATR_PKT_ILLEGAL_PKT_TP; 
     }
 
     if(!C_ASSERT(ver != 0) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR; 
     }
 
     if(!C_ASSERT(tc_pus != 1) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
     if(!C_ASSERT(ccsds_sec_hdr != 0) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
     if(!C_ASSERT(pkt->type != TC && pkt->type != TM) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
     if(!C_ASSERT(dfield_hdr != 1) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
     if(!C_ASSERT(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) == true) {
+        pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
