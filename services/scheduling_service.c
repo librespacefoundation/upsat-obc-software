@@ -11,14 +11,11 @@
 
 #include "scheduling_service.h"
 
-/*TODO: becomes a 'state' struct oh .h*/
-/*Number of loaded schedules*/
-uint8_t nmbr_of_ld_sched = 0;
-uint8_t schedule_arr_full = 0;
-
 uint8_t find_schedule_pos();
 
 SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
+Scheduling_service_state sc_s_state;
+
 
 /*  Initiates the scheduling service.
  *  Loads the schedules from persistent storage.
@@ -77,49 +74,49 @@ void cross_schedules(){
 /*
  *
  */
-//TaskFunction_t init_and_run_schedules(void* p){   
-//    
-//    load_schedules();
-//        time_t current_time;
+SAT_returnState init_schedules(){   
+    
+    load_schedules();
+        time_t current_time;
+
+        /* Cross schedules array, 
+         * in every pass check if the specific schedule 
+         * if enabled,
+         *      if it is then check if its relative or absolute and check the time.
+         *      if time >= release time, then execute it. (?? what if time has passed?)
+         * else !enabled
+         *      if time>= release time, then mark it as !valid
+         */
+        
+        while(1){
+//        /* Obtain current time. */
+//        current_time = time(NULL);
 //
-//        /* Cross schedules array, 
-//         * in every pass check if the specific schedule 
-//         * if enabled,
-//         *      if it is then check if its relative or absolute and check the time.
-//         *      if time >= release time, then execute it. (?? what if time has passed?)
-//         * else !enabled
-//         *      if time>= release time, then mark it as !valid
-//         */
+//        if (current_time == ((time_t)-1))
+//        {
+////            printf(stderr, "Failure to obtain the current time.\n");
+////            exit(EXIT_FAILURE);
+//        }
+//
+//        /* Convert to local time format. */
+//        c_time_string = ctime(&current_time);
+//
+//        if (c_time_string == NULL)
+//        {
+////            printf(stderr, "Failure to convert the current time.\n");
+////            exit(EXIT_FAILURE);
+//        }
+//        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
+//        /* Print to stdout. ctime() has already added a terminating newline character. */
+////         printf("%s", c_time_string);
+////        exit(EXIT_SUCCESS);
 //        
-//        while(1){
-////        /* Obtain current time. */
-////        current_time = time(NULL);
-////
-////        if (current_time == ((time_t)-1))
-////        {
-//////            printf(stderr, "Failure to obtain the current time.\n");
-//////            exit(EXIT_FAILURE);
+////        if ( scheduling_stateAPI() ){
+////            cross_schedules();
 ////        }
-////
-////        /* Convert to local time format. */
-////        c_time_string = ctime(&current_time);
-////
-////        if (c_time_string == NULL)
-////        {
-//////            printf(stderr, "Failure to convert the current time.\n");
-//////            exit(EXIT_FAILURE);
-////        }
-////        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
-////        /* Print to stdout. ctime() has already added a terminating newline character. */
-//////         printf("%s", c_time_string);
-//////        exit(EXIT_SUCCESS);
-////        
-//////        if ( scheduling_stateAPI() ){
-//////            cross_schedules();
-//////        }
-//         HAL_Delay(100);
-//    }
-//}
+         HAL_Delay(100);
+    }
+}
 
 SAT_returnState scheduling_app(tc_tm_pkt* spacket){
     return SATR_OK;
@@ -129,29 +126,35 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
                                            SC_pkt* theSchpck ){        
     
     /*check if schedule array is already full*/
-//    if ( nmbr_of_ld_sched == (MAX_STORED_SCHEDULES -1) ){
-    if ( schedule_arr_full ){  
-        /*TODO: Here to create a telemetry saying "i'm full"*/
+    
+    if ( !C_ASSERT(sc_s_state.schedule_arr_full) == true ){  
+        /*TODO: Here to create a telemetry/log saying "i'm full"*/
         return SATR_SCHEDULE_FULL;
     }
+    
+    uint8_t pos = find_schedule_pos(sch_mem_pool);
+    if ( !C_ASSERT(pos != SC_MAX_STORED_SCHEDULES) == true){
+        return SATR_SCHEDULE_FULL;
+    }
+    
     /*Check sub-schedule id*/
-    if ( theSchpck->sub_schedule_id !=1 ){
+    if ( !C_ASSERT(theSchpck->sub_schedule_id !=1) == true ){
         return SATR_SSCH_ID_INVALID;
     }
     /*Check number of tc in schpck id*/
-    if ( theSchpck->num_of_sch_tc !=1 ){
+    if ( !C_ASSERT(theSchpck->num_of_sch_tc !=1) == true ){
         return SATR_NMR_OF_TC_INVALID;
     }
     /*Check interlock set id*/
-    if ( theSchpck->intrlck_set_id !=0  ){
+    if ( !C_ASSERT(theSchpck->intrlck_set_id !=0) == true){
         return SATR_INTRL_ID_INVALID;
     }
     /*Check interlock assessment id*/
-    if ( theSchpck->intrlck_ass_id !=1 ){
+    if ( !C_ASSERT(theSchpck->intrlck_ass_id !=1) == true ){
         return SATR_ASS_INTRL_ID_INVALID;
     }
     /*Check release time type id*/
-    if ( theSchpck->sch_evt != ABSOLUTE ){
+    if ( !C_ASSERT(theSchpck->sch_evt != ABSOLUTE) == true ){
         return SATR_RLS_TIMET_ID_INVALID;
     }
     /*Check time value*/
@@ -163,19 +166,18 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
 //       return INTRL_LOGIC_ERROR; 
 //    }
     
-    uint8_t pos = find_schedule_pos(sch_mem_pool);
+    
 //    if (!C_ASSERT(pos<SC_MAX_STORED_SCHEDULES)==true){
 //        //prob on pos.
 //        return SATR_ERROR;
 //    }
         
     /*Copy the packet into the array*/
-//    mem_schedule[pos] = *theSchpck;
     sch_mem_pool[pos] = *theSchpck;
-    nmbr_of_ld_sched++;
-    if ( nmbr_of_ld_sched == SC_MAX_STORED_SCHEDULES ){
+    sc_s_state.nmbr_of_ld_sched++;
+    if ( sc_s_state.nmbr_of_ld_sched == SC_MAX_STORED_SCHEDULES ){
         /*schedule array has become full*/
-        schedule_arr_full = true;
+        sc_s_state.schedule_arr_full = true;
         /*TODO: turn 1, 0 to true, false*/
     }
     return SATR_OK;
@@ -311,21 +313,23 @@ OBC_returnStateTypedef ( Schedule_pck theSchpck ){
  */
 uint8_t find_schedule_pos(SC_pkt* sche_mem_pool)
 {
-    if ( nmbr_of_ld_sched == 0){
-        return 0;
-    }
-    else{
+//    if ( sc_s_state.nmbr_of_ld_sched == 0){
+//        return 0; /*first position in schedules memory pool array*/
+//    }
+//    else{
         uint8_t pos=0;
-        while( sche_mem_pool[pos++].valid == 1 ){
+        while( sche_mem_pool[pos].valid == true ){
 //            pos++;
             if (pos >= SC_MAX_STORED_SCHEDULES){
-                return SATR_SCHEDULE_FULL;
+//                return SATR_SCHEDULE_FULL;
+                return SC_MAX_STORED_SCHEDULES;
             }
             else{
-                nmbr_of_ld_sched++;
-                return --pos;
+//                sc_s_state.nmbr_of_ld_sched++;
+                return pos;
             }
+            pos++;
         }
-//        return nmbr_of_ld_sched;
-    }
+        return pos; /*returns 0*/
 }
+

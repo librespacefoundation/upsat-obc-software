@@ -137,25 +137,41 @@ typedef struct {
          * by a new one.
          * When a schedule goes for execution, 
          * automatically becomes invalid.
-         * Valid=1, Invalid=0
+         * Valid=true, 1, Invalid=false ,0
          */
     uint8_t valid;
     
 }SC_pkt;
 
+typedef struct {
+    /*Number of loaded schedules*/
+    uint8_t nmbr_of_ld_sched;
+    
+    /* Defines the state of the Scheduling service,
+    * if enabled the release of TC is running.
+    * Enable = true, 1
+    * Disabled = false, 0
+    */
+    uint8_t scheduling_enabled;
+    
+    /* Schedules memory pool is full.
+     * Full = true, 1
+     * space avaliable = false, 0 
+     */
+    uint8_t schedule_arr_full; 
+    
+}Scheduling_service_state;
+
 extern SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
+extern Scheduling_service_state sc_s_state;
 
-/* Defines the state of the Scheduling service,
- * if enabled the release of TC is running.
- * Enable = 1
- * Disabled = 0
- */
-static scheduling_enabled = 1;
 
-/* Service initialization and runtime function 
+static scheduling_enabled = true;
+
+/* Service initialization.
  * 
  */
-//TaskFunction_t init_and_run_schedules(void*p);
+SAT_returnState init_schedules();
 
 /* To serve as unique entry point to the Service.
  * To be called from route_packet. 
