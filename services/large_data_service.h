@@ -34,7 +34,9 @@ struct _ld_status {
     MS_mode mode;           /**/
     uint32_t from;          /**/
     uint32_t to;            /**/
-}LD_status;
+};
+
+extern struct _ld_status LD_status;
 
 extern void *get_pkt(uint8_t mode);
 extern uint32_t time_now();

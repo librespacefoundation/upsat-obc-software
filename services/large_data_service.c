@@ -1,5 +1,7 @@
 #include "large_data_service.h"
 
+struct _ld_status LD_status;
+
 SAT_returnState large_data_app(tc_tm_pkt *pkt) {
 
     if(pkt->ser_subtype == TC_LD_FIRST_UPLINK)              { large_data_firstRx_api(pkt); } 
