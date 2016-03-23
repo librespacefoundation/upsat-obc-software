@@ -18,7 +18,7 @@ extern void *get_pkt(uint8_t mode);
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 extern uint32_t time_now();
 
-extern SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res); 
+extern SAT_returnState verification_app(tc_tm_pkt *pkt); 
 extern SAT_returnState hk_app(tc_tm_pkt *pkt);
 extern SAT_returnState function_management_app(tc_tm_pkt *pkt);
 extern SAT_returnState mass_storage_app(tc_tm_pkt *pkt);

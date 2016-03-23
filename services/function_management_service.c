@@ -16,7 +16,7 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     if(fun_id == P_OFF || fun_id == P_ON || fun_id == P_RESET) {  /*power management*/
-        pkt->verification_state = R_OK; 
+        pkt->verification_state = SATR_OK; 
         power_control_api((FM_dev_id)val, fun_id); 
     }
     //else if() /*time management*/

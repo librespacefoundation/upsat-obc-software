@@ -137,7 +137,6 @@ SAT_returnState import_eps_pkt() {
     uint8_t buf[TEST_ARRAY];
     SAT_returnState res;    
     SAT_returnState res_deframe;
-    SAT_returnState res_unpack;
 
     res = HAL_eps_uart_rx(&c);
     if( res == SATR_OK ) {

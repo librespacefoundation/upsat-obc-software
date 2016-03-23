@@ -48,12 +48,12 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         obc_status.temp_eps = pkt->data[5];
         obc_status.temp_batt = pkt->data[6];
 
-        pkt->verification_state = R_OK;
+        pkt->verification_state = SATR_OK;
 
     } else if(pkt->app_id == COMMS_APP_ID && pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         obc_status.temp_comms = pkt->data[1];
 
-        pkt->verification_state = R_OK;
+        pkt->verification_state = SATR_OK;
     }
 
     return SATR_OK;
