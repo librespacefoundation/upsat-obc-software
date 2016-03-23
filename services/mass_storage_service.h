@@ -54,18 +54,20 @@ extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 
 //ToDo
+//	check type casting for snprintf & %d conversions
+//	error checking for sprintf
 //  strtol proper checking, return value range is ok
 //  error checking in return values of fatfs
-//  check if sprintf is ok for the job
 //  check various equations
 //  assert, require.
 //  finish definitions, documentation and doc.
-//  unit testing.
-//  system testing.
 //  check for EOF
 //  add global counters for file and size, add check for array limits.
 //  add check for MAX_FILE for loop, hard limit.
 //  maybe file paths should be const variable instead of definitions.
+
+//Finished
+//  check if sprintf is ok for the job, used snprintf
 
 SAT_returnState mass_storage_init();
 
