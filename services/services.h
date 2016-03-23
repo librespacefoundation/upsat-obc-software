@@ -121,6 +121,7 @@ typedef enum {
 #define TC_LARGE_DATA_SERVICE           13
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
+#define TC_SCHEDULING_SERVICE           11
 
 #define TC_VR_ACCEPTANCE_SUCCESS        1
 #define TC_VR_ACCEPTANCE_FAILURE        2

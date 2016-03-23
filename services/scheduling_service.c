@@ -56,10 +56,10 @@ SAT_returnState load_schedules()
     sp4.timeout = 0;
     sp4.enabled = 1;
     
-    insert_stc_in_scheduleAPI(mem_schedule,&sp1);
-    insert_stc_in_scheduleAPI(mem_schedule,&sp2);
-    insert_stc_in_scheduleAPI(mem_schedule,&sp3);
-    insert_stc_in_scheduleAPI(mem_schedule,&sp4);
+    scheduling_insert_api(mem_schedule,&sp1);
+    scheduling_insert_api(mem_schedule,&sp2);
+    scheduling_insert_api(mem_schedule,&sp3);
+    scheduling_insert_api(mem_schedule,&sp4);
 }
 
 void cross_schedules(){
@@ -119,10 +119,15 @@ SAT_returnState init_schedules(){
 }
 
 SAT_returnState scheduling_app(tc_tm_pkt* spacket){
+    
+    SC_pkt the_sc_packet;
+    /*extract the scheduling packet from the data pointer*/
+    
+    
     return SATR_OK;
 }
 
-SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool, 
+SAT_returnState scheduling_insert_api( SC_pkt* sch_mem_pool, 
                                            SC_pkt* theSchpck ){        
     
     /*check if schedule array is already full*/
@@ -153,10 +158,11 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
     if ( !C_ASSERT(theSchpck->intrlck_ass_id !=1) == true ){
         return SATR_ASS_INTRL_ID_INVALID;
     }
-    /*Check release time type id*/
-    if ( !C_ASSERT(theSchpck->sch_evt != ABSOLUTE) == true ){
-        return SATR_RLS_TIMET_ID_INVALID;
-    }
+//    /*Check release time type id*/
+//    if ( (!C_ASSERT(theSchpck->sch_evt != ABSOLUTE) == true) ||
+//         (!C_ASSERT(theSchpck->sch_evt != QB50EPC) == true) ){
+//        return SATR_RLS_TIMET_ID_INVALID;
+//    }
     /*Check time value*/
 //    if (   ){
 //        return TIME_SPEC_INVALID;
@@ -164,12 +170,6 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
     /*Check execution time out*/
 //    if (  ){
 //       return INTRL_LOGIC_ERROR; 
-//    }
-    
-    
-//    if (!C_ASSERT(pos<SC_MAX_STORED_SCHEDULES)==true){
-//        //prob on pos.
-//        return SATR_ERROR;
 //    }
         
     /*Copy the packet into the array*/
@@ -183,7 +183,7 @@ SAT_returnState insert_stc_in_scheduleAPI( SC_pkt* sch_mem_pool,
     return SATR_OK;
 }
 
-SAT_returnState scheduling_stateAPI(){
+SAT_returnState operations_scheduling_state_api(){
 //    if (scheduling_enabled){
 //        return R_OK;
 //    }
@@ -193,16 +193,13 @@ SAT_returnState scheduling_stateAPI(){
     return (scheduling_enabled ? SATR_OK : SATR_ERROR);
 }
 
-//OBC_returnStateTypedef edit_schedule_state(uint8_t state){
-//    scheduling_enabled = state;
-//}
-
-SAT_returnState remove_stc_from_scheduleAPI( SC_pkt theSchpck ){
+SAT_returnState scheduling_remove_schedule_api( SC_pkt* sch_mem_pool, 
+                                                           SC_pkt* theSchpck ){
     
     return SATR_OK;
 } 
 
-SAT_returnState reset_scheduleAPI(SC_pkt* sch_mem_pool){
+SAT_returnState scheduling_reset_schedule_api(SC_pkt* sch_mem_pool){
     uint8_t pos = 0;
     while( pos<SC_MAX_STORED_SCHEDULES ){
         sch_mem_pool[pos++].valid = false;
@@ -210,7 +207,7 @@ SAT_returnState reset_scheduleAPI(SC_pkt* sch_mem_pool){
     return SATR_OK;
 }
 
-SAT_returnState time_shift_all_schedulesAPI(SC_pkt* sch_mem_pool, int32_t secs ){
+SAT_returnState scheduling_time_shift_all_schedules_api(SC_pkt* sch_mem_pool, int32_t secs ){
     
     uint8_t pos = 0;
     while( pos<SC_MAX_STORED_SCHEDULES ){

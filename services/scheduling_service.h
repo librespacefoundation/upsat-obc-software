@@ -67,7 +67,7 @@ typedef struct {
         /* This is the application id that the telecommand it is destined to.
          * This info will be extracted from the encapsulated TC packet.
          */
-//    TC_TM_app_id app_id;
+    TC_TM_app_id app_id;
     
         /* This is the sequence count of the telecommand packet.
          * This info will be extracted (?) from the encapsulated TC packet. (?)
@@ -165,7 +165,6 @@ typedef struct {
 extern SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
 extern Scheduling_service_state sc_s_state;
 
-
 static scheduling_enabled = true;
 
 /* Service initialization.
@@ -195,13 +194,13 @@ SAT_returnState edit_schedule_stateAPI(tc_tm_pkt* spacket);
  * Marks every schedule struct as invalid and eligible for allocation.
  * 
  */
-SAT_returnState reset_scheduleAPI(SC_pkt* sche_mem_pool);
+SAT_returnState operations_scheduling_reset_schedule_api(SC_pkt* sche_mem_pool);
 
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
  */
-SAT_returnState insert_stc_in_scheduleAPI(SC_pkt* sch_mem_pool,
-                                          SC_pkt* theSchpck );
+SAT_returnState scheduling_insert_api(SC_pkt* sch_mem_pool,
+                                      SC_pkt* theSchpck );
 
 /* Removes a given Schedule_pck from the schedule array
  * * Service Subtype 5
@@ -219,7 +218,7 @@ SAT_returnState remove_from_scheduleOTPAPI( SC_pkt theSchpck );
  * if negative the seconds are substracted from the Schedule's TC time value. 
  * Service Subtype 15.
  */
-SAT_returnState time_shift_all_schedulesAPI( SC_pkt* sch_mem_pool, int32_t secs );
+SAT_returnState scheduling_time_shift_all_schedules_api( SC_pkt* sch_mem_pool, int32_t secs );
 
 #endif /* SCHEDULING_SERVICE_H */
 
