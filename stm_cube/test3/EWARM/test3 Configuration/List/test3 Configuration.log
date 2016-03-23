@@ -243,6 +243,7 @@ Loading object G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test
               reference :  get_pkt
               reference :  tst_debugging
               definition:  LD_status
+              definition:  __iar_cc..ZJonRyGpMZ1
               definition:  large_data_abortPkt
               definition:  large_data_abort_api
               definition:  large_data_app
@@ -259,7 +260,6 @@ Loading object G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test
               definition:  large_data_timeout
               definition:  large_data_updatePkt
               definition:  large_data_verifyPkt
-              definition:  __iar_cc..ZJonRyGpMZ1
               definition:  __iar_cc..kkzkmfUcp7$
 Loading object G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\list.o.
               definition:  uxListRemove
@@ -1257,7 +1257,7 @@ Resolving duplicate symbol definitions
   Picking __iar_cc.._xRKG1RcQXD [s38 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\syscall.o]
     Suppressing __iar_cc.._xRKG1RcQXD [s322 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\cmsis_os.o]
   Picking __iar_cc..ZJonRyGpMZ1 [s102 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\mass_storage_service.o]
-    Suppressing __iar_cc..ZJonRyGpMZ1 [s111 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\large_data_service.o]
+    Suppressing __iar_cc..ZJonRyGpMZ1 [s15 G:\Users\nanimo\Documents\GitHub\upsat-obc-software\stm_cube\test3\EWARM\test3 Configuration\Obj\large_data_service.o]
 *** Marking from roots ***
 Marking symbol __iar_program_start                Glb  (10 cstartup_M.o) [program entry]
   Marking fragment #5844 .text (6 cstartup_M.o(rt7M_tl.a)) init:always
@@ -17666,8 +17666,6 @@ Marking from fragment #1981 .debug_info (89 mass_storage_service.o)
   Marking symbol .debug_ranges157                        (129 mass_storage_service.o)
   Marking symbol .debug_info7                            (62 mass_storage_service.o)
   Marking symbol .debug_loc155                           (128 mass_storage_service.o)
-  Marking symbol .debug_info7                            (62 mass_storage_service.o)
-  Marking symbol .debug_info7                            (62 mass_storage_service.o)
   Marking symbol .debug_info7                            (62 mass_storage_service.o)
   Marking symbol .debug_info7                            (62 mass_storage_service.o)
   Marking symbol .debug_info7                            (62 mass_storage_service.o)

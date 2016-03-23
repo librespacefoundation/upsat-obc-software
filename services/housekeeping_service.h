@@ -26,6 +26,7 @@ struct _obc_status {
 //ToDo
 //  finish sid
 //  when the get packet happens in crt pkt
+//  sid to enum
 
 SAT_returnState hk_app(tc_tm_pkt *pkt);
 

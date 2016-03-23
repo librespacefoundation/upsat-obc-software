@@ -1,7 +1,7 @@
 #ifndef MASS_STORAGE_SERVICE_H
 #define MASS_STORAGE_SERVICE_H
 
-#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include "fatfs.h"
@@ -52,6 +52,7 @@ extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 
 //ToDo
+//  strtol proper checking, return value range is ok
 //  error checking in return values of fatfs
 //  check if sprintf is ok for the job
 //  check various equations

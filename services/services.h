@@ -204,7 +204,8 @@ typedef enum {
     BETWEEN     = 2,
     SPECIFIC    = 3,
     LAST_PART   = 4,
-    LAST_MODE   = 5
+    NO_MODE     = 5,
+    LAST_MODE   = 6
 }MS_mode;
 
 #define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 

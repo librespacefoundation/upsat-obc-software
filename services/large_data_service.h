@@ -22,7 +22,7 @@ LAST_STATE              = 6
 
 struct _ld_status {
     LD_states state;        /*service state machine, state variable*/
-    uint8_t sid;            /*sid */
+    MS_sid sid;            /*sid */
     TC_TM_app_id app_id;    /*destination app id*/
     uint8_t ld_num;         /**/
     uint32_t timeout;       /**/

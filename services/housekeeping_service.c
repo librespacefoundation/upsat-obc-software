@@ -30,7 +30,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
 
     if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_REPORT_PARAMETERS) {
         uint8_t sid = pkt->data[0];
-        hk_crt_pkt_TM(pkt, pkt->dest_id, sid);
+        hk_crt_pkt_TM(pkt, (TC_TM_app_id)pkt->dest_id, sid);
         route_pkt(pkt);
     } else if(pkt->ser_type == TC_HOUSEKEEPING_SERVICE &&  pkt->ser_subtype == TC_HK_PARAMETERS_REPORT) {
         if(pkt->app_id == EPS_APP_ID) {
