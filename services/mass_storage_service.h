@@ -55,7 +55,6 @@ extern void cnv32_8(const uint32_t from, uint8_t *to);
 
 //ToDo
 //  add global counters for file and size, add check for array limits.
-//  add check for MAX_FILE for loop, hard limit.
 //	check type casting for snprintf & %d conversions
 //	error checking for sprintf
 //  strtol proper checking, return value range is ok
@@ -67,6 +66,7 @@ extern void cnv32_8(const uint32_t from, uint8_t *to);
 //  maybe file paths should be const variable instead of definitions.
 
 //Finished
+//  add check for MAX_FILE for loop, hard limit.
 //  check if sprintf is ok for the job, used snprintf
 
 SAT_returnState mass_storage_init();

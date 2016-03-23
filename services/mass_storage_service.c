@@ -533,7 +533,7 @@ SAT_returnState mass_storage_getFileSizeCount(MS_sid sid) {
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
 
     if (f_opendir(&dir, (char*)path) != FR_OK) { return SATR_ERROR; }
-    for (uint16_t i = 0; i < MS_MAX_FILES; i++) {
+    for (i = 0; i < MS_MAX_FILES; i++) {
 
         res = f_readdir(&dir, &fno);                   /* Read a directory item */
         if(res != FR_OK) { f_closedir(&dir); return SATR_ERROR; }  /* Break on error */
