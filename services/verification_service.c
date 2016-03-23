@@ -33,28 +33,27 @@ SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res) {
 SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, SAT_returnState res) {
 
     uint8_t subtype;
-    union _cnv cnv;
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
     if(!C_ASSERT(res < SATR_LAST) == true) { return SATR_ERROR; }
 
     out = get_pkt(NORMAL);
-    if(!C_ASSERT(out != NULL) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     subtype = TC_VR_ACCEPTANCE_SUCCESS;
 
     cnv.cnv16[0] = pkt->app_id;
-    out->data[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
-    out->data[1] = cnv.cnv8[0];
+    out->data[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3);
+    out->data[1] = (uint8_t)pkt->app_id;
 
     cnv.cnv16[0] = pkt->seq_count;
-    out->data[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
-    out->data[3] = cnv.cnv8[0];
+    cnv16_8(pkt->seq_count, &out->data[2]);
+    out->data[2] |= (pkt->seq_flags << 6 );
 
     out->len = 4;
 
     if(res != SATR_OK) {
-        out->data[4] = res;
+        out->data[4] = (uint8_t)res;        /*failure reason*/
         subtype = TC_VR_ACCEPTANCE_FAILURE;
         out->len = 5;
     }

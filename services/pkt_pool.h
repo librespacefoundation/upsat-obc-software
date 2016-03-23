@@ -18,9 +18,15 @@ struct _pkt_pool{
 
     uint8_t data_NRM[MAX_POOL_NRM_PKT][MAX_PKT_DATA];
     uint8_t data_EXT[MAX_POOL_EXT_PKT][MAX_EX_PKT_DATA];
-}pkt_pool;
+};
+
+//ToDo
+//	add assertions
+//	finish definitions
 
 extern uint32_t time_now();
+
+extern struct _pkt_pool pkt_pool;
 
 void *get_pkt(uint8_t mode);
 

@@ -1,5 +1,7 @@
 #include "service_utilities.h"
 
+struct _obc_data obc_data;
+
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
 
@@ -92,6 +94,12 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
 
     verification_app(pkt, res);
     free_pkt(pkt);
+    return SATR_OK;
+}
+
+SAT_returnState obc_data_INIT() {
+
+    obc_data.obc_seq_cnt = 0;
     return SATR_OK;
 }
 
@@ -249,6 +257,9 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
     buf[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
     buf[1] = cnv.cnv8[0];
+
+    /*if the pkt was created in OBC, it updates the counter*/
+    if(pkt->app_id == OBC_APP_ID) { pkt->seq_count = obc_data.obc_seq_cnt++; }
 
     cnv.cnv16[0] = pkt->seq_count;
     buf[2] = (  pkt->seq_flags << 6 | cnv.cnv8[1]);
