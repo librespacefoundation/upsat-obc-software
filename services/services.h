@@ -229,7 +229,7 @@ typedef struct {
     //uint8_t ver; /* 3 bits, should be equal to 0 */
 
     //uint8_t data_field_hdr; /* 1 bit, data_field_hdr exists in data = 1 */
-    uint8_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. should be 11 bits only 8 are used though */
+    TC_TM_app_id app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. should be 11 bits only 8 are used though */
     uint8_t type; /* 1 bit, tm = 0, tc = 1 */
 
     /* packet sequence control */
@@ -244,7 +244,7 @@ typedef struct {
 
     /*optional*/
     //uint8_t pckt_sub_cnt; /* 8 bits*/
-    uint16_t dest_id;   /*on TC is the source id, on TM its the destination id*/
+    TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
     uint8_t *data; /* variable data, this should be fixed array, normal or extended */
 /*  uint8_t padding;  x bits, padding for word alligment */
@@ -260,7 +260,6 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //ToDo
 //  assert for 0 in modes, ids when applicable.
 //  verify HK_struct_id modes
-//  add seq count in pack and global memory.
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  there is no support for verification for obc, do we need that?
@@ -276,17 +275,18 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  finish assertions
 //  add assertions in each service for its subtype
 //  architecture overview
-//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
 //  add definitions for packet len calculations
-//  use packet len instead of individual service pack, for pack.
+
+//finished
 //  when to free the packets.
 //  definitions of subtypes.
 //  modify route & verification.
 //  add function management service.
 //  add serial.
 //  use cnv functions.
-
-//finished
+//  use packet len instead of individual service pack, for pack.
+//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
+//  add seq count in pack and global memory.
 //  use pkt->len for data?
 //  add pack functions in each service.
 

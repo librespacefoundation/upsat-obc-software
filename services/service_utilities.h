@@ -40,6 +40,8 @@ extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
+SAT_returnState obc_data_INIT();
+
 SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 SAT_returnState import_eps_pkt();

@@ -156,7 +156,6 @@ SAT_returnState import_eps_pkt() {
 /*Must check for endianess*/
 SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size) {
 
-    union _cnv cnv;
     uint8_t tmp_crc[2];
 
     uint8_t ver, dfield_hdr, ccsds_sec_hdr, tc_pus;
@@ -171,19 +170,15 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
     pkt->type = (buf[0] >> 4) & 0x01;
     dfield_hdr = (buf[0] >> 3) & 0x01;
 
-    cnv.cnv8[0] = buf[1];
-    cnv.cnv8[1] = 0x07 & buf[0];
-    pkt->app_id = cnv.cnv16[0];
+    pkt->app_id = (TC_TM_app_id)buf[1];
 
     pkt->seq_flags = buf[2] >> 6;
 
-    cnv.cnv8[0] = buf[3];
-    cnv.cnv8[1] = buf[2] & 0x3F;
     pkt->seq_count = cnv.cnv16[0];
+    cnv8_16((uint8_t*)&buf[2], &pkt->seq_count);
+    pkt->seq_count &= 0x3FFF;
 
-    cnv.cnv8[0] = buf[4];
-    cnv.cnv8[1] = buf[5];
-    pkt->len = cnv.cnv16[0];
+    cnv8_16((uint8_t*)&buf[4], &pkt->len);
 
     ccsds_sec_hdr = buf[6] >> 7;
 
