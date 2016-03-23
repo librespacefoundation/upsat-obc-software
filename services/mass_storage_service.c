@@ -136,7 +136,7 @@ SAT_returnState mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t fro
 
     if(!C_ASSERT(*part > 0) == true) { return SATR_ERROR; }
 
-    snprintf((char*)path, "%s//%d", MS_MAX_PATH, path, *part);
+    snprintf((char*)path, MS_MAX_PATH, "%s//%d", path, *part);
 
     if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
 
@@ -169,7 +169,7 @@ SAT_returnState mass_storage_downlinkLargeFile(MS_sid sid, uint32_t file, uint8_
     if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)  { return SATR_ERROR; }
     if(!C_ASSERT(sid == FOTOS) == true)                                 { return SATR_ERROR; }
 
-    snprintf((char*)path,"%s//%d", MS_MAX_PATH, MS_FOTOS, file);
+    snprintf((char*)path, MS_MAX_PATH, "%s//%d", MS_FOTOS, file);
 
     if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
 
@@ -434,17 +434,17 @@ SAT_returnState mass_storage_getLog(MS_sid sid, uint8_t *fn) {
         MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
         MS_data.stores_fsize[sid-SU_SCRIPT_7] += MS_SU_FSIZE;
 
-        snprintf((char*)fn, "%s//%d", MS_MAX_PATH, MS_SU_LOG, time_now()); 
+        snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_SU_LOG, time_now()); 
         return SATR_OK; 
     }
 
     if(MS_data.ev_temp_log == 0) { 
         MS_data.ev_temp_log = time_now(); 
-        snprintf((char*)fn, "%s//%d", MS_MAX_PATH, MS_EVENT_LOG, MS_data.ev_temp_log); 
+        snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
         return SATR_OK; 
     }
 
-    snprintf((char*)fn, "%s//%d", MS_MAX_PATH, MS_EVENT_LOG, MS_data.ev_temp_log); 
+    snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
 
     if(f_stat((char*)fn, &fno) != FR_OK) { return SATR_ERROR; } 
 
@@ -454,7 +454,7 @@ SAT_returnState mass_storage_getLog(MS_sid sid, uint8_t *fn) {
         MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
 
         MS_data.ev_temp_log = time_now(); 
-        snprintf((char*)fn, "%s//%d", MS_MAX_PATH, MS_EVENT_LOG, MS_data.ev_temp_log); 
+        snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
         return SATR_OK; 
     }
 
@@ -551,6 +551,6 @@ SAT_returnState mass_storage_init() {
 
 SAT_returnState mass_storage_getFileName(uint8_t *fn) {
 
-    snprintf((char*)fn,"%d", MS_MAX_FNAME, time_now());
+    snprintf((char*)fn, MS_MAX_FNAME, "%d", time_now());
     return SATR_OK;
 }
