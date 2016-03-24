@@ -4,8 +4,10 @@
 #include <stdint.h>
 #include "services.h"
 
+#define ECSS_VR_DATA_LEN_SUCCESS 4
+#define ECSS_VR_DATA_LEN_FAILURE 5
+
 //ToDo
-//make verification service
 
 //Finished
 //  check verify_pkt
