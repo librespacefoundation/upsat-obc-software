@@ -6,6 +6,8 @@
 
 //temp
 #define TEST_ARRAY 1024
+#define MIN_PKT_SIZE 5
+#define MAX_PKT_SIZE 1024
 
 //need to make an obc struct with all the data.
 struct _obc_data
