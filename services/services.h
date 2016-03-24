@@ -35,7 +35,11 @@
 #define MAX_EX_PKT_DATA 512
 #define TC_MAX_PKT_SIZE 515 //random
 
-#define ECSS_DATA_HEADER_SIZE 4
+#define ECSS_HEADER_SIZE        6
+#define ECSS_DATA_HEADER_SIZE   4
+#define ECSS_CRC_SIZE           2
+
+#define ECSS_DATA_OFFSET        ECSS_HEADER_SIZE + ECSS_DATA_HEADER_SIZE
 
 #define MAX_APP_ID      20
 #define MAX_SERVICES    20
@@ -241,6 +245,7 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  define in unpack the MIN_PKT_SIZE and MAX_PKT_SIZE
 //  need to check pkt len for not overruning to checksum
 //  sort definitions relating to file system and packet sizes etc.
 //  update verification lookup table

@@ -7,6 +7,7 @@
 //temp
 #define TEST_ARRAY 1024
 
+//need to make an obc struct with all the data.
 struct _obc_data
 {
 	uint16_t obc_seq_cnt;	
@@ -35,12 +36,13 @@ extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 //ToDo
+//	need to make an obc struct with all the data.
 //	fix in unpack the pkt len - 4
 //  Add if condition for normal packet or extended
 
 SAT_returnState event_log(uint8_t *event);
 
-uint8_t checkSum(const uint8_t *data, uint16_t size);
+SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_crc);
 
 SAT_returnState obc_data_INIT();
 
