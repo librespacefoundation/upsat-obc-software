@@ -6,12 +6,12 @@ void *get_pkt(uint8_t mode) {
 
     uint8_t start;
 
+    if(!C_ASSERT(mode == NORMAL || mode == EXTENDED) == true) { return NULL; }
+
     if(mode == NORMAL) {
         start = 0;
     } else if(mode == EXTENDED) {
         start = EXT_POOL_PKT_START;
-    } else {
-        return NULL;
     }
 
     for(uint8_t i = start; i < MAX_POOL_PKT; i++) {

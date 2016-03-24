@@ -31,7 +31,7 @@ SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, SAT_returnS
     out = get_pkt(NORMAL);
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
-    subtype = TC_VR_ACCEPTANCE_SUCCESS;
+    subtype = TM_VR_ACCEPTANCE_SUCCESS;
 
     out->data[0] = (ECSS_VER_NUMBER << 5 | pkt->type << 4 | ECSS_DATA_FIELD_HDR_FLG << 3);
     out->data[1] = (uint8_t)pkt->app_id;
@@ -43,7 +43,7 @@ SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt *out, SAT_returnS
 
     if(res != SATR_OK) {
         out->data[4] = (uint8_t)res;        /*failure reason*/
-        subtype = TC_VR_ACCEPTANCE_FAILURE;
+        subtype = TM_VR_ACCEPTANCE_FAILURE;
         out->len = ECSS_VR_DATA_LEN_FAILURE;
     }
 
