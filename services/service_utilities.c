@@ -298,6 +298,8 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     buf[4] = cnv.cnv8[0];
     buf[5] = cnv.cnv8[1];
 
+    /*added it for ecss conformity, checksum in the ecss is defined to have 16 bits, we only use 8*/
+    buf[buf_pointer++] = 0;
     buf[buf_pointer] = checkSum(buf, buf_pointer-1);
     *size = buf_pointer;
     return SATR_OK;

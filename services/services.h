@@ -225,8 +225,8 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  need to check pkt len for not overruning to checksum
 //  sort definitions relating to file system and packet sizes etc.
-//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  update verification lookup table
 //  add verification steps in each service.
 //  assert for 0 in modes, ids when applicable.
@@ -243,6 +243,7 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  add definitions for packet len calculations
 
 //finished
+//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  there is no support for verification for obc, do we need that?
 //  SAT_returnState renaming to UPS_OK?
 //  what to do with verification service, after route or after its service.
