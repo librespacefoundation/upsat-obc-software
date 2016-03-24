@@ -12,41 +12,6 @@
 
 #define ECSS_PUS_VER            1
 #define ECSS_SEC_HDR_FIELD_FLG  0
-/* Minimal */
-#define TC_TM_SER_TC_VER_ACC_SUCC           1
-#define TC_TM_SER_TC_VER_ACC_FAIL           2
-/* Additional */
-#define TC_TM_SER_TC_VER_EXEC_START_SUCC    3
-#define TC_TM_SER_TC_VER_EXEC_START_FAIL    4
-#define TC_TM_SER_TC_VER_EXEC_PROG_SUCC     5
-#define TC_TM_SER_TC_VER_EXEC_PROG_FAIL     6
-#define TC_TM_SER_TC_VER_EXEC_COMP_SUCC     7
-#define TC_TM_SER_TC_VER_EXEC_COMP_FAIL     8
-
-#define TC_TM_SER_DIST      2
-#define TC_TM_SER_HK        3
-
-/* Minimal */
-#define TC_TM_SER_HK_PAR    25
-/* Additional */
-
-#define TC_TM_SER_STAT      4
-#define TC_TM_SER_EVENT     5
-#define TC_TM_SER_MEM       6
-#define TC_TM_SER_NC1       7
-#define TC_TM_SER_FMAG      8
-#define TC_TM_SER_TMAG      9
-#define TC_TM_SER_NC2       10
-
-#define TC_TM_SER_SCH       11
-#define TC_TM_SER_MON       12
-#define TC_TM_SER_LDATA     13
-#define TC_TM_SER_PCKT_FWD  14
-#define TC_TM_SER_STORAGE   15
-#define TC_TM_SER_NC3       16
-#define TC_TM_SER_TEST      17
-#define TC_TM_SER_PROC      18
-#define TC_TM_SER_EV_ACT    19
 
 /*sequence definitions*/
 #define TC_TM_SEQ_FPACKET 0x01
@@ -64,12 +29,6 @@
 #define TC_ACK_ALL          0x0F
 
 #define TC_TM_SER_LDATA_MAX_DATA_PKT    512
-
-#define VER_NUMBER
-#define TC_TM_TYPE
-#define DATA_FIELD_HDR_FLG
-#define APP_ID
-#define SEQ_FLG
 
 #define MAX_PKT_DATA    20
 #define MAX_EX_PKT_DATA 512

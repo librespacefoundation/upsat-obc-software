@@ -321,6 +321,8 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 }
 
 //WIP: will not compile
+//should add a flag that writes the array in the sd in a idle task
+//uint8 is temp and generic.
 SAT_returnState event_log(uint8_t *event) {
     
     if(event+log_cnt > MAX EVENT FILE SIZE) {
