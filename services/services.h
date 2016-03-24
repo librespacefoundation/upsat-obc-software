@@ -65,44 +65,57 @@ typedef enum {
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
+#define TC_SCHEDULING_SERVICE           11
 #define TC_LARGE_DATA_SERVICE           13
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
 
 /*services subtypes*/
-#define TC_VR_ACCEPTANCE_SUCCESS        1
-#define TC_VR_ACCEPTANCE_FAILURE        2
+#define TM_VR_ACCEPTANCE_SUCCESS        1
+#define TM_VR_ACCEPTANCE_FAILURE        2
 
 #define TC_HK_REPORT_PARAMETERS         21
-#define TC_HK_PARAMETERS_REPORT         23
+#define TM_HK_PARAMETERS_REPORT         23
 
 #define TC_FM_PERFORM_FUNCTION          1
 
-#define TC_LD_FIRST_DOWNLINK            1
+#define TC_SC_ENABLE_RELEASE            1
+#define TC_SC_DISABLE_RELEASE           2
+#define TC_SC_RESET_SCHEDULE            3
+#define TC_SC_INSERT_TC                 4
+#define TC_SC_DELETE_TC                 5
+#define TC_SC_TIME_SHIFT_SPECIFIC       7
+#define TC_SC_TIME_SHIFT_SELECTED_OTP   8
+#define TC_SC_TIME_SHIFT_ALL            15
+
+#define TM_LD_FIRST_DOWNLINK            1
 #define TC_LD_FIRST_UPLINK              9
-#define TC_LD_INT_DOWNLINK              2
+#define TM_LD_INT_DOWNLINK              2
 #define TC_LD_INT_UPLINK                10
-#define TC_LD_LAST_DOWNLINK             3
+#define TM_LD_LAST_DOWNLINK             3
 #define TC_LD_LAST_UPLINK               11
 #define TC_LD_ACK_DOWNLINK              5
-#define TC_LD_ACK_UPLINK                14
+#define TM_LD_ACK_UPLINK                14
 #define TC_LD_REPEAT_DOWNLINK           6
-#define TC_LD_REPEAT_UPLINK             15
-#define TC_LD_REPEATED_DOWNLINK         7
+#define TM_LD_REPEAT_UPLINK             15
+#define TM_LD_REPEATED_DOWNLINK         7
 #define TC_LD_REPEATED_UPLINK           12
-#define TC_LD_ABORT_SE_DOWNLINK         4
+#define TM_LD_ABORT_SE_DOWNLINK         4
 #define TC_LD_ABORT_SE_UPLINK           13
 #define TC_LD_ABORT_RE_DOWNLINK         8
-#define TC_LD_ABORT_RE_UPLINK           16
-#define TC_LD_STANDALONE_DOWNLINK       17
-#define TC_LD_STANDALONE_UPLINK         18
+#define TM_LD_ABORT_RE_UPLINK           16
+#define TM_LD_STANDALONE_DOWNLINK       17 /*custom*/
+#define TC_LD_STANDALONE_UPLINK         18 /*custom*/
 
+#define TC_MS_ENABLE                    1
+#define TC_MS_DISABLE                   2
 #define TC_MS_DOWNLINK                  9
 #define TC_MS_DELETE                    11
 #define TC_MS_REPORT                    12
+#define TM_MS_CATALOGUE_REPORT          13
 
 #define TC_CT_PERFORM_TEST              1
-#define TC_CT_REPORT_TEST               2
+#define TM_CT_REPORT_TEST               2
 
 /*memory pool packet modes*/
 #define NORMAL      1
