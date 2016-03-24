@@ -53,7 +53,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef Uart2Handle;
+UART_HandleTypeDef huart2;
 __IO ITStatus UartReady = SET;
 
 /* Buffer used for reception */
@@ -279,10 +279,10 @@ TaskFunction_t UART2_ReceiveData(void* pvParameters)
 {
     while (1)
     {
-        HAL_UART_Receive(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
+        HAL_UART_Receive(&huart2, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
         for ( int u=0;u<RXBUFFERSIZE;u++)
         {
-            HAL_UART_Transmit(&Uart2Handle, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
+            HAL_UART_Transmit(&huart2, (uint8_t *) total_buffer, RXBUFFERSIZE-1, 5000);
         }
 
         vTaskDelay(250 / portTICK_RATE_MS);
@@ -296,7 +296,7 @@ TaskFunction_t UART2_TransmitData(void* pvParameters)
         char *test = "Hello\n";
         
         //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-        HAL_UART_Transmit(&Uart2Handle, (uint8_t *) test, RXBUFFERSIZE-1, 5000);
+        HAL_UART_Transmit(&huart2, (uint8_t *) test, RXBUFFERSIZE-1, 5000);
         
         vTaskDelay(250 / portTICK_RATE_MS);
     }
@@ -450,17 +450,17 @@ void MX_UART2_UART_Init(void)
         - Parity = None
         - BaudRate = 9600 baud
         - Hardware flow control disabled (RTS and CTS signals) */
-    Uart2Handle.Instance = USARTx;
+    huart2.Instance = USARTx;
     
-    Uart2Handle.Init.BaudRate = 9600;
-    Uart2Handle.Init.WordLength = UART_WORDLENGTH_8B;
-    Uart2Handle.Init.StopBits = UART_STOPBITS_1;
-    Uart2Handle.Init.Parity = UART_PARITY_NONE;
-    Uart2Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-    Uart2Handle.Init.Mode = UART_MODE_TX_RX;
-    Uart2Handle.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart2.Init.BaudRate = 9600;
+    huart2.Init.WordLength = UART_WORDLENGTH_8B;
+    huart2.Init.StopBits = UART_STOPBITS_1;
+    huart2.Init.Parity = UART_PARITY_NONE;
+    huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart2.Init.Mode = UART_MODE_TX_RX;
+    huart2.Init.OverSampling = UART_OVERSAMPLING_16;
     
-    if(HAL_UART_Init(&Uart2Handle) != HAL_OK)
+    if(HAL_UART_Init(&huart2) != HAL_OK)
     {
 //      Error_Handler();
     }
@@ -599,18 +599,26 @@ void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
+
 void StartDefaultTask(void const * argument)
 {
     /* init code for FATFS */
     MX_FATFS_Init();
 
     /* USER CODE BEGIN 5 */
+    uint8_t uart_temp[20];
+    pkt_pool_INIT();
+//    mass_storage_init();
+    sprintf((char*)uart_temp, "Hello\n");
+    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+
     /* Infinite loop */
-    for (;;)
+    for(;;)
     {
+        import_eps_pkt();
         osDelay(1);
     }
-    /* USER CODE END 5 */
+    /* USER CODE END 5 */ 
 }
 
 /**

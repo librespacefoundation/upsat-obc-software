@@ -1,21 +1,23 @@
 #include "pkt_pool.h"
 
+struct _pkt_pool pkt_pool;
+
 void *get_pkt(uint8_t mode) {
 
     uint8_t start;
+
+    if(!C_ASSERT(mode == NORMAL || mode == EXTENDED) == true) { return NULL; }
 
     if(mode == NORMAL) {
         start = 0;
     } else if(mode == EXTENDED) {
         start = EXT_POOL_PKT_START;
-    } else {
-        return NULL;
     }
 
     for(uint8_t i = start; i < MAX_POOL_PKT; i++) {
         if(pkt_pool.free[i] == true) {
             pkt_pool.free[i] = false;
-            //pkt_pool.time[i] = time.now();
+            pkt_pool.time[i] = time_now();
             return &pkt_pool.pkt[i];
         }
     }

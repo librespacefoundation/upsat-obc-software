@@ -367,7 +367,7 @@ void StartDefaultTask(void const * argument)
    mass_storage_init();
    sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
-   
+    
   /* Infinite loop */
   for(;;)
   {

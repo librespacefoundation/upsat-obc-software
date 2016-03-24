@@ -9,11 +9,19 @@
 //temp
 #define TEST_ARRAY 1024
 
+//need to make an obc struct with all the data.
+struct _obc_data
+{
+	uint16_t obc_seq_cnt;	
+};
+
+extern struct _obc_data obc_data;
+
 extern void *get_pkt(uint8_t mode);
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 extern uint32_t time_now();
 
-extern SAT_returnState verification_app(tc_tm_pkt *pkt, SAT_returnState res); 
+extern SAT_returnState verification_app(tc_tm_pkt *pkt); 
 extern SAT_returnState hk_app(tc_tm_pkt *pkt);
 extern SAT_returnState function_management_app(tc_tm_pkt *pkt);
 extern SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
@@ -31,10 +39,15 @@ extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 //ToDo
+//	need to make an obc struct with all the data.
 //	fix in unpack the pkt len - 4
 //  Add if condition for normal packet or extended
 
-uint8_t checkSum(const uint8_t *data, uint16_t size);
+SAT_returnState event_log(uint8_t *event);
+
+SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_crc);
+
+SAT_returnState obc_data_INIT();
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
@@ -46,7 +59,7 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 
 SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
-SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
+SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, TC_TM_app_id dest_id);
 
 void cnv32_8(const uint32_t from, uint8_t *to);
 

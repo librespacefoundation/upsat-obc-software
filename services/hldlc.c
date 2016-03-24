@@ -1,11 +1,10 @@
 #include "hldlc.h"
 
-/* it should return the status*/
 SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
 
-    if(!C_ASSERT(c != NULL && buf != NULL && buf != NULL) == true)  { return SATR_ERROR; }
-    if(!C_ASSERT(*cnt == 0 && c != HLDLC_START_FLAG) == true)       { return SATR_ERROR; } //error is when its true
-    if(!C_ASSERT(*cnt <= TC_MAX_PKT_SIZE) == true)                  { return SATR_ERROR; } //hard limits, check
+    if(!C_ASSERT(buf != NULL && cnt != NULL) == true)                       { return SATR_ERROR; }
+    if(!C_ASSERT(*cnt == 0 && c == HLDLC_START_FLAG || *cnt > 0 ) == true)  { return SATR_ERROR; } /*the first char should be a start flag*/
+    if(!C_ASSERT(*cnt <= TC_MAX_PKT_SIZE) == true)                          { return SATR_ERROR; } //hard limits, check
 
     if(*cnt != 0 && c == HLDLC_START_FLAG) {
         *cnt = 0;
@@ -23,7 +22,6 @@ SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
     return SATR_ERROR;
 }
 
-/* it should return the status*/
 SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
 
     if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return SATR_ERROR; }

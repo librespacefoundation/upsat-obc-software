@@ -48,7 +48,7 @@
 /* External variables --------------------------------------------------------*/
 /* UART handler declared in "main.c" file */
 #define MAXCLISTRING 100
-extern UART_HandleTypeDef Uart2Handle;
+extern UART_HandleTypeDef huart2;
 static __IO uint32_t uwTick;
 
 /******************************************************************************/
@@ -198,7 +198,7 @@ void DebugMon_Handler(void)
   */
 void USART2_IRQHandler(void)
 {
-  HAL_UART_IRQHandler(&Uart2Handle);
+  HAL_UART_IRQHandler(&huart2);
 
 //    if ( __HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE) != RESET ){
 //        uint8_t data;

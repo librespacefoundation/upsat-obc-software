@@ -8,47 +8,14 @@
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
 #define ECSS_DATA_FIELD_HDR_FLG     1
-#define TC_TM_SER_TC_VER            1
+// never used
+//#define TC_TM_SER_TC_VER            1
 
 #define ECSS_PUS_VER            1
 #define ECSS_SEC_HDR_FIELD_FLG  0
-/* Minimal */
-#define TC_TM_SER_TC_VER_ACC_SUCC           1
-#define TC_TM_SER_TC_VER_ACC_FAIL           2
-/* Additional */
-#define TC_TM_SER_TC_VER_EXEC_START_SUCC    3
-#define TC_TM_SER_TC_VER_EXEC_START_FAIL    4
-#define TC_TM_SER_TC_VER_EXEC_PROG_SUCC     5
-#define TC_TM_SER_TC_VER_EXEC_PROG_FAIL     6
-#define TC_TM_SER_TC_VER_EXEC_COMP_SUCC     7
-#define TC_TM_SER_TC_VER_EXEC_COMP_FAIL     8
-
-#define TC_TM_SER_DIST      2
-#define TC_TM_SER_HK        3
-
-/* Minimal */
-#define TC_TM_SER_HK_PAR    25
-/* Additional */
-
-#define TC_TM_SER_STAT      4
-#define TC_TM_SER_EVENT     5
-#define TC_TM_SER_MEM       6
-#define TC_TM_SER_NC1       7
-#define TC_TM_SER_FMAG      8
-#define TC_TM_SER_TMAG      9
-#define TC_TM_SER_NC2       10
-
-#define TC_TM_SER_SCH       11
-#define TC_TM_SER_MON       12
-#define TC_TM_SER_LDATA     13
-#define TC_TM_SER_PCKT_FWD  14
-#define TC_TM_SER_STORAGE   15
-#define TC_TM_SER_NC3       16
-#define TC_TM_SER_TEST      17
-#define TC_TM_SER_PROC      18
-#define TC_TM_SER_EV_ACT    19
 
 /*sequence definitions*/
+/*we only support TC_TM_SEQ_SPACKET*/
 #define TC_TM_SEQ_FPACKET 0x01
 #define TC_TM_SEQ_CPACKET 0x00
 #define TC_TM_SEQ_LPACKET 0x02
@@ -63,24 +30,20 @@
 #define TC_ACK_EXE_COMP     0x08
 #define TC_ACK_ALL          0x0F
 
-#define TC_TM_SER_LDATA_MAX_DATA_PKT    512
-
-#define VER_NUMBER
-#define TC_TM_TYPE
-#define DATA_FIELD_HDR_FLG
-#define APP_ID
-#define SEQ_FLG
-
+//needs to redifine
 #define MAX_PKT_DATA    20
 #define MAX_EX_PKT_DATA 512
+#define TC_MAX_PKT_SIZE 515 //random
 
-#define ECSS_DATA_HEADER_SIZE 4 //need to check
+#define ECSS_HEADER_SIZE        6
+#define ECSS_DATA_HEADER_SIZE   4
+#define ECSS_CRC_SIZE           2
+
+#define ECSS_DATA_OFFSET        ECSS_HEADER_SIZE + ECSS_DATA_HEADER_SIZE
 
 #define MAX_APP_ID      20
 #define MAX_SERVICES    20
 #define MAX_SUBTYPES    26
-
-#define TC_MAX_PKT_SIZE 515 //random
 
 #define TC 1
 #define TM 0
@@ -98,65 +61,81 @@ typedef enum {
     SATR_CRC_ERROR             = 9,
     SATR_PKT_ILLEGAL_ACK       = 10,
     SATR_ALREADY_SERVICING     = 11,
+    SATR_MS_MAX_FILES          = 12,
     /* Scheduling Service Error State Codes
     * from 
     */
-    SATR_SCHEDULE_FULL         = 12, /* Schedule array is full */
-    SATR_SSCH_ID_INVALID       = 13, /* Subschedule ID invalid */
-    SATR_NMR_OF_TC_INVALID     = 14, /* Number of telecommands invalid */
-    SATR_INTRL_ID_INVALID      = 15, /* Interlock ID invalid */
-    SATR_ASS_INTRL_ID_INVALID  = 16, /* Assess Interlock ID invalid */
-    SATR_RLS_TIMET_ID_INVALID  = 17, /* relese time type ID invalid */
-    SATR_DEST_APID_INVALID     = 18, /* Destination APID in embedded TC is invalids */
-    SATR_TIME_INVALID          = 19, /* Release time of TC is invalid */
-    SATR_TIME_SPEC_INVALID     = 20, /* Release time of TC is specified in a invalid representation*/
-    SATR_INTRL_LOGIC_ERROR     = 21,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
-    SATR_SCHEDULE_DISABLED     = 22,
+    SATR_SCHEDULE_FULL         = 13, /* Schedule array is full */
+    SATR_SSCH_ID_INVALID       = 14, /* Subschedule ID invalid */
+    SATR_NMR_OF_TC_INVALID     = 15, /* Number of telecommands invalid */
+    SATR_INTRL_ID_INVALID      = 16, /* Interlock ID invalid */
+    SATR_ASS_INTRL_ID_INVALID  = 17, /* Assess Interlock ID invalid */
+    SATR_RLS_TIMET_ID_INVALID  = 18, /* relese time type ID invalid */
+    SATR_DEST_APID_INVALID     = 19, /* Destination APID in embedded TC is invalids */
+    SATR_TIME_INVALID          = 20, /* Release time of TC is invalid */
+    SATR_TIME_SPEC_INVALID     = 21, /* Release time of TC is specified in a invalid representation*/
+    SATR_INTRL_LOGIC_ERROR     = 22,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
+    SATR_SCHEDULE_DISABLED     = 23,
     /*LAST*/
-    SATR_LAST                  = 23
+    SATR_LAST                  = 24
 }SAT_returnState;
 
+/*services types*/
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
+#define TC_SCHEDULING_SERVICE           11
 #define TC_LARGE_DATA_SERVICE           13
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
 #define TC_SCHEDULING_SERVICE           11
 
-#define TC_VR_ACCEPTANCE_SUCCESS        1
-#define TC_VR_ACCEPTANCE_FAILURE        2
+/*services subtypes*/
+#define TM_VR_ACCEPTANCE_SUCCESS        1
+#define TM_VR_ACCEPTANCE_FAILURE        2
 
 #define TC_HK_REPORT_PARAMETERS         21
-#define TC_HK_PARAMETERS_REPORT         23
+#define TM_HK_PARAMETERS_REPORT         23
 
 #define TC_FM_PERFORM_FUNCTION          1
 
-#define TC_LD_FIRST_DOWNLINK            1
+#define TC_SC_ENABLE_RELEASE            1
+#define TC_SC_DISABLE_RELEASE           2
+#define TC_SC_RESET_SCHEDULE            3
+#define TC_SC_INSERT_TC                 4
+#define TC_SC_DELETE_TC                 5
+#define TC_SC_TIME_SHIFT_SPECIFIC       7
+#define TC_SC_TIME_SHIFT_SELECTED_OTP   8
+#define TC_SC_TIME_SHIFT_ALL            15
+
+#define TM_LD_FIRST_DOWNLINK            1
 #define TC_LD_FIRST_UPLINK              9
-#define TC_LD_INT_DOWNLINK              2
+#define TM_LD_INT_DOWNLINK              2
 #define TC_LD_INT_UPLINK                10
-#define TC_LD_LAST_DOWNLINK             3
+#define TM_LD_LAST_DOWNLINK             3
 #define TC_LD_LAST_UPLINK               11
 #define TC_LD_ACK_DOWNLINK              5
-#define TC_LD_ACK_UPLINK                14
+#define TM_LD_ACK_UPLINK                14
 #define TC_LD_REPEAT_DOWNLINK           6
-#define TC_LD_REPEAT_UPLINK             15
-#define TC_LD_REPEATED_DOWNLINK         7
+#define TM_LD_REPEAT_UPLINK             15
+#define TM_LD_REPEATED_DOWNLINK         7
 #define TC_LD_REPEATED_UPLINK           12
-#define TC_LD_ABORT_SE_DOWNLINK         4
+#define TM_LD_ABORT_SE_DOWNLINK         4
 #define TC_LD_ABORT_SE_UPLINK           13
 #define TC_LD_ABORT_RE_DOWNLINK         8
-#define TC_LD_ABORT_RE_UPLINK           16
-#define TC_LD_STANDALONE_DOWNLINK       17
-#define TC_LD_STANDALONE_UPLINK         18
+#define TM_LD_ABORT_RE_UPLINK           16
+#define TM_LD_STANDALONE_DOWNLINK       17 /*custom*/
+#define TC_LD_STANDALONE_UPLINK         18 /*custom*/
 
+#define TC_MS_ENABLE                    1
+#define TC_MS_DISABLE                   2
 #define TC_MS_DOWNLINK                  9
 #define TC_MS_DELETE                    11
 #define TC_MS_REPORT                    12
+#define TM_MS_CATALOGUE_REPORT          13
 
 #define TC_CT_PERFORM_TEST              1
-#define TC_CT_REPORT_TEST               2
+#define TM_CT_REPORT_TEST               2
 
 /*memory pool packet modes*/
 #define NORMAL      1
@@ -171,6 +150,14 @@ typedef enum {
     GND_APP_ID      = 6,
     LAST_APP_ID     = 7
 }TC_TM_app_id;
+
+typedef enum {  
+    HEALTH_REP      = 1,
+    EX_HEALTH_REP   = 2,
+    EVENTS_REP      = 3,
+    WOD_REP         = 4,
+    LAST_STRUCT_ID  = 5
+}HK_struct_id;
 
 typedef enum {
     P_OFF       = 0,
@@ -193,25 +180,26 @@ typedef enum {
     LAST_DEV_ID     = 10
 }FM_dev_id;
 
+/*Mass storage ids*/
 typedef enum {  
-    SU_SCRIPT_1         = 1,
-    SU_SCRIPT_2         = 2,
-    SU_SCRIPT_3         = 3,
-    SU_SCRIPT_4         = 4,
-    SU_SCRIPT_5         = 5,
-    SU_SCRIPT_6         = 6,
-    SU_SCRIPT_7         = 7,
-    SU_LOG              = 8,
-    EVENT_LOG           = 9,
-    FOTOS               = 10,
-    TMP_SU_SCRIPT_1     = 11,
-    TMP_SU_SCRIPT_2     = 12,
-    TMP_SU_SCRIPT_3     = 13,
-    TMP_SU_SCRIPT_4     = 14,
-    TMP_SU_SCRIPT_5     = 15,
-    TMP_SU_SCRIPT_6     = 16,
-    TMP_SU_SCRIPT_7     = 17,
-    LAST_SID            = 18
+    SU_SCRIPT_1     = 1,
+    SU_SCRIPT_2     = 2,
+    SU_SCRIPT_3     = 3,
+    SU_SCRIPT_4     = 4,
+    SU_SCRIPT_5     = 5,
+    SU_SCRIPT_6     = 6,
+    SU_SCRIPT_7     = 7,
+    SU_LOG          = 8,
+    EVENT_LOG       = 9,
+    FOTOS           = 10,
+    TMP_SU_SCRIPT_1 = 11,
+    TMP_SU_SCRIPT_2 = 12,
+    TMP_SU_SCRIPT_3 = 13,
+    TMP_SU_SCRIPT_4 = 14,
+    TMP_SU_SCRIPT_5 = 15,
+    TMP_SU_SCRIPT_6 = 16,
+    TMP_SU_SCRIPT_7 = 17,
+    LAST_SID        = 18
 }MS_sid;
 
 typedef enum {  
@@ -237,7 +225,7 @@ typedef struct {
     //uint8_t ver; /* 3 bits, should be equal to 0 */
 
     //uint8_t data_field_hdr; /* 1 bit, data_field_hdr exists in data = 1 */
-    uint8_t app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. should be 11 bits only 8 are used though */
+    TC_TM_app_id app_id; /* TM: app id = 0 for time packets, = 0xff for idle packets. should be 11 bits only 8 are used though */
     uint8_t type; /* 1 bit, tm = 0, tc = 1 */
 
     /* packet sequence control */
@@ -252,9 +240,16 @@ typedef struct {
 
     /*optional*/
     //uint8_t pckt_sub_cnt; /* 8 bits*/
-    uint16_t dest_id;   /*on TC is the source id, on TM its the destination id*/
+    TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
     uint8_t *data; /* variable data, this should be fixed array, normal or extended */
+
+    /*this is not part of the header. it is used from the software and the verification service,
+     *when the packet wants ack. 
+     *the type is SAT_returnState and it either stores R_OK or has the error code (failure reason).
+     *it is initiazed as R_ERROR and the service should be responsible to make it R_OK or put the coresponding error.     
+     */
+    SAT_returnState verification_state; 
 /*  uint8_t padding;  x bits, padding for word alligment */
 
 //  uint16_t crc; /* CRC or checksum, mission specific*/
@@ -266,33 +261,40 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
-//  add seq count in pack and global memory.
-//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
-//  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
-//  there is no support for verification for obc, do we need that?
-//  should we move all utilities functions, like pack, route etc in one big function file?
+//  define in unpack the MIN_PKT_SIZE and MAX_PKT_SIZE
+//  need to check pkt len for not overruning to checksum
+//  sort definitions relating to file system and packet sizes etc.
+//  update verification lookup table
+//  add verification steps in each service.
+//  assert for 0 in modes, ids when applicable.
+//  verify HK_struct_id modes
 //  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
-//  what to do with verification service, after route or after its service.
-//  SAT_returnState renaming to UPS_OK?
 //  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm
 //  finish assertions
 //  add assertions in each service for its subtype
 //  architecture overview
-//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
 //  add definitions for packet len calculations
-//  use packet len instead of individual service pack, for pack.
+
+//finished
+//  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
+//  there is no support for verification for obc, do we need that?
+//  SAT_returnState renaming to UPS_OK?
+//  what to do with verification service, after route or after its service.
+//  should we move all utilities functions, like pack, route etc in one big function file?
+//  migrate verification on pkt status bit: add status byte in tc_tm pkt, add support for each service, make sure route works
 //  when to free the packets.
 //  definitions of subtypes.
 //  modify route & verification.
 //  add function management service.
 //  add serial.
 //  use cnv functions.
-
-//finished
+//  use packet len instead of individual service pack, for pack.
+//  rename tc_tm.h, use it as a header only, move .c in service_utilities.
+//  add seq count in pack and global memory.
 //  use pkt->len for data?
 //  add pack functions in each service.
 

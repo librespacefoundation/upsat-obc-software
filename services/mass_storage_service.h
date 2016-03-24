@@ -7,6 +7,8 @@
 #include "fatfs.h"
 #include "services.h"
 
+#define MS_SD_PATH "0:"
+
 #define MS_SU_LOG          "/SU_LOG"
 #define MS_SU_SCRIPT_1     "/SU_SCR_1/SCR1.bin"
 #define MS_SU_SCRIPT_2     "/SU_SCR_2/SCR2.bin"
@@ -38,9 +40,9 @@
 
 struct _MS_data {
     FATFS test;
-    uint16_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
+    uint32_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
     uint16_t stores_fcount[3];  /*file count in each store, fotos, su_log, ev_log */
-    uint32_t ev_temp_log;
+    //uint32_t ev_temp_log;
 };
 
 extern struct _MS_data MS_data;
@@ -52,18 +54,20 @@ extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 
 //ToDo
+//	check type casting for snprintf & %d conversions
+//	error checking for sprintf
 //  strtol proper checking, return value range is ok
 //  error checking in return values of fatfs
-//  check if sprintf is ok for the job
 //  check various equations
 //  assert, require.
 //  finish definitions, documentation and doc.
-//  unit testing.
-//  system testing.
 //  check for EOF
+//  maybe file paths should be const variable instead of definitions.
+
+//Finished
 //  add global counters for file and size, add check for array limits.
 //  add check for MAX_FILE for loop, hard limit.
-//  maybe file paths should be const variable instead of definitions.
+//  check if sprintf is ok for the job, used snprintf
 
 SAT_returnState mass_storage_init();
 
