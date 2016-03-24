@@ -264,7 +264,8 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     uint8_t buf_pointer;
 
     if(!C_ASSERT(buf != NULL && pkt != NULL && pkt->data != NULL  && size != NULL) == true) { return SATR_ERROR; }
-    if(!C_ASSERT(*size != 0) == true)                                                       { return SATR_ERROR; }
+    if(!C_ASSERT(pkt->type == TC || pkt->type == TM) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(pkt->app_id < LAST_APP_ID) == true) { return SATR_ERROR; }
 
     cnv.cnv16[0] = pkt->app_id;
 
@@ -284,31 +285,32 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
         buf[6] = ECSS_PUS_VER << 4 ;
     } else if(pkt->type == TC) {
         buf[6] = ( ECSS_SEC_HDR_FIELD_FLG << 7 | ECSS_PUS_VER << 4 | pkt->ack);
-    } else {
-        return SATR_ERROR;
     }
 
     buf[7] = pkt->ser_type;
     buf[8] = pkt->ser_subtype;
     buf[9] = pkt->dest_id; /*source or destination*/
 
-    buf_pointer = 10;
+    buf_pointer = ECSS_DATA_OFFSET;
 
     for(int i = 0; i < pkt->len; i++) {
         buf[buf_pointer++] = pkt->data[i];
     }
 
-    pkt->len += ECSS_DATA_HEADER_SIZE;
+    pkt->len += ECSS_DATA_HEADER_SIZE + ECSS_CRC_SIZE;
 
     /*check if this is correct*/
-    cnv.cnv16[0] = buf_pointer - 6;
+    cnv.cnv16[0] = pkt->len;
     buf[4] = cnv.cnv8[0];
     buf[5] = cnv.cnv8[1];
 
     /*added it for ecss conformity, checksum in the ecss is defined to have 16 bits, we only use 8*/
     buf[buf_pointer++] = 0;
-    buf[buf_pointer] = checkSum(buf, buf_pointer-1);
-    *size = buf_pointer;
+    checkSum(buf, buf_pointer-2, &buf[buf_pointer]);
+    *size = buf_pointer; //maybe it needs + 1
+
+    if(!C_ASSERT(*size > MIN_PKT_SIZE && *size < MAX_PKT_SIZE) == true)       { return SATR_ERROR; }
+
     return SATR_OK;
 }
 
