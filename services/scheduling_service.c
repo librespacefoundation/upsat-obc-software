@@ -1,6 +1,6 @@
 /* 
  * File:   scheduling_service.c
- * Author: Apostolos D. Masiakos
+ * Author: 
  *
  * Created on March 8, 2016, 9:05 PM
  * This is the implementation of scheduling service as is
@@ -13,7 +13,7 @@
 
 uint8_t find_schedule_pos();
 
-SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
+SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
 Scheduling_service_state sc_s_state;
 
 
@@ -56,10 +56,10 @@ SAT_returnState load_schedules()
     sp4.timeout = 0;
     sp4.enabled = 1;
     
-    scheduling_insert_api(mem_schedule,&sp1);
-    scheduling_insert_api(mem_schedule,&sp2);
-    scheduling_insert_api(mem_schedule,&sp3);
-    scheduling_insert_api(mem_schedule,&sp4);
+    scheduling_insert_api(&sp1);
+    scheduling_insert_api(&sp2);
+    scheduling_insert_api(&sp3);
+    scheduling_insert_api(&sp4);
 }
 
 void cross_schedules(){
@@ -120,24 +120,41 @@ SAT_returnState init_schedules(){
 
 SAT_returnState scheduling_app(tc_tm_pkt* spacket){
     
+    /*TODO: add assertions*/
     SC_pkt the_sc_packet;
+    uint32_t time;
+    uint16_t exec_timeout;
     /*extract the scheduling packet from the data pointer*/
     
+    the_sc_packet.sub_schedule_id = spacket->data[0];
+    the_sc_packet.num_of_sch_tc = spacket->data[1];
+    the_sc_packet.intrlck_set_id = spacket->data[2];
+    the_sc_packet.intrlck_ass_id = spacket->data[3];
+    the_sc_packet.assmnt_type = spacket->data[4];
+    the_sc_packet.sch_evt = spacket->data[5];
+//    6789 is the time fields
+    time = spacket->data[6] << 23 | spacket->data[7] | spacket->data[8] | spacket->data[9];
+    exec_timeout = spacket->data[10] << 7 | spacket->data[11];
+    
+    /*TODO: parse the rest telecommand packet to extract needed info for scheduling packet*/
+    
+//    scheduling_insert_api(mem_schedule, &the_sc_packet);
+     scheduling_insert_api(&the_sc_packet);
     
     return SATR_OK;
 }
 
-SAT_returnState scheduling_insert_api( SC_pkt* sch_mem_pool, 
-                                           SC_pkt* theSchpck ){        
+SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
+                                       SC_pkt* theSchpck ){        
     
     /*check if schedule array is already full*/
     
     if ( !C_ASSERT(sc_s_state.schedule_arr_full) == true ){  
-        /*TODO: Here to create a telemetry/log saying "i'm full"*/
+        /*TODO: Here to create a telemetry/log saying "I'm full"*/
         return SATR_SCHEDULE_FULL;
     }
     
-    uint8_t pos = find_schedule_pos(sch_mem_pool);
+    uint8_t pos = find_schedule_pos(scheduling_mem_array);
     if ( !C_ASSERT(pos != SC_MAX_STORED_SCHEDULES) == true){
         return SATR_SCHEDULE_FULL;
     }
@@ -173,7 +190,7 @@ SAT_returnState scheduling_insert_api( SC_pkt* sch_mem_pool,
 //    }
         
     /*Copy the packet into the array*/
-    sch_mem_pool[pos] = *theSchpck;
+    scheduling_mem_array[pos] = *theSchpck;
     sc_s_state.nmbr_of_ld_sched++;
     if ( sc_s_state.nmbr_of_ld_sched == SC_MAX_STORED_SCHEDULES ){
         /*schedule array has become full*/
@@ -183,19 +200,23 @@ SAT_returnState scheduling_insert_api( SC_pkt* sch_mem_pool,
     return SATR_OK;
 }
 
-SAT_returnState operations_scheduling_state_api(){
-//    if (scheduling_enabled){
-//        return R_OK;
-//    }
-//    else{
-//        return R_NOK;
-//    }
-    return (scheduling_enabled ? SATR_OK : SATR_ERROR);
+SAT_returnState scheduling_state_api(){
+
+    return (scheduling_enabled ? SATR_OK : SATR_SCHEDULE_DISABLED);
 }
 
 SAT_returnState scheduling_remove_schedule_api( SC_pkt* sch_mem_pool, 
-                                                           SC_pkt* theSchpck ){
+                                                SC_pkt* theSchpck, uint8_t apid, uint16_t seqc ){
     
+    uint8_t pos = 0;
+    while( pos<SC_MAX_STORED_SCHEDULES ){
+        if (sch_mem_pool[pos].app_id == apid && sch_mem_pool[pos].seq_count == seqc){
+            sch_mem_pool[pos].valid = 0;
+            sc_s_state.nmbr_of_ld_sched--;
+            sc_s_state.schedule_arr_full = 0;
+        }
+        pos++;
+    }
     return SATR_OK;
 } 
 
@@ -214,13 +235,15 @@ SAT_returnState scheduling_time_shift_all_schedules_api(SC_pkt* sch_mem_pool, in
         if (sch_mem_pool[pos].sch_evt == ABSOLUTE ){
             /*convert the secs to utc and add them or remove them from the time field.*/
             
+            /*TODO: timing api*/
         }
         else
         if(sch_mem_pool[pos].sch_evt == QB50EPC ){
             /*add them or remove them from the time field. Error if */
+            
+            /*TODO: timing api*/
         }
     }
-    
     return SATR_OK;
 }
 
@@ -244,6 +267,7 @@ SAT_returnState time_shift_sel_schedule(SC_pkt* sch_mem_pool, uint8_t apid, uint
 //                /*add them or remove them from the time field. Error if */
 //            }
 //        }
+        pos++;
     }
     return SATR_OK;
 }
@@ -310,23 +334,12 @@ OBC_returnStateTypedef ( Schedule_pck theSchpck ){
  */
 uint8_t find_schedule_pos(SC_pkt* sche_mem_pool)
 {
-//    if ( sc_s_state.nmbr_of_ld_sched == 0){
-//        return 0; /*first position in schedules memory pool array*/
-//    }
-//    else{
-        uint8_t pos=0;
-        while( sche_mem_pool[pos].valid == true ){
-//            pos++;
-            if (pos >= SC_MAX_STORED_SCHEDULES){
-//                return SATR_SCHEDULE_FULL;
-                return SC_MAX_STORED_SCHEDULES;
-            }
-            else{
-//                sc_s_state.nmbr_of_ld_sched++;
-                return pos;
-            }
-            pos++;
-        }
-        return pos; /*returns 0*/
+    uint8_t pos=0;
+    while( sche_mem_pool[pos].valid == true ){
+      if (pos >= SC_MAX_STORED_SCHEDULES){ return SC_MAX_STORED_SCHEDULES; }
+      else{ return pos; }
+      pos++;
+    }
+    return pos; /*returns 0*/
 }
 

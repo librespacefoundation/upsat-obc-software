@@ -5,12 +5,20 @@
  *      Author: nchronas
  */
 
-#ifndef TIMEKEEPING_H
-#define TIMEKEEPING_H
+#ifndef TIME_MANAGEMENT_H
+#define TIME_MANAGEMENT_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "services.h"
+
+typedef struct{
+    
+    uint32_t last_rtc_sync;
+    uint32_t last_gps_sync;
+    uint32_t last_gnd_sync;
+    
+}Time_management_state;
 
 typedef struct{
     uint8_t tm_sec;       /* seconds, range 0 to 59          */
@@ -23,6 +31,11 @@ typedef struct{
     uint8_t tm_yearday;   /* day in the year, range 0 to 365  */
     uint8_t tm_isdst;     /* daylight saving time             */
 }OBCTime_Type;
+
+/* Time management service state.
+ * 
+ */
+extern Time_management_state time_s_state;
 
 /* Counts the seconds that has 
  * passed from a reset/boot of the uCtrl.
@@ -53,7 +66,7 @@ extern OBCTime_Type obc_gmt_time;
 /* Returns the system's seconds from current boot.
  * Max. seconds to be counted: 2^32 = 4294967296.
  */
-uint32_t get_seconds_from_last_bootAPI();
+uint32_t time_manage_get_last_boot_seconds_api();
 
 /* Service initialization and runtime function 
  * 

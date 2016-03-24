@@ -1,6 +1,6 @@
 /* 
  * File:   scheduling_service.h
- * Author: Apostolos D. Masiakos
+ * Author: 
  *
  * Created on March 8, 2016, 9:05 PM
  */
@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include "services.h"
 #include "housekeeping_service.h"
-#include "timekeeping.h"
+#include "time_management.h.h"
 
 #define SCHEDULING_SERVICE_V 0.1
 
@@ -70,7 +70,7 @@ typedef struct {
     TC_TM_app_id app_id;
     
         /* This is the sequence count of the telecommand packet.
-         * This info will be extracted (?) from the encapsulated TC packet. (?)
+         * This info will be extracted from the encapsulated TC packet.
          */
     uint16_t seq_count;
     
@@ -162,7 +162,7 @@ typedef struct {
     
 }Scheduling_service_state;
 
-extern SC_pkt mem_schedule[SC_MAX_STORED_SCHEDULES];
+extern SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
 extern Scheduling_service_state sc_s_state;
 
 static scheduling_enabled = true;
@@ -199,7 +199,7 @@ SAT_returnState operations_scheduling_reset_schedule_api(SC_pkt* sche_mem_pool);
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
  */
-SAT_returnState scheduling_insert_api(SC_pkt* sch_mem_pool,
+SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool,*/
                                       SC_pkt* theSchpck );
 
 /* Removes a given Schedule_pck from the schedule array

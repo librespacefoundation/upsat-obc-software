@@ -111,8 +111,9 @@ typedef enum {
     SATR_TIME_INVALID          = 19, /* Release time of TC is invalid */
     SATR_TIME_SPEC_INVALID     = 20, /* Release time of TC is specified in a invalid representation*/
     SATR_INTRL_LOGIC_ERROR     = 21,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
+    SATR_SCHEDULE_DISABLED     = 22,
     /*LAST*/
-    SATR_LAST                  = 22 
+    SATR_LAST                  = 23
 }SAT_returnState;
 
 #define TC_VERIFICATION_SERVICE         1

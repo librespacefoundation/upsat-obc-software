@@ -1,43 +1,24 @@
-/*
- * timekeeping.c
+/* 
+ * File:   time_management.c
+ * Author: 
  *
- *  Created on: 31 ��� 2016
- *      Author: nchronas
+ * Created on March 8, 2016, 9:05 PM
+ * This is the implementation of Time management service as is
+ * documented at pages 95-97 of ECSS-E-70-41A document.
+ * Service Type 9 
+ * (some restrictions may apply)
  */
 
-#include "timekeeping.h"
+#include "time_management.h.h"
 
 volatile uint32_t boot_seconds = 0;
 volatile uint32_t qb50_seconds = 0;
 
 OBCTime_Type obc_gmt_boot_time;
 OBCTime_Type obc_gmt_time;
-/* 
- * 
- */
-//TaskFunction_t init_and_run_time(void* p){   
-//    
-//    /*TODO: Update the time from RTC*/
-//    obc_gmt_boot_time.tm_year = 2016;
-//    obc_gmt_boot_time.tm_weeday = 4;
-//    obc_gmt_boot_time.tm_monthday = 21;
-//    obc_gmt_boot_time.tm_month = 2;
-//    obc_gmt_boot_time.tm_hour = 21;
-//    obc_gmt_boot_time.tm_min = 53;
-//    obc_gmt_boot_time.tm_sec=23;
-//    
-//    obc_gmt_time = obc_gmt_boot_time;
-//    
-//    /*TODO: maybe log here the boot time*/
-//    
-//    while(1){
-//        HAL_UART_Transmit(&Uart2Handle, (uint8_t*) obc_gmt_boot_time.tm_min, 1 ,5000);
-//        HAL_Delay(500);
-//    }
-//    
-//}
 
-uint32_t get_seconds_from_last_bootAPI(){
+
+uint32_t time_manage_get_last_boot_seconds_api(){
     return boot_seconds;
 }
 
