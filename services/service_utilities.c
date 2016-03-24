@@ -197,48 +197,53 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
         return SATR_PKT_ILLEGAL_APPID; 
     }
 
-    if(!C_ASSERT(pkt->len != size - 7) == true) {
+    if(!C_ASSERT(pkt->len == size - 7) == true) {
         pkt->verification_state = SATR_PKT_INV_LEN;
         return SATR_PKT_INV_LEN; 
     }
     pkt->len -= 4;
 
-    if(!C_ASSERT(tmp_crc[0] != tmp_crc[1]) == true) {
+    if(!C_ASSERT(tmp_crc[0] == tmp_crc[1]) == true) {
         pkt->verification_state = SATR_PKT_INC_CRC;
         return SATR_PKT_INC_CRC; 
     }
 
-    if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] != 1) == true) { 
+    if(!C_ASSERT(services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type] == 1) == true) { 
         pkt->verification_state = SATR_PKT_ILLEGAL_PKT_TP;
         return SATR_PKT_ILLEGAL_PKT_TP; 
     }
 
-    if(!C_ASSERT(ver != 0) == true) {
+    if(!C_ASSERT(ver == ECSS_VER_NUMBER) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR; 
     }
 
-    if(!C_ASSERT(tc_pus != 1) == true) {
+    if(!C_ASSERT(tc_pus == ECSS_PUS_VER) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
-    if(!C_ASSERT(ccsds_sec_hdr != 0) == true) {
+    if(!C_ASSERT(ccsds_sec_hdr == ECSS_SEC_HDR_FIELD_FLG) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
-    if(!C_ASSERT(pkt->type != TC && pkt->type != TM) == true) {
+    if(!C_ASSERT(pkt->type == TC && pkt->type == TM) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
-    if(!C_ASSERT(dfield_hdr != 1) == true) {
+    if(!C_ASSERT(dfield_hdr == ECSS_DATA_FIELD_HDR_FLG) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
 
-    if(!C_ASSERT(pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC || pkt->ack != TC_ACK_EXE_COMP) == true) {
+    if(!C_ASSERT(pkt->ack == TC_ACK_NO || pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_EXE_COMP) == true) {
+        pkt->verification_state = SATR_ERROR;
+        return SATR_ERROR;
+    }
+
+    if(!C_ASSERT(pkt->seq_flags == TC_TM_SEQ_SPACKET) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
@@ -258,7 +263,7 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     uint8_t buf_pointer;
 
     if(!C_ASSERT(buf != NULL && pkt != NULL && pkt->data != NULL  && size != NULL) == true) { return SATR_ERROR; }
-    if(!C_ASSERT(*size == 0) == true)                                                       { return SATR_ERROR; }
+    if(!C_ASSERT(*size != 0) == true)                                                       { return SATR_ERROR; }
 
     cnv.cnv16[0] = pkt->app_id;
 
@@ -268,6 +273,7 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     /*if the pkt was created in OBC, it updates the counter*/
     if(pkt->app_id == OBC_APP_ID) { pkt->seq_count = obc_data.obc_seq_cnt++; }
 
+    pkt->seq_flags = TC_TM_SEQ_SPACKET;
     cnv.cnv16[0] = pkt->seq_count;
     buf[2] = (  pkt->seq_flags << 6 | cnv.cnv8[1]);
     buf[3] = cnv.cnv8[0];

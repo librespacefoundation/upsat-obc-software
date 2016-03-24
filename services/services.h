@@ -8,12 +8,14 @@
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
 #define ECSS_DATA_FIELD_HDR_FLG     1
-#define TC_TM_SER_TC_VER            1
+// never used
+//#define TC_TM_SER_TC_VER            1
 
 #define ECSS_PUS_VER            1
 #define ECSS_SEC_HDR_FIELD_FLG  0
 
 /*sequence definitions*/
+/*we only support TC_TM_SEQ_SPACKET*/
 #define TC_TM_SEQ_FPACKET 0x01
 #define TC_TM_SEQ_CPACKET 0x00
 #define TC_TM_SEQ_LPACKET 0x02
@@ -28,18 +30,16 @@
 #define TC_ACK_EXE_COMP     0x08
 #define TC_ACK_ALL          0x0F
 
-#define TC_TM_SER_LDATA_MAX_DATA_PKT    512
-
+//needs to redifine
 #define MAX_PKT_DATA    20
 #define MAX_EX_PKT_DATA 512
+#define TC_MAX_PKT_SIZE 515 //random
 
-#define ECSS_DATA_HEADER_SIZE 4 //need to check
+#define ECSS_DATA_HEADER_SIZE 4
 
 #define MAX_APP_ID      20
 #define MAX_SERVICES    20
 #define MAX_SUBTYPES    26
-
-#define TC_MAX_PKT_SIZE 515 //random
 
 #define TC 1
 #define TM 0
@@ -61,6 +61,7 @@ typedef enum {
     SATR_LAST                  = 13
 }SAT_returnState;
 
+/*services types*/
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
@@ -68,6 +69,7 @@ typedef enum {
 #define TC_MASS_STORAGE_SERVICE         15
 #define TC_TEST_SERVICE                 17
 
+/*services subtypes*/
 #define TC_VR_ACCEPTANCE_SUCCESS        1
 #define TC_VR_ACCEPTANCE_FAILURE        2
 
@@ -145,6 +147,7 @@ typedef enum {
     LAST_DEV_ID     = 10
 }FM_dev_id;
 
+/*Mass storage ids*/
 typedef enum {  
     SU_SCRIPT_1     = 1,
     SU_SCRIPT_2     = 2,
