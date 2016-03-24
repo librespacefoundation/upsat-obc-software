@@ -38,6 +38,8 @@ extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 //	fix in unpack the pkt len - 4
 //  Add if condition for normal packet or extended
 
+SAT_returnState event_log(uint8_t *event);
+
 uint8_t checkSum(const uint8_t *data, uint16_t size);
 
 SAT_returnState obc_data_INIT();

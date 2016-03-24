@@ -42,7 +42,7 @@ struct _MS_data {
     FATFS test;
     uint32_t stores_fsize[3];   /*total file size in each store, fotos, su_log, ev_log */
     uint16_t stores_fcount[3];  /*file count in each store, fotos, su_log, ev_log */
-    uint32_t ev_temp_log;
+    //uint32_t ev_temp_log;
 };
 
 extern struct _MS_data MS_data;

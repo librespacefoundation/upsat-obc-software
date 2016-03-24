@@ -320,3 +320,17 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
     return SATR_OK;
 }
 
+//WIP: will not compile
+SAT_returnState event_log(uint8_t *event) {
+    
+    if(event+log_cnt > MAX EVENT FILE SIZE) {
+        mass_storage_storeLogs(EVENT_LOG, event_arr, uint16_t *size);
+    }
+
+    for(uint16_t i = 0; i < event size; ) {
+        event_arr[log_cnt++] = event[i];   
+    }
+    write2eeprom(event);
+
+    return SATR_OK;
+}
