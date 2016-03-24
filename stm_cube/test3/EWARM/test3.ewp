@@ -2,7 +2,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>test3 Configuration</name>
+    <name>test3</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -16,15 +16,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>test3 Configuration/Exe</state>
+          <state>test3/Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>test3 Configuration/Obj</state>
+          <state>test3/Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>test3 Configuration/List</state>
+          <state>test3/List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -671,7 +671,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>test3 Configuration.out</state>
+          <state>test3.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1009,6 +1009,8 @@
       <name>$PROJ_DIR$/../Src/main.c</name>
     </file><file>
       <name>$PROJ_DIR$/../Src/freertos.c</name>
+    </file><file>
+      <name>$PROJ_DIR$/../Src/stm32f4xx_hal_timebase_TIM.c</name>
     </file></group>
   <group>
     <name />
@@ -2080,6 +2082,10 @@
       <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c</name>
     </file><file>
       <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</name>
+    </file><file>
+      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</name>
+    </file><file>
+      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c</name>
     </file></group>
   <group>
     <name />

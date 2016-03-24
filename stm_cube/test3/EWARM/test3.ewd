@@ -2,7 +2,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>test3 Configuration</name>
+    <name>test3</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>

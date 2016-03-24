@@ -13,7 +13,7 @@ CStepIntDis=_ 0
 stlinkserialNo=18E8279F
 stlinkfoundProbes=
 [DebugChecksum]
-Checksum=-667902432
+Checksum=1028475641
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -80,13 +80,17 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
+[Aliases]
+Count=0
+SuppressDialog=0
 [DriverProfiling]
 Enabled=0
 Mode=3
@@ -97,10 +101,6 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Count=0
-[Aliases]
-Count=0
-SuppressDialog=0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
