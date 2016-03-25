@@ -56,5 +56,5 @@ uint32_t time_now() {
 }
 
 uint8_t tst_debugging() {
-    return 1;
+    return false;
 }

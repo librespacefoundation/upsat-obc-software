@@ -2,7 +2,7 @@
 
 struct _pkt_pool pkt_pool;
 
-void *get_pkt(uint8_t mode) {
+tc_tm_pkt * get_pkt(uint8_t mode) {
 
     uint8_t start;
 
@@ -18,6 +18,7 @@ void *get_pkt(uint8_t mode) {
         if(pkt_pool.free[i] == true) {
             pkt_pool.free[i] = false;
             pkt_pool.time[i] = time_now();
+            pkt_pool.pkt[i].verification_state = SATR_PKT_INIT;
             return &pkt_pool.pkt[i];
         }
     }
@@ -46,6 +47,9 @@ SAT_returnState pkt_pool_INIT() {
 
     for(uint8_t i = 0; i < MAX_POOL_EXT_PKT; i++) {
         pkt_pool.pkt[i+EXT_POOL_PKT_START].data = pkt_pool.data_EXT[i];
+    }
+    for(uint8_t i = 0; i < MAX_POOL_PKT; i++) {
+       pkt_pool.free[i] = true;
     }
     return SATR_OK;
 }

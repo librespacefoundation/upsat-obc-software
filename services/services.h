@@ -62,7 +62,8 @@ typedef enum {
     SATR_PKT_ILLEGAL_ACK       = 10,
     SATR_ALREADY_SERVICING     = 11,
     SATR_MS_MAX_FILES          = 12,
-    SATR_LAST                  = 13
+    SATR_PKT_INIT              = 13,
+    SATR_LAST                  = 14
 }SAT_returnState;
 
 /*services types*/
@@ -196,7 +197,8 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
-#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
+//#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
+#define C_ASSERT(e)    ((e) ? (true) :  (false) )
 
 union _cnv {
     uint32_t cnv32;

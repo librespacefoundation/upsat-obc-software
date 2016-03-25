@@ -5,11 +5,11 @@ void HAL_obc_delay(uint32_t sec) {
 }
 
 void HAL_obc_SD_ON() {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
 }
 
 void HAL_obc_SD_OFF() {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 }
 
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {

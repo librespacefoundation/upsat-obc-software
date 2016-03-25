@@ -40,8 +40,8 @@ void cnv8_16(uint8_t *from, uint16_t *to) {
 
     union _cnv cnv;
 
-    cnv.cnv8[0] = from[0];
-    cnv.cnv8[1] = from[1];
+    cnv.cnv8[0] = from[1];
+    cnv.cnv8[1] = from[0];
     *to = cnv.cnv16[0];
 }
 
@@ -50,6 +50,7 @@ SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_
     if(!C_ASSERT(data != NULL && size != 0) == true)                        { return SATR_ERROR; }
     if(!C_ASSERT(size > MIN_PKT_SIZE-2 && size < MAX_PKT_SIZE-2) == true)   { return SATR_ERROR; }
 
+    *res_crc = 0;
     for(int i=0; i<=size; i++){
         *res_crc = *res_crc ^ data[i];
     }
@@ -107,7 +108,6 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     uint8_t c = 0;
     uint16_t size = 0;
-    uint16_t cnt = 0;
     uint16_t cnt_out = 0;
     uint8_t buf[TEST_ARRAY];
     uint8_t buf_out[TEST_ARRAY];
@@ -116,36 +116,40 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
     pack_pkt(buf, pkt, &size);
     for(uint16_t i = 0; i < size*2; i++) {
         res = HLDLC_frame(&c, buf, &cnt_out, size);
-        if(res == SATR_EOT || res != SATR_ERROR) { cnt = i; break; }
-        buf_out[i++] = c;   
+        if(res == SATR_EOT)        { buf_out[cnt_out] = c; break; }
+        else if(res == SATR_ERROR) { return SATR_ERROR;; }
+        buf_out[cnt_out] = c;   
     }
 
-    if(!C_ASSERT(cnt > 0) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(cnt_out > 0) == true) { return SATR_ERROR; }
 
-    HAL_eps_uart_tx(buf_out, cnt);
+    HAL_eps_uart_tx(buf_out, cnt_out+1);
 
     return SATR_OK;
 }
+
+    uint16_t cnt = 0;
+    uint8_t buf[TEST_ARRAY];
 
 //WIP
 SAT_returnState import_eps_pkt() {
 
     tc_tm_pkt *pkt;
     uint8_t c = 0;
-    uint16_t cnt = 0;
-    uint8_t buf[TEST_ARRAY];
+    uint16_t size = 0;
+
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
     res = HAL_eps_uart_rx(&c);
-    if( res == SATR_OK ) {
-        res_deframe = HLDLC_deframe(buf, &cnt, c);
+    if( res == SATR_OK ) { 
+        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
         if(res_deframe == SATR_EOT) {
             
             //if(cnt > )
             pkt = get_pkt(NORMAL);
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            if(unpack_pkt(buf, pkt, cnt) == SATR_OK) { route_pkt(pkt); } 
+            if(unpack_pkt(buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }
@@ -191,18 +195,18 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
     pkt->ser_subtype = buf[8];
     pkt->dest_id = (TC_TM_app_id)buf[9];
 
-    pkt->verification_state = SATR_ERROR;
+    pkt->verification_state = SATR_PKT_INIT;
 
     if(!C_ASSERT(pkt->app_id < LAST_APP_ID) == true) {
         pkt->verification_state = SATR_PKT_ILLEGAL_APPID;
         return SATR_PKT_ILLEGAL_APPID; 
     }
 
-    if(!C_ASSERT(pkt->len == size - ECSS_HEADER_SIZE - 2) == true) {
+    if(!C_ASSERT(pkt->len == size - ECSS_HEADER_SIZE - 1) == true) {
         pkt->verification_state = SATR_PKT_INV_LEN;
         return SATR_PKT_INV_LEN; 
     }
-    pkt->len -= ECSS_DATA_HEADER_SIZE - ECSS_CRC_SIZE;
+    pkt->len = pkt->len - ECSS_DATA_HEADER_SIZE - ECSS_CRC_SIZE + 1;
 
     if(!C_ASSERT(tmp_crc[0] == tmp_crc[1]) == true) {
         pkt->verification_state = SATR_PKT_INC_CRC;
@@ -229,7 +233,7 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
         return SATR_ERROR;
     }
 
-    if(!C_ASSERT(pkt->type == TC && pkt->type == TM) == true) {
+    if(!C_ASSERT(pkt->type == TC || pkt->type == TM) == true) {
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
@@ -248,6 +252,12 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
         pkt->verification_state = SATR_ERROR;
         return SATR_ERROR;
     }
+
+    /*assertion for data size depanding on pkt type*/
+    //if(!C_ASSERT(pkt->len == pkt_size[app_id][type][subtype][generic] == true) {
+    //    pkt->verification_state = SATR_ERROR;
+    //    return SATR_ERROR;
+    //}    
 
     for(int i = 0; i < pkt->len; i++) {
         pkt->data[i] = buf[ECSS_DATA_OFFSET+i];
@@ -297,7 +307,7 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
         buf[buf_pointer++] = pkt->data[i];
     }
 
-    pkt->len += ECSS_DATA_HEADER_SIZE + ECSS_CRC_SIZE;
+    pkt->len += ECSS_DATA_HEADER_SIZE + ECSS_CRC_SIZE - 1;
 
     /*check if this is correct*/
     cnv.cnv16[0] = pkt->len;
@@ -327,6 +337,7 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 
     pkt->ser_type = ser_type;
     pkt->ser_subtype = ser_subtype;
+    pkt->verification_state = SATR_PKT_INIT;
 
     return SATR_OK;
 }
