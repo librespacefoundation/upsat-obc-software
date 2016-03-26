@@ -8,6 +8,8 @@
 
 //temp
 #define TEST_ARRAY 1024
+#define MIN_PKT_SIZE 5
+#define MAX_PKT_SIZE 1024
 
 //need to make an obc struct with all the data.
 struct _obc_data
@@ -17,7 +19,7 @@ struct _obc_data
 
 extern struct _obc_data obc_data;
 
-extern void *get_pkt(uint8_t mode);
+extern tc_tm_pkt * get_pkt(uint8_t mode);
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 extern uint32_t time_now();
 
@@ -32,7 +34,7 @@ extern SAT_returnState scheduling_app(tc_tm_pkt *pkt);
 extern SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 extern SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
-extern SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c);
+extern SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint16_t *size);
 extern SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size);
 
 extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);

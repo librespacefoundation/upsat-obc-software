@@ -1,12 +1,14 @@
 #include "hldlc.h"
 
-SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
+SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint16_t *size) {
 
-    if(!C_ASSERT(buf != NULL && cnt != NULL) == true)                       { return SATR_ERROR; }
+    if(!C_ASSERT(buf != 0) == true)                       { return SATR_ERROR; }
+    if(!C_ASSERT(cnt != 0) == true)                       { return SATR_ERROR; }
     if(!C_ASSERT(*cnt == 0 && c == HLDLC_START_FLAG || *cnt > 0 ) == true)  { return SATR_ERROR; } /*the first char should be a start flag*/
     if(!C_ASSERT(*cnt <= TC_MAX_PKT_SIZE) == true)                          { return SATR_ERROR; } //hard limits, check
 
     if(*cnt != 0 && c == HLDLC_START_FLAG) {
+        *size = *cnt;
         *cnt = 0;
         return SATR_EOT;
     } else if(cnt != 0 && buf[(*cnt)-1] == HLDLC_CONTROL_FLAG) {
@@ -14,6 +16,12 @@ SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
         else if(c == 0x5D) { buf[*cnt-1] = HLDLC_CONTROL_FLAG; }
         else { return SATR_ERROR; }
         return SATR_OK;
+    } else if(*cnt == 1 && buf[0] == HLDLC_START_FLAG) {
+        buf[*cnt-1] = c;
+        return SATR_OK;
+    //} else if(*cnt == 0 && c == HLDLC_START_FLAG) {
+    //    (*cnt)++;
+    //    return SATR_OK;
     } else {
         buf[*cnt] = c;
         (*cnt)++;
@@ -25,7 +33,7 @@ SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c) {
 SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t *cnt, const uint16_t size) {
 
     if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return SATR_ERROR; }
-    if(!C_ASSERT(*cnt < size) == true)                               { return SATR_ERROR; } //check
+    //if(!C_ASSERT(*cnt <= size) == true)                              { return SATR_ERROR; } //check
 
     if(*cnt == 0) {
         *c = HLDLC_START_FLAG;

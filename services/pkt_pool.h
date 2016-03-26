@@ -28,7 +28,7 @@ extern uint32_t time_now();
 
 extern struct _pkt_pool pkt_pool;
 
-void *get_pkt(uint8_t mode);
+tc_tm_pkt * get_pkt(uint8_t mode);
 
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 

@@ -62,22 +62,23 @@ typedef enum {
     SATR_PKT_ILLEGAL_ACK       = 10,
     SATR_ALREADY_SERVICING     = 11,
     SATR_MS_MAX_FILES          = 12,
+    SATR_PKT_INIT              = 13,
     /* Scheduling Service Error State Codes
     * from 
     */
-    SATR_SCHEDULE_FULL         = 13, /* Schedule array is full */
-    SATR_SSCH_ID_INVALID       = 14, /* Subschedule ID invalid */
-    SATR_NMR_OF_TC_INVALID     = 15, /* Number of telecommands invalid */
-    SATR_INTRL_ID_INVALID      = 16, /* Interlock ID invalid */
-    SATR_ASS_INTRL_ID_INVALID  = 17, /* Assess Interlock ID invalid */
-    SATR_RLS_TIMET_ID_INVALID  = 18, /* relese time type ID invalid */
-    SATR_DEST_APID_INVALID     = 19, /* Destination APID in embedded TC is invalids */
-    SATR_TIME_INVALID          = 20, /* Release time of TC is invalid */
-    SATR_TIME_SPEC_INVALID     = 21, /* Release time of TC is specified in a invalid representation*/
-    SATR_INTRL_LOGIC_ERROR     = 22,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
-    SATR_SCHEDULE_DISABLED     = 23,
+    SATR_SCHEDULE_FULL         = 14, /* Schedule array is full */
+    SATR_SSCH_ID_INVALID       = 15, /* Subschedule ID invalid */
+    SATR_NMR_OF_TC_INVALID     = 16, /* Number of telecommands invalid */
+    SATR_INTRL_ID_INVALID      = 17, /* Interlock ID invalid */
+    SATR_ASS_INTRL_ID_INVALID  = 18, /* Assess Interlock ID invalid */
+    SATR_RLS_TIMET_ID_INVALID  = 19, /* relese time type ID invalid */
+    SATR_DEST_APID_INVALID     = 20, /* Destination APID in embedded TC is invalids */
+    SATR_TIME_INVALID          = 21, /* Release time of TC is invalid */
+    SATR_TIME_SPEC_INVALID     = 22, /* Release time of TC is specified in a invalid representation*/
+    SATR_INTRL_LOGIC_ERROR     = 23,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
+    SATR_SCHEDULE_DISABLED     = 24,
     /*LAST*/
-    SATR_LAST                  = 24
+    SATR_LAST                  = 25
 }SAT_returnState;
 
 /*services types*/
@@ -212,7 +213,8 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
-#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
+//#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
+#define C_ASSERT(e)    ((e) ? (true) :  (false) )
 
 union _cnv {
     uint32_t cnv32;
