@@ -28,10 +28,10 @@ void cnv8_32(uint8_t *from, uint32_t *to) {
 
     union _cnv cnv;
 
-    cnv.cnv8[0] = from[0];
-    cnv.cnv8[1] = from[1];
-    cnv.cnv8[2] = from[2];
-    cnv.cnv8[3] = from[3];
+    cnv.cnv8[3] = from[0];
+    cnv.cnv8[2] = from[1];
+    cnv.cnv8[1] = from[2];
+    cnv.cnv8[0] = from[3];
     *to = cnv.cnv32;
 
 }
