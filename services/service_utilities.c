@@ -141,9 +141,6 @@ SAT_returnState import_eps_pkt() {
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
-    //static int temp_i = 0;
-    //if(!C_ASSERT( temp_i < 2) == true) { return SATR_ERROR; }
-    //temp_i++;
     res = HAL_eps_uart_rx(&c);
     if( res == SATR_OK ) { 
         res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
@@ -192,7 +189,7 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 
     tc_pus = buf[6] >> 4;
 
-    pkt->ack = 0x04 & buf[6];
+    pkt->ack = 0x07 & buf[6];
 
     pkt->ser_type = buf[7];
     pkt->ser_subtype = buf[8];
