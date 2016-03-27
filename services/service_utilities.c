@@ -141,6 +141,9 @@ SAT_returnState import_eps_pkt() {
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
+    //static int temp_i = 0;
+    //if(!C_ASSERT( temp_i < 2) == true) { return SATR_ERROR; }
+    //temp_i++;
     res = HAL_eps_uart_rx(&c);
     if( res == SATR_OK ) { 
         res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
