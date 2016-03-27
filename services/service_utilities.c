@@ -102,7 +102,9 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
     else if(id == GND_APP_ID)      { export_eps_pkt(pkt); } 
 
     verification_app(pkt);
-    free_pkt(pkt);
+    
+    //TODO: if TC packet is FROM Scheduling service, DO NOT call free_pkt();
+    free_pkt(pkt); 
     return SATR_OK;
 }
 

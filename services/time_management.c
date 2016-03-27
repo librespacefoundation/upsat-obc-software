@@ -9,14 +9,13 @@
  * (some restrictions may apply)
  */
 
-#include "time_management.h.h"
+#include "time_management.h"
 
 volatile uint32_t boot_seconds = 0;
 volatile uint32_t qb50_seconds = 0;
 
 OBCTime_Type obc_gmt_boot_time;
 OBCTime_Type obc_gmt_time;
-
 
 uint32_t time_manage_get_last_boot_seconds_api(){
     return boot_seconds;
@@ -26,7 +25,6 @@ SAT_returnState set_seconds_from_last_bootAPI(uint32_t secs){
     boot_seconds = secs;
     return SATR_OK;
 }
-
 
 SAT_returnState calculate_qb50_seconds(OBCTime_Type* gmt_time){
     

@@ -68,10 +68,6 @@ extern OBCTime_Type obc_gmt_time;
  */
 uint32_t time_manage_get_last_boot_seconds_api();
 
-/* Service initialization and runtime function 
- * 
- */
-//TaskFunction_t init_and_run_time(void*p);
 
 /* Sets the system's seconds from current boot.
  * This call is always successful, returns R_OK.

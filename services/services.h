@@ -214,7 +214,7 @@ typedef enum {
 }MS_mode;
 
 //#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
-#define C_ASSERT(e)    ((e) ? (true) :  (false) )
+#define C_ASSERT(e)    ((e) ? (true) : (false) )
 
 union _cnv {
     uint32_t cnv32;

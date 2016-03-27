@@ -11,9 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "services.h"
-#include "housekeeping_service.h"
-#include "time_management.h.h"
+#include "service_utilities.h"
+#include "time_management.h"
 
 #define SCHEDULING_SERVICE_V 0.1
 
@@ -23,12 +22,6 @@
 #define SC_MAX_STORED_SCHEDULES 15
 
 #include "services.h"
-
-/**/
-//typedef enum {
-//    ALL=0,
-//    SUBSET
-//}SC_options_type;
 
 typedef enum {
     /* The 'release_time' member
@@ -165,12 +158,12 @@ typedef struct {
 extern SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
 extern Scheduling_service_state sc_s_state;
 
-static scheduling_enabled = true;
+static uint8_t scheduling_enabled = true;
 
 /* Service initialization.
  * 
  */
-SAT_returnState init_schedules();
+SAT_returnState scheduling_init_service();
 
 /* To serve as unique entry point to the Service.
  * To be called from route_packet. 
@@ -205,7 +198,11 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool,*/
 /* Removes a given Schedule_pck from the schedule array
  * * Service Subtype 5
  */
-SAT_returnState remove_stc_from_scheduleAPI( SC_pkt theSchpck );
+SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool, */ 
+                                                SC_pkt* theSchpck, uint8_t apid, uint16_t seqc );
+
+
+
 
 /* Remove Schedule_pck from schedule over a time period (OTP)
  * * Service Subtype 6

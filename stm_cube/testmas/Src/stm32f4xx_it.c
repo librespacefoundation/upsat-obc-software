@@ -39,7 +39,7 @@
 #include "cmsis_os.h"
 #include "circular_buffer.h"
 #include "main.h"
-#include "time_management.h.h"
+#include "time_management.h"
 
 /* USER CODE BEGIN 0 */
 

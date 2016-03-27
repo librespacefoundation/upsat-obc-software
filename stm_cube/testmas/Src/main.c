@@ -44,9 +44,10 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
-#include "circular_buffer.h"
 #include "scheduling_service.h"
-#include "time_management.h.h"
+//#include "circular_buffer.h"
+//#include "scheduling_service.h"
+//#include "time_management.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -614,7 +615,25 @@ void StartDefaultTask(void const * argument)
 
     /* Infinite loop */
     for(;;)
-    {
+    {                                                      /*tc data from 13->, appid id 14*/
+        uint8_t testdata[] = { 1,2,3,4,5,6,7,8,9,10,11,12, 13,14,15,16,17 };
+        tc_tm_pkt test ;
+        test.ack = 1;
+        test.app_id = OBC_APP_ID;
+        test.data = testdata;
+        test.dest_id = OBC_APP_ID;
+        test.len = 2;
+        test.seq_count = 66;
+        test.seq_flags = 0b1111;
+        test.ser_subtype = 4;
+        test.ser_type = 11;
+        test.type = 1;
+        test.verification_state = SATR_OK;
+        test.data = testdata;
+        
+//        scheduling_init_service();
+        scheduling_app(&test);
+//        C_ASSERT(false);
         import_eps_pkt();
         osDelay(1);
     }

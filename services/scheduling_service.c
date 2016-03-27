@@ -12,10 +12,8 @@
 #include "scheduling_service.h"
 
 uint8_t find_schedule_pos();
-
 SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
 Scheduling_service_state sc_s_state;
-
 
 /*  Initiates the scheduling service.
  *  Loads the schedules from persistent storage.
@@ -64,7 +62,7 @@ SAT_returnState load_schedules()
 
 void cross_schedules(){
     
-    for ( int o=0;o<SC_MAX_STORED_SCHEDULES;o++){
+    for ( uint8_t o=0;o<SC_MAX_STORED_SCHEDULES;o++){
 //        if (mem_sche[o].time <= seconds ){
 
 //        }
@@ -74,11 +72,8 @@ void cross_schedules(){
 /*
  *
  */
-SAT_returnState init_schedules(){   
-    
-    load_schedules();
-        time_t current_time;
-
+SAT_returnState scheduling_init_service(){
+        load_schedules();
         /* Cross schedules array, 
          * in every pass check if the specific schedule 
          * if enabled,
@@ -88,60 +83,55 @@ SAT_returnState init_schedules(){
          *      if time>= release time, then mark it as !valid
          */
         
-        while(1){
-//        /* Obtain current time. */
-//        current_time = time(NULL);
-//
-//        if (current_time == ((time_t)-1))
-//        {
-////            printf(stderr, "Failure to obtain the current time.\n");
-////            exit(EXIT_FAILURE);
-//        }
-//
-//        /* Convert to local time format. */
-//        c_time_string = ctime(&current_time);
-//
-//        if (c_time_string == NULL)
-//        {
-////            printf(stderr, "Failure to convert the current time.\n");
-////            exit(EXIT_FAILURE);
-//        }
-//        HAL_UART_Transmit(&Uart2Handle, (uint8_t *)c_time_string, 25,5000);
-//        /* Print to stdout. ctime() has already added a terminating newline character. */
-////         printf("%s", c_time_string);
-////        exit(EXIT_SUCCESS);
-//        
-////        if ( scheduling_stateAPI() ){
-////            cross_schedules();
-////        }
-         HAL_Delay(100);
-    }
 }
 
-SAT_returnState scheduling_app(tc_tm_pkt* spacket){
+SAT_returnState scheduling_app(tc_tm_pkt *spacket){
     
     /*TODO: add assertions*/
     SC_pkt the_sc_packet;
-    uint32_t time;
-    uint16_t exec_timeout;
-    /*extract the scheduling packet from the data pointer*/
+    uint32_t time = 0;
+    uint16_t exec_timeout = 0;
+    uint8_t tc_data_len = 0;
+    uint8_t offset = 12;
     
+    /*extract the scheduling packet from the data pointer*/
     the_sc_packet.sub_schedule_id = spacket->data[0];
     the_sc_packet.num_of_sch_tc = spacket->data[1];
     the_sc_packet.intrlck_set_id = spacket->data[2];
     the_sc_packet.intrlck_ass_id = spacket->data[3];
     the_sc_packet.assmnt_type = spacket->data[4];
-    the_sc_packet.sch_evt = spacket->data[5];
-//    6789 is the time fields
-    time = spacket->data[6] << 23 | spacket->data[7] | spacket->data[8] | spacket->data[9];
-    exec_timeout = spacket->data[10] << 7 | spacket->data[11];
+    the_sc_packet.sch_evt = (SC_event_time_type)spacket->data[5];    
+    /*7,8,9,10th bytes are the time fields, combine them to a uint32_t*/
+    time = ( time | spacket->data[6]) << 8;
+    time = ( time | spacket->data[7]) << 8;
+    time = ( time | spacket->data[8]) << 8;
+    time = ( time | spacket->data[9]);
+    /*read execution time out fields*/
+    exec_timeout = (exec_timeout | spacket->data[10]) << 8;
+    exec_timeout = (exec_timeout | spacket->data[11]);
     
-    /*TODO: parse the rest telecommand packet to extract needed info for scheduling packet*/
+    /*extract data from internal TC packet ( app_id )*/
+    the_sc_packet.app_id = spacket->data[offset+1];
+    the_sc_packet.seq_count = 
+                            the_sc_packet.seq_count | (spacket->data[offset+2] >> 2) ;
+    the_sc_packet.seq_count << 8;
+    the_sc_packet.seq_count = 
+                            the_sc_packet.seq_count | (spacket->data[offset+3]) ;
+    the_sc_packet.release_time = time;
+    the_sc_packet.timeout = exec_timeout;
     
-//    scheduling_insert_api(mem_schedule, &the_sc_packet);
-     scheduling_insert_api(&the_sc_packet);
+    /*copy the internal TC packet for future use*/
+//    the_sc_packet.tc_pck = spacket->data[1]; /*here we must copy the data*/
+//    the_sc_packet.tc_pck.
+    
+//    scheduling_insert_api(&the_sc_packet);
     
     return SATR_OK;
+}
+
+void copyTC(){
+    
+    
 }
 
 SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
@@ -205,13 +195,14 @@ SAT_returnState scheduling_state_api(){
     return (scheduling_enabled ? SATR_OK : SATR_SCHEDULE_DISABLED);
 }
 
-SAT_returnState scheduling_remove_schedule_api( SC_pkt* sch_mem_pool, 
+SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool, */ 
                                                 SC_pkt* theSchpck, uint8_t apid, uint16_t seqc ){
     
     uint8_t pos = 0;
     while( pos<SC_MAX_STORED_SCHEDULES ){
-        if (sch_mem_pool[pos].app_id == apid && sch_mem_pool[pos].seq_count == seqc){
-            sch_mem_pool[pos].valid = 0;
+        if (scheduling_mem_array[pos].app_id == apid && 
+                scheduling_mem_array[pos].seq_count == seqc){
+            scheduling_mem_array[pos].valid = 0;
             sc_s_state.nmbr_of_ld_sched--;
             sc_s_state.schedule_arr_full = 0;
         }
