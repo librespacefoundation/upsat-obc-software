@@ -218,6 +218,64 @@ int main() {
         printf("%d\n", in[i]);
     }
     printf("FM led off with ack\n");
+
+    in[0] = 0b00011000;
+    in[1] = EPS_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010000;
+
+    in[7] = TC_HOUSEKEEPING_SERVICE;
+
+    in[8] = TM_HK_PARAMETERS_REPORT;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = WOD_REP; //led off
+    
+    in[11] = 0;
+    in[12] = 0;
+    checkSum(in, 14, &in[12]);
+
+    for(int i = 0; i < 13; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("HK tc wod report\n");
+
+    in[0] = 0b00011000;
+    in[1] = EPS_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010000;
+
+    in[7] = TC_HOUSEKEEPING_SERVICE;
+
+    in[8] = TM_HK_PARAMETERS_REPORT;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = WOD_REP; //led off
+    
+    in[11] = 0;
+    in[12] = 0;
+    checkSum(in, 14, &in[12]);
+
+    for(int i = 0; i < 13; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("HK tc wod report\n");
 	// size = 16;
 	// /*TC*/
 	// in[0] = 0b00011000;

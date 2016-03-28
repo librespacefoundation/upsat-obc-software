@@ -36,7 +36,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         tc_tm_pkt *temp_pkt = 0;
         HK_struct_id sid = (HK_struct_id)pkt->data[0];
 
-        hk_crt_empty_pkt_TM(temp_pkt, (TC_TM_app_id)pkt->dest_id, sid);
+        hk_crt_empty_pkt_TM(&temp_pkt, (TC_TM_app_id)pkt->dest_id, sid);
         if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
         route_pkt(pkt);
@@ -60,12 +60,12 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
     return SATR_OK;
 }
 
-SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
+SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt **pkt, TC_TM_app_id app_id, HK_struct_id sid) {
 
-    pkt = get_pkt(NORMAL);
-    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+    *pkt = get_pkt(NORMAL);
+    if(!C_ASSERT(*pkt != NULL && (*pkt)->data != NULL) == true) { return SATR_ERROR; }
 
-    hk_crt_pkt_TM(pkt, app_id, sid);
+    hk_crt_pkt_TM(*pkt, app_id, sid);
     return SATR_OK;
 }
 

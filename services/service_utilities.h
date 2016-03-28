@@ -39,8 +39,11 @@ extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 //ToDo
 //	need to make an obc struct with all the data.
-//	fix in unpack the pkt len - 4
 //  Add if condition for normal packet or extended
+
+//Finished
+//	fix in unpack the pkt len - 4
+
 
 SAT_returnState event_log(uint8_t *event);
 
