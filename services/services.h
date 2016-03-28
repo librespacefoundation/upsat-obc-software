@@ -64,7 +64,8 @@ typedef enum {
     SATR_ALREADY_SERVICING     = 11,
     SATR_MS_MAX_FILES          = 12,
     SATR_PKT_INIT              = 13,
-    SATR_LAST                  = 14
+    SATR_INV_STORE_ID          = 14,
+    SATR_LAST                  = 15
 }SAT_returnState;
 
 /*services types*/

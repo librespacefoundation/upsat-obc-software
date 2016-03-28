@@ -386,6 +386,45 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     return SATR_OK;
 }
 
+SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf, uint16_t *size) {
+
+    FIL fp;
+    FRESULT res;
+    uint8_t path[MS_MAX_PATH];
+
+    if(!C_ASSERT(sid <= SU_SCRIPT_7) == true) { return SATR_INV_STORE_ID; }
+
+    if(sid == SU_SCRIPT_1)          { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_2)     { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_3)     { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_4)     { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_5)     { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_6)     { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_7)     { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
+    else { return SATR_ERROR; }
+
+    if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
+        
+    res = f_read(&fp, &buf, MS_MAX_SU_FILE_SIZE, (void *)size);
+    f_close(&fp);
+
+    if(res != FR_OK) { return SATR_ERROR; } 
+
+    if(!C_ASSERT(*size > 0) == true) { f_close(&fp); return SATR_ERROR; } 
+
+    uint16_t sum1 = 0;
+    uint16_t sum2 = 0;
+
+    for(uint16_t i = 0; i < *size; i++) {
+        sum1 = (sum1 + c) % 255; 
+        sum2 = (sum2 + sum1) % 255;
+    }
+
+    if(!C_ASSERT(((sum2 << 8) | sum1) != 0) == true)  { return SATR_CRC_ERROR; }
+
+    return SATR_OK;
+}
+
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
 
     FIL fp;
@@ -399,7 +438,7 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
 
     uint8_t c = 0;
 
-    if(!C_ASSERT(sid < LAST_SID) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(sid < LAST_SID) == true) { return SATR_INV_STORE_ID; }
 
     if(sid == SU_SCRIPT_1)          { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
     else if(sid == SU_SCRIPT_2)     { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
@@ -434,8 +473,6 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
     }
 
     f_close(&fp);
-
-	if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
 
     return SATR_OK;
 }
