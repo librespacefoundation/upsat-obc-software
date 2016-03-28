@@ -136,5 +136,19 @@ void su_INIT() {
         mass_storage_su_load_api((MS_sid)i, buf, size);
         su_populate_header((MS_sid)i, buf);        
     }
-
 }
+
+SAT_returnState su_populate_header(MS_sid sid, uint8_t *buf) {
+
+    if(!C_ASSERT(buf != NULL) == true)          { return SATR_ERROR; }
+    if(!C_ASSERT(sid <= SU_SCRIPT_7) == true)   { return SATR_INV_STORE_ID; }
+
+    cnv8_16(&buf[0],.script_len);
+    cnv8_32(&buf[2],.start_time);
+    cnv8_32(&buf[6],.file_sn);
+
+    .SW_ver = 0x1F & buf[10];
+    .su_id = 0x03 & (buf[10] >> 5); //need to check this
+    .script_type = 0x1F & buf[11];
+    .su_md = 0x03 & (buf[11] >> 5); //need to check this 
+}  

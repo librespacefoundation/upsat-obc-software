@@ -74,30 +74,30 @@ REQ: MNLP-031
 #define SU_RSP_PCKT_SIZE       174
 
 struct OBC_data {
-	uint32_t time_epoch;
-	int16_t  roll;
-	int16_t  pitch;
-	int16_t  yaw;
-	int16_t  roll_dot;
-	int16_t  pitch_dot;
-	int16_t  yaw_dot;
-	uint16_t x_eci;
-	uint16_t y_eci;
-	uint16_t z_eci;
+    uint32_t time_epoch;
+    int16_t  roll;
+    int16_t  pitch;
+    int16_t  yaw;
+    int16_t  roll_dot;
+    int16_t  pitch_dot;
+    int16_t  yaw_dot;
+    uint16_t x_eci;
+    uint16_t y_eci;
+    uint16_t z_eci;
 };
 
 struct script_handler_data 
 {
-	uint16_t su_timeout
-	uint8_t state;
-	struct  su_script buffer[7];
+    uint16_t su_timeout
+    uint8_t state;
+    struct  su_script buffer[7];
 };
 
 struct su_script {
-	script_hdr header;
-	stack script_times_table time_table; 
-	uint8_t c0;
-	uint8_t c1;
+    script_hdr header;
+    stack script_times_table time_table; 
+    uint8_t c0;
+    uint8_t c1;
 };
 
 /* 
@@ -109,11 +109,11 @@ MD_type:  b4-b0 script type, b6-b5 su model
 */
 struct script_hdr 
 {
-	uint16_t script_len;
-	uint32_t start_time;
-	uint32_t file_sn;
-	uint8_t  ID_SWver;
-	uint8_t  MD_type;
+    uint16_t script_len;
+    uint32_t start_time;
+    uint32_t file_sn;
+    uint8_t  ID_SWver;
+    uint8_t  MD_type;
 };
 
 /* 
@@ -122,11 +122,11 @@ REQ: MNLP-027
 */
 struct script_times_table
 {
-	uint8_t sec;
-	uint8_t min;
-	uint8_t hour;
-	uint8_t index;
-	stack script_seq seq;
+    uint8_t sec;
+    uint8_t min;
+    uint8_t hour;
+    uint8_t index;
+    stack script_seq seq;
 };
 
 
@@ -137,12 +137,12 @@ parameters size is variable, thus the pointer.
 */
 struct script_seq
 {
-	uint8_t dTIME_sec;
-	uint8_t dTIME_min;
-	uint8_t cmd_id;
-	uint8_t len;
-	uint8_t seq_cnt;
-	uint8_t * parameters;
+    uint8_t dTIME_sec;
+    uint8_t dTIME_min;
+    uint8_t cmd_id;
+    uint8_t len;
+    uint8_t seq_cnt;
+    uint8_t * parameters;
 };
 
 
@@ -151,8 +151,8 @@ struct script_seq
 
 */
 struct science_data {
-	struct science_hdr header;
-	struct response_pckt res_pck;
+    struct science_hdr header;
+    struct response_pckt res_pck;
 }; 
 
 /*
@@ -161,16 +161,16 @@ REQ: MNLP-022
 */
 struct science_hdr 
 {
-	uint32_t time_epoch;
-	int16_t  roll;
-	int16_t  pitch;
-	int16_t  yaw;
-	int16_t  roll_dot;
-	int16_t  pitch_dot;
-	int16_t  yaw_dot;
-	uint16_t x_eci;
-	uint16_t y_eci;
-	uint16_t z_eci;
+    uint32_t time_epoch;
+    int16_t  roll;
+    int16_t  pitch;
+    int16_t  yaw;
+    int16_t  roll_dot;
+    int16_t  pitch_dot;
+    int16_t  yaw_dot;
+    uint16_t x_eci;
+    uint16_t y_eci;
+    uint16_t z_eci;
 };
 
 /*
@@ -179,9 +179,9 @@ REQ: MNLP-031
 */
 struct response_pckt 
 {
-	uint8_t rsp_id;
-	uint8_t seq_cnt;
-	uint8_t data[SU_RSP_PCKT_DATA_SIZE];
+    uint8_t rsp_id;
+    uint8_t seq_cnt;
+    uint8_t data[SU_RSP_PCKT_DATA_SIZE];
 };
 
 #endif
