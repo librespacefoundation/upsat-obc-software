@@ -37,6 +37,7 @@
 #define MS_FILE_SECTOR          512
 #define MS_STORES               3
 #define MS_SU_FSIZE             174
+#define MS_MIN_SU_FILE 			1	//min is the header.
 
 struct _MS_data {
     FATFS test;

@@ -410,7 +410,7 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf, uint16_t *siz
 
     if(res != FR_OK) { return SATR_ERROR; } 
 
-    if(!C_ASSERT(*size > 0) == true) { f_close(&fp); return SATR_ERROR; } 
+    if(!C_ASSERT(*size > MS_MIN_SU_FILE == true) { f_close(&fp); return SATR_ERROR; } 
 
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
