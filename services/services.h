@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
@@ -213,15 +214,14 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
-//#define C_ASSERT(e)    ((e) ? (true) : tst_debugging("%s,%d: assertion '%s' failed\n", __FILE__, __LINE__, #e), false) 
-#define C_ASSERT(e)    ((e) ? (true) : (false) )
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e))) 
 
 union _cnv {
     uint32_t cnv32;
     uint16_t cnv16[2];
     uint8_t cnv8[4];
 };
-
+extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 typedef struct {
     /* packet id */
     //uint8_t ver; /* 3 bits, should be equal to 0 */
@@ -303,6 +303,6 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //stub
 uint32_t time_now();
 
-uint8_t tst_debugging();
+uint8_t tst_debugging(char *f, int l, char *e);
 
 #endif

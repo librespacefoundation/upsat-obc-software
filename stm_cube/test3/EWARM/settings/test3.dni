@@ -13,7 +13,7 @@ CStepIntDis=_ 0
 stlinkserialNo=18E8279F
 stlinkfoundProbes=
 [DebugChecksum]
-Checksum=1028475641
+Checksum=-1796828477
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -40,6 +40,8 @@ ITMportsEnable=0
 ITMportsTermIO=0
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
+[array_types]
+Fmt0=uint8_t[1024]	3	0
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -83,11 +85,15 @@ SumSortOrder=0
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\services.c}.68.3" 0 0 1 "" 0 "" 0
+Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
 [Aliases]
 Count=0
 SuppressDialog=0
@@ -101,6 +107,3 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""

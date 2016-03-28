@@ -55,6 +55,18 @@ uint32_t time_now() {
     return 0;
 }
 
-uint8_t tst_debugging() {
+uint8_t tst_debugging(char *f, int l, char *e) {
+  char uart_temp[50];
+  uint16_t size = 0;
+  int res;
+  
+  size = strnlen(f, 50) + strnlen(e, 50) + 3;
+  if(size > 50) { 
+    sprintf((char*)uart_temp, "Assertion failed, size > array\n");
     return false;
+  }
+  res = sprintf((char*)uart_temp, "Assertion failed %s,%d,%s\n", f, l, e);
+  size = strnlen(uart_temp, 50);
+  HAL_eps_uart_tx((uint8_t *)uart_temp, size);
+  return false;
 }

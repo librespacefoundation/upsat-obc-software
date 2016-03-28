@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include "service_utilities.h"
 #include "time_management.h"
+//#include "services.h"
 
 #define SCHEDULING_SERVICE_V 0.1
 
@@ -20,8 +21,6 @@
  * on-memory loaded schedule commands
  */
 #define SC_MAX_STORED_SCHEDULES 15
-
-#include "services.h"
 
 typedef enum {
     /* The 'release_time' member
@@ -136,6 +135,19 @@ typedef struct {
     
 }SC_pkt;
 
+ typedef struct{    
+    /*Holds structures, containing Scheduling Telecommands*/
+    SC_pkt sc_mem_array[SC_MAX_STORED_SCHEDULES];
+    
+    /* Memory array for inner TC data payload
+     * One to one mapping with the sc_mem_array
+     */
+    uint8_t innerd_tc_data[SC_MAX_STORED_SCHEDULES][MAX_EX_PKT_DATA];
+    
+}Schedule_pkt_pool;
+
+Schedule_pkt_pool schedule_mem_pool;
+
 typedef struct {
     /*Number of loaded schedules*/
     uint8_t nmbr_of_ld_sched;
@@ -155,7 +167,7 @@ typedef struct {
     
 }Scheduling_service_state;
 
-extern SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
+//extern SC_pkt scheduling_mem_array[SC_MAX_STORED_SCHEDULES];
 extern Scheduling_service_state sc_s_state;
 
 static uint8_t scheduling_enabled = true;
@@ -187,7 +199,7 @@ SAT_returnState edit_schedule_stateAPI(tc_tm_pkt* spacket);
  * Marks every schedule struct as invalid and eligible for allocation.
  * 
  */
-SAT_returnState operations_scheduling_reset_schedule_api(SC_pkt* sche_mem_pool);
+SAT_returnState operations_scheduling_reset_schedule_api();
 
 /* Inserts a given Schedule_pck on the schedule array
  * Service Subtype 4
@@ -200,9 +212,6 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool,*/
  */
 SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool, */ 
                                                 SC_pkt* theSchpck, uint8_t apid, uint16_t seqc );
-
-
-
 
 /* Remove Schedule_pck from schedule over a time period (OTP)
  * * Service Subtype 6
