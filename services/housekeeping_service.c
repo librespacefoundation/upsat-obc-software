@@ -39,7 +39,7 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         hk_crt_empty_pkt_TM(&temp_pkt, (TC_TM_app_id)pkt->dest_id, sid);
         if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
-        route_pkt(pkt);
+        route_pkt(temp_pkt);
 
     } else if(pkt->app_id == EPS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
         sat_status.batt_curr = pkt->data[1];

@@ -248,6 +248,8 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  add reset counter, reset source finder.
+//  add it uart
 //  add assertions for pkt size related to the service type, subtype
 //  check hldlc, its buggy.
 //  define in unpack the MIN_PKT_SIZE and MAX_PKT_SIZE
@@ -259,7 +261,6 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
-//  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm
 //  finish assertions

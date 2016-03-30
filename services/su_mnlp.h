@@ -1,5 +1,5 @@
-#ifndef SU_H
-#define SU_H
+#ifndef SU_MNLP_H
+#define SU_MNLP_H
 
 #include <stdint.h>
 
@@ -31,23 +31,23 @@ Section 13.10
 
 when 0x00 is undefined
 */
-#define OBC_SU_ON_CMD_ID    0xF1
-#define OBC_SU_OFF_CMD_ID   0xF2
-#define SU_RESET_CMD_ID     0x02
-#define SU_LDP_CMD_ID       0x05
-#define SU_HC_CMD_ID        0x06
-#define SU_CAL_CMD_ID       0x07
-#define SU_SCI_CMD_ID       0x08
-#define SU_HK_CMD_ID        0x09
-#define SU_STM_CMD_ID       0x0A
-#define SU_DUMP_CMD_ID      0x0B
-#define SU_BIAS_ON_CMD_ID   0x53
-#define SU_BIAS_OFF_CMD_ID  0xC9
-#define SU_MTEE_ON_CMD_ID   0x35
-#define SU_MTEE_OFF_CMD_ID  0x9C
-#define SU_ERR_CMD_ID       0x00
-#define OBC_SU_ERR_CMD_ID   0x00
-#define OBC_EOT_CMD_ID      0xFE
+#define SU_OBC_SU_ON_CMD_ID     0xF1
+#define SU_OBC_SU_OFF_CMD_ID    0xF2
+#define SU_RESET_CMD_ID         0x02
+#define SU_LDP_CMD_ID           0x05
+#define SU_HC_CMD_ID            0x06
+#define SU_CAL_CMD_ID           0x07
+#define SU_SCI_CMD_ID           0x08
+#define SU_HK_CMD_ID            0x09
+#define SU_STM_CMD_ID           0x0A
+#define SU_DUMP_CMD_ID          0x0B
+#define SU_BIAS_ON_CMD_ID       0x53
+#define SU_BIAS_OFF_CMD_ID      0xC9
+#define SU_MTEE_ON_CMD_ID       0x35
+#define SU_MTEE_OFF_CMD_ID      0x9C
+#define SU_ERR_CMD_ID           0x00
+#define SU_OBC_SU_ERR_CMD_ID    0x00
+#define SU_OBC_EOT_CMD_ID       0xFE
 
 #define OBC_SU_ON_RSP_ID    0x00
 #define OBC_SU_OFF_RSP_ID   0x00
@@ -73,6 +73,8 @@ REQ: MNLP-031
 #define SU_RSP_PCKT_DATA_SIZE  172
 #define SU_RSP_PCKT_SIZE       174
 
+#define SU_TT_OFFSET    12
+
 struct OBC_data {
     uint32_t time_epoch;
     int16_t  roll;
@@ -86,18 +88,26 @@ struct OBC_data {
     uint16_t z_eci;
 };
 
-struct script_handler_data 
+struct script_handler
 {
     uint16_t su_timeout
     uint8_t state;
-    struct  su_script buffer[7];
+    struct  su_script scripts[SU_MAX_SCRIPTS];
+    
+    uint8_t temp_buf[MS_MAX_SU_FILE_SIZE];
+    uint8_t active_buf[MS_MAX_SU_FILE_SIZE];  
+    MS_sid active_script;
+
+    struct script_times_table tt_header;
+    struct script_seq cmd_header;
+
+    uint16_t tt_pointer_curr;
+    uint16_t script_pointer_curr;
 };
 
 struct su_script {
-    script_hdr header;
-    stack script_times_table time_table; 
-    uint8_t c0;
-    uint8_t c1;
+    struct script_hdr header;
+    uint16_t script_pointer_start[SU_CMD_SEQ];
 };
 
 /* 
@@ -112,39 +122,35 @@ struct script_hdr
     uint16_t script_len;
     uint32_t start_time;
     uint32_t file_sn;
-    uint8_t  ID_SWver;
-    uint8_t  MD_type;
+    uint8_t  sw_ver;
+    uint8_t  su_id;
+    uint8_t  script_type;
+    uint8_t  su_md;
 };
 
 /* 
 REQ: MNLP-027
-
 */
 struct script_times_table
 {
     uint8_t sec;
     uint8_t min;
-    uint8_t hour;
-    uint8_t index;
-    stack script_seq seq;
+    uint8_t hours;
+    uint8_t script_index;
 };
-
-
 
 /* 
 REQ: MNLP-027
-parameters size is variable, thus the pointer.
 */
 struct script_seq
 {
-    uint8_t dTIME_sec;
-    uint8_t dTIME_min;
+    uint8_t dt_sec;
+    uint8_t dt_min;
     uint8_t cmd_id;
     uint8_t len;
     uint8_t seq_cnt;
-    uint8_t * parameters;
+    uint8_t parameters[255];
 };
-
 
 /*
 
@@ -183,5 +189,7 @@ struct response_pckt
     uint8_t seq_cnt;
     uint8_t data[SU_RSP_PCKT_DATA_SIZE];
 };
+
+extern struct script_handler obc_su_scripts;
 
 #endif

@@ -386,11 +386,13 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     return SATR_OK;
 }
 
-SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf, uint16_t *size) {
+SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
 
     FIL fp;
     FRESULT res;
     uint8_t path[MS_MAX_PATH];
+    uint16_t size = 0;
+    uint16_t script_len = 0;
 
     if(!C_ASSERT(sid <= SU_SCRIPT_7) == true) { return SATR_INV_STORE_ID; }
 
@@ -405,12 +407,15 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf, uint16_t *siz
 
     if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
         
-    res = f_read(&fp, &buf, MS_MAX_SU_FILE_SIZE, (void *)size);
+    res = f_read(&fp, &buf, MS_MAX_SU_FILE_SIZE, (void *)&size);
     f_close(&fp);
 
     if(res != FR_OK) { return SATR_ERROR; } 
 
-    if(!C_ASSERT(*size > MS_MIN_SU_FILE == true) { f_close(&fp); return SATR_ERROR; } 
+    cnv8_16(&buf[0], &script_len);
+    
+
+    if(!C_ASSERT(size == script_len) == true) { return SATR_ERROR; } 
 
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
