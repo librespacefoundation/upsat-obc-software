@@ -26,8 +26,8 @@ SAT_returnState load_schedules()
 {
                                                    /*tc data from 13->, appid id 14*/
         uint8_t schedule_data[] = { 1,1,0,0,1, 4 /*QB50 epoch*/ 
-                                    ,39,188,134,170, /*time = 666666666*/
-                                    3,231, /*execution timeout = 999*/
+                                    ,0,0,0,10, /*time = 666666666*/
+                                    0,33, /*execution timeout = 999*/
                                     24,1,192,185,0,10,16,8,1,6,1,0,0,0,8,0,124 }; /*inner tc payload */
         tc_tm_pkt test ;
         test.ack = 1;
@@ -104,7 +104,7 @@ SAT_returnState scheduling_init_service(){
     /* Load Schedules from storage.
      * 
      */
-//    load_schedules();
+    load_schedules();
 }
 
 
@@ -119,14 +119,17 @@ void cross_schedules(){
  *      if time>= release time, then mark it as !valid
  */
     while(1){
-        uint8_t pos=0;
+//        uint8_t i=0;
 //        uint32_t current_obc_time = obc
-        boot_seconds;
-        if (schedule_mem_pool.sc_mem_array[pos].release_time == 666666666 ){
-//            route_pkt( &(schedule_mem_pool.sc_mem_array[pos].tc_pck));
+//        boot_seconds;
+        for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
+            
+            if (schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
+                route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));
+                
+            }
         }
-        
-        
+//        if(++i >= SC_MAX_STORED_SCHEDULES) { i=0;}
     }
 }
 

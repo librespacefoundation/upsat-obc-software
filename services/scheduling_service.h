@@ -172,6 +172,8 @@ extern Scheduling_service_state sc_s_state;
 
 static uint8_t scheduling_enabled = true;
 
+void cross_schedules();
+
 /* Service initialization.
  * 
  */

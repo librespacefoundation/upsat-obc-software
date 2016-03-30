@@ -145,14 +145,14 @@ int main(void)
 //                NULL /* Task handle */
 //                );
        
-//       xTaskCreate(
-//                init_and_run_schedules, /* Function pointer */
-//                "scheduling", /* Task name - for debugging only*/
-//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//                NULL /* Task handle */
-//                );
+       xTaskCreate(
+                cross_schedules, /* Function pointer */
+                "scheduling", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
        
       xTaskCreate(
                ToggleLED_Timer1, /* Function pointer */
@@ -617,16 +617,13 @@ void StartDefaultTask(void const * argument)
      
         
     scheduling_init_service();
-    load_schedules();
-    cross_schedules();
-//        scheduling_app(&test);
-//        route_pkt(&test);
-//        C_ASSERT(false);
-        
+//    load_schedules();
+//    cross_schedules();
     
     for(;;)
     {   
         import_eps_pkt();
+        
         osDelay(1);
     }
     /* USER CODE END 5 */ 
