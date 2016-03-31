@@ -90,7 +90,9 @@ struct OBC_data {
 
 struct script_handler
 {
-    uint16_t su_timeout
+    uint32_t timeout;
+    uint8_t rx_buf[SU_MAX_RSP_SIZE];
+
     uint8_t state;
     struct  su_script scripts[SU_MAX_SCRIPTS];
     
@@ -126,6 +128,7 @@ struct script_hdr
     uint8_t  su_id;
     uint8_t  script_type;
     uint8_t  su_md;
+    uint16_t xsum;
 };
 
 /* 

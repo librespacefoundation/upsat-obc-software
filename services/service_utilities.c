@@ -108,22 +108,17 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     uint8_t c = 0;
     uint16_t size = 0;
-    uint16_t cnt_out = 0;
     uint8_t buf[TEST_ARRAY];
     uint8_t buf_out[TEST_ARRAY];
     SAT_returnState res;    
 
     pack_pkt(buf, pkt, &size);
-    for(uint16_t i = 0; i < size*2; i++) {
-        res = HLDLC_frame(&c, buf, &cnt_out, size);
-        if(res == SATR_EOT)        { buf_out[cnt_out] = c; break; }
-        else if(res == SATR_ERROR) { return SATR_ERROR;; }
-        buf_out[cnt_out] = c;   
-    }
+    res = HLDLC_frame(buf, buf_out, &size);
+    if(res == SATR_ERROR) { return SATR_ERROR; }
 
-    if(!C_ASSERT(cnt_out > 0) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
 
-    HAL_eps_uart_tx(buf_out, cnt_out+1);
+    HAL_eps_uart_tx(buf_out, size+1);
 
     return SATR_OK;
 }

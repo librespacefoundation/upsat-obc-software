@@ -5,74 +5,86 @@ struct script_handler obc_su_scripts;
 /*
 draft implementation
 */
-void su_err_handler(uint8_t error) {
-    if(error == timeout) {
-        struct su_mnlp_obc_su_err_pckt err_pckt;
-        eps_su_mnlp_pwr(OFF);
-        generate_OBC_SU_ERR_pckt(err_pckt);
-        delay_sec(60);
-        sd_store_pckt(err_pckt);
-        eps_su_mnlp_pwr(ON);
+void su_timeout_handler(uint8_t error) {
+    
+    cnv32_8(time_now(), &obc_su_scripts.rx_buf[0]);
+    cnv16_8(flight_data.roll, &obc_su_scripts.rx_buf[4]);
+    cnv16_8(flight_data.pitch, &obc_su_scripts.rx_buf[6]);
+    cnv16_8(flight_data.yaw, &obc_su_scripts.rx_buf[8]);
+    cnv16_8(flight_data.roll_dot, &obc_su_scripts.rx_buf[10]);
+    cnv16_8(flight_data.pitch_dot, &obc_su_scripts.rx_buf[12]);
+    cnv16_8(flight_data.yaw_dot, &obc_su_scripts.rx_buf[14]);
+    cnv16_8(flight_data.x_eci, &obc_su_scripts.rx_buf[16]);
+    cnv16_8(flight_data.y_eci, &obc_su_scripts.rx_buf[18]);
+    cnv16_8(flight_data.z_eci, &obc_su_scripts.rx_buf[20]);
 
-    } else if (error == su_err_pckt) {
-        eps_su_mnlp_pwr(OFF);
-        delay_sec(60);
-        eps_su_mnlp_pwr(ON);
-    } else {
-        ERROR
+    buf_pointer = SU_SCI_HEADER;
+
+    obc_su_scripts.rx_buf[buf_pointer++] = OBC_SU_ERR_RSP_ID;
+    buf_pointer++;
+    buf_pointer++;
+
+    obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[obc_su_scripts.active_script].xsum;
+    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
+    buf_pointer += 4;
+    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
+    buf_pointer += 4;
+    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].su_id << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].sw_ver;
+    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].su_md << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].script_type;
+
+    for(uint16_t i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
+
+        obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[i].xsum;
+        cnv32_8(obc_su_scripts.scripts[i].start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
+        buf_pointer += 4;
+        cnv32_8(obc_su_scripts.scripts[i].file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
+        buf_pointer += 4;
+        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].su_id << 5) | obc_su_scripts.scripts[i].sw_ver;
+        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].su_md << 5) | obc_su_scripts.scripts[i].script_type;
     }
+
+    for(uint16_t i = 99; i < 173; i++) {
+        obc_su_scripts.rx_buf[i] = 0;
+    }
+
+    mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, SU_MAX_RSP_SIZE);
+    su_power_ctrl(P_RESET);
+    obc_su_scripts.timeout = time_now();
+
+    su_next_tt(&obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
+
 }
 
-struct science_data pck;
-struct OBC_data flight_data;
-uint8_t su_rx_buf[SU_RSP_PCKT_SIZE];
+SAT_returnState su_incoming_rx() {
 
-void su_rx_callback(char c) {
-    static cnt = 0;
-    
-    if(cnt<SU_RSP_PCKT_SIZE) {
-        buf[c] = c;
-        cnt++;
-    } else {
-        reset_su_timeout_timer();
-        cnt = 0;
-        pck.res_pck.rsp_id = buf[0];
-        pck.res_pck.seq_cnt = buf[1]
-        for(int i = 0; i < SU_RSP_PCKT_DATA_SIZE; i++) {
-            pck.res_pck.data[i] = buf[i+2];
+    SAT_returnState res;    
+    uint8_t c = 0;
+
+    res = HAL_su_uart_rx(&c);
+    if( res == SATR_OK ) {
+        if(obc_su_scripts.rx_cnt < SU_RSP_PCKT_SIZE) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
+        else {
+
+            obc_su_scripts.rx_cnt = SU_SCI_HEADER;
+
+            obc_su_scripts.timeout = time_now();
+            if(obc_su_scripts.rx_buf[SU_SCI_HEADER] == SU_ERR_RSP_ID) { su_power_ctrl(P_RESET); }
+
+            /**science header*/
+            cnv32_8(time_now(), &obc_su_scripts.rx_buf[0]);
+            cnv16_8(flight_data.roll, &obc_su_scripts.rx_buf[4]);
+            cnv16_8(flight_data.pitch, &obc_su_scripts.rx_buf[6]);
+            cnv16_8(flight_data.yaw, &obc_su_scripts.rx_buf[8]);
+            cnv16_8(flight_data.roll_dot, &obc_su_scripts.rx_buf[10]);
+            cnv16_8(flight_data.pitch_dot, &obc_su_scripts.rx_buf[12]);
+            cnv16_8(flight_data.yaw_dot, &obc_su_scripts.rx_buf[14]);
+            cnv16_8(flight_data.x_eci, &obc_su_scripts.rx_buf[16]);
+            cnv16_8(flight_data.y_eci, &obc_su_scripts.rx_buf[18]);
+            cnv16_8(flight_data.z_eci, &obc_su_scripts.rx_buf[20]);
+
+            mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, SU_MAX_RSP_SIZE);
         }
-        post_ev(handle_packet);
     }
-}
-
-void handle_packet(){
-    
-    if( pck.res_pck.rsp_id == SU_ERR_RSP_ID) {
-        post_ev(su_err_pckt);
-    }
-
-    fill_science_header();
-    post_ev(sd_log_su_pck);
-
-}
-
-void fill_science_header() {
-    pck.header.time_epoch = flight_data.time_epoch ;
-    pck.header.roll = flight_data.roll ;
-    pck.header.pitch = flight_data.pitch ;
-    pck.header.yaw = flight_data.yaw ;
-    pck.header.roll_dot = flight_data.roll_dot ;
-    pck.header.pitch_dot = flight_data.pitch_dot ;
-    pck.header.yaw_dot = flight_data.yaw_dot ;
-    pck.header.x_eci = flight_data.x_eci ;
-    pck.header.y_eci = flight_data.y_eci ;
-    pck.header.z_eci = flight_data.z_eci ;
-
-}
-
-SAT_returnState su_incoming_rx(uint8_t *resp) {
-
-
     return SATR_OK;
 }
 
@@ -148,29 +160,10 @@ SAT_returnState su_cmd_handler(struct script_seq *cmd) {
 
     HAL_delay((cmd->dt_min * 60) + cmd->dt_sec);
 
-    if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID) {
-
-        tc_tm_pkt *temp_pkt = 0;
-
-        fm_pctrl_crt_pkt_api(&temp_pkt, EPS_APP_ID, P_ON, SU_DEV_ID);
-        if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
-
-        route_pkt(temp_pkt);
-
-    } else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID) {
- 
-        tc_tm_pkt *temp_pkt = 0;
-
-        fm_pctrl_crt_pkt_api(&temp_pkt, EPS_APP_ID, P_OFF, SU_DEV_ID);
-        if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
-
-        route_pkt(temp_pkt);
-
-    } else if(cmd->cmd_id == SU_OBC_EOT_CMD_ID) {
-        return SATR_EOT;
-    } else {
-        HAL_eps_uart_tx(&cmd->pointer, cmd->len);
-    }
+    if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID)          { su_power_ctrl(P_ON); } 
+    else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID)    { su_power_ctrl(P_OFF); } 
+    else if(cmd->cmd_id == SU_OBC_EOT_CMD_ID)       { return SATR_EOT; } 
+    else                                            { HAL_su_uart_tx(&cmd->pointer, cmd->len); }
 
     return SATR_OK;
 }
@@ -189,6 +182,8 @@ SAT_returnState su_populate_header(struct script_hdr *hdr, uint8_t *buf) {
     hdr->su_id = 0x03 & (buf[10] >> 5); //need to check this
     hdr->script_type = 0x1F & buf[11];
     hdr->su_md = 0x03 & (buf[11] >> 5); //need to check this
+
+    hdr->xsum = buf[hdr->script_len]; //need to check this
 
     return SATR_OK;
 }  
@@ -229,6 +224,7 @@ SAT_returnState su_populate_scriptPointers(struct su_script *su_scr, uint8_t *bu
 SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t pointer) {
 
     if(!C_ASSERT(buf != NULL && tt != NULL && pointer != NULL) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(tt->script_index != SU_SCR_TT_EOR) == true) { return SATR_EOT; }
 
     tt->sec = buf[(*pointer)++];
     tt->min = buf[(*pointer)++];
@@ -251,6 +247,7 @@ SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t
 SAT_returnState su_next_cmd(uint8_t *buf, struct script_seq *cmd, uint16_t pointer) {
 
     if(!C_ASSERT(buf != NULL && cmd != NULL && pointer != NULL) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(tt->script_index != SU_OBC_EOT_CMD_ID) == true) { return SATR_EOT; }
 
     cmd->dt_sec = buf[(*pointer)++];
     cmd->dt_min = buf[(*pointer)++];
@@ -280,6 +277,18 @@ SAT_returnState su_next_cmd(uint8_t *buf, struct script_seq *cmd, uint16_t point
                  cmd->cmd_id == SU_MTEE_ON_CMD_ID || \
                  cmd->cmd_id == SU_MTEE_OFF_CMD_ID || \
                  cmd->cmd_id == SU_OBC_EOT_CMD_ID) == true) { return SATR_ERROR; }
+
+    return SATR_OK;
+}
+
+SAT_returnState su_power_ctrl(FM_fun_id fid) {
+
+    tc_tm_pkt *temp_pkt = 0;
+
+    fm_pctrl_crt_pkt_api(&temp_pkt, EPS_APP_ID, fid, SU_DEV_ID);
+    if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
+
+    route_pkt(temp_pkt);
 
     return SATR_OK;
 }

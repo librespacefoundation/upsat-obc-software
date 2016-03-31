@@ -14,6 +14,7 @@ void HAL_obc_SD_OFF() {
 
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
     HAL_UART_Transmit(&huart2, buf, size, 10);
+    //HAL_UART_Transmit_DMA(&huart2, buf, size, 10);
 }
 
 SAT_returnState HAL_eps_uart_rx(uint8_t *c) {
@@ -25,4 +26,29 @@ SAT_returnState HAL_eps_uart_rx(uint8_t *c) {
     else if(res == HAL_TIMEOUT) { return SATR_ERROR; }
     
     return SATR_ERROR;
+}
+
+void HAL_su_uart_tx(uint8_t *buf, uint16_t size) {
+    HAL_UART_Transmit(&huart2, buf, size, 10);
+    //HAL_UART_Transmit_DMA(&huart2, buf, size, 10);
+}
+
+SAT_returnState HAL_su_uart_rx(uint8_t *c) {
+
+    HAL_StatusTypeDef res;
+
+    res = HAL_UART_Receive(&huart2, c, 1, 10);
+    if(res == HAL_OK) { return SATR_OK; }
+    else if(res == HAL_TIMEOUT) { return SATR_ERROR; }
+    
+    return SATR_ERROR;
+}
+
+void HAL_reset_source(uint8_t *src) {
+
+    uint32_t temp;
+
+    temp = RCC_CSR;
+    *src = (temp >> 25)
+    RCC_CSR = 0x0100 0000 | temp;
 }

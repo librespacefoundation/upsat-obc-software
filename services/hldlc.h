@@ -14,6 +14,6 @@
 
 SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint16_t *size);
 
-SAT_returnState HLDLC_frame(uint8_t *c, uint8_t *buf, uint16_t * cnt, const uint16_t size);
+SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 
 #endif
