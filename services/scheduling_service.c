@@ -28,7 +28,7 @@ SAT_returnState load_schedules()
         uint8_t schedule_data[] = { 1,1,0,0,1, 4 /*QB50 epoch*/ 
                                     ,0,0,0,10, /*time = 666666666*/
                                     0,33, /*execution timeout = 999*/
-                                    24,1,192,185,0,10,16,8,1,6,1,0,0,0,8,0,124 }; /*inner tc payload */
+                                    24,1,192,185,0,10,16,8,1,6,1,0,0,0,13,0,121 }; /*inner tc payload */
         tc_tm_pkt test ;
         test.ack = 1;
         test.app_id = OBC_APP_ID;
@@ -99,14 +99,16 @@ SAT_returnState scheduling_init_service(){
          * can be taken by a request to the Schedule packets pool.
          */
         schedule_mem_pool.sc_mem_array[s].valid = false;
+        schedule_mem_pool.sc_mem_array[s].release_time = -1; /*don't run on boot_second zero, normally this should be avoided by checking validity*/
+        sc_s_state.nmbr_of_ld_sched=0;
+        sc_s_state.schedule_arr_full = false;
     }
     
     /* Load Schedules from storage.
      * 
      */
-    load_schedules();
+//    load_schedules();
 }
-
 
 void cross_schedules(){
     
@@ -118,19 +120,26 @@ void cross_schedules(){
  *  else !enabled
  *      if time>= release time, then mark it as !valid
  */
-    while(1){
-//        uint8_t i=0;
+    
+//    while(1){
+        uint8_t i=0;
 //        uint32_t current_obc_time = obc
 //        boot_seconds;
-        for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
+        for(;i<SC_MAX_STORED_SCHEDULES;i++){
             
-            if (schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
-                route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));
+            if ( schedule_mem_pool.sc_mem_array[i].valid == true &&
+                    schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
+                route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));   
                 
+                schedule_mem_pool.sc_mem_array[i].valid = false;
+                sc_s_state.nmbr_of_ld_sched--;
+                sc_s_state.schedule_arr_full = false;
             }
+//            vTaskDelay(250 / portTICK_RATE_MS);
+//            if ( i == SC_MAX_STORED_SCHEDULES-1) { i=0;}
         }
-//        if(++i >= SC_MAX_STORED_SCHEDULES) { i=0;}
-    }
+        
+//    }
 }
 
 SAT_returnState scheduling_app(tc_tm_pkt *spacket){
@@ -140,6 +149,7 @@ SAT_returnState scheduling_app(tc_tm_pkt *spacket){
     /*TODO: add assertions*/
 //    uint8_t pos = find_schedule_pos();
     SC_pkt *the_sc_packet = find_schedule_pos();
+    
     uint32_t time = 0;
     uint16_t exec_timeout = 0;
     uint8_t tc_data_len = 0;
@@ -173,6 +183,10 @@ SAT_returnState scheduling_app(tc_tm_pkt *spacket){
     (*the_sc_packet).release_time = time;
     (*the_sc_packet).timeout = exec_timeout;
     
+    (*the_sc_packet).valid = true;
+    (*the_sc_packet).enabled = true;
+    
+    
     /*copy the internal TC packet for future use*/
     
     /*  spacket is a TC containing 12 bytes of data related to scheduling service.
@@ -187,9 +201,9 @@ SAT_returnState scheduling_app(tc_tm_pkt *spacket){
      */
     copy_inner_tc( &(spacket->data[12]), &((*the_sc_packet).tc_pck), (uint16_t)spacket->len-12 );
 
-//    route_pkt(&(*the_sc_packet).tc_pck);
+//    route_pkt( &(*the_sc_packet).tc_pck);
     
-//    scheduling_insert_api(&*the_sc_packet);
+    scheduling_insert_api( the_sc_packet);
     
     return SATR_OK;
 }
@@ -302,10 +316,10 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
     
     /*check if schedule array is already full*/
     
-    if ( !C_ASSERT(sc_s_state.schedule_arr_full) == true ){  
-        /*TODO: Here to create a telemetry/log saying "I'm full"*/
-        return SATR_SCHEDULE_FULL;
-    }
+//    if ( !C_ASSERT(sc_s_state.schedule_arr_full) == true ){  
+//        /*TODO: Here to create a telemetry/log saying "I'm full"*/
+//        return SATR_SCHEDULE_FULL;
+//    }
     
 //    uint8_t pos = find_schedule_pos(scheduling_mem_array);
 //    if ( !C_ASSERT(pos != SC_MAX_STORED_SCHEDULES) == true){
@@ -342,8 +356,7 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
 //       return INTRL_LOGIC_ERROR; 
 //    }
         
-    /*Copy the packet into the array*/
-//    scheduling_mem_array[pos] = *theSchpck;
+    /*Place the packet into the scheduling array*/
     sc_s_state.nmbr_of_ld_sched++;
     if ( sc_s_state.nmbr_of_ld_sched == SC_MAX_STORED_SCHEDULES ){
         /*schedule array has become full*/

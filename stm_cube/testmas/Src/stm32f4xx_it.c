@@ -66,7 +66,13 @@ void SysTick_Handler(void)
   osSystickHandler();
   HAL_IncTick();
   if ( HAL_GetTick()%1000==999){ /*add a second to the system time*/
+      
+      __disable_irq();
+      
       boot_seconds++;
+      
+      __enable_irq();
+      
   }
   
 //  HAL_UART_Transmit(&Uart2Handle, (uint8_t *)HAL_GetTick(), 1,10);

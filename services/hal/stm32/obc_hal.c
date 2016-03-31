@@ -1,7 +1,13 @@
 #include "obc_hal.h"
 
-void HAL_obc_delay(uint32_t sec) {
-	osDelay(sec);
+void HAL_obc_delay(uint32_t millisec) {
+	osDelay(millisec);
+}
+
+HAL_obc_LED_CONTROL(uint16_t lednum, uint8_t func)
+{
+//    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);    
+    HAL_GPIO_WritePin(GPIOD, lednum , (GPIO_PinState) func);
 }
 
 void HAL_obc_SD_ON() {

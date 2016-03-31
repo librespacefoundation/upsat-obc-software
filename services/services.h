@@ -179,7 +179,14 @@ typedef enum {
     GPS_DEV_ID      = 7,
     OBC_SD_DEV_ID   = 8,
     ADCS_SD_DEV_ID  = 9,
-    LAST_DEV_ID     = 10
+    /*THESE ENTRIES IS TO BE USED FOR SCHEDULING SERVICE TESTING*/
+    
+    LED_BLUE = 15,
+    LED_GREEN = 12,
+    LED_ORANGE = 13,
+    LED_RED = 14,
+    
+    LAST_DEV_ID     = 30 /*return this to actual last value*/
 }FM_dev_id;
 
 /*Mass storage ids*/
