@@ -46,16 +46,63 @@ SAT_returnState HAL_su_uart_rx(uint8_t *c) {
 
 void HAL_reset_source(uint8_t *src) {
 
-    uint8_t temp;
-
-    temp = __HAL_RCC_GET_FLAG(RCC_FLAG_BORRST);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) << 1);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) << 2);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST) << 3);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST) << 4);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) << 5);
-    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_LPWRRST) << 6);
+    *src = __HAL_RCC_GET_FLAG(RCC_FLAG_BORRST);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) << 1);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) << 2);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST) << 3);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST) << 4);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) << 5);
+    *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_LPWRRST) << 6);
  
     __HAL_RCC_CLEAR_RESET_FLAGS();
 
+}
+
+void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
+
+  RTC_TimeTypeDef sTime;
+
+  sTime.Hours = hours;
+  sTime.Minutes = mins;
+  sTime.Seconds = sec;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+
+}
+
+void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
+
+  RTC_TimeTypeDef sTime;
+
+  HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+   *hours = sTime.Hours;
+   *mins = sTime.Minutes;
+   *sec = sTime.Seconds;  
+}
+
+//void HAL_obc_setDate();
+//
+//  RTC_DateTypeDef sDate;
+//
+//  sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
+//  sDate.Month = RTC_MONTH_APRIL;
+//  sDate.Date = 1;
+//  sDate.Year = 16;
+//
+//  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+//
+//}
+//
+//void HAL_obc_getDate();
+//
+//}
+
+void HAL_obc_enableBkUpAccess() {
+  
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_BKPSRAM_CLK_ENABLE();
+  
 }

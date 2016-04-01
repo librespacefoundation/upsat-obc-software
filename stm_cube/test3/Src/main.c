@@ -40,6 +40,8 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+RTC_HandleTypeDef hrtc;
+
 SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
@@ -57,12 +59,15 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_RTC_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 extern SAT_returnState mass_storage_init();
 extern SAT_returnState pkt_pool_INIT();
+extern void HAL_reset_source(uint8_t *src);
+extern void HAL_obc_enableBkUpAccess();
 
 /* USER CODE END PFP */
 
@@ -89,6 +94,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SDIO_SD_Init();
   MX_USART2_UART_Init();
+  MX_RTC_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -145,13 +151,15 @@ void SystemClock_Config(void)
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
   __HAL_RCC_PWR_CLK_ENABLE();
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
@@ -168,12 +176,54 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+}
+
+/* RTC init function */
+void MX_RTC_Init(void)
+{
+
+  RTC_TimeTypeDef sTime;
+  RTC_DateTypeDef sDate;
+
+    /**Initialize RTC and set the Time and Date 
+    */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  HAL_RTC_Init(&hrtc);
+
+  sTime.Hours = 12;
+  sTime.Minutes = 15;
+  sTime.Seconds = 17;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+  sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
+  sDate.Month = RTC_MONTH_APRIL;
+  sDate.Date = 1;
+  sDate.Year = 16;
+
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+    /**Enable Calibrartion 
+    */
+  HAL_RTCEx_SetCalibrationOutPut(&hrtc, RTC_CALIBOUTPUT_1HZ);
+
 }
 
 /* SDIO init function */
@@ -223,7 +273,6 @@ void MX_USART2_UART_Init(void)
      PA10   ------> USB_OTG_FS_ID
      PA11   ------> USB_OTG_FS_DM
      PA12   ------> USB_OTG_FS_DP
-     PC10   ------> I2S3_CK
      PB6   ------> I2C1_SCL
      PB9   ------> I2C1_SDA
 */
@@ -311,8 +360,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC7 I2S3_SCK_Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_7|I2S3_SCK_Pin;
+  /*Configure GPIO pin : PC7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -372,8 +421,11 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+   HAL_reset_source(&obc_data.rsrc);
+   //event_log(reset source);
    uint8_t uart_temp[20];
    pkt_pool_INIT();
+   HAL_obc_enableBkUpAccess();
    //mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");

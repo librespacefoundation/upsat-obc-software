@@ -12,7 +12,8 @@
 //need to make an obc struct with all the data.
 struct _obc_data
 {
-	uint16_t obc_seq_cnt;	
+	uint16_t obc_seq_cnt;
+        uint8_t  rsrc;  
 };
 
 extern struct _obc_data obc_data;
@@ -62,6 +63,14 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
 SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, TC_TM_app_id dest_id);
+
+
+SAT_returnState event_log_store(uint8_t *buf, const uint16_t size);
+
+SAT_returnState event_log_load(uint8_t *buf, const uint16_t size);
+
+SAT_returnState event_log_IDLE();
+
 
 void cnv32_8(const uint32_t from, uint8_t *to);
 
