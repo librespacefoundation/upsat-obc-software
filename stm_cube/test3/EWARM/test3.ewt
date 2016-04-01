@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>test3 Configuration</name>
+    <name>test3</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1074,6 +1074,9 @@
         <name>$PROJ_DIR$\..\Src\stm32f4xx_hal_msp.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Src\stm32f4xx_hal_timebase_TIM.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
       </file>
     </group>
@@ -1126,6 +1129,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sd.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c</name>
@@ -1250,6 +1259,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\services\services.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\services\test_service.c</name>

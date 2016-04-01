@@ -34,7 +34,7 @@
         
         
       <PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
-    <WATCH_1><expressions><item>buf</item><item>pkt_pool</item><item>temp_pkt</item><item>buf_out</item><item>cnt_out</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>139</item><item>150</item><item>100</item><item>211</item></col-widths></WATCH_1></Static>
+    <WATCH_1><expressions><item>buf</item><item>pkt_pool</item><item>temp_pkt</item><item>buf_out</item><item>cnt_out</item><item/></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>139</item><item>150</item><item>100</item><item>211</item></col-widths></WATCH_1></Static>
     <Windows>
       
       
