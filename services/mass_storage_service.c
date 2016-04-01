@@ -413,15 +413,14 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
     if(res != FR_OK) { return SATR_ERROR; } 
 
     cnv8_16(&buf[0], &script_len);
-    
 
     if(!C_ASSERT(size == script_len) == true) { return SATR_ERROR; } 
 
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
 
-    for(uint16_t i = 0; i < *size; i++) {
-        sum1 = (sum1 + c) % 255; 
+    for(uint16_t i = 0; i < size; i++) {
+        sum1 = (sum1 + buf[i]) % 255; 
         sum2 = (sum2 + sum1) % 255;
     }
 

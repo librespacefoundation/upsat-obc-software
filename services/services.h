@@ -199,6 +199,13 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
+typedef enum {  
+    su_running    = 1,
+    su_idle       = 2,
+    su_finished   = 3,
+    LAST_SU_STATE = 4
+}SU_state;
+
 #define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e))) 
 
 union _cnv {

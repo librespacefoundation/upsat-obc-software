@@ -106,7 +106,6 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
-    uint8_t c = 0;
     uint16_t size = 0;
     uint8_t buf[TEST_ARRAY];
     uint8_t buf_out[TEST_ARRAY];

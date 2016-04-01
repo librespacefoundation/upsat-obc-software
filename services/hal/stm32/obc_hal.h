@@ -26,4 +26,6 @@ void HAL_su_uart_tx(uint8_t *buf, uint16_t size);
 
 SAT_returnState HAL_su_uart_rx(uint8_t *c);
 
+void HAL_reset_source(uint8_t *src);
+
 #endif

@@ -1,6 +1,7 @@
 #include "su_mnlp.h"
 
 struct script_handler obc_su_scripts;
+struct OBC_data flight_data;
 
 /*
 draft implementation
@@ -18,40 +19,41 @@ void su_timeout_handler(uint8_t error) {
     cnv16_8(flight_data.y_eci, &obc_su_scripts.rx_buf[18]);
     cnv16_8(flight_data.z_eci, &obc_su_scripts.rx_buf[20]);
 
-    buf_pointer = SU_SCI_HEADER;
+    uint16_t buf_pointer = SU_SCI_HEADER;
 
     obc_su_scripts.rx_buf[buf_pointer++] = OBC_SU_ERR_RSP_ID;
     buf_pointer++;
     buf_pointer++;
 
-    obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[obc_su_scripts.active_script].xsum;
-    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
+    obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[obc_su_scripts.active_script].header.xsum;
+    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].header.start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
     buf_pointer += 4;
-    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
+    cnv32_8(obc_su_scripts.scripts[obc_su_scripts.active_script].header.file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
     buf_pointer += 4;
-    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].su_id << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].sw_ver;
-    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].su_md << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].script_type;
+    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].header.su_id << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].header.sw_ver;
+    obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[obc_su_scripts.active_script].header.su_md << 5) | obc_su_scripts.scripts[obc_su_scripts.active_script].header.script_type;
 
     for(uint16_t i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
 
-        obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[i].xsum;
-        cnv32_8(obc_su_scripts.scripts[i].start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
+        obc_su_scripts.rx_buf[buf_pointer++] = obc_su_scripts.scripts[i].header.xsum;
+        cnv32_8(obc_su_scripts.scripts[i].header.start_time, &obc_su_scripts.rx_buf[buf_pointer++]);
         buf_pointer += 4;
-        cnv32_8(obc_su_scripts.scripts[i].file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
+        cnv32_8(obc_su_scripts.scripts[i].header.file_sn, &obc_su_scripts.rx_buf[buf_pointer++]);
         buf_pointer += 4;
-        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].su_id << 5) | obc_su_scripts.scripts[i].sw_ver;
-        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].su_md << 5) | obc_su_scripts.scripts[i].script_type;
+        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].header.su_id << 5) | obc_su_scripts.scripts[i].header.sw_ver;
+        obc_su_scripts.rx_buf[buf_pointer++] = (obc_su_scripts.scripts[i].header.su_md << 5) | obc_su_scripts.scripts[i].header.script_type;
     }
 
     for(uint16_t i = 99; i < 173; i++) {
         obc_su_scripts.rx_buf[i] = 0;
     }
 
-    mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, SU_MAX_RSP_SIZE);
+    uint16_t size = SU_MAX_RSP_SIZE;
+    mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, &size);
     su_power_ctrl(P_RESET);
     obc_su_scripts.timeout = time_now();
 
-    su_next_tt(&obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
+    su_next_tt(obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
 
 }
 
@@ -82,7 +84,8 @@ SAT_returnState su_incoming_rx() {
             cnv16_8(flight_data.y_eci, &obc_su_scripts.rx_buf[18]);
             cnv16_8(flight_data.z_eci, &obc_su_scripts.rx_buf[20]);
 
-            mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, SU_MAX_RSP_SIZE);
+            uint16_t size = SU_MAX_RSP_SIZE;
+            mass_storage_storeLogs(SU_LOG, obc_su_scripts.rx_buf, &size);
         }
     }
     return SATR_OK;
@@ -90,59 +93,60 @@ SAT_returnState su_incoming_rx() {
 
 void su_SCH() {
 
-    if(obc_su_scripts.state == idle) {
+    if(obc_su_scripts.state == su_idle) {
         for(MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
-            if(obc_su_scripts.scripts[i].header.start_time >= OBC_data.time_epoch && scripts[i].start_time != 0) {
+            if(obc_su_scripts.scripts[i].header.start_time >= time_now() && obc_su_scripts.scripts[i].header.start_time != 0) {
                 
-                obc_su_scripts.state = running
+                obc_su_scripts.state = su_running;
                 obc_su_scripts.active_script = i;
                 
-                mass_storage_su_load_api(i, &obc_su_scripts.active_buf);
+                mass_storage_su_load_api(i, obc_su_scripts.active_buf);
                 obc_su_scripts.tt_pointer_curr = SU_TT_OFFSET;
 
-                for(uint16_t b = SU_TT_OFFSET; b < MS_MAX_SU_FILE_SIZE; b++) {
+                for(uint16_t b = SU_TT_OFFSET; b < SU_MAX_FILE_SIZE; b++) {
 
-                    su_next_tt(&obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
+                    su_next_tt(obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
 
-                    if(tt_header.script_index == SU_SCR_TT_EOR) { break; }
-                    else if(bc_su_scripts.tt_header.time < OBC_data.time_epoch) { su_next_tt(&obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr); }
+                    if(obc_su_scripts.tt_header.script_index == SU_SCR_TT_EOR) { break; }
+                   // else if(obc_su_scripts.tt_header.time < time_now()) { su_next_tt(obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr); }
                     else { break; }
-                    if(!C_ASSERT(tt_temp < su_scr.header.script_len) == true) { break; }
+                    if(!C_ASSERT(obc_su_scripts.tt_pointer_curr < obc_su_scripts.scripts[i].header.script_len) == true) { break; }
                 }
             }
         }
     }
-    if(obc_su_scripts.state == running) {
-        if(obc_su_scripts.tt_header.time >= OBC_data.time_epoch) { 
-            if(obc_su_scripts.tt_header.script_index == SU_SCR_TT_EOR) { obc_su_scripts.state = finished; break; }
+    if(obc_su_scripts.state == su_running) {
+      //  if(obc_su_scripts.tt_header.time >= time_now()) { 
+            if(obc_su_scripts.tt_header.script_index == SU_SCR_TT_EOR) { obc_su_scripts.state = su_finished; }
+            else {
+              SAT_returnState res;
+              su_tt_handler(obc_su_scripts.tt_header, obc_su_scripts.scripts, obc_su_scripts.active_script, &obc_su_scripts.script_pointer_curr);
+              su_next_cmd(obc_su_scripts.active_buf, &obc_su_scripts.cmd_header, &obc_su_scripts.script_pointer_curr);
+              
+              for(uint16_t i = obc_su_scripts.script_pointer_curr; i < SU_MAX_FILE_SIZE; i++) {
 
-            SAT_returnState res;
-            su_tt_handler(obc_su_scripts.tt_header, &obc_su_scripts.scripts, obc_su_scripts.active_script, &obc_su_scripts.script_pointer_curr);
-            su_next_cmd(&obc_su_scripts.active_buf, &obc_su_scripts.cmd_header, &obc_su_scripts.script_pointer_curr);
-            
-            for(uint16_t i = obc_su_scripts.script_pointer_curr; i < MS_MAX_SU_FILE_SIZE; i++) {
-
-                res = su_cmd_handler(&obc_su_scripts.cmd_header);
-                if(res == SATR_EOT) { break; }
-                su_next_cmd(&obc_su_scripts.active_buf, &obc_su_scripts.cmd_header, &obc_su_scripts.script_pointer_curr);
+                  res = su_cmd_handler(&obc_su_scripts.cmd_header);
+                  if(res == SATR_EOT) { break; }
+                  su_next_cmd(obc_su_scripts.active_buf, &obc_su_scripts.cmd_header, &obc_su_scripts.script_pointer_curr);
+              }
+              su_next_tt(obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr); 
+          
             }
-            su_next_tt(&obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr); 
-        }
-
-
+     //   }
     }
-    if(time == midnight) {
+ //   if(time_now() == midnight) {
         su_INIT();
-        obc_su_scripts.state = idle;
-    }
+        obc_su_scripts.state = su_idle;
+ //   }
 }
 
 void su_INIT() {
     for(MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
-        mass_storage_su_load_api(i, &obc_su_scripts.temp_buf);
-        su_populate_header(&obc_su_scripts.scripts[(uint8_t)i].header, &obc_su_scripts.temp_buf);
-        su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)i], &obc_su_scripts.temp_buf);       
+        mass_storage_su_load_api(i, obc_su_scripts.temp_buf);
+        su_populate_header(&obc_su_scripts.scripts[(uint8_t)i].header, obc_su_scripts.temp_buf);
+        su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)i], obc_su_scripts.temp_buf);       
     }
+    obc_su_scripts.rx_cnt = SU_SCI_HEADER;
 }
 
 SAT_returnState su_tt_handler(struct script_times_table tt, struct su_script *scripts, MS_sid active_script, uint16_t *start) {
@@ -158,7 +162,7 @@ SAT_returnState su_tt_handler(struct script_times_table tt, struct su_script *sc
 
 SAT_returnState su_cmd_handler(struct script_seq *cmd) {
 
-    HAL_delay((cmd->dt_min * 60) + cmd->dt_sec);
+    HAL_obc_delay((cmd->dt_min * 60) + cmd->dt_sec);
 
     if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID)          { su_power_ctrl(P_ON); } 
     else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID)    { su_power_ctrl(P_OFF); } 
@@ -172,11 +176,10 @@ SAT_returnState su_populate_header(struct script_hdr *hdr, uint8_t *buf) {
 
 
     if(!C_ASSERT(buf != NULL) == true)          { return SATR_ERROR; }
-    if(!C_ASSERT(sid <= SU_SCRIPT_7) == true)   { return SATR_INV_STORE_ID; }
 
-    cnv8_16(&buf[0], hdr->script_len);
-    cnv8_32(&buf[2], hdr->start_time);
-    cnv8_32(&buf[6], hdr->file_sn);
+    cnv8_16(&buf[0], &hdr->script_len);
+    cnv8_32(&buf[2], &hdr->start_time);
+    cnv8_32(&buf[6], &hdr->file_sn);
 
     hdr->sw_ver = 0x1F & buf[10];
     hdr->su_id = 0x03 & (buf[10] >> 5); //need to check this
@@ -196,32 +199,31 @@ SAT_returnState su_populate_scriptPointers(struct su_script *su_scr, uint8_t *bu
 
     struct script_times_table temp_tt_header;
 
-    for(uint16_t i = SU_TT_OFFSET; i < MS_MAX_SU_FILE_SIZE; i++) {
+    for(uint16_t i = SU_TT_OFFSET; i < SU_MAX_FILE_SIZE; i++) {
         su_next_tt(buf, &temp_tt_header, &tt_temp);
-        if(tt_header.script_index == SU_SCR_TT_EOR) { break; }
-        if(!C_ASSERT(tt_temp < su_scr.header.script_len) == true) { break; }
+        if(temp_tt_header.script_index == SU_SCR_TT_EOR) { break; }
+        if(!C_ASSERT(tt_temp < su_scr->header.script_len) == true) { break; }
     }
 
-    struct script_seq 
+    struct script_seq temp_cmd_header;
 
-    su_scr->script_pointer_curr = 0;
     su_scr->script_pointer_start[0] = tt_temp + SU_TT_HEADER_SIZE;
     uint16_t script_temp = su_scr->script_pointer_start[0];
 
     for(uint8_t a = 1; a < SU_CMD_SEQ; a++) {
 
-        for(uint16_t b = 0; i < MS_MAX_SU_FILE_SIZE; i++) {
+        for(uint16_t b = 0; b < SU_MAX_FILE_SIZE; b++) {
             su_next_cmd(buf, &temp_cmd_header, &script_temp);
             if(temp_cmd_header.cmd_id == SU_OBC_EOT_CMD_ID) { break; }
-            else if(!C_ASSERT(script_temp < su_scr->script_len) == true) { break; }
+            else if(!C_ASSERT(script_temp < su_scr->header.script_len) == true) { break; }
         }
-        su_scr->script_pointer_start[a] = script_temp + SU_CMD_HEADER_SIZE;
+        su_scr->script_pointer_start[a] = script_temp + SU_EOT_CMD_HEADER_SIZE;
         
     }
     return SATR_OK;
 }
 
-SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t pointer) {
+SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t *pointer) {
 
     if(!C_ASSERT(buf != NULL && tt != NULL && pointer != NULL) == true) { return SATR_ERROR; }
     if(!C_ASSERT(tt->script_index != SU_SCR_TT_EOR) == true) { return SATR_EOT; }
@@ -233,7 +235,7 @@ SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t
 
     if(!C_ASSERT(tt->sec < 59) == true) { return SATR_ERROR; }
     if(!C_ASSERT(tt->min < 59) == true) { return SATR_ERROR; }
-    if(!C_ASSERT(tt->hour < 23) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(tt->hours < 23) == true) { return SATR_ERROR; }
     if(!C_ASSERT(tt->script_index == SU_SCR_TT_S1 || \
                  tt->script_index == SU_SCR_TT_S2 || \
                  tt->script_index == SU_SCR_TT_S3 || \
@@ -244,10 +246,10 @@ SAT_returnState su_next_tt(uint8_t *buf, struct script_times_table *tt, uint16_t
     return SATR_OK;
 }
 
-SAT_returnState su_next_cmd(uint8_t *buf, struct script_seq *cmd, uint16_t pointer) {
+SAT_returnState su_next_cmd(uint8_t *buf, struct script_seq *cmd, uint16_t *pointer) {
 
     if(!C_ASSERT(buf != NULL && cmd != NULL && pointer != NULL) == true) { return SATR_ERROR; }
-    if(!C_ASSERT(tt->script_index != SU_OBC_EOT_CMD_ID) == true) { return SATR_EOT; }
+    if(!C_ASSERT(cmd->cmd_id != SU_OBC_EOT_CMD_ID) == true) { return SATR_EOT; }
 
     cmd->dt_sec = buf[(*pointer)++];
     cmd->dt_min = buf[(*pointer)++];
@@ -285,7 +287,7 @@ SAT_returnState su_power_ctrl(FM_fun_id fid) {
 
     tc_tm_pkt *temp_pkt = 0;
 
-    fm_pctrl_crt_pkt_api(&temp_pkt, EPS_APP_ID, fid, SU_DEV_ID);
+    function_management_pctrl_crt_pkt_api(&temp_pkt, EPS_APP_ID, fid, SU_DEV_ID);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     route_pkt(temp_pkt);

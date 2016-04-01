@@ -375,6 +375,7 @@ void StartDefaultTask(void const * argument)
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    //mass_storage_init();
+   //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   
@@ -382,6 +383,7 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
     import_eps_pkt();
+    //su_SCH();
     osDelay(1);
   }
   /* USER CODE END 5 */ 

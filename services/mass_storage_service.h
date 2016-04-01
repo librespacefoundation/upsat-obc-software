@@ -53,6 +53,7 @@ extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 extern uint32_t time_now();
 extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern void cnv32_8(const uint32_t from, uint8_t *to);
+extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 //ToDo
 //	check type casting for snprintf & %d conversions
@@ -85,7 +86,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
 
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
 
-SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf, uint16_t *size);
+SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf);
 
 
 SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);

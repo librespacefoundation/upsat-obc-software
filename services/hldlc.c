@@ -33,7 +33,7 @@ SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint
 //used for DMA
 SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
 
-    if(!C_ASSERT(c != NULL && buf != NULL && cnt != NULL) == true)   { return SATR_ERROR; }
+    if(!C_ASSERT(buf_in != NULL && buf_out != NULL && size != NULL) == true)   { return SATR_ERROR; }
 
     uint16_t cnt = 0;
 

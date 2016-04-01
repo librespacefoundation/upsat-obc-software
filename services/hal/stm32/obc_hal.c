@@ -46,9 +46,16 @@ SAT_returnState HAL_su_uart_rx(uint8_t *c) {
 
 void HAL_reset_source(uint8_t *src) {
 
-    uint32_t temp;
+    uint8_t temp;
 
-    temp = RCC_CSR;
-    *src = (temp >> 25)
-    RCC_CSR = 0x0100 0000 | temp;
+    temp = __HAL_RCC_GET_FLAG(RCC_FLAG_BORRST);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) << 1);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) << 2);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST) << 3);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST) << 4);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) << 5);
+    temp |= (__HAL_RCC_GET_FLAG(RCC_FLAG_LPWRRST) << 6);
+ 
+    __HAL_RCC_CLEAR_RESET_FLAGS();
+
 }
