@@ -336,19 +336,49 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
     return SATR_OK;
 }
 
-//WIP: will not compile
-//should add a flag that writes the array in the sd in a idle task
-//uint8 is temp and generic.
-// SAT_returnState event_log(uint8_t *event) {
-    
-//     if(event+log_cnt > MAX EVENT FILE SIZE) {
-//         mass_storage_storeLogs(EVENT_LOG, event_arr, uint16_t *size);
-//     }
+void event_log_INIT() {
 
-//     for(uint16_t i = 0; i < event size; ) {
-//         event_arr[log_cnt++] = event[i];   
-//     }
-//     write2eeprom(event);
+    obc_data.log_cnt = BKPSRAM_BASE;
+    obc_data.log_tail = BKPSRAM_BASE + 1;
+    obc_data.log = BKPSRAM_BASE + 2;
 
-//     return SATR_OK;
-// }
+}
+
+SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
+
+    for(uint16_t i = 0; i < size; i++) {
+        *obc_data.log[*obc_data.log_cnt >> 2] = buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8);
+        (*obc_data.log_cnt)++;
+        if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
+    }
+
+}
+
+SAT_returnState event_log_load(uint8_t *buf, const uint16_t size) {
+
+}
+
+SAT_returnState event_log_IDLE() {
+    if(*obc_data.log_mode && *obc_data.log_cnt > (EV_MAX_BUFFER / 2) ) {
+
+        uint16_t size = (EV_MAX_BUFFER / 2);
+
+        for(uint16_t i = 0; i < size; i++) {
+            buf[i] = obc_data.log[i >> 2] >> ((0x00000003 & i) * 8);
+        }
+        mass_storage_storeLogs(EVENT_LOG, buf, &size);
+
+        *obc_data.log_mode = ;
+
+    } else if(*obc_data.log_mode && *obc_data.log_cnt < (EV_MAX_BUFFER / 2) ) {
+
+        uint16_t size = (EV_MAX_BUFFER / 2);
+
+        for(uint16_t i = 0; i < size; i++) {
+            buf[i] = obc_data.log[i >> 2] >> ((0x00000003 & (i + (EV_MAX_BUFFER / 2))) * 8);
+        }
+        mass_storage_storeLogs(EVENT_LOG, buf, &size);
+
+        *obc_data.log_mode = ;
+    } 
+}

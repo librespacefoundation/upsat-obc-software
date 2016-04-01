@@ -426,6 +426,7 @@ void StartDefaultTask(void const * argument)
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
+   event_log_INIT();
    //mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");

@@ -19,7 +19,16 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
         pkt->verification_state = SATR_OK; 
         power_control_api((FM_dev_id)val, fun_id); 
     }
-    //else if() /*time management*/
+    else if(fun_id == SET_TIME) { /*time management*/
+
+        uint8_t hours = 0;
+        uint8_t mins = 0; 
+        uint8_t sec = 0;
+
+        //cnvQB50_UTC(val, &hours, &mins, &sec);
+        HAL_obc_setTime(hours, mins, sec);
+        //HAL_obc_setDate(hours, mins, sec);
+    }
 
     return SATR_OK;
 }

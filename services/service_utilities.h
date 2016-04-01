@@ -9,11 +9,16 @@
 #define MIN_PKT_SIZE 5
 #define MAX_PKT_SIZE 1024
 
+#define EV_MAX_BUFFER 1024
+
 //need to make an obc struct with all the data.
 struct _obc_data
 {
-	uint16_t obc_seq_cnt;
-        uint8_t  rsrc;  
+    uint16_t obc_seq_cnt;
+    uint8_t rsrc;
+    uint32_t *log;
+    uint32_t *log_cnt;
+    uint32_t *log_tail;
 };
 
 extern struct _obc_data obc_data;
@@ -39,11 +44,11 @@ extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 //ToDo
-//	need to make an obc struct with all the data.
+//  need to make an obc struct with all the data.
 //  Add if condition for normal packet or extended
 
 //Finished
-//	fix in unpack the pkt len - 4
+//  fix in unpack the pkt len - 4
 
 
 SAT_returnState event_log(uint8_t *event);
@@ -64,8 +69,9 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
 SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, TC_TM_app_id dest_id);
 
+void event_log_INIT();
 
-SAT_returnState event_log_store(uint8_t *buf, const uint16_t size);
+SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 
 SAT_returnState event_log_load(uint8_t *buf, const uint16_t size);
 
