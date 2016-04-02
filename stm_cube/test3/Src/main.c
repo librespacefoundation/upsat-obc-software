@@ -40,12 +40,16 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+IWDG_HandleTypeDef hiwdg;
+
 RTC_HandleTypeDef hrtc;
 
 SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
 UART_HandleTypeDef huart2;
+
+WWDG_HandleTypeDef hwwdg;
 
 osThreadId defaultTaskHandle;
 
@@ -60,6 +64,8 @@ static void MX_GPIO_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_IWDG_Init(void);
+static void MX_WWDG_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -95,6 +101,8 @@ int main(void)
   MX_SDIO_SD_Init();
   MX_USART2_UART_Init();
   MX_RTC_Init();
+  MX_IWDG_Init();
+  MX_WWDG_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -188,6 +196,17 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
 }
 
+/* IWDG init function */
+void MX_IWDG_Init(void)
+{
+
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
+  hiwdg.Init.Reload = 4095;
+  HAL_IWDG_Init(&hiwdg);
+
+}
+
 /* RTC init function */
 void MX_RTC_Init(void)
 {
@@ -206,12 +225,12 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   HAL_RTC_Init(&hrtc);
 
-  //sTime.Hours = 12;
-  //sTime.Minutes = 15;
-  //sTime.Seconds = 17;
-  //sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  //sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  sTime.Hours = 12;
+  sTime.Minutes = 15;
+  sTime.Seconds = 17;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
   sDate.Month = RTC_MONTH_APRIL;
@@ -253,6 +272,18 @@ void MX_USART2_UART_Init(void)
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   HAL_UART_Init(&huart2);
+
+}
+
+/* WWDG init function */
+void MX_WWDG_Init(void)
+{
+
+  hwwdg.Instance = WWDG;
+  hwwdg.Init.Prescaler = WWDG_PRESCALER_1;
+  hwwdg.Init.Window = 64;
+  hwwdg.Init.Counter = 64;
+  HAL_WWDG_Init(&hwwdg);
 
 }
 
@@ -421,6 +452,7 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+  obc_data.rsrc = 0;
    HAL_reset_source(&obc_data.rsrc);
    //event_log(reset source);
    uint8_t uart_temp[20];
@@ -449,11 +481,15 @@ void StartDefaultTask(void const * argument)
 
    event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
    HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
+   
+   sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
    //mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
-  
+   //HAL_IWDG_Start(&hiwdg); //0x17
+   //HAL_WWDG_Start(&hwwdg); //0x22
   /* Infinite loop */
   for(;;)
   {
