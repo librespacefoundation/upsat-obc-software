@@ -1117,6 +1117,10 @@
       <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c</name>
     </file><file>
       <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c</name>
+    </file><file>
+      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_iwdg.c</name>
+    </file><file>
+      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.c</name>
     </file></group>
   </group>
   <group>

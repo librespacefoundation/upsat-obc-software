@@ -13,7 +13,7 @@ CStepIntDis=_ 0
 stlinkserialNo=18E8279F
 stlinkfoundProbes=
 [DebugChecksum]
-Checksum=666342639
+Checksum=947299668
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -103,7 +103,8 @@ ShowTiming=1
 mode=0
 [Breakpoints2]
 Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\services.c}.68.3" 0 0 1 "" 0 "" 0
-Count=1
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\main.c}.496.5" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0
