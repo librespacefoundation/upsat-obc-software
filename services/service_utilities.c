@@ -338,24 +338,35 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 
 void event_log_INIT() {
 
-    obc_data.log_cnt = BKPSRAM_BASE;
-    obc_data.log_tail = BKPSRAM_BASE + 1;
-    obc_data.log = BKPSRAM_BASE + 2;
+    obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
+    obc_data.log_mode = HAL_obc_BKPSRAM_BASE() + 1;
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 2;
 
 }
 
 SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
 
+    union _cnv temp_cnv;
+  
     for(uint16_t i = 0; i < size; i++) {
-        *obc_data.log[*obc_data.log_cnt >> 2] = buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8);
+      uint32_t point = ((*obc_data.log_cnt) >> 2);
+      temp_cnv.cnv32 = obc_data.log[point];
+      temp_cnv.cnv8[(0x00000003 & *obc_data.log_cnt)] = buf[i];
+       obc_data.log[point] = temp_cnv.cnv32;
+      //obc_data.log[point] &= 0xFFFF
+      //obc_data.log[point] |= (buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8));
         (*obc_data.log_cnt)++;
         if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
     }
 
+    return SATR_OK;
 }
 
-SAT_returnState event_log_load(uint8_t *buf, const uint16_t size) {
-
+SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint16_t size) {
+   for(uint16_t i = 0; i < size; i++) {
+        buf[i] = obc_data.log[(pointer + i) >> 2] >> ((0x00000003 & i) * 8);
+   }
+   return SATR_OK;
 }
 
 SAT_returnState event_log_IDLE() {
@@ -368,7 +379,7 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_mode = ;
+        *obc_data.log_mode = 0;
 
     } else if(*obc_data.log_mode && *obc_data.log_cnt < (EV_MAX_BUFFER / 2) ) {
 
@@ -379,6 +390,8 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_mode = ;
-    } 
+        *obc_data.log_mode = 0;
+    }
+    
+     return SATR_OK;
 }

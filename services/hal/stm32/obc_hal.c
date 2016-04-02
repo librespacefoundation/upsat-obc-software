@@ -106,3 +106,7 @@ void HAL_obc_enableBkUpAccess() {
   __HAL_RCC_BKPSRAM_CLK_ENABLE();
   
 }
+
+uint32_t * HAL_obc_BKPSRAM_BASE() {
+  return (uint32_t *)BKPSRAM_BASE;
+}

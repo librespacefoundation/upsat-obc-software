@@ -200,7 +200,7 @@ typedef enum {
 }MS_mode;
 
 typedef enum {  
-    su_running    = 1,
+    su_running     = 1,
     su_idle       = 2,
     su_finished   = 3,
     LAST_SU_STATE = 4

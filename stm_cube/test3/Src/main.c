@@ -206,12 +206,12 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   HAL_RTC_Init(&hrtc);
 
-  sTime.Hours = 12;
-  sTime.Minutes = 15;
-  sTime.Seconds = 17;
-  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  //sTime.Hours = 12;
+  //sTime.Minutes = 15;
+  //sTime.Seconds = 17;
+  //sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  //sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
   sDate.Month = RTC_MONTH_APRIL;
@@ -427,6 +427,28 @@ void StartDefaultTask(void const * argument)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    event_log_INIT();
+   
+   uint8_t hours, mins, sec = 0;
+   HAL_obc_getTime(&hours, &mins, &sec);
+   sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   //hours = 19;
+   //mins = 35;
+   //sec = 11;
+   //HAL_obc_setTime(hours, mins, sec);
+   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   sprintf((char*)uart_temp, "F: %u\n", *obc_data.log_cnt);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   //(*obc_data.log_cnt)++;
+   //*obc_data.log_cnt = 0;
+   uint8_t tt[] = "YO!\n";
+   event_log(tt, 4);
+
+   event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
+   HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
    //mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");
