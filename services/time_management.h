@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include "services.h"
 
+#define SECONDSFROM00S 
+
 typedef struct{
     
     uint32_t last_rtc_sync;

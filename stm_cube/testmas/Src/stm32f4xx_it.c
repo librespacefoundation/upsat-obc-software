@@ -67,11 +67,11 @@ void SysTick_Handler(void)
   HAL_IncTick();
   if ( HAL_GetTick()%1000==999){ /*add a second to the system time*/
       
-      __disable_irq();
+//      __disable_irq();
       
       boot_seconds++;
       
-      __enable_irq();
+//      __enable_irq();
       
   }
   

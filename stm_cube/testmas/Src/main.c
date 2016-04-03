@@ -601,28 +601,35 @@ void MX_GPIO_Init(void)
 
 /* StartDefaultTask function */
 
+//uint8_t t[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,0,0,0,8,0,124,126};
+//
+//char *t2[2] = {126,24};
+//char *temp = t2;
+
 void StartDefaultTask(void const * argument)
 {
     /* init code for FATFS */
     MX_FATFS_Init();
 
     /* USER CODE BEGIN 5 */
-    uint8_t uart_temp[20];
+    uint8_t uart_temp[10];
     pkt_pool_INIT();
 //    mass_storage_init();
+    
+//    sprintf((char*)uart_temp, t);
     sprintf((char*)uart_temp, "Hello\n");
-    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
-
+//    for(;;){
+        HAL_UART_Transmit(&huart2, uart_temp, 6 , 1000);
+//        HAL_Delay(2000);
+//    }
     /* Infinite loop */
-     
-        
+             
     scheduling_init_service();
 //    load_schedules();
 //    cross_schedules();
     
     for(;;)
     {   
-        
 //        C_ASSERT(false);
         import_eps_pkt();
         cross_schedules();

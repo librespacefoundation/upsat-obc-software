@@ -327,21 +327,21 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
 //    }
     
     /*Check sub-schedule id*/
-    if ( !C_ASSERT(theSchpck->sub_schedule_id !=1) == true ){
-        return SATR_SSCH_ID_INVALID;
-    }
-    /*Check number of tc in schpck id*/
-    if ( !C_ASSERT(theSchpck->num_of_sch_tc !=1) == true ){
-        return SATR_NMR_OF_TC_INVALID;
-    }
-    /*Check interlock set id*/
-    if ( !C_ASSERT(theSchpck->intrlck_set_id !=0) == true){
-        return SATR_INTRL_ID_INVALID;
-    }
-    /*Check interlock assessment id*/
-    if ( !C_ASSERT(theSchpck->intrlck_ass_id !=1) == true ){
-        return SATR_ASS_INTRL_ID_INVALID;
-    }
+//    if ( C_ASSERT(theSchpck->sub_schedule_id !=1) == true ){
+//        return SATR_SSCH_ID_INVALID;
+//    }
+//    /*Check number of tc in schpck id*/
+//    if ( C_ASSERT(theSchpck->num_of_sch_tc !=1) == true ){
+//        return SATR_NMR_OF_TC_INVALID;
+//    }
+//    /*Check interlock set id*/
+//    if ( C_ASSERT(theSchpck->intrlck_set_id !=0) == true){
+//        return SATR_INTRL_ID_INVALID;
+//    }
+//    /*Check interlock assessment id*/
+//    if ( C_ASSERT(theSchpck->intrlck_ass_id !=1) == true ){
+//        return SATR_ASS_INTRL_ID_INVALID;
+//    }
 //    /*Check release time type id*/
 //    if ( (!C_ASSERT(theSchpck->sch_evt != ABSOLUTE) == true) ||
 //         (!C_ASSERT(theSchpck->sch_evt != QB50EPC) == true) ){
