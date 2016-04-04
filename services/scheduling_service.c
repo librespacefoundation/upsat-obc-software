@@ -11,8 +11,6 @@
 
 #include "scheduling_service.h"
 
-
-
 SAT_returnState copy_inner_tc(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 SC_pkt* find_schedule_pos();
 
@@ -142,7 +140,7 @@ void cross_schedules(){
 //    }
 }
 
-SAT_returnState scheduling_app(tc_tm_pkt *spacket){
+SAT_returnState scheduling_app( tc_tm_pkt *spacket){
     
 //    uint8_t sch_mem_pool[MAX_EX_PKT_DATA];
     
@@ -185,7 +183,6 @@ SAT_returnState scheduling_app(tc_tm_pkt *spacket){
     
     (*the_sc_packet).valid = true;
     (*the_sc_packet).enabled = true;
-    
     
     /*copy the internal TC packet for future use*/
     
@@ -314,6 +311,39 @@ SAT_returnState copy_inner_tc(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t
 SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool, */
                                        SC_pkt* theSchpck ){        
     
+//    if ( report ){
+//        
+//    }
+//    else if ( completely_remove_schedule ){
+//        
+//    }
+//    else if ( temporarilly_disable_a_schedule ){
+//        
+//    }
+//    else if ( enable_a_schedule ){
+//        
+//    }
+//    else if ( reset_schedule ){
+//        
+//    }
+//    else if ( insert_a_schedule ){
+//        
+//    }
+//    else if ( get_service_state ){
+//        
+//    }
+//    else if ( reset_schedule ){
+//        
+//    }
+//    else if ( time_shift_all ){
+//        
+//    }
+//    else if ( time_shift_selected ){
+//        
+//    }
+//    else if ( report_summary_all_and_everything_else ){
+//        
+//    }
     /*check if schedule array is already full*/
     
 //    if ( !C_ASSERT(sc_s_state.schedule_arr_full) == true ){  
@@ -439,30 +469,26 @@ SAT_returnState time_shift_sel_schedule(SC_pkt* sch_mem_pool, uint8_t apid, uint
     return SATR_OK;
 }
 
-/* Time shifts selected telecommands over a time period on the Schedule 
- * * Service Subtype 8
+/* Find a 'free' (non-valid schedule) position in the Schedule_pck array to
+ * insert the Scheduling packet, and return its address.
  */
-SAT_returnState time_shift_sel_scheduleOTP( SC_pkt* theSchpck ){
-    
-    return SATR_OK;
+SC_pkt* find_schedule_pos(/*SC_pkt* sche_mem_pool*/)
+{
+    for( uint8_t k=0; k<SC_MAX_STORED_SCHEDULES; k++){
+        if( schedule_mem_pool.sc_mem_array[k].valid != true){
+            return &( schedule_mem_pool.sc_mem_array[k]);
+        }
+    }
+    return NULL;
 }
 
-/* Reports detailed info about every telecommand the Schedule 
- * * Service Subtype 16
- */
-SAT_returnState report_detailed( SC_pkt theSchpck ){
+/* Reports summary info of all telecommands from the Schedule 
+ * * Service Subtype 
+ *
+OBC_returnStateTypedef ( Schedule_pck theSchpck ){
     
-    return SATR_OK;
-}
-
-
-/* Reports detailed info about a subset of telecommands from the Schedule 
- * * Service Subtype 9
- */
-SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
-    
-    return SATR_OK;
-}
+    return R_OK;
+}*/
 
 /* 
  * * Service Subtype 10
@@ -480,6 +506,22 @@ SAT_returnState report_summary_all( SC_pkt theSchpck ){
     return SATR_OK;
 }
 
+/* Time shifts selected telecommands over a time period on the Schedule 
+ * * Service Subtype 8
+ */
+SAT_returnState time_shift_sel_scheduleOTP( SC_pkt* theSchpck ){
+    
+    return SATR_OK;
+}
+
+/* Reports detailed info about every telecommand the Schedule 
+ * * Service Subtype 16
+ */
+SAT_returnState report_detailed( SC_pkt theSchpck ){
+    
+    return SATR_OK;
+}
+
 /* Reports summary info of a subset of telecommands from the Schedule 
  * * Service Subtype 12
  */
@@ -488,24 +530,10 @@ SAT_returnState report_summary_subset( SC_pkt theSchpck ){
     return SATR_OK;
 }
 
-/* Reports summary info of all telecommands from the Schedule 
- * * Service Subtype 
- *
-OBC_returnStateTypedef ( Schedule_pck theSchpck ){
-    
-    return R_OK;
-}*/
-
-/* Find a 'free' (non-valid schedule) position in the Schedule_pck array to
- * insert the Scheduling packet, and return its address.
+/* Reports detailed info about a subset of telecommands from the Schedule 
+ * * Service Subtype 9
  */
-SC_pkt* find_schedule_pos(/*SC_pkt* sche_mem_pool*/)
-{
-    for(uint8_t k=0;k<SC_MAX_STORED_SCHEDULES;k++){
-        if(schedule_mem_pool.sc_mem_array[k].valid != true){
-            return &(schedule_mem_pool.sc_mem_array[k]);
-        }
-    }
-    return NULL;
+SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
+    
+    return SATR_OK;
 }
-

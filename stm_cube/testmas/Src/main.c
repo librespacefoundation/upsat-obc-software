@@ -128,14 +128,14 @@ int main(void)
 //                NULL /* Task handle */
 //                );
 
-//    xTaskCreate(
-//                UART2_TransmitData, /* Function pointer */
-//                "usasrtrx", /* Task name - for debugging only*/
-//                configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//                (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//                tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//                NULL /* Task handle */
-//                );
+    xTaskCreate(
+                UART2_TransmitData, /* Function pointer */
+                "usasrtrx", /* Task name - for debugging only*/
+                configMINIMAL_STACK_SIZE, /* Stack depth in words */
+                (void*) NULL, /* Pointer to tasks arguments (parameter) */
+                tskIDLE_PRIORITY + 2UL, /* Task priority*/
+                NULL /* Task handle */
+                );
 //       xTaskCreate(
 //                init_and_run_time, /* Function pointer */
 //                "timing", /* Task name - for debugging only*/
@@ -154,23 +154,23 @@ int main(void)
 //                NULL /* Task handle */
 //                );
        
-//      xTaskCreate(
-//               ToggleLED_Timer1, /* Function pointer */
-//               "Task1", /* Task name - for debugging only*/
-//               configMINIMAL_STACK_SIZE, /* Stack depth in words */
-//               (void*) NULL, /* Pointer to tasks arguments (parameter) */
-//               tskIDLE_PRIORITY + 2UL, /* Task priority*/
-//               NULL /* Task handle */
-//      );
-//
-//      xTaskCreate(
-//    		  ToggleLED_Timer2,                 /* Function pointer */
-//    		  "Task1",                          /* Task name - for debugging only*/
-//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-//    		  NULL                              /* Task handle */
-//      );
+      xTaskCreate(
+               ToggleLED_Timer1, /* Function pointer */
+               "Task1", /* Task name - for debugging only*/
+               configMINIMAL_STACK_SIZE, /* Stack depth in words */
+               (void*) NULL, /* Pointer to tasks arguments (parameter) */
+               tskIDLE_PRIORITY + 2UL, /* Task priority*/
+               NULL /* Task handle */
+      );
+
+      xTaskCreate(
+    		  ToggleLED_Timer2,                 /* Function pointer */
+    		  "Task1",                          /* Task name - for debugging only*/
+    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+    		  NULL                              /* Task handle */
+      );
 //      
 //      xTaskCreate(
 //    		  ToggleLED_Timer3,                 /* Function pointer */
@@ -295,11 +295,20 @@ TaskFunction_t UART2_TransmitData(void* pvParameters)
     while (1)
     {
         char *test = "Hello\n";
+        uint8_t t1[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,0,0,0,8,0,124,126};
+        uint8_t t2[19] = {126,24,1,192,185,0,10,16,8,1, 6,0,1,0,0,8,0,124,126};
+        uint8_t t3[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,1,1,1,8,1,124,126};
+        uint8_t t4[19] = {126,24,1,192,185,0,10,16,8,1, 6,0,0,0,0,1,0,124,126};
         
         //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
-        HAL_UART_Transmit(&huart2, (uint8_t *) test, RXBUFFERSIZE-1, 5000);
+        HAL_UART_Transmit(&huart2, (uint8_t *) test, 6, 5000);
         
-        vTaskDelay(250 / portTICK_RATE_MS);
+        HAL_UART_Transmit(&huart2, (uint8_t *) t1, 19, 5000);
+        HAL_UART_Transmit(&huart2, (uint8_t *) t2, 19, 5000);
+        HAL_UART_Transmit(&huart2, (uint8_t *) t3, 19, 5000);
+        HAL_UART_Transmit(&huart2, (uint8_t *) t4, 19, 5000);
+//        C_ASSERT(false);
+        vTaskDelay(1000 / portTICK_RATE_MS);
     }
 }
 
@@ -617,7 +626,7 @@ void StartDefaultTask(void const * argument)
 //    mass_storage_init();
     
 //    sprintf((char*)uart_temp, t);
-    sprintf((char*)uart_temp, "Hello\n");
+    sprintf((char*)uart_temp, "Booted\n");
 //    for(;;){
         HAL_UART_Transmit(&huart2, uart_temp, 6 , 1000);
 //        HAL_Delay(2000);
