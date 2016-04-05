@@ -32,8 +32,7 @@
 #define TC_ACK_ALL          0x0F
 
 //needs to redifine
-#define MAX_PKT_DATA    20
-#define MAX_EX_PKT_DATA 512
+#define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
 
 #define ECSS_HEADER_SIZE        6
@@ -123,10 +122,6 @@ typedef enum {
 
 #define TC_CT_PERFORM_TEST              1
 #define TM_CT_REPORT_TEST               2
-
-/*memory pool packet modes*/
-#define NORMAL      1
-#define EXTENDED    2
 
 typedef enum {  
     OBC_APP_ID      = 1,
@@ -236,7 +231,7 @@ typedef struct {
     //uint8_t pckt_sub_cnt; /* 8 bits*/
     TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
-    uint8_t *data; /* variable data, this should be fixed array, normal or extended */
+    uint8_t data[MAX_PKT_DATA]; /* pkt data */
 
     /*this is not part of the header. it is used from the software and the verification service,
      *when the packet wants ack. 
