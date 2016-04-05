@@ -340,12 +340,24 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
     return SATR_OK;
 }
 
-void event_log_INIT() {
+void bkup_sram_INIT() {
 
     obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
     obc_data.log_mode = HAL_obc_BKPSRAM_BASE() + 1;
-    obc_data.log = HAL_obc_BKPSRAM_BASE() + 2;
+    boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
 
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 3;
+
+}
+
+SAT_returnState update_boot_counter() {
+    (*boot_counter)++;
+    return SATR_OK;
+}
+
+SAT_returnState get_boot_counter(uint32_t *cnt) {
+    *cnt = *boot_counter;
+    return SATR_OK;
 }
 
 SAT_returnState event_log(uint8_t *buf, const uint16_t size) {

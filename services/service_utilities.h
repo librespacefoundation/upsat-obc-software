@@ -16,6 +16,7 @@ struct _obc_data
 {
     uint16_t obc_seq_cnt;
     uint8_t rsrc;
+    uint32_t *boot_counter;
     uint32_t *log;
     uint32_t *log_cnt;
     uint32_t *log_mode;
@@ -69,7 +70,13 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, TC_TM_app_id dest_id);
 
 
-void event_log_INIT();
+void bkup_sram_INIT();
+
+
+SAT_returnState update_boot_counter();
+
+SAT_returnState get_boot_counter(uint32_t *cnt);
+
 
 SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 

@@ -454,6 +454,8 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
   obc_data.rsrc = 0;
    HAL_reset_source(&obc_data.rsrc);
+   update_boot_counter();
+
    //event_log(reset source);
    uint8_t uart_temp[20];
    pkt_pool_INIT();
