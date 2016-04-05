@@ -142,62 +142,52 @@ void cross_schedules(){
 
 SAT_returnState scheduling_app( tc_tm_pkt *spacket){
     
-//    uint8_t sch_mem_pool[MAX_EX_PKT_DATA];
-    
     /*TODO: add assertions*/
-//    uint8_t pos = find_schedule_pos();
-    SC_pkt *the_sc_packet = find_schedule_pos();
+    uint8_t subtype;
     
-    uint32_t time = 0;
-    uint16_t exec_timeout = 0;
-    uint8_t tc_data_len = 0;
-    uint8_t offset = 12;
+    SC_pkt *the_sc_packet;
+    if( (the_sc_packet = find_schedule_pos()) == NULL){
+        return SATR_SCHEDULE_FULL; }
+    else{ 
+        parse_sch_packet( &the_sc_packet); }
     
-//    *the_sc_packet.tc_pck.data = sch_mem_pool;
+    subtype = spacket->ser_subtype;
+    switch(subtype){
+        case 1 : /*Enable release TCs*/
+                ;
+                break;
+        case 2: /*Disable release TCs*/
+                ;
+                break;
+        case 3: /*Reset TCs Schedule*/
+                ;
+                break;
+        case 4: /*Insert TC*/
+                ;
+                break;
+        case 5: /*Delete TCs from schedule*/
+                ;
+                break;
+        case 6: /**/
+                ;
+                break;
+        case 7:
+                ;
+                break;
+        case 8:
+                ;
+                break;
+        case 15:
+                ;
+                break;
+    }
     
-    /*extract the scheduling packet from the data pointer*/
-    (*the_sc_packet).sub_schedule_id = spacket->data[0];
-    (*the_sc_packet).num_of_sch_tc = spacket->data[1];
-    (*the_sc_packet).intrlck_set_id = spacket->data[2];
-    (*the_sc_packet).intrlck_ass_id = spacket->data[3];
-    (*the_sc_packet).assmnt_type = spacket->data[4];
-    (*the_sc_packet).sch_evt = (SC_event_time_type)spacket->data[5];    
-    /*7,8,9,10th bytes are the time fields, combine them to a uint32_t*/
-    time = ( time | spacket->data[6]) << 8;
-    time = ( time | spacket->data[7]) << 8;
-    time = ( time | spacket->data[8]) << 8;
-    time = ( time | spacket->data[9]);
-    /*read execution time out fields*/
-    exec_timeout = (exec_timeout | spacket->data[10]) << 8;
-    exec_timeout = (exec_timeout | spacket->data[11]);
-    
-    /*extract data from internal TC packet ( app_id )*/
-    (*the_sc_packet).app_id = spacket->data[offset+1];
-    (*the_sc_packet).seq_count = 
-                            (*the_sc_packet).seq_count | (spacket->data[offset+2] >> 2) ;
-    (*the_sc_packet).seq_count << 8;
-    (*the_sc_packet).seq_count = 
-                            (*the_sc_packet).seq_count | (spacket->data[offset+3]) ;
-    (*the_sc_packet).release_time = time;
-    (*the_sc_packet).timeout = exec_timeout;
-    
-    (*the_sc_packet).valid = true;
-    (*the_sc_packet).enabled = true;
-    
-    /*copy the internal TC packet for future use*/
-    
-    /*  spacket is a TC containing 12 bytes of data related to scheduling service.
-     *  After those 12 bytes, a 'whole_inner_tc' packet starts.
-     *  
-     *  The 'whole_inner_tc' offset in the spacket's data payload is: 12 (13th byte).
-     *  
-     *  The length of the 'whole_inner_tc' is spacket->data - 12 bytes
-     *  
-     *  Within the 'whole_inner_tc' the lenght of the 'inner' goes for:
-     *  16+16+16+32+(spacket->len - 11)+16 bytes.
-     */
-    copy_inner_tc( &(spacket->data[12]), &((*the_sc_packet).tc_pck), (uint16_t)spacket->len-12 );
-
+//    if( spacket->ser_subtype == 1 ){
+//        /*Enable/Disale TC release*/
+//    }
+//    else if( spacket->){
+//        
+//    }
 //    route_pkt( &(*the_sc_packet).tc_pck);
     
     scheduling_insert_api( the_sc_packet);
@@ -536,4 +526,88 @@ SAT_returnState report_summary_subset( SC_pkt theSchpck ){
 SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
     
     return SATR_OK;
+}
+
+
+void parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
+    
+    /*extract the packet and route accordingly*/
+        uint32_t time = 0;
+        uint16_t exec_timeout = 0;
+        uint8_t tc_data_len = 0;
+        uint8_t offset = 12;
+        /*extract the scheduling packet from the data pointer*/
+        (*sc_pkt).sub_schedule_id = tc_pkt->data[0];        
+        if( !C_ASSERT( (*sc_pkt).sub_schedule_id == 1 ) == true) {
+            return SATR_SSCH_ID_INVALID; 
+        }
+        
+        (*sc_pkt).num_of_sch_tc = tc_pkt->data[1];
+        if( !C_ASSERT( (*sc_pkt).num_of_sch_tc == 1 ) == true) {
+                        
+            return SATR_NMR_OF_TC_INVALID; 
+        }
+        
+        (*sc_pkt).intrlck_set_id = tc_pkt->data[2];
+        if( !C_ASSERT( (*sc_pkt).intrlck_set_id == 0 ) == true) {
+                        
+            return SATR_INTRL_ID_INVALID; 
+        }
+        
+        (*sc_pkt).intrlck_ass_id = tc_pkt->data[3];
+        if( !C_ASSERT( (*sc_pkt).intrlck_ass_id == 0 )== true ) {
+                        
+            return SATR_ASS_INTRL_ID_INVALID; 
+        }
+        
+        (*sc_pkt).assmnt_type = tc_pkt->data[4];
+        if( !C_ASSERT( (*sc_pkt).assmnt_type == 1 ) == true) {
+                        
+            return SATR_ASS_TYPE_ID_INVALID; 
+        }
+        
+        (*sc_pkt).sch_evt = (SC_event_time_type)tc_pkt->data[5];    
+        if( !C_ASSERT( (*sc_pkt).sch_evt >= LAST_EVENTTIME ) == true) {
+                        
+            return SATR_RLS_TIMET_ID_INVALID; 
+        }
+        /*7,8,9,10th bytes are the time fields, combine them to a uint32_t*/
+        time = ( time | tc_pkt->data[6]) << 8;
+        time = ( time | tc_pkt->data[7]) << 8;
+        time = ( time | tc_pkt->data[8]) << 8;
+        time = ( time | tc_pkt->data[9]);
+        /*read execution time out fields*/
+        exec_timeout = (exec_timeout | tc_pkt->data[10]) << 8;
+        exec_timeout = (exec_timeout | tc_pkt->data[11]);
+
+        /*extract data from internal TC packet ( app_id )*/
+        (*sc_pkt).app_id = tc_pkt->data[offset+1];
+        if( !C_ASSERT( (*sc_pkt).app_id < LAST_APP_ID ) == true) {
+            return SATR_PKT_ILLEGAL_APPID; 
+        }
+        (*sc_pkt).seq_count = 
+                                (*sc_pkt).seq_count | (tc_pkt->data[offset+2] >> 2) ;
+        (*sc_pkt).seq_count << 8;
+        (*sc_pkt).seq_count = 
+                                (*sc_pkt).seq_count | (tc_pkt->data[offset+3]) ;
+        (*sc_pkt).release_time = time;
+        (*sc_pkt).timeout = exec_timeout;
+        
+        
+        (*sc_pkt).valid = true;
+        (*sc_pkt).enabled = true;
+        
+        /*copy the internal TC packet for future use*/
+
+        /*  tc_pkt is a TC containing 12 bytes of data related to scheduling service.
+         *  After those 12 bytes, a 'whole_inner_tc' packet starts.
+         *  
+         *  The 'whole_inner_tc' offset in the tc_pkt's data payload is: 12 (13th byte).
+         *  
+         *  The length of the 'whole_inner_tc' is tc_pkt->data - 12 bytes
+         *  
+         *  Within the 'whole_inner_tc' the lenght of the 'inner' goes for:
+         *  16+16+16+32+(tc_pkt->len - 11)+16 bytes.
+         */
+        copy_inner_tc( &(tc_pkt->data[12]), &((*sc_pkt).tc_pck), (uint16_t)tc_pkt->len-12 );
 }

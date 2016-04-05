@@ -72,14 +72,15 @@ typedef enum {
     SATR_NMR_OF_TC_INVALID     = 16, /* Number of telecommands invalid */
     SATR_INTRL_ID_INVALID      = 17, /* Interlock ID invalid */
     SATR_ASS_INTRL_ID_INVALID  = 18, /* Assess Interlock ID invalid */
-    SATR_RLS_TIMET_ID_INVALID  = 19, /* relese time type ID invalid */
-    SATR_DEST_APID_INVALID     = 20, /* Destination APID in embedded TC is invalids */
-    SATR_TIME_INVALID          = 21, /* Release time of TC is invalid */
-    SATR_TIME_SPEC_INVALID     = 22, /* Release time of TC is specified in a invalid representation*/
-    SATR_INTRL_LOGIC_ERROR     = 23,  /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
-    SATR_SCHEDULE_DISABLED     = 24,
+    SATR_ASS_TYPE_ID_INVALID   = 19, /* Assesment type id invalid*/        
+    SATR_RLS_TIMET_ID_INVALID  = 20, /* Relese time type ID invalid */
+    SATR_DEST_APID_INVALID     = 21, /* Destination APID in embedded TC is invalids */
+    SATR_TIME_INVALID          = 22, /* Release time of TC is invalid */
+    SATR_TIME_SPEC_INVALID     = 23, /* Release time of TC is specified in a invalid representation*/
+    SATR_INTRL_LOGIC_ERROR     = 24, /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
+    SATR_SCHEDULE_DISABLED     = 25,
     /*LAST*/
-    SATR_LAST                  = 25
+    SATR_LAST                  = 26
 }SAT_returnState;
 
 /*services types*/
@@ -221,7 +222,7 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
-#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e))) 
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e)))
 
 union _cnv {
     uint32_t cnv32;

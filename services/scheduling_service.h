@@ -80,7 +80,7 @@ typedef struct {
     
         /* Number of telecommands in the schedule.
          * For this specific implementation is set to 1 (one) Telecommand
-         * per Schedule.
+         * per Schedule Packet.
          */
     uint8_t num_of_sch_tc;
     
