@@ -145,7 +145,7 @@ SAT_returnState import_eps_pkt() {
         if(res_deframe == SATR_EOT) {
             
             //if(cnt > )
-            pkt = get_pkt(NORMAL);
+            pkt = get_pkt();
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
             if(unpack_pkt(buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }

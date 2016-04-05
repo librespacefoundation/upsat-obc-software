@@ -39,8 +39,8 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
 
 SAT_returnState function_management_pctrl_crt_pkt_api(tc_tm_pkt **pkt, TC_TM_app_id dest_id, FM_fun_id fun_id, FM_dev_id did) {
 
-    *pkt = get_pkt(NORMAL);
-    if(!C_ASSERT(*pkt != NULL && (*pkt)->data != NULL) == true) { return SATR_ERROR; }
+    *pkt = get_pkt();
+    if(!C_ASSERT(*pkt != NULL) == true) { return SATR_ERROR; }
     crt_pkt(*pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_TEST_SERVICE, TC_FM_PERFORM_FUNCTION, dest_id);
 
     (*pkt)->data[0] = fun_id;

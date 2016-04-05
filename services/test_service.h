@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "services.h"
 
-extern void *get_pkt(uint8_t mode);
+extern tc_tm_pkt * get_pkt();
 extern uint32_t time_now();
 extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);

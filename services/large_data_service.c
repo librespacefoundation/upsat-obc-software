@@ -447,7 +447,7 @@ SAT_returnState large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subt
 
 SAT_returnState large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, uint16_t dest_id) {
 
-    pkt = get_pkt(NORMAL);
+    pkt = get_pkt();
     if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
     crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, 0, dest_id); //what dest_id ?
 
@@ -459,7 +459,7 @@ SAT_returnState large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, u
 
 SAT_returnState large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id) {
 
-    pkt = get_pkt(EXTENDED);
+    pkt = get_pkt();
     if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
     crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, TM_LD_ACK_UPLINK, dest_id);
 
@@ -472,7 +472,7 @@ SAT_returnState large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_i
 
 SAT_returnState large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype) {
 
-    pkt = get_pkt(NORMAL);
+    pkt = get_pkt();
     if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
     crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, subtype, dest_id);
 

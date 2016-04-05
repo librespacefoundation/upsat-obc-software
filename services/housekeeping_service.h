@@ -5,7 +5,7 @@
 #include "services.h"
 
 extern uint32_t time_now();
-extern tc_tm_pkt * get_pkt(uint8_t mode);
+extern tc_tm_pkt * get_pkt();
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 extern SAT_returnState power_control_api(FM_dev_id did, FM_fun_id fid);
 

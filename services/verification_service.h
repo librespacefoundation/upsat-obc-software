@@ -12,7 +12,7 @@
 //Finished
 //  check verify_pkt
 
-extern void *get_pkt(uint8_t mode);
+extern tc_tm_pkt * get_pkt();
 extern uint32_t time_now();
 extern void cnv16_8(const uint16_t from, uint8_t *to);
 
