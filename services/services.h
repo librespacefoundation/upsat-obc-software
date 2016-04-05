@@ -206,7 +206,7 @@ typedef enum {
     LAST_SU_STATE = 4
 }SU_state;
 
-#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e))) 
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __FILE_ID__, __LINE__, #e))) 
 
 union _cnv {
     uint32_t cnv32;
@@ -298,6 +298,6 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //stub
 uint32_t time_now();
 
-uint8_t tst_debugging(char *f, int l, char *e);
+uint8_t tst_debugging(char *f, int fi, int l, char *e);
 
 #endif

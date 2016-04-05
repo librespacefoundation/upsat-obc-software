@@ -1,5 +1,9 @@
 #include "housekeeping_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 5
+
 struct _sat_status sat_status;
 
 void hk_SCH() {

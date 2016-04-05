@@ -1,5 +1,8 @@
 #include "su_mnlp.h"
 
+#undef __FILE_ID__
+#define __FILE_ID__ 3
+
 struct script_handler obc_su_scripts;
 struct OBC_data flight_data;
 

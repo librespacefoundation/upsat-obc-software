@@ -1,5 +1,9 @@
 #include "function_management_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 6
+
 SAT_returnState function_management_app(tc_tm_pkt *pkt) {
 
     uint32_t val;

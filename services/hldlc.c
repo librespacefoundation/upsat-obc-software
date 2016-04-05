@@ -1,5 +1,9 @@
 #include "hldlc.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 12
+
 SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint16_t *size) {
 
     if(!C_ASSERT(buf != 0) == true)                       { return SATR_ERROR; }

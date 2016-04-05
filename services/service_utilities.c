@@ -1,5 +1,9 @@
 #include "service_utilities.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 2
+
 struct _obc_data obc_data;
 
 // need to check endiannes

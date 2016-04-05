@@ -1,5 +1,9 @@
 #include "verification_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 4
+
 SAT_returnState verification_app(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }

@@ -1,5 +1,9 @@
 #include "test_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 9
+
 SAT_returnState test_app(tc_tm_pkt *pkt) {
 
     tc_tm_pkt *temp_pkt = 0;

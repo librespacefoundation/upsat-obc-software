@@ -1,5 +1,9 @@
 #include "obc_hal.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 13
+
 void HAL_obc_delay(uint32_t sec) {
 	osDelay(sec);
 }

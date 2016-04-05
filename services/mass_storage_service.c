@@ -1,5 +1,9 @@
 #include "mass_storage_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 8
+
 struct _MS_data MS_data;
 
 /* entry point for incoming packets. */
