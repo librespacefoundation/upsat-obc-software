@@ -1,12 +1,10 @@
 #ifndef TIME_MANAGEMENT_H
 #define TIME_MANAGEMENT_H
 
-struct time_keeping {
-    uint32_t epoch;
-    uint32_t elapsed;
-    struct time_utc utc;
+#include <stdint.h>
+#include "services.h"
 
-};
+#define MAX_YEAR 20
 
 struct time_utc {
     uint8_t day;
@@ -17,8 +15,15 @@ struct time_utc {
     uint8_t sec;
 };
 
+struct time_keeping {
+    uint32_t epoch;
+    uint32_t elapsed;
+    struct time_utc utc;
+
+};
+
 /*calculate uint size, and perform calculations*/
-extern const uint32_t cnv_QB50[MAX_YEAR][MONTHS];
+extern const uint32_t cnv_QB50[MAX_YEAR][12];
 
 void update_time();
 

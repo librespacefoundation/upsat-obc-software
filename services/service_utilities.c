@@ -344,19 +344,19 @@ void bkup_sram_INIT() {
 
     obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
     obc_data.log_mode = HAL_obc_BKPSRAM_BASE() + 1;
-    boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
+    obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
 
     obc_data.log = HAL_obc_BKPSRAM_BASE() + 3;
 
 }
 
 SAT_returnState update_boot_counter() {
-    (*boot_counter)++;
+    (*obc_data.boot_counter)++;
     return SATR_OK;
 }
 
 SAT_returnState get_boot_counter(uint32_t *cnt) {
-    *cnt = *boot_counter;
+    *cnt = *obc_data.boot_counter;
     return SATR_OK;
 }
 

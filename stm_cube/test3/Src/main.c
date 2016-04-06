@@ -460,8 +460,8 @@ void StartDefaultTask(void const * argument)
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
-   event_log_INIT();
-   
+   bkup_sram_INIT();
+
    uint8_t hours, mins, sec = 0;
    HAL_obc_getTime(&hours, &mins, &sec);
    sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);

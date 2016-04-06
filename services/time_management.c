@@ -3,7 +3,7 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 14
 
-const uint32_t cnv_QB50[MAX_YEAR][MONTHS] = {
+const uint32_t cnv_QB50[MAX_YEAR][12] = {
                                                 { 31622400, 34300800, 36720000, 39398400, 41990400, 44668800, 47260800, 49939200, 52617600, 55209600, 57888000, 60480000 },
                                                 { 63158400, 65836800, 68256000, 70934400, 73526400, 76204800, 78796800, 81475200, 84153600, 86745600, 89424000, 92016000 },
                                                 { 94694400, 97372800, 99792000, 102470400, 105062400, 107740800, 110332800, 113011200, 115689600, 118281600, 120960000, 123552000 },
@@ -24,46 +24,46 @@ const uint32_t cnv_QB50[MAX_YEAR][MONTHS] = {
                                                 { 568080000, 570758400, 573177600, 575856000, 578448000, 581126400, 583718400, 586396800, 589075200, 591667200, 594345600, 596937600 },
                                                 { 599616000, 602294400, 604713600, 607392000, 609984000, 612662400, 615254400, 617932800, 620611200, 623203200, 625881600, 628473600 },
                                                 { 631152000, 633830400, 636336000, 639014400, 641606400, 644284800, 646876800, 649555200, 652233600, 654825600, 657504000, 660096000 }
-                                            }
+                                            };
 
 
-void update_time() {
-    obc.time.elapsed++;
-    obc.time.epoch++;
-
-    obc.time.utc.sec++;
-    if(obc.time.utc.sec >= 60) {
-        obc.time.utc.sec = 0;
-        obc.time.utc.min++;
-        if(obc.time.utc.min >= 60) {
-            obc.time.utc.min = 0;
-            if(obc.time.utc.hour >= 24) {
-                obc.time.utc.hour = 0;
-                /*post event for su_cscript handler*/
-            }
-        }
-    }
-}
-
-void set_time( struct time_utc time) {
-    obc.time.utc.day = time.day;
-    obc.time.utc.month = time.month;
-    obc.time.utc.year = time.year;
-
-    obc.time.utc.hour = time.hour;
-    obc.time.utc.min = time.min;
-    obc.time.utc.sec = time.sec;
-
-    convert_utc_to_epoch();
-}
-
-void convert_utc_to_epoch( struct time_utc time) {
-    year = epoch_year_to_sec[2000-time.year];
-    month = epoch_month_to_sec[time.month];
-    day = time.day*86400;
-
-    hour = time.hour*3600;
-    minutes = time.min*80;
-
-    obc.time.epoch = year + month + day + hour + minutes + time.sec;
-}
+//void update_time() {
+//    obc.time.elapsed++;
+//    obc.time.epoch++;
+//
+//    obc.time.utc.sec++;
+//    if(obc.time.utc.sec >= 60) {
+//        obc.time.utc.sec = 0;
+//        obc.time.utc.min++;
+//        if(obc.time.utc.min >= 60) {
+//            obc.time.utc.min = 0;
+//            if(obc.time.utc.hour >= 24) {
+//                obc.time.utc.hour = 0;
+//                /*post event for su_cscript handler*/
+//            }
+//        }
+//    }
+//}
+//
+//void set_time( struct time_utc time) {
+//    obc.time.utc.day = time.day;
+//    obc.time.utc.month = time.month;
+//    obc.time.utc.year = time.year;
+//
+//    obc.time.utc.hour = time.hour;
+//    obc.time.utc.min = time.min;
+//    obc.time.utc.sec = time.sec;
+//
+//    convert_utc_to_epoch();
+//}
+//
+//void convert_utc_to_epoch( struct time_utc time) {
+//    year = epoch_year_to_sec[2000-time.year];
+//    month = epoch_month_to_sec[time.month];
+//    day = time.day*86400;
+//
+//    hour = time.hour*3600;
+//    minutes = time.min*80;
+//
+//    obc.time.epoch = year + month + day + hour + minutes + time.sec;
+//}
