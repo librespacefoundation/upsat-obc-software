@@ -1,0 +1,2 @@
+:cmock:
+ :mock_path: ./unity_tests/mocks
