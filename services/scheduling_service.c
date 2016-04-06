@@ -120,10 +120,10 @@ void cross_schedules(){
  */
     
 //    while(1){
-        uint8_t i=0;
+        
 //        uint32_t current_obc_time = obc
 //        boot_seconds;
-        for(;i<SC_MAX_STORED_SCHEDULES;i++){
+        for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
             
             if ( schedule_mem_pool.sc_mem_array[i].valid == true &&
                     schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
@@ -144,14 +144,16 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
     
     /*TODO: add assertions*/
     uint8_t subtype;
-    
+    SAT_returnState insertion_state = SATR_ERROR;
     SC_pkt *the_sc_packet;
+    
     if( (the_sc_packet = find_schedule_pos()) == NULL){
         return SATR_SCHEDULE_FULL; }
-    else{ 
-        parse_sch_packet( &the_sc_packet); }
+    else{
+        insertion_state = parse_sch_packet( the_sc_packet, spacket); }
     
     subtype = spacket->ser_subtype;
+    
     switch(subtype){
         case 1 : /*Enable release TCs*/
                 ;
@@ -163,7 +165,7 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
                 ;
                 break;
         case 4: /*Insert TC*/
-                ;
+                scheduling_insert_api( the_sc_packet);
                 break;
         case 5: /*Delete TCs from schedule*/
                 ;
@@ -189,8 +191,6 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
 //        
 //    }
 //    route_pkt( &(*the_sc_packet).tc_pck);
-    
-    scheduling_insert_api( the_sc_packet);
     
     return SATR_OK;
 }
@@ -529,13 +529,14 @@ SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
 }
 
 
-void parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
+SAT_returnState parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
     
     /*extract the packet and route accordingly*/
         uint32_t time = 0;
         uint16_t exec_timeout = 0;
         uint8_t tc_data_len = 0;
         uint8_t offset = 12;
+        
         /*extract the scheduling packet from the data pointer*/
         (*sc_pkt).sub_schedule_id = tc_pkt->data[0];        
         if( !C_ASSERT( (*sc_pkt).sub_schedule_id == 1 ) == true) {
@@ -567,7 +568,7 @@ void parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
         }
         
         (*sc_pkt).sch_evt = (SC_event_time_type)tc_pkt->data[5];    
-        if( !C_ASSERT( (*sc_pkt).sch_evt >= LAST_EVENTTIME ) == true) {
+        if( !C_ASSERT( (*sc_pkt).sch_evt < LAST_EVENTTIME ) == true) {
                         
             return SATR_RLS_TIMET_ID_INVALID; 
         }
@@ -609,5 +610,5 @@ void parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
          *  Within the 'whole_inner_tc' the lenght of the 'inner' goes for:
          *  16+16+16+32+(tc_pkt->len - 11)+16 bytes.
          */
-        copy_inner_tc( &(tc_pkt->data[12]), &((*sc_pkt).tc_pck), (uint16_t)tc_pkt->len-12 );
+        return copy_inner_tc( &(tc_pkt->data[12]), &((*sc_pkt).tc_pck), (uint16_t)tc_pkt->len-12 );
 }

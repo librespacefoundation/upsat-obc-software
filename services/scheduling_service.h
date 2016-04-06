@@ -228,5 +228,7 @@ SAT_returnState remove_from_scheduleOTPAPI( SC_pkt theSchpck );
  */
 SAT_returnState scheduling_time_shift_all_schedules_api( SC_pkt* sch_mem_pool, int32_t secs );
 
+SAT_returnState parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt );
+
 #endif /* SCHEDULING_SERVICE_H */
 
