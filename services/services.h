@@ -201,6 +201,16 @@ typedef enum {
     LAST_SU_STATE = 4
 }SU_state;
 
+typedef enum {  
+    ev_free_1     = 1,
+    ev_free_2     = 2,
+    ev_wr_1       = 3,
+    ev_wr_2       = 4,
+    ev_owr_1      = 5,
+    ev_owr_2      = 6,
+    LAST_EV_STATE = 7
+}EV_state;
+
 #define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __FILE_ID__, __LINE__, #e))) 
 
 union _cnv {

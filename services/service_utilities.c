@@ -343,7 +343,7 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 void bkup_sram_INIT() {
 
     obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
-    obc_data.log_mode = HAL_obc_BKPSRAM_BASE() + 1;
+    obc_data.log_state = HAL_obc_BKPSRAM_BASE() + 1;
     obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
     obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
 
@@ -375,14 +375,19 @@ SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
     union _cnv temp_cnv;
   
     for(uint16_t i = 0; i < size; i++) {
-      uint32_t point = ((*obc_data.log_cnt) >> 2);
-      temp_cnv.cnv32 = obc_data.log[point];
-      temp_cnv.cnv8[(0x00000003 & *obc_data.log_cnt)] = buf[i];
-       obc_data.log[point] = temp_cnv.cnv32;
-      //obc_data.log[point] &= 0xFFFF
-      //obc_data.log[point] |= (buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8));
+        uint32_t point = ((*obc_data.log_cnt) >> 2);
+        temp_cnv.cnv32 = obc_data.log[point];
+        temp_cnv.cnv8[(0x00000003 & *obc_data.log_cnt)] = buf[i];
+        obc_data.log[point] = temp_cnv.cnv32;
+        //obc_data.log[point] &= 0xFFFF
+        //obc_data.log[point] |= (buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8));
         (*obc_data.log_cnt)++;
         if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
+
+        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_1; }
+        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_2; }
+        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_2; }
+        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_1; }
     }
 
     return SATR_OK;
@@ -396,27 +401,26 @@ SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint1
 }
 
 SAT_returnState event_log_IDLE() {
-    if(*obc_data.log_mode && *obc_data.log_cnt > (EV_MAX_BUFFER / 2) ) {
 
+    if(*obc_data.log_state == ev_wr_1 || *obc_data.log_state == ev_owr_1) { 
         uint16_t size = (EV_MAX_BUFFER / 2);
 
-        for(uint16_t i = 0; i < size; i++) {
-            buf[i] = obc_data.log[i >> 2] >> ((0x00000003 & i) * 8);
+        for(uint16_t i = 0; i < size ; i+=4) {
+            cnv32_8(obc_data.log[i], &buf[i]);
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_mode = 0;
+        *obc_data.log_state == ev_free_2;
 
-    } else if(*obc_data.log_mode && *obc_data.log_cnt < (EV_MAX_BUFFER / 2) ) {
-
+    } else if(*obc_data.log_state == ev_wr_2 || *obc_data.log_state == ev_owr_2) { 
         uint16_t size = (EV_MAX_BUFFER / 2);
 
-        for(uint16_t i = 0; i < size; i++) {
-            buf[i] = obc_data.log[i >> 2] >> ((0x00000003 & (i + (EV_MAX_BUFFER / 2))) * 8);
+        for(uint16_t i = 0; i < size ; i+=4) {
+            cnv32_8(obc_data.log[i + size], &buf[i]);
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_mode = 0;
+        *obc_data.log_state == ev_free_1;
     }
     
      return SATR_OK;

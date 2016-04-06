@@ -23,7 +23,7 @@ struct _obc_data
     uint32_t *boot_counter;
     uint32_t *log;
     uint32_t *log_cnt;
-    uint32_t *log_mode;
+    uint32_t *log_state;
 };
 
 extern struct _obc_data obc_data;
