@@ -20,7 +20,7 @@ clean-tests:
 	rm -rf tests/mocks
 
 unity_tests/test_hldlc.c: hldlc.o
-	gcc  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_hldlc.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
+	gcc -std=c99  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_hldlc.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
 	./test_hldlc.out
 
 test: clean $(TESTS)
