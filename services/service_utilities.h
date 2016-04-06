@@ -11,11 +11,15 @@
 
 #define EV_MAX_BUFFER 1024
 
+/*restriction for 8 char filename, for conversion from num to file name*/
+#define MAX_FILE_NUM 0x5F5E0FF
+
 //need to make an obc struct with all the data.
 struct _obc_data
 {
     uint16_t obc_seq_cnt;
     uint8_t rsrc;
+    uint32_t *file_id;
     uint32_t *boot_counter;
     uint32_t *log;
     uint32_t *log_cnt;
@@ -72,6 +76,7 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 
 void bkup_sram_INIT();
 
+uint32_t get_new_fileId();
 
 SAT_returnState update_boot_counter();
 

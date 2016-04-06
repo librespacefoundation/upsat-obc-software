@@ -345,9 +345,19 @@ void bkup_sram_INIT() {
     obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
     obc_data.log_mode = HAL_obc_BKPSRAM_BASE() + 1;
     obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
+    obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
 
-    obc_data.log = HAL_obc_BKPSRAM_BASE() + 3;
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 4;
 
+}
+
+uint32_t get_new_fileId() {
+
+    (*obc_data.file_id)++;
+    if(*obc_data. > MAX_FILE_NUM) {
+        *obc_data.file_id = 1;
+    }
+    return;
 }
 
 SAT_returnState update_boot_counter() {

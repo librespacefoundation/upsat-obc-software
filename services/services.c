@@ -72,5 +72,11 @@ uint8_t tst_debugging(char *f, int fi, int l, char *e) {
   res = sprintf((char*)uart_temp, "Assertion failed %s,%d,%d,%s\n", f, fi, l, e);
   size = strnlen(uart_temp, 200);
   HAL_eps_uart_tx((uint8_t *)uart_temp, size);
+
+  cnv32_8(time_now(), &uart_temp[0]);
+  uart_temp[4] = fi;
+  cnv16_8(l, &uart_temp[5]);
+  event_log(uart_temp, 6);
+
   return false;
 }

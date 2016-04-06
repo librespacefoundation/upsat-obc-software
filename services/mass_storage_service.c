@@ -492,34 +492,10 @@ SAT_returnState mass_storage_getLog(MS_sid sid, uint8_t *fn) {
     if(!C_ASSERT(fn != NULL) == true)                           { return SATR_ERROR; }
     if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
 
-    if(sid == SU_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_SU_LOG, time_now()); }
-    else if(sid == EVENT_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, time_now()); }
+    if(sid == SU_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_SU_LOG, get_new_fileId()); }
+    else if(sid == EVENT_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, get_new_fileId()); }
+
     return SATR_OK; 
-
-    //if(sid == SU_LOG) { 
-
-    //    snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_SU_LOG, time_now()); 
-    //    return SATR_OK; 
-    //}
-
-    // if(MS_data.ev_temp_log == 0) { 
-    //     MS_data.ev_temp_log = time_now(); 
-    //     snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
-    //     return SATR_OK; 
-    // }
-
-    // snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
-
-    // if(f_stat((char*)fn, &fno) != FR_OK) { return SATR_ERROR; } 
-
-    // if(fno.fsize >= MS_MAX_LOG_FILE_SIZE) {
-
-    //     MS_data.ev_temp_log = time_now(); 
-    //     snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, MS_data.ev_temp_log); 
-    //     return SATR_OK; 
-    // }
-
-    // return SATR_OK;
 }
 
 SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn) {
@@ -618,6 +594,6 @@ SAT_returnState mass_storage_init() {
 
 SAT_returnState mass_storage_getFileName(uint8_t *fn) {
 
-    snprintf((char*)fn, MS_MAX_FNAME, "%d", time_now());
+    snprintf((char*)fn, MS_MAX_FNAME, "%d", get_new_fileId());
     return SATR_OK;
 }
