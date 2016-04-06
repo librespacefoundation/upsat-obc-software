@@ -2,8 +2,6 @@
 #include "hldlc.h"
 #include "Mockservices.h"
 
-#include <stdio.h>
-
 #define TEST_ARRAY 20
 
 
