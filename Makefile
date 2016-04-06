@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS= -std=c99 -I.
 DEPS = services/services.h
 OBJ = hldlc.o
 EXE = runme.out
