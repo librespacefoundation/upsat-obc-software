@@ -1,5 +1,6 @@
 #include "hldlc.h"
 
+#include <stdio.h>
 
 #undef __FILE_ID__
 #define __FILE_ID__ 12
@@ -38,14 +39,16 @@ SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint
 SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
 
     if(!C_ASSERT(buf_in != NULL && buf_out != NULL && size != NULL) == true)   { return SATR_ERROR; }
-
-    uint16_t cnt = 0;
+    printf("assertion is ok with size: %d\n", *size);
+    uint16_t cnt = 2;
 
     for(uint16_t i = 0; i < *size; i++) {
-        if(i == 0) { 
+        if(i == 0) {
+            printf("assertion is ok with size: %d\n", *size);
             buf_out[0] = HLDLC_START_FLAG;
             buf_out[1] = buf_in[0];
         } else if(i == (*size) - 1) {
+            buf_out[cnt++] = buf_in[i];
             buf_out[cnt] = HLDLC_START_FLAG;
             *size = cnt;
             return SATR_EOT;
@@ -57,7 +60,10 @@ SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
             buf_out[cnt++] = 0x5D;
         } else {
             buf_out[cnt++] = buf_in[i];
+            //buf_out[++cnt] = buf_in[i];
         }
+
+        printf("buf_out[0] = %u at %d iteration \n", buf_out[0], i);
     }
 
     return SATR_ERROR;
