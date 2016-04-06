@@ -98,8 +98,13 @@ SAT_returnState scheduling_init_service(){
          */
         schedule_mem_pool.sc_mem_array[s].valid = false;
         schedule_mem_pool.sc_mem_array[s].release_time = -1; /*don't run on boot_second zero, normally this should be avoided by checking validity*/
-        sc_s_state.nmbr_of_ld_sched=0;
-        sc_s_state.schedule_arr_full = false;
+    }
+    sc_s_state.nmbr_of_ld_sched=0;
+    sc_s_state.schedule_arr_full = false;
+    
+    /*Enable scheduling release for every APID*/
+    for(uint8_t s=0;s<LAST_APP_ID;s++){
+        sc_s_state.scheduling_apids_enabled[s] = true;
     }
     
     /* Load Schedules from storage.
@@ -126,6 +131,7 @@ void cross_schedules(){
         for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
             
             if ( schedule_mem_pool.sc_mem_array[i].valid == true &&
+                    sc_s_state.scheduling_apids_enabled[(schedule_mem_pool.sc_mem_array[i].app_id)-1] == true &&
                     schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
                 route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));   
                 
@@ -143,29 +149,29 @@ void cross_schedules(){
 SAT_returnState scheduling_app( tc_tm_pkt *spacket){
     
     /*TODO: add assertions*/
-    uint8_t subtype;
+//    uint8_t subtype;
     SAT_returnState insertion_state = SATR_ERROR;
     SC_pkt *the_sc_packet;
     
-    if( (the_sc_packet = find_schedule_pos()) == NULL){
-        return SATR_SCHEDULE_FULL; }
-    else{
-        insertion_state = parse_sch_packet( the_sc_packet, spacket); }
+//    subtype = spacket->ser_subtype;
     
-    subtype = spacket->ser_subtype;
-    
-    switch(subtype){
-        case 1 : /*Enable release TCs*/
-                ;
+    switch( spacket->ser_subtype){
+        /*Ranges may not be supported by some c compilers*/
+        case 1 ... 2 : /*Enable / Disable release TCs*/
+                enable_disable_schedule_apid_release( spacket->ser_subtype, spacket->data[3] );
                 break;
-        case 2: /*Disable release TCs*/
-                ;
-                break;
+//        case 2: /*Disable release TCs*/
+//                ;
+//                break;
         case 3: /*Reset TCs Schedule*/
                 ;
                 break;
         case 4: /*Insert TC*/
-                scheduling_insert_api( the_sc_packet);
+                if( (the_sc_packet = find_schedule_pos()) == NULL){
+                    return SATR_SCHEDULE_FULL; }
+                else{
+                    insertion_state = parse_sch_packet( the_sc_packet, spacket); }    
+                    scheduling_insert_api( the_sc_packet);
                 break;
         case 5: /*Delete TCs from schedule*/
                 ;
@@ -183,14 +189,17 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
                 ;
                 break;
     }
+        
+    return SATR_OK;
+}
+
+SAT_returnState enable_disable_schedule_apid_release( uint8_t subtype, uint8_t apid  ){
     
-//    if( spacket->ser_subtype == 1 ){
-//        /*Enable/Disale TC release*/
-//    }
-//    else if( spacket->){
-//        
-//    }
-//    route_pkt( &(*the_sc_packet).tc_pck);
+    //TODO: add logging on actions
+    if( subtype == 1 ){ 
+        sc_s_state.scheduling_apids_enabled[apid-1] = true; }
+    else { 
+        sc_s_state.scheduling_apids_enabled[apid-1] = false; }
     
     return SATR_OK;
 }
@@ -531,7 +540,9 @@ SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
 
 SAT_returnState parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
     
-    /*extract the packet and route accordingly*/
+    if( tc_pkt->data[3] != 1 || tc_pkt->data[3] != 2 ){
+        
+        /*extract the packet and route accordingly*/
         uint32_t time = 0;
         uint16_t exec_timeout = 0;
         uint8_t tc_data_len = 0;
@@ -611,4 +622,15 @@ SAT_returnState parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
          *  16+16+16+32+(tc_pkt->len - 11)+16 bytes.
          */
         return copy_inner_tc( &(tc_pkt->data[12]), &((*sc_pkt).tc_pck), (uint16_t)tc_pkt->len-12 );
+        
+    }
+    else{
+        
+        uint8_t o=0;
+        
+    }
+    
+    
+    
+    
 }

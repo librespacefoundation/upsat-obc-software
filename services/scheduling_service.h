@@ -157,13 +157,19 @@ typedef struct {
     * Enable = true, 1
     * Disabled = false, 0
     */
-    uint8_t scheduling_enabled;
+    uint8_t scheduling_service_enabled;
     
     /* Schedules memory pool is full.
      * Full = true, 1
      * space avaliable = false, 0 
      */
-    uint8_t schedule_arr_full; 
+    uint8_t schedule_arr_full;
+    
+    /* This array holds the value 1 (True), if 
+     * the specified APID scheduling is enabled.
+     * OBC_APP_ID = 1, starts at zero index.
+     */
+    uint8_t scheduling_apids_enabled[LAST_APP_ID-1];
     
 }Scheduling_service_state;
 
@@ -196,6 +202,11 @@ SAT_returnState scheduling_state_api();
  * Return R_OK, on successful state alteration.
  */
 SAT_returnState edit_schedule_stateAPI(tc_tm_pkt* spacket);
+
+/* 
+ * 
+ */
+SAT_returnState enable_disable_schedule_apid_release( uint8_t subtype, uint8_t apid );
 
 /* Reset the schedule memory pool.
  * Marks every schedule struct as invalid and eligible for allocation.
