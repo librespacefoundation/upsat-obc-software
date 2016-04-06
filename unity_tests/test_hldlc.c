@@ -53,25 +53,8 @@ void test_hldlc_frame1(void) {
     res[10] = 0x23;
     res[11] = 0x7E;
 
-    printf("out = ");
-	for(size_t i = 0; i < res_size; i++)
-	    printf("%02X ", out[i]);
-    printf("\n");
-
 
     check = HLDLC_frame(in, out, &size);
-
-    printf("res = ");
-	for(size_t i = 0; i < res_size; i++)
-	    printf("%02X ", res[i]);
-    printf("\n");
-
-    printf("out = ");
-    for(size_t i = 0; i < res_size; i++)
-	printf("%02X ", out[i]);
-    printf("\n");
-
-    printf("check is %u \n", check);
 
     TEST_ASSERT_TRUE(check == SATR_EOT);
 
