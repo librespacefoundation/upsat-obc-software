@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "services.h"
 
-#define MAX_YEAR 20
+#define MAX_YEAR 21
 
 struct time_utc {
     uint8_t day;
@@ -23,12 +23,16 @@ struct time_keeping {
 };
 
 /*calculate uint size, and perform calculations*/
-extern const uint32_t cnv_QB50[MAX_YEAR][12];
+extern const uint32_t UTC_QB50[MAX_YEAR][13];
 
-void update_time();
+void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb);
 
-void set_time( struct time_utc);
+void set_time_QB50(uint32_t qb);
 
-void convert_utc_to_epoch( struct time_utc);
+void set_time_UTC(struct time_utc utc);
+
+void get_time_QB50(uint32_t *qb);
+
+void get_time_UTC(struct time_utc *utc);
 
 #endif
