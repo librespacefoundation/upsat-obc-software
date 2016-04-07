@@ -123,6 +123,20 @@ typedef enum {
 #define TC_CT_PERFORM_TEST              1
 #define TM_CT_REPORT_TEST               2
 
+/*taken from stm32f4xx_hal_rtc.h*/
+#define TM_MONTH_JANUARY              ((uint8_t)0x01U)
+#define TM_MONTH_FEBRUARY             ((uint8_t)0x02U)
+#define TM_MONTH_MARCH                ((uint8_t)0x03U)
+#define TM_MONTH_APRIL                ((uint8_t)0x04U)
+#define TM_MONTH_MAY                  ((uint8_t)0x05U)
+#define TM_MONTH_JUNE                 ((uint8_t)0x06U)
+#define TM_MONTH_JULY                 ((uint8_t)0x07U)
+#define TM_MONTH_AUGUST               ((uint8_t)0x08U)
+#define TM_MONTH_SEPTEMBER            ((uint8_t)0x09U)
+#define TM_MONTH_OCTOBER              ((uint8_t)0x10U)
+#define TM_MONTH_NOVEMBER             ((uint8_t)0x11U)
+#define TM_MONTH_DECEMBER             ((uint8_t)0x12U)
+
 typedef enum {  
     OBC_APP_ID      = 1,
     EPS_APP_ID      = 2,
@@ -219,6 +233,13 @@ union _cnv {
     uint8_t cnv8[4];
 };
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
+extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
+
+extern void cnv32_8(const uint32_t from, uint8_t *to);
+extern void cnv16_8(const uint16_t from, uint8_t *to);
+extern void cnv8_32(uint8_t *from, uint32_t *to);
+extern void cnv8_16(uint8_t *from, uint16_t *to);
+
 typedef struct {
     /* packet id */
     //uint8_t ver; /* 3 bits, should be equal to 0 */

@@ -354,10 +354,10 @@ void bkup_sram_INIT() {
 uint32_t get_new_fileId() {
 
     (*obc_data.file_id)++;
-    if(*obc_data. > MAX_FILE_NUM) {
+    if(*obc_data.file_id > MAX_FILE_NUM) {
         *obc_data.file_id = 1;
     }
-    return;
+    return *obc_data.file_id;
 }
 
 SAT_returnState update_boot_counter() {
@@ -384,10 +384,10 @@ SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
         (*obc_data.log_cnt)++;
         if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
 
-        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_1; }
-        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_2; }
-        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_2; }
-        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_1; }
+        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_1; }
+        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_2; }
+        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_2; }
+        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_1; }
     }
 
     return SATR_OK;
@@ -410,7 +410,7 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_state == ev_free_2;
+        *obc_data.log_state = ev_free_2;
 
     } else if(*obc_data.log_state == ev_wr_2 || *obc_data.log_state == ev_owr_2) { 
         uint16_t size = (EV_MAX_BUFFER / 2);
@@ -420,7 +420,7 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_state == ev_free_1;
+        *obc_data.log_state = ev_free_1;
     }
     
      return SATR_OK;
