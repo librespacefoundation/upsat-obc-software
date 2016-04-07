@@ -221,10 +221,11 @@ SAT_returnState scheduling_insert_api( /*SC_pkt* sch_mem_pool,*/
                                       SC_pkt* theSchpck );
 
 /* Removes a given Schedule_pck from the schedule array
- * * Service Subtype 5
+ * Service Subtype 5.
+ * Selection Criteria is destined APID and Sequence Count.
  */
-SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool, */ 
-                                                SC_pkt* theSchpck, uint8_t apid, uint16_t seqc );
+SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool,  
+                                                SC_pkt* theSchpck, */ uint8_t apid, uint16_t seqc );
 
 /* Remove Schedule_pck from schedule over a time period (OTP)
  * * Service Subtype 6

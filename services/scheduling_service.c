@@ -173,8 +173,8 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
                     insertion_state = parse_sch_packet( the_sc_packet, spacket); }    
                     scheduling_insert_api( the_sc_packet);
                 break;
-        case 5: /*Delete TCs from schedule*/
-                ;
+        case 5: /*Delete specific TC from schedule, selection criteria is destined APID and Seq.Count*/
+                scheduling_remove_schedule_api( spacket->data[1], spacket->data[2]);
                 break;
         case 6: /**/
                 ;
@@ -400,19 +400,19 @@ SAT_returnState scheduling_state_api(){
     return (scheduling_enabled ? SATR_OK : SATR_SCHEDULE_DISABLED);
 }
 
-SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool, */ 
-                                                SC_pkt* theSchpck, uint8_t apid, uint16_t seqc ){
+SAT_returnState scheduling_remove_schedule_api( /*SC_pkt* sch_mem_pool,  
+                                                SC_pkt* theSchpck, */ uint8_t apid, uint16_t seqc ){
     
-    uint8_t pos = 0;
-//    while( pos<SC_MAX_STORED_SCHEDULES ){
-//        if (scheduling_mem_array[pos].app_id == apid && 
-//                scheduling_mem_array[pos].seq_count == seqc){
-//            scheduling_mem_array[pos].valid = 0;
-//            sc_s_state.nmbr_of_ld_sched--;
-//            sc_s_state.schedule_arr_full = 0;
-//        }
-//        pos++;
-//    }
+    for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
+            if ( /*schedule_mem_pool.sc_mem_array[i].valid == true &&*/
+                schedule_mem_pool.sc_mem_array[i].seq_count == seqc &&   
+                schedule_mem_pool.sc_mem_array[i].app_id == apid ){
+                    
+                schedule_mem_pool.sc_mem_array[i].valid = false;
+                sc_s_state.nmbr_of_ld_sched--;
+                sc_s_state.schedule_arr_full = false;
+            }
+        }
     return SATR_OK;
 } 
 
