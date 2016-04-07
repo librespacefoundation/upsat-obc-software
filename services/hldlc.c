@@ -56,7 +56,6 @@ SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
             buf_out[cnt++] = 0x5D;
         } else {
             buf_out[cnt++] = buf_in[i];
-            //buf_out[++cnt] = buf_in[i];
         }
 
     }
