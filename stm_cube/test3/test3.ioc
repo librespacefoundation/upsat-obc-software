@@ -1,6 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
+FATFS.IPParameters=_FS_LOCK
+FATFS._FS_LOCK=0
 FREERTOS.IPParameters=Tasks01
-FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask
+FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default;hk,-2,128,StartTask02,Default
 File.Version=6
 KeepUserPlacement=true
 Mcu.Family=STM32F4

@@ -59,8 +59,10 @@ uint32_t time_now() {
     return 0;
 }
 
+char uart_temp[200]; 
+
 uint8_t tst_debugging(char *f, int fi, int l, char *e) {
-  char uart_temp[200];
+  
   uint16_t size = 0;
   int res;
   

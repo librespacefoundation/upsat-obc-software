@@ -52,6 +52,7 @@ UART_HandleTypeDef huart2;
 WWDG_HandleTypeDef hwwdg;
 
 osThreadId defaultTaskHandle;
+osThreadId hkHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -67,6 +68,7 @@ static void MX_RTC_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_WWDG_Init(void);
 void StartDefaultTask(void const * argument);
+void StartTask02(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -74,6 +76,7 @@ extern SAT_returnState mass_storage_init();
 extern SAT_returnState pkt_pool_INIT();
 extern void HAL_reset_source(uint8_t *src);
 extern void HAL_obc_enableBkUpAccess();
+extern void hk_SCH();
 
 /* USER CODE END PFP */
 
@@ -124,6 +127,10 @@ int main(void)
   /* definition and creation of defaultTask */
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of hk */
+  osThreadDef(hk, StartTask02, osPriorityLow, 0, 128);
+  hkHandle = osThreadCreate(osThread(hk), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -461,7 +468,8 @@ void StartDefaultTask(void const * argument)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
-
+   *obc_data.log_cnt = 0;
+   
    uint8_t hours, mins, sec = 0;
    HAL_obc_getTime(&hours, &mins, &sec);
    sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
@@ -486,7 +494,7 @@ void StartDefaultTask(void const * argument)
    
    sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
    HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   //mass_storage_init();
+   mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
@@ -497,9 +505,22 @@ void StartDefaultTask(void const * argument)
   {
     import_eps_pkt();
     //su_SCH();
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END 5 */ 
+}
+
+/* StartTask02 function */
+void StartTask02(void const * argument)
+{
+  /* USER CODE BEGIN StartTask02 */
+  /* Infinite loop */
+  for(;;)
+  {
+    hk_SCH();
+   //osDelay(1);
+  }
+  /* USER CODE END StartTask02 */
 }
 
 #ifdef USE_FULL_ASSERT

@@ -6,17 +6,17 @@
 
 struct _sat_status sat_status;
 
-void hk_SCH() {
+tc_tm_pkt hk_pkt;
 
-    tc_tm_pkt pkt;
+void hk_SCH() {
   
-    hk_crt_pkt_TC(&pkt, EPS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    hk_crt_pkt_TC(&pkt, COMMS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    HAL_obc_delay(59);
-    hk_crt_pkt_TM(&pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&pkt);
+    hk_crt_pkt_TC(&hk_pkt, EPS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    HAL_obc_delay(59000);
+    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
+    route_pkt(&hk_pkt);
     clear_wod();
 }
 

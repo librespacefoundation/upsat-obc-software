@@ -34,9 +34,9 @@ extern void HAL_obc_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
 /*calculate uint size, and perform calculations*/
 extern const uint32_t UTC_QB50_YM[MAX_YEAR][13];
 
-extern const uint32_t cnv_QB50_D[32];
+extern const uint32_t UTC_QB50_D[32];
 
-extern const uint32_t cnv_QB50_H[25];
+extern const uint32_t UTC_QB50_H[25];
 
 void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb);
 
