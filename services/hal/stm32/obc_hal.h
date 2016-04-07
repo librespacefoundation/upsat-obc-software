@@ -33,6 +33,10 @@ void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec);
 
 void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec);
 
+void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year);
+
+void HAL_obc_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
+
 void HAL_obc_enableBkUpAccess();
 
 uint32_t * HAL_obc_BKPSRAM_BASE();

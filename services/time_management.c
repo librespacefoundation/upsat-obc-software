@@ -3,7 +3,7 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 14
 
-const uint32_t UTC_QB50[MAX_YEAR][13] = {       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+const uint32_t UTC_QB50_YM[MAX_YEAR][13] = {       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                                                 { 0, 31622400, 34300800, 36720000, 39398400, 41990400, 44668800, 47260800, 49939200, 52617600, 55209600, 57888000, 60480000 },
                                                 { 0, 63158400, 65836800, 68256000, 70934400, 73526400, 76204800, 78796800, 81475200, 84153600, 86745600, 89424000, 92016000 },
                                                 { 0, 94694400, 97372800, 99792000, 102470400, 105062400, 107740800, 110332800, 113011200, 115689600, 118281600, 120960000, 123552000 },
@@ -26,10 +26,70 @@ const uint32_t UTC_QB50[MAX_YEAR][13] = {       { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                                                 { 0, 631152000, 633830400, 636336000, 639014400, 641606400, 644284800, 646876800, 649555200, 652233600, 654825600, 657504000, 660096000 }
                                             };
 
+const uint32_t cnv_QB50_D[32] = { 0,
+                                  86400,
+                                  172800,
+                                  259200,
+                                  345600,
+                                  432000,
+                                  518400,
+                                  604800,
+                                  691200,
+                                  777600,
+                                  864000,
+                                  950400,
+                                  1036800,
+                                  1123200,
+                                  1209600,
+                                  1296000,
+                                  1382400,
+                                  1468800,
+                                  1555200,
+                                  1641600,
+                                  1728000,
+                                  1814400,
+                                  1900800,
+                                  1987200,
+                                  2073600,
+                                  2160000,
+                                  2246400,
+                                  2332800,
+                                  2419200,
+                                  2505600,
+                                  2592000,
+                                  2678400
+                                }
+
+const uint32_t cnv_QB50_H[25] = { 0,
+                                  3600,
+                                  7200,
+                                  10800,
+                                  14400,
+                                  18000,
+                                  21600,
+                                  25200,
+                                  28800,
+                                  32400,
+                                  36000,
+                                  39600,
+                                  43200,
+                                  46800,
+                                  50400,
+                                  54000,
+                                  57600,
+                                  61200,
+                                  64800,
+                                  68400,
+                                  72000,
+                                  75600,
+                                  79200,
+                                  82800,
+                                  86400
+                                }
+
+
 void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb) {
-
     *qb = UTC_QB50_YM[utc.year][utc.month] + UTC_QB50_D[utc.day] + UTC_QB50_H[utc.hours] + utc.min * 60 + utc.sec;  
-
 }
 
 void set_time_QB50(uint32_t qb) {
@@ -37,14 +97,25 @@ void set_time_QB50(uint32_t qb) {
 }
 
 void set_time_UTC(struct time_utc utc) {
-  
+    HAL_obc_setDate(utc.mon, utc.date, utc.year);
+    HAL_obc_setTime(utc.hours, utc.mins, utc.sec);
 }
 
 void get_time_QB50(uint32_t *qb) {
-  cnv_UTC_QB50(&utc, &qb);
+
+    struct time_utc utc;
+    uint32_t qb;
+
+    HAL_obc_getDate(&utc.mon, &utc.date, &utc.year);
+    HAL_obc_getTime(&utc.hours, &utc.mins, &utc.sec);
+    cnv_UTC_QB50(utc, &qb);
+
 }
 
 
 void get_time_UTC(struct time_utc *utc) {
-  
+
+    HAL_obc_getDate(utc.mon, utc.date, utc.year);
+    HAL_obc_getTime(utc.hours, utc.mins, utc.sec);
+
 }

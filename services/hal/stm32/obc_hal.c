@@ -87,19 +87,19 @@ void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
    *sec = sTime.Seconds;  
 }
 
-//void HAL_obc_setDate();
-//
-//  RTC_DateTypeDef sDate;
-//
+void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year) {
+
+  RTC_DateTypeDef sDate;
+
 //  sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
-//  sDate.Month = RTC_MONTH_APRIL;
-//  sDate.Date = 1;
-//  sDate.Year = 16;
-//
-//  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-//
-//}
-//
+  sDate.Month = mon;
+  sDate.Date = date;
+  sDate.Year = year;
+
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+}
+
 //void HAL_obc_getDate();
 //
 //}

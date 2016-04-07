@@ -22,8 +22,21 @@ struct time_keeping {
 
 };
 
+extern void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec);
+extern void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec);
+
+extern void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year);
+extern void HAL_obc_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
+
+//ToDo
+//  Set assertions everywhere
+
 /*calculate uint size, and perform calculations*/
-extern const uint32_t UTC_QB50[MAX_YEAR][13];
+extern const uint32_t UTC_QB50_YM[MAX_YEAR][13];
+
+extern const uint32_t cnv_QB50_D[32];
+
+extern const uint32_t cnv_QB50_H[25];
 
 void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb);
 
