@@ -265,7 +265,7 @@ typedef struct {
     //uint8_t pckt_sub_cnt; /* 8 bits*/
     TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
-    uint8_t data[MAX_PKT_DATA]; /* pkt data */
+    uint8_t *data; /* pkt data */
 
     /*this is not part of the header. it is used from the software and the verification service,
      *when the packet wants ack. 

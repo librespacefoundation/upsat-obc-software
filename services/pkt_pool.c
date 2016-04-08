@@ -37,6 +37,7 @@ SAT_returnState pkt_pool_INIT() {
 
     for(uint8_t i = 0; i < POOL_PKT_SIZE; i++) {
        pkt_pool.free[i] = true;
+       pkt_pool.pkt[i].data = pkt_pool.data[i];
     }
     return SATR_OK;
 }
