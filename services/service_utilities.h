@@ -39,6 +39,7 @@ extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 extern uint32_t * HAL_obc_BKPSRAM_BASE();
 
 //ToDo
+//  seq counter, hoq it works?
 //  need to make an obc struct with all the data.
 //  Add if condition for normal packet or extended
 
