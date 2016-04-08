@@ -48,6 +48,7 @@ SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 WWDG_HandleTypeDef hwwdg;
 
@@ -62,6 +63,7 @@ osThreadId hkHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
@@ -101,6 +103,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SDIO_SD_Init();
   MX_USART2_UART_Init();
   MX_RTC_Init();
@@ -108,7 +111,7 @@ int main(void)
   MX_WWDG_Init();
 
   /* USER CODE BEGIN 2 */
-
+  
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -294,6 +297,21 @@ void MX_WWDG_Init(void)
 
 }
 
+/** 
+  * Enable DMA controller clock
+  */
+void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -459,6 +477,8 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+HAL_UART_RxCpltCallback(&huart2);
   obc_data.rsrc = 0;
    HAL_reset_source(&obc_data.rsrc);
    update_boot_counter();
@@ -501,6 +521,7 @@ void StartDefaultTask(void const * argument)
    //HAL_IWDG_Start(&hiwdg); //0x17
    //HAL_WWDG_Start(&hwwdg); //0x22
   /* Infinite loop */
+   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
   for(;;)
   {
     import_eps_pkt();
