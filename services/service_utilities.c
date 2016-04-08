@@ -4,8 +4,6 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 2
 
-struct _obc_data obc_data;
-
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
 

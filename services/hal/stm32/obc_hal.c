@@ -29,8 +29,8 @@ void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
 SAT_returnState HAL_eps_uart_rx() {
 
     if(huart2.RxState == HAL_UART_STATE_READY) {
-        obc_data.eps_uart_size = huart->RxXferSize - huart->RxXferCount;
-        HAL_UART_Receive_IT(&huart2, &obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+        obc_data.eps_uart_size = huart2.RxXferSize - huart2.RxXferCount;
+        HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
         return SATR_EOT;
     }
     return SATR_OK;

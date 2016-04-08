@@ -280,6 +280,23 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
+struct _obc_data
+{
+    uint16_t obc_seq_cnt;
+    uint8_t rsrc;
+    uint32_t *file_id;
+    uint32_t *boot_counter;
+    uint32_t *log;
+    uint32_t *log_cnt;
+    uint32_t *log_state;
+
+    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t eps_uart_size;
+};
+
+extern struct _obc_data obc_data;
+
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 

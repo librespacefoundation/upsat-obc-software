@@ -10,6 +10,7 @@
 //  improve return types
 //  need to make the change from the two different typedefs
 
+extern struct _obc_data obc_data;
 extern UART_HandleTypeDef huart2;
 extern RTC_HandleTypeDef hrtc;
 

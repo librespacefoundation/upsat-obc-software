@@ -4,10 +4,9 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 12
 
-SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size); {
+SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
 
-    if(!C_ASSERT(buf != 0) == true)                       { return SATR_ERROR; }
-    if(!C_ASSERT(cnt != 0) == true)                       { return SATR_ERROR; }
+    if(!C_ASSERT(buf_in != 0 && buf_out != 0) == true)    { return SATR_ERROR; }
     if(!C_ASSERT(buf_in[0] == HLDLC_START_FLAG) == true)  { return SATR_ERROR; } /*the first char should be a start flag*/
     if(!C_ASSERT(*size <= TC_MAX_PKT_SIZE) == true)       { return SATR_ERROR; } //hard limits, check
 
@@ -19,6 +18,7 @@ SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size)
             return SATR_EOT;
         } else if(buf_in[i] == HLDLC_CONTROL_FLAG) {
             i++;
+            if(!C_ASSERT(i < (*size) - 1) == true)       { return SATR_ERROR; }
             if(buf_in[i] == 0x5E) { buf_out[cnt++] == 0x7E; }
             else if(buf_in[i] == 0x5D) { buf_out[cnt++] == 0x7D; }
             else { return SATR_ERROR; }
