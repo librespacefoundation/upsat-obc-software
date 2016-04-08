@@ -67,7 +67,6 @@ typedef struct {
     uint16_t seq_count;
     
         /* If the specific schedule command is enabled.
-         * This is to be changed by Subtype1,2 calls.
          * Enabled = 1, Disabled = 0.
          */
     uint8_t enabled;
@@ -210,6 +209,7 @@ SAT_returnState enable_disable_schedule_apid_release( uint8_t subtype, uint8_t a
 
 /* Reset the schedule memory pool.
  * Marks every schedule struct as invalid and eligible for allocation.
+ * Release to every APID will be enabled.
  * 
  */
 SAT_returnState operations_scheduling_reset_schedule_api();

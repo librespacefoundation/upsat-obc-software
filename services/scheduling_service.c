@@ -130,7 +130,7 @@ void cross_schedules(){
 //        boot_seconds;
         for(uint8_t i=0;i<SC_MAX_STORED_SCHEDULES;i++){
             
-            if ( schedule_mem_pool.sc_mem_array[i].valid == true &&
+            if (    schedule_mem_pool.sc_mem_array[i].valid == true &&
                     sc_s_state.scheduling_apids_enabled[(schedule_mem_pool.sc_mem_array[i].app_id)-1] == true &&
                     schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
                 route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));   
@@ -164,7 +164,7 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
 //                ;
 //                break;
         case 3: /*Reset TCs Schedule*/
-                ;
+                operations_scheduling_reset_schedule_api();
                 break;
         case 4: /*Insert TC*/
                 if( (the_sc_packet = find_schedule_pos()) == NULL){
@@ -201,6 +201,21 @@ SAT_returnState enable_disable_schedule_apid_release( uint8_t subtype, uint8_t a
     else { 
         sc_s_state.scheduling_apids_enabled[apid-1] = false; }
     
+    return SATR_OK;
+}
+
+SAT_returnState operations_scheduling_reset_schedule_api(){
+    uint8_t g = 0;
+    sc_s_state.nmbr_of_ld_sched = 0;
+    sc_s_state.schedule_arr_full = false;
+    sc_s_state.scheduling_service_enabled = true;
+    for( g;g<SC_MAX_STORED_SCHEDULES;g++ ){
+        schedule_mem_pool.sc_mem_array[g].valid = false;
+    }
+    g=0;
+    for( g;g<LAST_APP_ID;g++ ){
+        sc_s_state.scheduling_apids_enabled[g] = true;
+    }
     return SATR_OK;
 }
 
