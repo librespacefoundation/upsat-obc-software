@@ -48,6 +48,9 @@
 #define TC 1
 #define TM 0
 
+#define HLDLC_START_FLAG        0x7E
+#define HLDLC_CONTROL_FLAG      0x7D
+
 typedef enum {  
     SATR_PKT_ILLEGAL_APPID     = 0,
     SATR_PKT_INV_LEN           = 1,

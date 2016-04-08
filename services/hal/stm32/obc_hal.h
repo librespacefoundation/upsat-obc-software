@@ -19,6 +19,10 @@ void HAL_obc_SD_OFF();
 
 void HAL_obc_delay(uint32_t sec);
 
+void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
+
+void UART_OBC_Receive_IT(UART_HandleTypeDef *huart);
+
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
 SAT_returnState HAL_eps_uart_rx(uint8_t *c);
