@@ -20,21 +20,20 @@ void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
     HAL_StatusTypeDef res;
     //HAL_UART_Transmit(&huart2, buf, size, 10);
     for(;;) { // should use hard limits
-      res = HAL_UART_Transmit_DMA(&huart2, buf, size);
-      if(res == HAL_OK) { break; }
-      osDelay(10);
+        res = HAL_UART_Transmit_DMA(&huart2, buf, size);
+        if(res == HAL_OK) { break; }
+        osDelay(10);
     }
 }
 
-SAT_returnState HAL_eps_uart_rx(uint8_t *c) {
+SAT_returnState HAL_eps_uart_rx() {
 
-    HAL_StatusTypeDef res;
-
-    res = HAL_UART_Receive(&huart2, c, 1, 10);
-    if(res == HAL_OK) { return SATR_OK; }
-    else if(res == HAL_TIMEOUT) { return SATR_ERROR; }
-    
-    return SATR_ERROR;
+    if(huart2.RxState == HAL_UART_STATE_READY) {
+        obc_data.eps_uart_size = huart->RxXferSize - huart->RxXferCount;
+        HAL_UART_Receive_IT(&huart2, &obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+        return SATR_EOT;
+    }
+    return SATR_OK;
 }
 
 /**

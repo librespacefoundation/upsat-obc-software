@@ -139,15 +139,15 @@ SAT_returnState import_eps_pkt() {
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
-    res = HAL_eps_uart_rx(&c);
-    if( res == SATR_OK ) { 
-        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
+    res = HAL_eps_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.eps_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.eps_deframed_buf, obc_data.eps_uart_buf, &size);
         if(res_deframe == SATR_EOT) {
-            
-            //if(cnt > )
+
             pkt = get_pkt();
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            if(unpack_pkt(buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            if(unpack_pkt(obc_data.eps_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }

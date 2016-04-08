@@ -25,7 +25,7 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart);
 
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
-SAT_returnState HAL_eps_uart_rx(uint8_t *c);
+SAT_returnState HAL_eps_uart_rx();
 
 void HAL_su_uart_tx(uint8_t *buf, uint16_t size);
 

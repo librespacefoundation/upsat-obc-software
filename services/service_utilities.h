@@ -24,6 +24,10 @@ struct _obc_data
     uint32_t *log;
     uint32_t *log_cnt;
     uint32_t *log_state;
+
+    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t eps_deframed_buf[MAX_PKT_SIZE];
+    uint16_t eps_uart_size;
 };
 
 extern struct _obc_data obc_data;
