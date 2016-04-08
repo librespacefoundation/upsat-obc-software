@@ -131,7 +131,6 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 SAT_returnState import_eps_pkt() {
 
     tc_tm_pkt *pkt;
-    uint8_t c = 0;
     uint16_t size = 0;
 
     SAT_returnState res;    
@@ -140,7 +139,7 @@ SAT_returnState import_eps_pkt() {
     res = HAL_eps_uart_rx();
     if( res == SATR_EOT ) {
         size = obc_data.eps_uart_size;
-        res_deframe = HLDLC_deframe(obc_data.eps_deframed_buf, obc_data.eps_uart_buf, &size);
+        res_deframe = HLDLC_deframe(obc_data.eps_uart_buf, obc_data.eps_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();

@@ -83,6 +83,9 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
 
 	  /* Rx process is completed, restore huart->RxState to Ready */
       huart->RxState = HAL_UART_STATE_READY;
+    } else {
+      *huart->pRxBuffPtr++ = c;
+      huart->RxXferCount--;
     }
 
     if(huart->RxXferCount == 0U) // errror

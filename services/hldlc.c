@@ -19,8 +19,8 @@ SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size)
         } else if(buf_in[i] == HLDLC_CONTROL_FLAG) {
             i++;
             if(!C_ASSERT(i < (*size) - 1) == true)       { return SATR_ERROR; }
-            if(buf_in[i] == 0x5E) { buf_out[cnt++] == 0x7E; }
-            else if(buf_in[i] == 0x5D) { buf_out[cnt++] == 0x7D; }
+            if(buf_in[i] == 0x5E) { buf_out[cnt++] = 0x7E; }
+            else if(buf_in[i] == 0x5D) { buf_out[cnt++] = 0x7D; }
             else { return SATR_ERROR; }
         } else {
             buf_out[cnt++] = buf_in[i];
