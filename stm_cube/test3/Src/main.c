@@ -535,6 +535,7 @@ HAL_UART_RxCpltCallback(&huart2);
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
+  hk_INIT();
   /* Infinite loop */
   for(;;)
   {

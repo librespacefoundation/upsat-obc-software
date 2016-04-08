@@ -7,6 +7,11 @@
 struct _sat_status sat_status;
 
 tc_tm_pkt hk_pkt;
+uint8_t hk_pkt_data[MAX_PKT_DATA];
+
+void hk_INIT() {
+   hk_pkt.data = hk_pkt_data;
+}
 
 void hk_SCH() {
   
