@@ -4,8 +4,6 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 5
 
-struct _sat_status sat_status;
-
 tc_tm_pkt hk_pkt;
 uint8_t hk_pkt_data[MAX_PKT_DATA];
 

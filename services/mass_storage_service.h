@@ -57,6 +57,7 @@ extern void cnv32_8(const uint32_t from, uint8_t *to);
 extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 //ToDo
+//  add format for sd
 //	check type casting for snprintf & %d conversions
 //	error checking for sprintf
 //  strtol proper checking, return value range is ok
