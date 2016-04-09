@@ -127,16 +127,6 @@ uint32_t get_time_ELAPSED() {
 uint32_t time_cmp_elapsed(uint32_t t1, uint32_t t2) {
     return t2 - t1;
 }
-/* 
- * File:   time_management.c
- * Author: 
- *
- * Created on March 8, 2016, 9:05 PM
- * This is the implementation of Time management service as is
- * documented at pages 95-97 of ECSS-E-70-41A document.
- * Service Type 9 
- * (some restrictions may apply)
- */
 
 volatile uint32_t boot_seconds = 0;
 volatile uint32_t qb50_seconds = 0;

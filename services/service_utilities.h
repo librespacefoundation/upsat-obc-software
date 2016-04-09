@@ -13,10 +13,13 @@
 
 #define EV_MAX_BUFFER 1024
 
+#define WOD_MAX_BUFFER 64
+
 /*restriction for 8 char filename, for conversion from num to file name*/
 #define MAX_FILE_NUM 0x5F5E0FF
 
 extern struct _obc_data obc_data;
+extern struct _sat_status sat_status;
 
 extern tc_tm_pkt * get_pkt();
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);

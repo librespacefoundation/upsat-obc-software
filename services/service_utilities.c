@@ -356,9 +356,14 @@ void bkup_sram_INIT() {
     obc_data.log_state = HAL_obc_BKPSRAM_BASE() + 1;
     obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
     obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
+    obc_data.wod_cnt = HAL_obc_BKPSRAM_BASE() + 4;
 
-    obc_data.log = HAL_obc_BKPSRAM_BASE() + 4;
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 5;
 
+    obc_data.wod_log = HAL_obc_BKPSRAM_BASE() + 5 + (EV_MAX_BUFFER/32);
+
+//    if(!C_ASSERT(*obc_data.log_cnt > EV_MAX_BUFFER) == true) { *obc_data.log_cnt = 0; }
+    if(!C_ASSERT(*obc_data.wod_cnt > EV_MAX_BUFFER) == true) { *obc_data.wod_cnt = 0; }
 }
 
 uint32_t get_new_fileId() {
@@ -434,4 +439,42 @@ SAT_returnState event_log_IDLE() {
     }
     
      return SATR_OK;
+}
+
+SAT_returnState wod_log() {
+
+//check endianess
+
+    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.batt_curr << 24) || (sat_status.batt_volt << 16) || (sat_status.bus_3v3_curr << 8) || sat_status.bus_5v_curr; 
+     
+    (*obc_data.wod_cnt)++;
+    if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
+
+    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.temp_eps << 16) || (sat_status.temp_batt << 8) || sat_status.temp_comms;
+
+    (*obc_data.wod_cnt)++;
+    if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
+
+    return SATR_OK;
+}
+
+SAT_returnState wod_log_load(uint8_t *buf) {
+
+//    union _cnv temp_cnv;
+
+//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
+//    buf[i] = temp_cnv.cnv8[3];
+//    buf[i] = temp_cnv.cnv8[2];
+//    buf[i] = temp_cnv.cnv8[1];
+//    buf[i] = temp_cnv.cnv8[0];
+
+//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
+//    buf[i] = temp_cnv.cnv8[2];
+//    buf[i] = temp_cnv.cnv8[1];
+//    buf[i] = temp_cnv.cnv8[0];
+   
+//   for(uint16_t i = 0; i < size; i++) {
+//        buf[i] = obc_data.log[(pointer + i) >> 2] >> ((0x00000003 & i) * 8);
+//   }
+   return SATR_OK;
 }

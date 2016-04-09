@@ -4,8 +4,6 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 5
 
-struct _sat_status sat_status;
-
 tc_tm_pkt hk_pkt;
 uint8_t hk_pkt_data[MAX_PKT_DATA];
 
@@ -19,7 +17,7 @@ void hk_SCH() {
     route_pkt(&hk_pkt);
     hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
     route_pkt(&hk_pkt);
-    HAL_obc_delay(59000);
+    HAL_obc_delay(1000);
     hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
     route_pkt(&hk_pkt);
     clear_wod();

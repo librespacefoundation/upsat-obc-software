@@ -315,11 +315,26 @@ struct _obc_data
     uint32_t *log;
     uint32_t *log_cnt;
     uint32_t *log_state;
+    uint32_t *wod_log;
+    uint32_t *wod_cnt;
 
     uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
     uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
     uint16_t eps_uart_size;
 };
+
+struct _sat_status {
+    uint8_t mode;
+    uint8_t batt_curr;
+    uint8_t batt_volt;
+    uint8_t bus_3v3_curr;
+    uint8_t bus_5v_curr;
+    uint8_t temp_eps;
+    uint8_t temp_batt;
+    uint8_t temp_comms;
+};
+
+extern struct _sat_status sat_status;
 
 extern struct _obc_data obc_data;
 
