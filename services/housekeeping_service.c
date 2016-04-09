@@ -4,19 +4,22 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 5
 
-struct _sat_status sat_status;
+tc_tm_pkt hk_pkt;
+uint8_t hk_pkt_data[MAX_PKT_DATA];
+
+void hk_INIT() {
+   hk_pkt.data = hk_pkt_data;
+}
 
 void hk_SCH() {
-
-    tc_tm_pkt pkt;
   
-    hk_crt_pkt_TC(&pkt, EPS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    hk_crt_pkt_TC(&pkt, COMMS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    HAL_obc_delay(59);
-    hk_crt_pkt_TM(&pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&pkt);
+    hk_crt_pkt_TC(&hk_pkt, EPS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    HAL_obc_delay(59000);
+    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
+    route_pkt(&hk_pkt);
     clear_wod();
 }
 
@@ -107,7 +110,7 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
         pkt->len = 9;
     }
 
-    crt_pkt(pkt, OBC_APP_ID, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
+    crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
 
     return SATR_OK;
 }

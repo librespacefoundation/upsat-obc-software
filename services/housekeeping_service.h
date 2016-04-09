@@ -13,17 +13,6 @@ extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 extern void HAL_obc_delay(uint32_t sec);
 
-struct _sat_status {
-    uint8_t mode;
-    uint8_t batt_curr;
-    uint8_t batt_volt;
-    uint8_t bus_3v3_curr;
-    uint8_t bus_5v_curr;
-    uint8_t temp_eps;
-    uint8_t temp_batt;
-    uint8_t temp_comms;
-};
-
 extern struct _sat_status sat_status;
 
 //ToDo
@@ -43,6 +32,8 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt **pkt, TC_TM_app_id app_id, HK_struct_id sid);
 
 void hk_SCH();
+
+void hk_INIT();
 
 void clear_wod();
 

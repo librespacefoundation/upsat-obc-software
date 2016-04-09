@@ -34,6 +34,7 @@
 //needs to redifine
 #define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
+#define TC_MIN_PKT_SIZE 1 //random
 
 #define ECSS_HEADER_SIZE        6
 #define ECSS_DATA_HEADER_SIZE   4
@@ -47,6 +48,9 @@
 
 #define TC 1
 #define TM 0
+
+#define HLDLC_START_FLAG        0x7E
+#define HLDLC_CONTROL_FLAG      0x7D
 
 typedef enum {  
     SATR_PKT_ILLEGAL_APPID     = 0,
@@ -137,6 +141,8 @@ typedef enum {
 #define TM_MONTH_NOVEMBER             ((uint8_t)0x11U)
 #define TM_MONTH_DECEMBER             ((uint8_t)0x12U)
 
+#define OBC_UART_BUF_SIZE 1024
+
 typedef enum {  
     OBC_APP_ID      = 1,
     EPS_APP_ID      = 2,
@@ -186,16 +192,17 @@ typedef enum {
     SU_SCRIPT_6     = 6,
     SU_SCRIPT_7     = 7,
     SU_LOG          = 8,
-    EVENT_LOG       = 9,
-    FOTOS           = 10,
-    TMP_SU_SCRIPT_1 = 11,
-    TMP_SU_SCRIPT_2 = 12,
-    TMP_SU_SCRIPT_3 = 13,
-    TMP_SU_SCRIPT_4 = 14,
-    TMP_SU_SCRIPT_5 = 15,
-    TMP_SU_SCRIPT_6 = 16,
-    TMP_SU_SCRIPT_7 = 17,
-    LAST_SID        = 18
+    WOD_LOG         = 9,
+    EVENT_LOG       = 10,
+    FOTOS           = 11,
+    TMP_SU_SCRIPT_1 = 12,
+    TMP_SU_SCRIPT_2 = 13,
+    TMP_SU_SCRIPT_3 = 14,
+    TMP_SU_SCRIPT_4 = 15,
+    TMP_SU_SCRIPT_5 = 16,
+    TMP_SU_SCRIPT_6 = 17,
+    TMP_SU_SCRIPT_7 = 18,
+    LAST_SID        = 19
 }MS_sid;
 
 typedef enum {  
@@ -262,7 +269,7 @@ typedef struct {
     //uint8_t pckt_sub_cnt; /* 8 bits*/
     TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
-    uint8_t data[MAX_PKT_DATA]; /* pkt data */
+    uint8_t *data; /* pkt data */
 
     /*this is not part of the header. it is used from the software and the verification service,
      *when the packet wants ack. 
@@ -274,6 +281,38 @@ typedef struct {
 
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
+
+struct _obc_data
+{
+    uint16_t obc_seq_cnt;
+    uint8_t rsrc;
+    uint32_t *file_id;
+    uint32_t *boot_counter;
+    uint32_t *log;
+    uint32_t *log_cnt;
+    uint32_t *log_state;
+    uint32_t *wod_log;
+    uint32_t *wod_cnt;
+
+    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t eps_uart_size;
+};
+
+struct _sat_status {
+    uint8_t mode;
+    uint8_t batt_curr;
+    uint8_t batt_volt;
+    uint8_t bus_3v3_curr;
+    uint8_t bus_5v_curr;
+    uint8_t temp_eps;
+    uint8_t temp_batt;
+    uint8_t temp_comms;
+};
+
+extern struct _sat_status sat_status;
+
+extern struct _obc_data obc_data;
 
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
