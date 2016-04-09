@@ -34,9 +34,9 @@
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 #include "fatfs.h"
-
+#include "service_utilities.h"
 /* USER CODE BEGIN Includes */
-#include "../../../services/service_utilities.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -74,11 +74,6 @@ void StartTask02(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-extern SAT_returnState mass_storage_init();
-extern SAT_returnState pkt_pool_INIT();
-extern void HAL_reset_source(uint8_t *src);
-extern void HAL_obc_enableBkUpAccess();
-extern void hk_SCH();
 
 /* USER CODE END PFP */
 
@@ -111,7 +106,7 @@ int main(void)
   MX_WWDG_Init();
 
   /* USER CODE BEGIN 2 */
-  
+
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -477,56 +472,10 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
-//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
-HAL_UART_RxCpltCallback(&huart2);
-  obc_data.rsrc = 0;
-   HAL_reset_source(&obc_data.rsrc);
-   update_boot_counter();
-
-   //event_log(reset source);
-   uint8_t uart_temp[20];
-   pkt_pool_INIT();
-   HAL_obc_enableBkUpAccess();
-   bkup_sram_INIT();
-   *obc_data.log_cnt = 0;
-   
-   uint8_t hours, mins, sec = 0;
-   HAL_obc_getTime(&hours, &mins, &sec);
-   sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   
-   //hours = 19;
-   //mins = 35;
-   //sec = 11;
-   //HAL_obc_setTime(hours, mins, sec);
-   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   
-   sprintf((char*)uart_temp, "F: %u\n", *obc_data.log_cnt);
-   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   //(*obc_data.log_cnt)++;
-   //*obc_data.log_cnt = 0;
-   uint8_t tt[] = "YO!\n";
-   event_log(tt, 4);
-
-   event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
-   HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
-   
-   sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
-   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   mass_storage_init();
-   //su_INIT();
-   sprintf((char*)uart_temp, "Hello\n");
-   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
-   //HAL_IWDG_Start(&hiwdg); //0x17
-   //HAL_WWDG_Start(&hwwdg); //0x22
   /* Infinite loop */
-   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
   for(;;)
   {
-    import_eps_pkt();
-    //su_SCH();
-    osDelay(100);
+    osDelay(1);
   }
   /* USER CODE END 5 */ 
 }
@@ -535,12 +484,10 @@ HAL_UART_RxCpltCallback(&huart2);
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
-  hk_INIT();
   /* Infinite loop */
   for(;;)
   {
-    hk_SCH();
-   //osDelay(1);
+    osDelay(1);
   }
   /* USER CODE END StartTask02 */
 }

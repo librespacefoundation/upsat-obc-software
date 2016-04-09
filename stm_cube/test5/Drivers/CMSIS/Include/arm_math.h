@@ -298,13 +298,6 @@
 
 #define __CMSIS_GENERIC         /* disable NVIC and Systick functions */
 
-
-/**
- * Both these are defined by us (obc team), and is target board specific.
- */
-#define ARM_MATH_CM4
-#define __FPU_PRESENT 1
-
 #if defined(ARM_MATH_CM7)
   #include "core_cm7.h"
 #elif defined (ARM_MATH_CM4)

@@ -31,28 +31,20 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <stdlib.h>
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
-#include "stm32f4xx_hal_uart.h"
 #include "cmsis_os.h"
-#include "circular_buffer.h"
-#include "main.h"
-#include "time_management.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-/* UART handler declared in "main.c" file */
-#define MAXCLISTRING 100
-extern UART_HandleTypeDef huart2;
-static __IO uint32_t uwTick;
-
 extern SD_HandleTypeDef hsd;
 extern DMA_HandleTypeDef hdma_usart2_tx;
+extern UART_HandleTypeDef huart2;
+
 extern TIM_HandleTypeDef htim1;
 
 /******************************************************************************/
@@ -68,22 +60,17 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   osSystickHandler();
-  HAL_IncTick();
-  if ( HAL_GetTick()%1000==999){ /*add a second to the system time*/
-      
-//      __disable_irq();
-      
-      boot_seconds++;
-      
-//      __enable_irq();
-      
-  }
-  
-//  HAL_UART_Transmit(&Uart2Handle, (uint8_t *)HAL_GetTick(), 1,10);
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  
+
   /* USER CODE END SysTick_IRQn 1 */
 }
+
+/******************************************************************************/
+/* STM32F4xx Peripheral Interrupt Handlers                                    */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file (startup_stm32f4xx.s).                    */
+/******************************************************************************/
 
 /**
 * @brief This function handles DMA1 stream6 global interrupt.
@@ -112,146 +99,14 @@ void TIM1_UP_TIM10_IRQHandler(void)
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
-/******************************************************************************/
-/* STM32F4xx Peripheral Interrupt Handlers                                    */
-/* Add here the Interrupt Handlers for the used peripherals.                  */
-/* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32f4xx.s).                    */
-/******************************************************************************/
 
-/* USER CODE BEGIN 1 */
-/******************************************************************************/
-
-/**
-  * @brief   This function handles NMI exception.
-  * @param  None
-  * @retval None
-  */
-void NMI_Handler(void)
-{
-}
-
-/**
-  * @brief  This function handles Hard Fault exception.
-  * @param  None
-  * @retval None
-  */
-void HardFault_Handler(void)
-{
-  /* Go to infinite loop when Hard Fault exception occurs */
-  while (1)
-  {
-  }
-}
-
-/**
-  * @brief  This function handles Memory Manage exception.
-  * @param  None
-  * @retval None
-  */
-void MemManage_Handler(void)
-{
-  /* Go to infinite loop when Memory Manage exception occurs */
-  while (1)
-  {
-  }
-}
-
-/**
-  * @brief  This function handles Bus Fault exception.
-  * @param  None
-  * @retval None
-  */
-void BusFault_Handler(void)
-{
-  /* Go to infinite loop when Bus Fault exception occurs */
-  while (1)
-  {
-  }
-}
-
-/**
-  * @brief  This function handles Usage Fault exception.
-  * @param  None
-  * @retval None
-  */
-void UsageFault_Handler(void)
-{
-  /* Go to infinite loop when Usage Fault exception occurs */
-  while (1)
-  {
-  }
-}
-
-/**
-  * @brief  This function handles SVCall exception.
-  * @param  None
-  * @retval None
-  */
-//void SVC_Handler(void)
-//{
-//}
-
-/**
-  * @brief  This function handles Debug Monitor exception.
-  * @param  None
-  * @retval None
-  */
-void DebugMon_Handler(void)
-{
-}
-
-/**
-  * @brief  This function handles PendSVC exception.
-  * @param  None
-  * @retval None
-  */
-//void PendSV_Handler(void)
-//{
-//}
-
-/**
-  * @brief  This function handles SysTick Handler.
-  * @param  None
-  * @retval None
-  */
-//void SysTick_Handler(void)
-//{
-//  HAL_IncTick();
-//}
-
-/******************************************************************************/
-/*                 STM32F4xx Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) , for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32f4xx.s).                                               */
-/******************************************************************************/
-/**
-  * @brief  This function handles UART interrupt request.  
-  * @param  None
-  * @retval None
-  * @Note   This function is redefined in "main.h" and related to DMA stream 
-  *         used for USART data transmission     
-  */
-//void USART2_IRQHandler(void)
-//{
-//  HAL_UART_IRQHandler(&huart2);
-//
-////    if ( __HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE) != RESET ){
-////        uint8_t data;
-////        
-////    }
-////    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/    
-////  __HAL_UART_FLUSH_DRREGISTER(&Uart2Handle); // Clear the buffer to prevent overrun
-//
-//}
 /**
 * @brief This function handles USART2 global interrupt.
 */
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-  HAL_OBC_UART_IRQHandler(&huart2);
+
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
@@ -273,17 +128,7 @@ void SDIO_IRQHandler(void)
   /* USER CODE END SDIO_IRQn 1 */
 }
 
-
-/**
-  * @brief  This function handles PPP interrupt request.
-  * @param  None
-  * @retval None
-  */
-/*void PPP_IRQHandler(void)
-{
-}*/
-
-
+/* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

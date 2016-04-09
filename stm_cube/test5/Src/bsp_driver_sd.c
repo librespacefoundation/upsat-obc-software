@@ -264,9 +264,9 @@ void BSP_SD_DMA_Rx_IRQHandler(void)
   * @param  None
   * @retval Data transfer state.
   *          This value can be one of the following values:
-  *            @arg  SD_TRANSFESATR_OK: No data transfer is acting
+  *            @arg  SD_TRANSFER_OK: No data transfer is acting
   *            @arg  SD_TRANSFER_BUSY: Data transfer is acting
-  *            @arg  SD_TRANSFESATR_ERROR: Data transfer error 
+  *            @arg  SD_TRANSFER_ERROR: Data transfer error 
   */
 HAL_SD_TransferStateTypedef BSP_SD_GetStatus(void)
 {
