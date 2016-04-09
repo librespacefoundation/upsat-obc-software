@@ -483,6 +483,18 @@ HAL_UART_RxCpltCallback(&huart2);
    HAL_reset_source(&obc_data.rsrc);
    update_boot_counter();
 
+   uint32_t t1, t2, t3;
+   
+   t1 = time_cmp_elapsed(3, 6);
+   t2 = time_cmp_elapsed(0xfffffff0, 0xfffffff6);
+   t3 = time_cmp_elapsed(0xfffffff0, 3);
+   
+   t1 = get_time_ELAPSED();
+   osDelay(10);
+   t2 = get_time_ELAPSED();
+   osDelay(1000);
+   t3 = get_time_ELAPSED();
+   
    //event_log(reset source);
    uint8_t uart_temp[20];
    pkt_pool_INIT();

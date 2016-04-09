@@ -46,4 +46,6 @@ void HAL_obc_enableBkUpAccess();
 
 uint32_t * HAL_obc_BKPSRAM_BASE();
 
+uint32_t HAL_obc_GetTick();
+
 #endif

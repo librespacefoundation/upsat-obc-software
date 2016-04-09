@@ -118,3 +118,12 @@ void get_time_UTC(struct time_utc *utc) {
     HAL_obc_getTime(&utc->hours, &utc->min, &utc->sec);
 
 }
+
+uint32_t get_time_ELAPSED() {
+    return HAL_obc_GetTick();
+}
+
+/*works when the tick ovf*/
+uint32_t time_cmp_elapsed(uint32_t t1, uint32_t t2) {
+    return t2 - t1;
+}

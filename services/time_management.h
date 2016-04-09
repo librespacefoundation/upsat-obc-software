@@ -28,6 +28,8 @@ extern void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec);
 extern void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year);
 extern void HAL_obc_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
 
+extern uint32_t HAL_obc_GetTick();
+
 //ToDo
 //  Set assertions everywhere
 
@@ -47,5 +49,9 @@ void set_time_UTC(struct time_utc utc);
 void get_time_QB50(uint32_t *qb);
 
 void get_time_UTC(struct time_utc *utc);
+
+uint32_t get_time_ELAPSED();
+
+uint32_t time_cmp_elapsed(uint32_t t1, uint32_t t2);
 
 #endif
