@@ -34,6 +34,7 @@
 //needs to redifine
 #define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
+#define TC_MIN_PKT_SIZE 1 //random
 
 #define ECSS_HEADER_SIZE        6
 #define ECSS_DATA_HEADER_SIZE   4
@@ -215,16 +216,17 @@ typedef enum {
     SU_SCRIPT_6     = 6,
     SU_SCRIPT_7     = 7,
     SU_LOG          = 8,
-    EVENT_LOG       = 9,
-    FOTOS           = 10,
-    TMP_SU_SCRIPT_1 = 11,
-    TMP_SU_SCRIPT_2 = 12,
-    TMP_SU_SCRIPT_3 = 13,
-    TMP_SU_SCRIPT_4 = 14,
-    TMP_SU_SCRIPT_5 = 15,
-    TMP_SU_SCRIPT_6 = 16,
-    TMP_SU_SCRIPT_7 = 17,
-    LAST_SID        = 18
+    WOD_LOG         = 9,
+    EVENT_LOG       = 10,
+    FOTOS           = 11,
+    TMP_SU_SCRIPT_1 = 12,
+    TMP_SU_SCRIPT_2 = 13,
+    TMP_SU_SCRIPT_3 = 14,
+    TMP_SU_SCRIPT_4 = 15,
+    TMP_SU_SCRIPT_5 = 16,
+    TMP_SU_SCRIPT_6 = 17,
+    TMP_SU_SCRIPT_7 = 18,
+    LAST_SID        = 19
 }MS_sid;
 
 typedef enum {  

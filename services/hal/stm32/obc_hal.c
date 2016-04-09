@@ -75,6 +75,12 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
     if(huart->RxXferSize == huart->RxXferCount && c == HLDLC_START_FLAG) {
       *huart->pRxBuffPtr++ = c;
       huart->RxXferCount--;
+      //start timeout
+    } else if(c == HLDLC_START_FLAG && (huart->RxXferSize - huart->RxXferCount) < TC_MIN_PKT_SIZE) {
+      //error
+      //event log
+      //reset buffers & pointers
+      //start timeout
     } else if(c == HLDLC_START_FLAG) {
       *huart->pRxBuffPtr++ = c;
       huart->RxXferCount--;
@@ -186,4 +192,8 @@ void HAL_obc_enableBkUpAccess() {
 
 uint32_t * HAL_obc_BKPSRAM_BASE() {
   return (uint32_t *)BKPSRAM_BASE;
+}
+
+uint32_t HAL_obc_GetTick() {
+  return HAL_GetTick();
 }

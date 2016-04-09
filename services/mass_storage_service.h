@@ -10,6 +10,7 @@
 #define MS_SD_PATH "0:"
 
 #define MS_SU_LOG          "/SU_LOG"
+#define MS_WOD_LOG         "/WOD_LOG"
 #define MS_SU_SCRIPT_1     "/SU_SCR_1/SCR1.bin"
 #define MS_SU_SCRIPT_2     "/SU_SCR_2/SCR2.bin"
 #define MS_SU_SCRIPT_3     "/SU_SCR_3/SCR3.bin"

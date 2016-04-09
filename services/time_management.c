@@ -1,30 +1,4 @@
-/* 
- * File:   time_management.c
- * Author: 
- *
- * Created on March 8, 2016, 9:05 PM
- * This is the implementation of Time management service as is
- * documented at pages 95-97 of ECSS-E-70-41A document.
- * Service Type 9 
- * (some restrictions may apply)
- */
-
 #include "time_management.h"
-
-volatile uint32_t boot_seconds = 0;
-volatile uint32_t qb50_seconds = 0;
-
-//OBCTime_Type obc_gmt_boot_time;
-//OBCTime_Type obc_gmt_time;
-
-uint32_t time_manage_get_last_boot_seconds_api(){
-    return boot_seconds;
-}
-
-SAT_returnState set_seconds_from_last_bootAPI(uint32_t secs){
-    boot_seconds = secs;
-    return SATR_OK;
-}
 
 #undef __FILE_ID__
 #define __FILE_ID__ 14
@@ -144,6 +118,71 @@ void get_time_UTC(struct time_utc *utc) {
     HAL_obc_getTime(&utc->hours, &utc->min, &utc->sec);
 
 }
+
+uint32_t get_time_ELAPSED() {
+    return HAL_obc_GetTick();
+}
+
+/*works when the tick ovf*/
+uint32_t time_cmp_elapsed(uint32_t t1, uint32_t t2) {
+    return t2 - t1;
+}
+/* 
+ * File:   time_management.c
+ * Author: 
+ *
+ * Created on March 8, 2016, 9:05 PM
+ * This is the implementation of Time management service as is
+ * documented at pages 95-97 of ECSS-E-70-41A document.
+ * Service Type 9 
+ * (some restrictions may apply)
+ */
+
+volatile uint32_t boot_seconds = 0;
+volatile uint32_t qb50_seconds = 0;
+
+//OBCTime_Type obc_gmt_boot_time;
+//OBCTime_Type obc_gmt_time;
+
+uint32_t time_manage_get_last_boot_seconds_api(){
+    return boot_seconds;
+}
+
+SAT_returnState set_seconds_from_last_bootAPI(uint32_t secs){
+    boot_seconds = secs;
+    return SATR_OK;
+}
+
+//void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb) {
+//    *qb = UTC_QB50_YM[utc.year][utc.month] + UTC_QB50_D[utc.day] + UTC_QB50_H[utc.hours] + utc.min * 60 + utc.sec;  
+//}
+//
+//void set_time_QB50(uint32_t qb) {
+//  
+//}
+//
+//void set_time_UTC(struct time_utc utc) {
+//    HAL_obc_setDate(utc.month, utc.day, utc.year);
+//    HAL_obc_setTime(utc.hours, utc.min, utc.sec);
+//}
+//
+//void get_time_QB50(uint32_t *qb) {
+//
+//    struct time_utc utc;
+//
+//    HAL_obc_getDate(&utc.month, &utc.day, &utc.year);
+//    HAL_obc_getTime(&utc.hours, &utc.min, &utc.sec);
+//    cnv_UTC_QB50(utc, qb);
+//
+//}
+//
+//
+//void get_time_UTC(struct time_utc *utc) {
+//
+//    HAL_obc_getDate(&utc->month, &utc->day, &utc->year);
+//    HAL_obc_getTime(&utc->hours, &utc->min, &utc->sec);
+//
+//}
 
 
 //SAT_returnState calculate_qb50_seconds(OBCTime_Type* gmt_time){

@@ -69,12 +69,18 @@ static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_WWDG_Init(void);
+
 void StartDefaultTask(void const * argument);
 void StartTask02(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+TaskFunction_t ToggleLED_Timer1(void*);
+TaskFunction_t ToggleLED_Timer2(void*);
+TaskFunction_t ToggleLED_Timer3(void*);
+TaskFunction_t ToggleLED_Timer4(void*);
+TaskFunction_t UART2_ReceiveData(void*);
+TaskFunction_t UART2_TransmitData(void*);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -131,6 +137,41 @@ int main(void)
   hkHandle = osThreadCreate(osThread(hk), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+      xTaskCreate(
+               ToggleLED_Timer1, /* Function pointer */
+               "Task1", /* Task name - for debugging only*/
+               configMINIMAL_STACK_SIZE, /* Stack depth in words */
+               (void*) NULL, /* Pointer to tasks arguments (parameter) */
+               tskIDLE_PRIORITY + 2UL, /* Task priority*/
+               NULL /* Task handle */
+      );
+
+//      xTaskCreate(
+//    		  ToggleLED_Timer2,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer3,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer4,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -155,6 +196,91 @@ int main(void)
   }
   /* USER CODE END 3 */
 
+}
+
+/**
+ * TASK 1: Toggle LED via RTOS Timer
+ */
+TaskFunction_t ToggleLED_Timer1(void *pvParameters)
+{
+    while (1)
+    {
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(250 / portTICK_RATE_MS);
+    }
+
+}
+
+/**
+ * TASK 1: Toggle LED via RTOS Timer
+ */
+TaskFunction_t ToggleLED_Timer2(void *pvParameters)
+{
+    while (1)
+    {
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(500 / portTICK_RATE_MS);
+    }
+}
+
+/**
+ * TASK 1: Toggle LED via RTOS Timer
+ */
+TaskFunction_t ToggleLED_Timer3(void *pvParameters)
+{
+    while (1)
+    {
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+
+/**
+ * TASK 1: Toggle LED via RTOS Timer
+ */
+TaskFunction_t ToggleLED_Timer4(void *pvParameters)
+{
+    while (1)
+    {
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_14);
+        //    GPIO_ToggleBits(GPIOD, GPIO_Pin_15);
+        /*
+        Delay for a period of time. vTaskDelay() places the task into
+        the Blocked state until the period has expired.
+        The delay period is spacified in 'ticks'. We can convert
+        yhis in milisecond with the constant portTICK_RATE_MS.
+         */
+        vTaskDelay(1500 / portTICK_RATE_MS);
+    }
 }
 
 /** System Clock Configuration
@@ -472,10 +598,70 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+  //__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+   HAL_UART_RxCpltCallback(&huart2);
+   obc_data.rsrc = 0;
+   HAL_reset_source(&obc_data.rsrc);
+   update_boot_counter();
+
+   uint32_t t1, t2, t3;
+   
+   t1 = time_cmp_elapsed(3, 6);
+   t2 = time_cmp_elapsed(0xfffffff0, 0xfffffff6);
+   t3 = time_cmp_elapsed(0xfffffff0, 3);
+   
+   t1 = get_time_ELAPSED();
+   osDelay(10);
+   t2 = get_time_ELAPSED();
+   osDelay(1000);
+   t3 = get_time_ELAPSED();
+   
+   //event_log(reset source);
+   uint8_t uart_temp[20];
+   pkt_pool_INIT();
+   HAL_obc_enableBkUpAccess();
+   bkup_sram_INIT();
+   *obc_data.log_cnt = 0;
+   
+   uint8_t hours, mins, sec = 0;
+   HAL_obc_getTime(&hours, &mins, &sec);
+   sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   //hours = 19;
+   //mins = 35;
+   //sec = 11;
+   //HAL_obc_setTime(hours, mins, sec);
+   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   sprintf((char*)uart_temp, "F: %u\n", *obc_data.log_cnt);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   //(*obc_data.log_cnt)++;
+   //*obc_data.log_cnt = 0;
+   uint8_t tt[] = "YO!\n";
+   event_log(tt, 4);
+
+   event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
+   HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
+   
+   sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
+   HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   mass_storage_init();
+   
+   //su_INIT();
+   sprintf((char*)uart_temp, "Hello\n");
+   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+   //HAL_IWDG_Start(&hiwdg); //0x17
+   //HAL_WWDG_Start(&hwwdg); //0x22
   /* Infinite loop */
+   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+   
   for(;;)
   {
-    osDelay(1);
+    import_eps_pkt();
+    //su_SCH();
+    osDelay(100);
   }
   /* USER CODE END 5 */ 
 }
@@ -484,10 +670,12 @@ void StartDefaultTask(void const * argument)
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
+  hk_INIT();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    hk_SCH();
+//   osDelay(1);
   }
   /* USER CODE END StartTask02 */
 }
