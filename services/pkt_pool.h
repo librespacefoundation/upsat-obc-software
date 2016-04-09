@@ -6,18 +6,13 @@
 
 #define PKT_TIMEOUT 1000 /*in seconds*/
 
-#define MAX_POOL_NRM_PKT    8
-#define MAX_POOL_EXT_PKT    2
-#define MAX_POOL_PKT        MAX_POOL_EXT_PKT+MAX_POOL_NRM_PKT
-#define EXT_POOL_PKT_START  MAX_POOL_NRM_PKT
+#define POOL_PKT_SIZE    20
 
 struct _pkt_pool{
-    tc_tm_pkt pkt[MAX_POOL_PKT];
-    uint8_t free[MAX_POOL_PKT];
-    uint32_t time[MAX_POOL_PKT];
-
-    uint8_t data_NRM[MAX_POOL_NRM_PKT][MAX_PKT_DATA];
-    uint8_t data_EXT[MAX_POOL_EXT_PKT][MAX_EX_PKT_DATA];
+    tc_tm_pkt pkt[POOL_PKT_SIZE];
+    uint8_t free[POOL_PKT_SIZE];
+    uint32_t time[POOL_PKT_SIZE];
+    uint8_t data[POOL_PKT_SIZE][MAX_PKT_DATA];
 };
 
 //ToDo
@@ -28,7 +23,7 @@ extern uint32_t time_now();
 
 extern struct _pkt_pool pkt_pool;
 
-tc_tm_pkt * get_pkt(uint8_t mode);
+tc_tm_pkt * get_pkt();
 
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 

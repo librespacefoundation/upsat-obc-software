@@ -1,5 +1,9 @@
 #include "services.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 1
+
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = { 
 /*       0       1       2       3       4       5       6       7       8       9      10      11      12      13      14      15      16      17      18      19      20      21      22      23      24      25   */
@@ -50,13 +54,17 @@ const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
+struct _obc_data obc_data;
+
 //stub
 uint32_t time_now() {
     return 0;
 }
 
-uint8_t tst_debugging(char *f, int l, char *e) {
-  char uart_temp[100];
+char uart_temp[200]; 
+
+uint8_t tst_debugging(char *f, int fi, int l, char *e) {
+  
   uint16_t size = 0;
   int res;
   
@@ -65,8 +73,14 @@ uint8_t tst_debugging(char *f, int l, char *e) {
     sprintf((char*)uart_temp, "Assertion failed, size > array\n");
     return false;
   }
-  res = sprintf((char*)uart_temp, "Assertion failed %s,%d,%s\n", f, l, e);
-  size = strnlen(uart_temp, 99);
+  res = sprintf((char*)uart_temp, "Assertion failed %s,%d,%d,%s\n", f, fi, l, e);
+  size = strnlen(uart_temp, 200);
   HAL_eps_uart_tx((uint8_t *)uart_temp, size);
+
+  cnv32_8(time_now(), &uart_temp[0]);
+  uart_temp[4] = fi;
+  cnv16_8(l, &uart_temp[5]);
+  event_log(uart_temp, 6);
+
   return false;
 }

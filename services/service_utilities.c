@@ -1,6 +1,8 @@
 #include "service_utilities.h"
 
-struct _obc_data obc_data;
+
+#undef __FILE_ID__
+#define __FILE_ID__ 2
 
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
@@ -119,24 +121,18 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
-    uint8_t c = 0;
     uint16_t size = 0;
-    uint16_t cnt_out = 0;
     uint8_t buf[TEST_ARRAY];
     uint8_t buf_out[TEST_ARRAY];
     SAT_returnState res;    
 
     pack_pkt(buf, pkt, &size);
-    for(uint16_t i = 0; i < size*2; i++) {
-        res = HLDLC_frame(&c, buf, &cnt_out, size);
-        if(res == SATR_EOT)        { buf_out[cnt_out] = c; break; }
-        else if(res == SATR_ERROR) { return SATR_ERROR;; }
-        buf_out[cnt_out] = c;   
-    }
+    res = HLDLC_frame(buf, buf_out, &size);
+    if(res == SATR_ERROR) { return SATR_ERROR; }
 
-    if(!C_ASSERT(cnt_out > 0) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
 
-    HAL_eps_uart_tx(buf_out, cnt_out+1);
+    HAL_eps_uart_tx(buf_out, size+1);
 
     return SATR_OK;
 }
@@ -148,24 +144,20 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 SAT_returnState import_eps_pkt() {
 
     tc_tm_pkt *pkt;
-    uint8_t c = 0;
     uint16_t size = 0;
 
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
-    //static int temp_i = 0;
-    //if(!C_ASSERT( temp_i < 2) == true) { return SATR_ERROR; }
-    //temp_i++;
-    res = HAL_eps_uart_rx(&c);
-    if( res == SATR_OK ) { 
-        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
+    res = HAL_eps_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.eps_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.eps_uart_buf, obc_data.eps_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
-            
-            //if(cnt > )
-            pkt = get_pkt(NORMAL);
+
+            pkt = get_pkt();
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            if(unpack_pkt(buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            if(unpack_pkt(obc_data.eps_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }
@@ -205,7 +197,7 @@ SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t si
 
     tc_pus = buf[6] >> 4;
 
-    pkt->ack = 0x04 & buf[6];
+    pkt->ack = 0x07 & buf[6];
 
     pkt->ser_type = buf[7];
     pkt->ser_subtype = buf[8];
@@ -358,19 +350,88 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
     return SATR_OK;
 }
 
-//WIP: will not compile
-//should add a flag that writes the array in the sd in a idle task
-//uint8 is temp and generic.
-// SAT_returnState event_log(uint8_t *event) {
+void bkup_sram_INIT() {
+
+    obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
+    obc_data.log_state = HAL_obc_BKPSRAM_BASE() + 1;
+    obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
+    obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
+
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 4;
+
+}
+
+uint32_t get_new_fileId() {
+
+    (*obc_data.file_id)++;
+    if(*obc_data.file_id > MAX_FILE_NUM) {
+        *obc_data.file_id = 1;
+    }
+    return *obc_data.file_id;
+}
+
+SAT_returnState update_boot_counter() {
+    (*obc_data.boot_counter)++;
+    return SATR_OK;
+}
+
+SAT_returnState get_boot_counter(uint32_t *cnt) {
+    *cnt = *obc_data.boot_counter;
+    return SATR_OK;
+}
+
+SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
+
+    union _cnv temp_cnv;
+  
+    for(uint16_t i = 0; i < size; i++) {
+        uint32_t point = ((*obc_data.log_cnt) >> 2);
+        temp_cnv.cnv32 = obc_data.log[point];
+        temp_cnv.cnv8[(0x00000003 & *obc_data.log_cnt)] = buf[i];
+        obc_data.log[point] = temp_cnv.cnv32;
+        //obc_data.log[point] &= 0xFFFF
+        //obc_data.log[point] |= (buf[i] << ((0x00000003 & *obc_data.log_cnt) * 8));
+        (*obc_data.log_cnt)++;
+        if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
+
+        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_1; }
+        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_2; }
+        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_2; }
+        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_1; }
+    }
+
+    return SATR_OK;
+}
+
+SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint16_t size) {
+   for(uint16_t i = 0; i < size; i++) {
+        buf[i] = obc_data.log[(pointer + i) >> 2] >> ((0x00000003 & i) * 8);
+   }
+   return SATR_OK;
+}
+
+SAT_returnState event_log_IDLE() {
+
+    if(*obc_data.log_state == ev_wr_1 || *obc_data.log_state == ev_owr_1) { 
+        uint16_t size = (EV_MAX_BUFFER / 2);
+
+        for(uint16_t i = 0; i < size ; i+=4) {
+            cnv32_8(obc_data.log[i], &buf[i]);
+        }
+        mass_storage_storeLogs(EVENT_LOG, buf, &size);
+
+        *obc_data.log_state = ev_free_2;
+
+    } else if(*obc_data.log_state == ev_wr_2 || *obc_data.log_state == ev_owr_2) { 
+        uint16_t size = (EV_MAX_BUFFER / 2);
+
+        for(uint16_t i = 0; i < size ; i+=4) {
+            cnv32_8(obc_data.log[i + size], &buf[i]);
+        }
+        mass_storage_storeLogs(EVENT_LOG, buf, &size);
+
+        *obc_data.log_state = ev_free_1;
+    }
     
-//     if(event+log_cnt > MAX EVENT FILE SIZE) {
-//         mass_storage_storeLogs(EVENT_LOG, event_arr, uint16_t *size);
-//     }
-
-//     for(uint16_t i = 0; i < event size; ) {
-//         event_arr[log_cnt++] = event[i];   
-//     }
-//     write2eeprom(event);
-
-//     return SATR_OK;
-// }
+     return SATR_OK;
+}

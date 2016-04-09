@@ -1,18 +1,27 @@
 #include "housekeeping_service.h"
 
+
+#undef __FILE_ID__
+#define __FILE_ID__ 5
+
 struct _sat_status sat_status;
 
-void hk_SCH() {
+tc_tm_pkt hk_pkt;
+uint8_t hk_pkt_data[MAX_PKT_DATA];
 
-    tc_tm_pkt pkt;
+void hk_INIT() {
+   hk_pkt.data = hk_pkt_data;
+}
+
+void hk_SCH() {
   
-    hk_crt_pkt_TC(&pkt, EPS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    hk_crt_pkt_TC(&pkt, COMMS_APP_ID, HEALTH_REP);
-    route_pkt(&pkt);
-    HAL_obc_delay(59);
-    hk_crt_pkt_TM(&pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&pkt);
+    hk_crt_pkt_TC(&hk_pkt, EPS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
+    route_pkt(&hk_pkt);
+    HAL_obc_delay(59000);
+    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
+    route_pkt(&hk_pkt);
     clear_wod();
 }
 
@@ -36,10 +45,10 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         tc_tm_pkt *temp_pkt = 0;
         HK_struct_id sid = (HK_struct_id)pkt->data[0];
 
-        hk_crt_empty_pkt_TM(temp_pkt, (TC_TM_app_id)pkt->dest_id, sid);
+        hk_crt_empty_pkt_TM(&temp_pkt, (TC_TM_app_id)pkt->dest_id, sid);
         if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
-        route_pkt(pkt);
+        route_pkt(temp_pkt);
 
     } else if(pkt->app_id == EPS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
         sat_status.batt_curr = pkt->data[1];
@@ -60,12 +69,12 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
     return SATR_OK;
 }
 
-SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
+SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt **pkt, TC_TM_app_id app_id, HK_struct_id sid) {
 
-    pkt = get_pkt(NORMAL);
-    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+    *pkt = get_pkt();
+    if(!C_ASSERT(*pkt != NULL) == true) { return SATR_ERROR; }
 
-    hk_crt_pkt_TM(pkt, app_id, sid);
+    hk_crt_pkt_TM(*pkt, app_id, sid);
     return SATR_OK;
 }
 
@@ -103,7 +112,7 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
         pkt->len = 9;
     }
 
-    crt_pkt(pkt, OBC_APP_ID, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
+    crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
 
     return SATR_OK;
 }

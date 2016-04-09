@@ -141,7 +141,7 @@ typedef struct {
     /* Memory array for inner TC data payload
      * One to one mapping with the sc_mem_array
      */
-    uint8_t innerd_tc_data[SC_MAX_STORED_SCHEDULES][MAX_EX_PKT_DATA];
+    uint8_t innerd_tc_data[SC_MAX_STORED_SCHEDULES][MAX_PKT_DATA];
     
 }Schedule_pkt_pool;
 

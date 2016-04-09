@@ -51,6 +51,10 @@
 extern UART_HandleTypeDef huart2;
 static __IO uint32_t uwTick;
 
+extern SD_HandleTypeDef hsd;
+extern DMA_HandleTypeDef hdma_usart2_tx;
+extern TIM_HandleTypeDef htim1;
+
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
@@ -81,6 +85,33 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 1 */
 }
 
+/**
+* @brief This function handles DMA1 stream6 global interrupt.
+*/
+void DMA1_Stream6_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream6_IRQn 0 */
+
+  /* USER CODE END DMA1_Stream6_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+  /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream6_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
+*/
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
+
+  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+
+  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
 /******************************************************************************/
 /* STM32F4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
@@ -202,21 +233,45 @@ void DebugMon_Handler(void)
   * @Note   This function is redefined in "main.h" and related to DMA stream 
   *         used for USART data transmission     
   */
+//void USART2_IRQHandler(void)
+//{
+//  HAL_UART_IRQHandler(&huart2);
+//
+////    if ( __HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE) != RESET ){
+////        uint8_t data;
+////        
+////    }
+////    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/    
+////  __HAL_UART_FLUSH_DRREGISTER(&Uart2Handle); // Clear the buffer to prevent overrun
+//
+//}
+/**
+* @brief This function handles USART2 global interrupt.
+*/
 void USART2_IRQHandler(void)
 {
+  /* USER CODE BEGIN USART2_IRQn 0 */
+  HAL_OBC_UART_IRQHandler(&huart2);
+  /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
 
-//    if ( __HAL_UART_GET_FLAG(&Uart2Handle, UART_FLAG_RXNE) != RESET ){
-//        uint8_t data;
-//        
-//    }
-//    /*When you access the DR of the usart, the RXNE bit is auto cleared to zero*/    
-//  __HAL_UART_FLUSH_DRREGISTER(&Uart2Handle); // Clear the buffer to prevent overrun
-
+  /* USER CODE END USART2_IRQn 1 */
 }
 
+/**
+* @brief This function handles SDIO global interrupt.
+*/
+void SDIO_IRQHandler(void)
+{
+  /* USER CODE BEGIN SDIO_IRQn 0 */
 
+  /* USER CODE END SDIO_IRQn 0 */
+  HAL_SD_IRQHandler(&hsd);
+  /* USER CODE BEGIN SDIO_IRQn 1 */
 
+  /* USER CODE END SDIO_IRQn 1 */
+}
 
 
 /**

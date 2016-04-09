@@ -32,8 +32,7 @@
 #define TC_ACK_ALL          0x0F
 
 //needs to redifine
-#define MAX_PKT_DATA    20
-#define MAX_EX_PKT_DATA 512
+#define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
 
 #define ECSS_HEADER_SIZE        6
@@ -48,6 +47,9 @@
 
 #define TC 1
 #define TM 0
+
+#define HLDLC_START_FLAG        0x7E
+#define HLDLC_CONTROL_FLAG      0x7D
 
 typedef enum {  
     SATR_PKT_ILLEGAL_APPID     = 0,
@@ -64,23 +66,24 @@ typedef enum {
     SATR_ALREADY_SERVICING     = 11,
     SATR_MS_MAX_FILES          = 12,
     SATR_PKT_INIT              = 13,
+    SATR_INV_STORE_ID          = 14,
     /* Scheduling Service Error State Codes
     * from 
     */
-    SATR_SCHEDULE_FULL         = 14, /* Schedule array is full */
-    SATR_SSCH_ID_INVALID       = 15, /* Subschedule ID invalid */
-    SATR_NMR_OF_TC_INVALID     = 16, /* Number of telecommands invalid */
-    SATR_INTRL_ID_INVALID      = 17, /* Interlock ID invalid */
-    SATR_ASS_INTRL_ID_INVALID  = 18, /* Assess Interlock ID invalid */
-    SATR_ASS_TYPE_ID_INVALID   = 19, /* Assesment type id invalid*/        
-    SATR_RLS_TIMET_ID_INVALID  = 20, /* Relese time type ID invalid */
-    SATR_DEST_APID_INVALID     = 21, /* Destination APID in embedded TC is invalids */
-    SATR_TIME_INVALID          = 22, /* Release time of TC is invalid */
-    SATR_TIME_SPEC_INVALID     = 23, /* Release time of TC is specified in a invalid representation*/
-    SATR_INTRL_LOGIC_ERROR     = 24, /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
-    SATR_SCHEDULE_DISABLED     = 25,
+    SATR_SCHEDULE_FULL         = 15, /* Schedule array is full */
+    SATR_SSCH_ID_INVALID       = 16, /* Subschedule ID invalid */
+    SATR_NMR_OF_TC_INVALID     = 17, /* Number of telecommands invalid */
+    SATR_INTRL_ID_INVALID      = 18, /* Interlock ID invalid */
+    SATR_ASS_INTRL_ID_INVALID  = 19, /* Assess Interlock ID invalid */
+    SATR_ASS_TYPE_ID_INVALID   = 20, /* Assesment type id invalid*/        
+    SATR_RLS_TIMET_ID_INVALID  = 21, /* Relese time type ID invalid */
+    SATR_DEST_APID_INVALID     = 22, /* Destination APID in embedded TC is invalids */
+    SATR_TIME_INVALID          = 23, /* Release time of TC is invalid */
+    SATR_TIME_SPEC_INVALID     = 24, /* Release time of TC is specified in a invalid representation*/
+    SATR_INTRL_LOGIC_ERROR     = 25, /* The release time of telecommand is in the execution window of its interlocking telecommand.*/
+    SATR_SCHEDULE_DISABLED     = 26,
     /*LAST*/
-    SATR_LAST                  = 26
+    SATR_LAST                  = 27
 }SAT_returnState;
 
 /*services types*/
@@ -140,9 +143,21 @@ typedef enum {
 #define TC_CT_PERFORM_TEST              1
 #define TM_CT_REPORT_TEST               2
 
-/*memory pool packet modes*/
-#define NORMAL      1
-#define EXTENDED    2
+/*taken from stm32f4xx_hal_rtc.h*/
+#define TM_MONTH_JANUARY              ((uint8_t)0x01U)
+#define TM_MONTH_FEBRUARY             ((uint8_t)0x02U)
+#define TM_MONTH_MARCH                ((uint8_t)0x03U)
+#define TM_MONTH_APRIL                ((uint8_t)0x04U)
+#define TM_MONTH_MAY                  ((uint8_t)0x05U)
+#define TM_MONTH_JUNE                 ((uint8_t)0x06U)
+#define TM_MONTH_JULY                 ((uint8_t)0x07U)
+#define TM_MONTH_AUGUST               ((uint8_t)0x08U)
+#define TM_MONTH_SEPTEMBER            ((uint8_t)0x09U)
+#define TM_MONTH_OCTOBER              ((uint8_t)0x10U)
+#define TM_MONTH_NOVEMBER             ((uint8_t)0x11U)
+#define TM_MONTH_DECEMBER             ((uint8_t)0x12U)
+
+#define OBC_UART_BUF_SIZE 1024
 
 typedef enum {  
     OBC_APP_ID      = 1,
@@ -222,7 +237,24 @@ typedef enum {
     LAST_MODE   = 6
 }MS_mode;
 
-#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __LINE__, #e)))
+typedef enum {  
+    su_running     = 1,
+    su_idle       = 2,
+    su_finished   = 3,
+    LAST_SU_STATE = 4
+}SU_state;
+
+typedef enum {  
+    ev_free_1     = 1,
+    ev_free_2     = 2,
+    ev_wr_1       = 3,
+    ev_wr_2       = 4,
+    ev_owr_1      = 5,
+    ev_owr_2      = 6,
+    LAST_EV_STATE = 7
+}EV_state;
+
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __FILE_ID__, __LINE__, #e))) 
 
 union _cnv {
     uint32_t cnv32;
@@ -230,6 +262,13 @@ union _cnv {
     uint8_t cnv8[4];
 };
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
+extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
+
+extern void cnv32_8(const uint32_t from, uint8_t *to);
+extern void cnv16_8(const uint16_t from, uint8_t *to);
+extern void cnv8_32(uint8_t *from, uint32_t *to);
+extern void cnv8_16(uint8_t *from, uint16_t *to);
+
 typedef struct {
     /* packet id */
     //uint8_t ver; /* 3 bits, should be equal to 0 */
@@ -252,7 +291,7 @@ typedef struct {
     //uint8_t pckt_sub_cnt; /* 8 bits*/
     TC_TM_app_id dest_id;   /*on TC is the source id, on TM its the destination id*/
 
-    uint8_t *data; /* variable data, this should be fixed array, normal or extended */
+    uint8_t *data; /* pkt data */
 
     /*this is not part of the header. it is used from the software and the verification service,
      *when the packet wants ack. 
@@ -265,23 +304,42 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
+struct _obc_data
+{
+    uint16_t obc_seq_cnt;
+    uint8_t rsrc;
+    uint32_t *file_id;
+    uint32_t *boot_counter;
+    uint32_t *log;
+    uint32_t *log_cnt;
+    uint32_t *log_state;
+
+    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t eps_uart_size;
+};
+
+extern struct _obc_data obc_data;
+
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
+//  add reset counter, reset source finder.
+//  add it uart
+//  add assertions for pkt size related to the service type, subtype
+//  check hldlc, its buggy.
 //  define in unpack the MIN_PKT_SIZE and MAX_PKT_SIZE
 //  need to check pkt len for not overruning to checksum
 //  sort definitions relating to file system and packet sizes etc.
-//  update verification lookup table
 //  add verification steps in each service.
 //  assert for 0 in modes, ids when applicable.
 //  verify HK_struct_id modes
 //  check that cnv functions are used correctly
 //  function management set time.
 //  finalize TC_MAX_PKT_SIZE
-//  add reset counter, reset source finder.
 //  add event log book function
 //  test assertion definition for stm
 //  finish assertions
@@ -290,6 +348,7 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  add definitions for packet len calculations
 
 //finished
+//  update verification lookup table
 //  CRC in 8bits instead of 16 but use it anyway. the high byte should be 0.
 //  there is no support for verification for obc, do we need that?
 //  SAT_returnState renaming to UPS_OK?
@@ -311,6 +370,6 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //stub
 uint32_t time_now();
 
-uint8_t tst_debugging(char *f, int l, char *e);
+uint8_t tst_debugging(char *f, int fi, int l, char *e);
 
 #endif

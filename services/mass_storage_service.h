@@ -33,10 +33,11 @@
 #define MS_MAX_FILES            30 //random num
 #define MS_MAX_FNAME            30 //random num
 #define MS_MAX_LOG_FILE_SIZE    512 //SD byte sectors 
-#define MS_MAX_SU_FILE_SIZE     512 //SD byte sectors 
+#define MS_MAX_SU_FILE_SIZE     2048 //2k
 #define MS_FILE_SECTOR          512
 #define MS_STORES               3
 #define MS_SU_FSIZE             174
+#define MS_MIN_SU_FILE 			1	//min is the header.
 
 struct _MS_data {
     FATFS test;
@@ -49,9 +50,10 @@ extern struct _MS_data MS_data;
 
 extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
-extern uint32_t time_now();
+extern uint32_t get_new_fileId();
 extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern void cnv32_8(const uint32_t from, uint8_t *to);
+extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 //ToDo
 //	check type casting for snprintf & %d conversions
@@ -81,7 +83,10 @@ SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, u
 
 SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
+
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
+
+SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf);
 
 
 SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);

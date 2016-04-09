@@ -100,6 +100,7 @@ int main() {
     in[14] = OBC_SD_DEV_ID; //OBC_SD_DEV_ID
     
     in[15] = 0;
+    in[16] = 0;
     checkSum(in, 14, &in[16]);
 
     for(int i = 0; i < 17; i++) {
@@ -142,8 +143,139 @@ int main() {
     for(int i = 0; i < 17; i++) {
         printf("%d\n", in[i]);
     }
-    printf("FM led off%d\n",(uint8_t)125);
+    printf("FM led off\n");
 
+//temp pkt for fm service.
+
+    size = 16;
+    /*TC*/
+    in[0] = 0b00011000;
+    in[1] = OBC_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010001;
+
+    in[7] = TC_FUNCTION_MANAGEMENT_SERVICE;
+
+    in[8] = TC_FM_PERFORM_FUNCTION;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = P_ON; //led on
+
+    in[11] = 0; //led on
+    in[12] = 0; 
+    in[13] = 0; 
+    in[14] = OBC_SD_DEV_ID; //OBC_SD_DEV_ID
+    
+    in[15] = 0;
+    in[16] = 0;
+    checkSum(in, 14, &in[16]);
+
+    for(int i = 0; i < 17; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("FM led on with ack\n");
+
+    size = 16;
+    /*TC*/
+    in[0] = 0b00011000;
+    in[1] = OBC_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010001;
+
+    in[7] = TC_FUNCTION_MANAGEMENT_SERVICE;
+
+    in[8] = TC_FM_PERFORM_FUNCTION;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = P_OFF; //led off
+
+    in[11] = 0; //led 
+    in[12] = 0; 
+    in[13] = 0; 
+    in[14] = OBC_SD_DEV_ID; //OBC_SD_DEV_ID
+    
+    in[15] = 0;
+    in[16] = 0;
+    checkSum(in, 14, &in[16]);
+
+    for(int i = 0; i < 17; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("FM led off with ack\n");
+
+    in[0] = 0b00011000;
+    in[1] = EPS_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010000;
+
+    in[7] = TC_HOUSEKEEPING_SERVICE;
+
+    in[8] = TM_HK_PARAMETERS_REPORT;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = WOD_REP; //led off
+    
+    in[11] = 0;
+    in[12] = 0;
+    checkSum(in, 14, &in[12]);
+
+    for(int i = 0; i < 13; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("HK tc wod report\n");
+
+    in[0] = 0b00011000;
+    in[1] = EPS_APP_ID;
+
+    in[2] = 0b11000000;
+    in[3] = 0xB9;
+
+    /*data_hdr+crc-1*/
+    in[4] = 0;
+    in[5] = 5+1+5-1;
+
+    in[6] = 0b00010000;
+
+    in[7] = TC_HOUSEKEEPING_SERVICE;
+
+    in[8] = TM_HK_PARAMETERS_REPORT;
+    
+    in[9] = GND_APP_ID;
+    
+    in[10] = WOD_REP; //led off
+    
+    in[11] = 0;
+    in[12] = 0;
+    checkSum(in, 14, &in[12]);
+
+    for(int i = 0; i < 13; i++) {
+        printf("%d\n", in[i]);
+    }
+    printf("HK tc wod report\n");
 	// size = 16;
 	// /*TC*/
 	// in[0] = 0b00011000;
