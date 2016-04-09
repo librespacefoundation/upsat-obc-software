@@ -47,9 +47,10 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
     uint8_t path[MS_MAX_PATH];
     uint16_t i;
 
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG ||sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
 
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
 
@@ -91,10 +92,10 @@ SAT_returnState mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint32_t fro
 
     SAT_returnState res; 
 
-    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)       { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)                         { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
 
-    if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_downlinkLogs(sid, mode, from, to, buf, size, part); }
+    if(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) { res = mass_storage_downlinkLogs(sid, mode, from, to, buf, size, part); }
     else if(sid == FOTOS) { res = mass_storage_downlinkLargeFile(sid, from, buf, size, part); }
     else { return SATR_ERROR; }
 
@@ -118,11 +119,12 @@ SAT_returnState mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t fro
 
     if(!C_ASSERT(buf != NULL && size != NULL && size != NULL && part != NULL) == true)  { return SATR_ERROR; }
     if(!C_ASSERT(*size > 0) == true)                                                    { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)                            { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) == true)          { return SATR_ERROR; }
     if(!C_ASSERT(mode < LAST_MODE) == true)                                             { return SATR_ERROR; }
 
     /*cp dir belonging to sid*/
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
 
     /*Find first file, new search*/
@@ -202,10 +204,10 @@ SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, u
 
     SAT_returnState res; 
 
-    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)       { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return SATR_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)                            { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return SATR_ERROR; }
 
-    if(sid == SU_LOG || sid == EVENT_LOG) { res = mass_storage_storeLogs(sid, buf, size); }
+    if(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) { res = mass_storage_storeLogs(sid, buf, size); }
     else if(sid == FOTOS || sid <= SU_SCRIPT_7) { res = mass_storage_storeLargeFile(sid, mode, buf, size, part); }
     else { return SATR_ERROR; }
 
@@ -338,11 +340,12 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     uint8_t path[MS_MAX_PATH];
     uint16_t i;
 
-    if(!C_ASSERT(buf != NULL && size != NULL && iter != NULL) == true)          { return SATR_ERROR; }
-    if(!C_ASSERT(*size == 0) == true)                                           { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return SATR_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL && iter != NULL) == true)                            { return SATR_ERROR; }
+    if(!C_ASSERT(*size == 0) == true)                                                             { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return SATR_ERROR; }
 
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
 
@@ -489,10 +492,11 @@ SAT_returnState mass_storage_getLog(MS_sid sid, uint8_t *fn) {
 
     FILINFO fno;
 
-    if(!C_ASSERT(fn != NULL) == true)                           { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
+    if(!C_ASSERT(fn != NULL) == true)                                             { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
 
     if(sid == SU_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_SU_LOG, get_new_fileId()); }
+    else if(sid == WOD_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_WOD_LOG, get_new_fileId()); }
     else if(sid == EVENT_LOG) { snprintf((char*)fn, MS_MAX_PATH, "%s//%d", MS_EVENT_LOG, get_new_fileId()); }
 
     return SATR_OK; 
@@ -509,10 +513,11 @@ SAT_returnState mass_storage_findLog(MS_sid sid, uint32_t *fn) {
     uint32_t min = 0;
     uint16_t i;
 
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
-    if(!C_ASSERT(fn != NULL) == true)                           { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) == true)    { return SATR_ERROR; }
+    if(!C_ASSERT(fn != NULL) == true)                                             { return SATR_ERROR; }
 
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
 
     if (f_opendir(&dir,(char*) path) != FR_OK) { return SATR_ERROR; }
@@ -555,9 +560,10 @@ SAT_returnState mass_storage_getFileSizeCount(MS_sid sid) {
     uint8_t path[MS_MAX_PATH];
     uint16_t i;
 
-    if(!C_ASSERT(sid == SU_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
 
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
+    else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
 
@@ -587,6 +593,7 @@ SAT_returnState mass_storage_init() {
 
     mass_storage_getFileSizeCount(FOTOS);
     mass_storage_getFileSizeCount(SU_LOG);
+    mass_storage_getFileSizeCount(WOD_LOG);
     mass_storage_getFileSizeCount(EVENT_LOG);
 
     return SATR_OK;
