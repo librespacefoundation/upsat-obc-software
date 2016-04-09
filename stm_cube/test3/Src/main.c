@@ -48,10 +48,12 @@ SD_HandleTypeDef hsd;
 HAL_SD_CardInfoTypedef SDCardInfo;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 WWDG_HandleTypeDef hwwdg;
 
 osThreadId defaultTaskHandle;
+osThreadId hkHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -61,12 +63,14 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_WWDG_Init(void);
 void StartDefaultTask(void const * argument);
+void StartTask02(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -74,6 +78,7 @@ extern SAT_returnState mass_storage_init();
 extern SAT_returnState pkt_pool_INIT();
 extern void HAL_reset_source(uint8_t *src);
 extern void HAL_obc_enableBkUpAccess();
+extern void hk_SCH();
 
 /* USER CODE END PFP */
 
@@ -98,6 +103,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SDIO_SD_Init();
   MX_USART2_UART_Init();
   MX_RTC_Init();
@@ -105,7 +111,7 @@ int main(void)
   MX_WWDG_Init();
 
   /* USER CODE BEGIN 2 */
-
+  
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -124,6 +130,10 @@ int main(void)
   /* definition and creation of defaultTask */
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of hk */
+  osThreadDef(hk, StartTask02, osPriorityLow, 0, 128);
+  hkHandle = osThreadCreate(osThread(hk), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -284,6 +294,21 @@ void MX_WWDG_Init(void)
   hwwdg.Init.Window = 64;
   hwwdg.Init.Counter = 64;
   HAL_WWDG_Init(&hwwdg);
+
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 
 }
 
@@ -452,16 +477,31 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+HAL_UART_RxCpltCallback(&huart2);
   obc_data.rsrc = 0;
    HAL_reset_source(&obc_data.rsrc);
    update_boot_counter();
 
+   uint32_t t1, t2, t3;
+   
+   t1 = time_cmp_elapsed(3, 6);
+   t2 = time_cmp_elapsed(0xfffffff0, 0xfffffff6);
+   t3 = time_cmp_elapsed(0xfffffff0, 3);
+   
+   t1 = get_time_ELAPSED();
+   osDelay(10);
+   t2 = get_time_ELAPSED();
+   osDelay(1000);
+   t3 = get_time_ELAPSED();
+   
    //event_log(reset source);
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
-
+   *obc_data.log_cnt = 0;
+   
    uint8_t hours, mins, sec = 0;
    HAL_obc_getTime(&hours, &mins, &sec);
    sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
@@ -486,20 +526,35 @@ void StartDefaultTask(void const * argument)
    
    sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
    HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   //mass_storage_init();
+   mass_storage_init();
    //su_INIT();
    sprintf((char*)uart_temp, "Hello\n");
    HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
    //HAL_IWDG_Start(&hiwdg); //0x17
    //HAL_WWDG_Start(&hwwdg); //0x22
   /* Infinite loop */
+   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
   for(;;)
   {
     import_eps_pkt();
     //su_SCH();
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END 5 */ 
+}
+
+/* StartTask02 function */
+void StartTask02(void const * argument)
+{
+  /* USER CODE BEGIN StartTask02 */
+  hk_INIT();
+  /* Infinite loop */
+  for(;;)
+  {
+    hk_SCH();
+   //osDelay(1);
+  }
+  /* USER CODE END StartTask02 */
 }
 
 #ifdef USE_FULL_ASSERT

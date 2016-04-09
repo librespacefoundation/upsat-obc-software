@@ -4,8 +4,6 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 2
 
-struct _obc_data obc_data;
-
 // need to check endiannes
 void cnv32_8(const uint32_t from, uint8_t *to) {
 
@@ -133,21 +131,20 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 SAT_returnState import_eps_pkt() {
 
     tc_tm_pkt *pkt;
-    uint8_t c = 0;
     uint16_t size = 0;
 
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
-    res = HAL_eps_uart_rx(&c);
-    if( res == SATR_OK ) { 
-        res_deframe = HLDLC_deframe(buf, &cnt, c, &size);
+    res = HAL_eps_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.eps_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.eps_uart_buf, obc_data.eps_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
-            
-            //if(cnt > )
+
             pkt = get_pkt();
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            if(unpack_pkt(buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            if(unpack_pkt(obc_data.eps_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }
@@ -346,18 +343,23 @@ void bkup_sram_INIT() {
     obc_data.log_state = HAL_obc_BKPSRAM_BASE() + 1;
     obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
     obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
+    obc_data.wod_cnt = HAL_obc_BKPSRAM_BASE() + 4;
 
-    obc_data.log = HAL_obc_BKPSRAM_BASE() + 4;
+    obc_data.log = HAL_obc_BKPSRAM_BASE() + 5;
 
+    obc_data.wod_log = HAL_obc_BKPSRAM_BASE() + 5 + (EV_MAX_BUFFER/32);
+
+    if(!C_ASSERT(*obc_data.log_cnt > EV_MAX_BUFFER) == true) { *obc_data.log_cnt = 0; }
+    if(!C_ASSERT(*obc_data.wod_cnt > EV_MAX_BUFFER) == true) { *obc_data.wod_cnt = 0; }
 }
 
 uint32_t get_new_fileId() {
 
     (*obc_data.file_id)++;
-    if(*obc_data. > MAX_FILE_NUM) {
+    if(*obc_data.file_id > MAX_FILE_NUM) {
         *obc_data.file_id = 1;
     }
-    return;
+    return *obc_data.file_id;
 }
 
 SAT_returnState update_boot_counter() {
@@ -384,10 +386,10 @@ SAT_returnState event_log(uint8_t *buf, const uint16_t size) {
         (*obc_data.log_cnt)++;
         if(*obc_data.log_cnt >= EV_MAX_BUFFER) { *obc_data.log_cnt = 0; }
 
-        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_1; }
-        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_wr_2; }
-        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_2; }
-        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state == ev_owr_1; }
+        if(*obc_data.log_state == ev_free_1 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_1; }
+        else if(*obc_data.log_state == ev_free_2 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_wr_2; }
+        else if(*obc_data.log_state == ev_wr_1 && *obc_data.log_cnt < (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_2; }
+        else if(*obc_data.log_state == ev_wr_2 && *obc_data.log_cnt > (EV_MAX_BUFFER / 2)) { *obc_data.log_state = ev_owr_1; }
     }
 
     return SATR_OK;
@@ -410,7 +412,7 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_state == ev_free_2;
+        *obc_data.log_state = ev_free_2;
 
     } else if(*obc_data.log_state == ev_wr_2 || *obc_data.log_state == ev_owr_2) { 
         uint16_t size = (EV_MAX_BUFFER / 2);
@@ -420,8 +422,46 @@ SAT_returnState event_log_IDLE() {
         }
         mass_storage_storeLogs(EVENT_LOG, buf, &size);
 
-        *obc_data.log_state == ev_free_1;
+        *obc_data.log_state = ev_free_1;
     }
     
      return SATR_OK;
+}
+
+SAT_returnState wod_log() {
+
+//check endianess
+
+    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.batt_curr << 24) || (sat_status.batt_volt << 16) || (sat_status.bus_3v3_curr << 8) || sat_status.bus_5v_curr; 
+     
+    (*obc_data.wod_cnt)++;
+    if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
+
+    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.temp_eps << 16) || (sat_status.temp_batt << 8) || sat_status.temp_comms;
+
+    (*obc_data.wod_cnt)++;
+    if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
+
+    return SATR_OK;
+}
+
+SAT_returnState wod_log_load(uint8_t *buf) {
+
+//    union _cnv temp_cnv;
+
+//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
+//    buf[i] = temp_cnv.cnv8[3];
+//    buf[i] = temp_cnv.cnv8[2];
+//    buf[i] = temp_cnv.cnv8[1];
+//    buf[i] = temp_cnv.cnv8[0];
+
+//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
+//    buf[i] = temp_cnv.cnv8[2];
+//    buf[i] = temp_cnv.cnv8[1];
+//    buf[i] = temp_cnv.cnv8[0];
+   
+//   for(uint16_t i = 0; i < size; i++) {
+//        buf[i] = obc_data.log[(pointer + i) >> 2] >> ((0x00000003 & i) * 8);
+//   }
+   return SATR_OK;
 }

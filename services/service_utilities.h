@@ -11,22 +11,13 @@
 
 #define EV_MAX_BUFFER 1024
 
+#define WOD_MAX_BUFFER 64
+
 /*restriction for 8 char filename, for conversion from num to file name*/
 #define MAX_FILE_NUM 0x5F5E0FF
 
-//need to make an obc struct with all the data.
-struct _obc_data
-{
-    uint16_t obc_seq_cnt;
-    uint8_t rsrc;
-    uint32_t *file_id;
-    uint32_t *boot_counter;
-    uint32_t *log;
-    uint32_t *log_cnt;
-    uint32_t *log_state;
-};
-
 extern struct _obc_data obc_data;
+extern struct _sat_status sat_status;
 
 extern tc_tm_pkt * get_pkt();
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
@@ -43,14 +34,15 @@ extern SAT_returnState test_app(tc_tm_pkt *pkt);
 extern SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 extern SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 
-extern SAT_returnState HLDLC_deframe(uint8_t *buf, uint16_t *cnt, const uint8_t c, uint16_t *size);
+extern SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 extern SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 
-extern SAT_returnState HAL_eps_uart_rx(uint8_t *c);
+extern SAT_returnState HAL_eps_uart_rx();
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 extern uint32_t * HAL_obc_BKPSRAM_BASE();
 
 //ToDo
+//  seq counter, hoq it works?
 //  need to make an obc struct with all the data.
 //  Add if condition for normal packet or extended
 
