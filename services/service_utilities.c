@@ -132,7 +132,7 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
 
-    HAL_eps_uart_tx(buf_out, size+1);
+    HAL_eps_uart_tx(buf_out, size);
 
     return SATR_OK;
 }
