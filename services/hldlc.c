@@ -32,15 +32,13 @@ SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size)
 SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
 
     if(!C_ASSERT(buf_in != NULL && buf_out != NULL && size != NULL) == true)   { return SATR_ERROR; }
-    uint16_t cnt = 2;
 
+    uint16_t cnt = 1;
+
+    buf_out[0] = HLDLC_START_FLAG;
     for(uint16_t i = 0; i < *size; i++) {
-        if(i == 0) {
-            buf_out[0] = HLDLC_START_FLAG;
-            buf_out[1] = buf_in[0];
-        } else if(i == (*size) - 1) {
-            buf_out[cnt++] = buf_in[i];
-            buf_out[cnt] = HLDLC_START_FLAG;
+        if(i == (*size) - 1) {
+            buf_out[cnt++] = HLDLC_START_FLAG;
             *size = cnt;
             return SATR_EOT;
         } else if(buf_in[i] == HLDLC_START_FLAG) {
