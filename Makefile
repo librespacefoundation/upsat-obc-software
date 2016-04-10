@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS= -std=c99 -I.
 DEPS = services/services.h
-OBJ = hldlc.o
+OBJ = hldlc.o pkt_pool.o
 EXE = runme.out
 TESTS = $(wildcard unity_tests/*.c)
 MOCKS = $(wildcard unity_tests/mocks/*.c)
@@ -20,8 +20,14 @@ clean-tests:
 	rm -rf tests/mocks
 
 unity_tests/test_hldlc.c: hldlc.o
-	gcc -std=c99  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_hldlc.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
+	$(CC) $(CFLAGS)  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_hldlc.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
 	./test_hldlc.out
+
+unity_tests/test_pkt_pool.c: pkt_pool.o
+	$(CC) $(CFLAGS)  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_pkt_pool.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
+	./test_pkt_pool.out
+
+
 
 test: clean $(TESTS)
 	echo $(TESTS)
