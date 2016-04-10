@@ -1,3 +1,6 @@
 CMock/
 Unity/
 unity_tests/mocks
+*.swp
+*.o
+*.out
