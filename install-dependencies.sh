@@ -1,4 +1,8 @@
 # /usr/bin/env sh
-git clone https://github.com/ThrowTheSwitch/Unity.git
-git clone --recursive https://github.com/ThrowTheSwitch/CMock.git
+if [ ! -d Unity ]; then
+  git clone https://github.com/ThrowTheSwitch/Unity.git
+fi
+if [ ! -d CMock ]; then
+  git clone --recursive https://github.com/ThrowTheSwitch/CMock.git
+fi
 make mock-functions
