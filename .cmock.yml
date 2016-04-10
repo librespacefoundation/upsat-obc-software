@@ -1,2 +1,4 @@
 :cmock:
- :mock_path: ./unity_tests/mocks
+  :mock_path: ./unity_tests/mocks
+  :plugins:
+    - 'ignore'
