@@ -27,9 +27,10 @@ unity_tests/test_pkt_pool.c: pkt_pool.o
 	$(CC) $(CFLAGS)  $@ $< Unity/src/unity.c CMock/src/cmock.c unity_tests/mocks/Mockservices.c -o test_pkt_pool.out -I./services -I./CMock/src -I./Unity/src -I./unity_tests/mocks
 	./test_pkt_pool.out
 
+install_dependencies:
+	./install-dependencies.sh
 
-
-test: clean $(TESTS)
+test: clean install_dependencies $(TESTS)
 	echo $(TESTS)
 
 mock-functions:
@@ -40,3 +41,4 @@ mock-functions:
 .PHONY: clean
 .PHONY: clean-tests
 .PHONY: mock-functions
+.PHONY: install-dependencies
