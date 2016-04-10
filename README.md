@@ -1,5 +1,5 @@
 # UPSat On Board Computer software
-WIP: OBC Software for UPSat
+OBC Software for UPSat
 
 ## License
 
