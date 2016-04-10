@@ -1,2 +1,2 @@
 # upsat-obc-software
-OBC Software for UPSat
+WIP: OBC Software for UPSat
