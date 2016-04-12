@@ -36,7 +36,7 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "../../services/service_utilities.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -535,10 +535,72 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
+   //obc_data.rsrc = 0;
+   HAL_reset_source(&obc_data.rsrc);
+   update_boot_counter();
+
+   //uint32_t t1, t2, t3;
+   
+   //t1 = time_cmp_elapsed(3, 6);
+   //t2 = time_cmp_elapsed(0xfffffff0, 0xfffffff6);
+   //t3 = time_cmp_elapsed(0xfffffff0, 3);
+   
+   //t1 = get_time_ELAPSED();
+   //osDelay(10);
+   //t2 = get_time_ELAPSED();
+   //osDelay(1000);
+   //t3 = get_time_ELAPSED();
+   
+   //event_log(reset source);
+   
+   uint8_t uart_temp[20];
+   
+   pkt_pool_INIT();
+   HAL_obc_enableBkUpAccess();
+   bkup_sram_INIT();
+   
+   mass_storage_init();
+   //su_INIT();
+   
+   *obc_data.log_cnt = 0;
+   //uint8_t hours, mins, sec = 0;
+   //HAL_obc_getTime(&hours, &mins, &sec);
+   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   //hours = 19;
+   //mins = 35;
+   //sec = 11;
+   //HAL_obc_setTime(hours, mins, sec);
+   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   //sprintf((char*)uart_temp, "F: %u\n", *obc_data.log_cnt);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   //(*obc_data.log_cnt)++;
+   //*obc_data.log_cnt = 0;
+   //uint8_t tt[] = "YO!\n";
+   //event_log(tt, 4);
+
+   //event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
+   //HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
+   
+   //sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   
+   
+   
+  sprintf((char*)uart_temp, "Hello\n");
+  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+  
+  /*Uart inits*/
+  HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    import_eps_pkt();
+    //su_SCH();
+    osDelay(100);
   }
   /* USER CODE END 5 */ 
 }
@@ -547,10 +609,11 @@ void StartDefaultTask(void const * argument)
 void HK_task(void const * argument)
 {
   /* USER CODE BEGIN HK_task */
+  hk_INIT();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    hk_SCH();
   }
   /* USER CODE END HK_task */
 }
