@@ -349,8 +349,12 @@ void bkup_sram_INIT() {
 
     obc_data.wod_log = HAL_obc_BKPSRAM_BASE() + 5 + (EV_MAX_BUFFER/32);
 
-    if(!C_ASSERT(*obc_data.log_cnt > EV_MAX_BUFFER) == true) { *obc_data.log_cnt = 0; }
-    if(!C_ASSERT(*obc_data.wod_cnt > EV_MAX_BUFFER) == true) { *obc_data.wod_cnt = 0; }
+    //for testing only
+    *obc_data.log_cnt = 0;
+    *obc_data.wod_cnt = 0;
+    
+    if(!C_ASSERT(*obc_data.log_cnt < EV_MAX_BUFFER) == true) { *obc_data.log_cnt = 0; }
+    if(!C_ASSERT(*obc_data.wod_cnt < EV_MAX_BUFFER) == true) { *obc_data.wod_cnt = 0; }
 }
 
 uint32_t get_new_fileId() {
