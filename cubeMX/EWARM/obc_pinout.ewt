@@ -1065,10 +1065,16 @@
         <name>$PROJ_DIR$\..\Src\fatfs.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Src\freertos.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Src\main.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_hal_msp.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Src\stm32f4xx_hal_timebase_TIM.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
@@ -1167,6 +1173,126 @@
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\option\syscall.c</name>
       </file>
     </group>
+    <group>
+      <name>FreeRTOS</name>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\croutine.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\event_groups.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\MemMang\heap_4.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\list.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\portasm.s</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\queue.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\tasks.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\timers.c</name>
+      </file>
+    </group>
+  </group>
+  <group>
+    <name>OBC</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\function_management_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\function_management_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\hldlc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\hldlc.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\housekeeping_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\housekeeping_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\large_data_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\large_data_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\mass_storage_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\mass_storage_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\pkt_pool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\pkt_pool.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\power_ctrl.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\power_ctrl.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\service_utilities.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\service_utilities.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\services.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\services.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\su_mnlp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\su_mnlp.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\test_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\test_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\time_management.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\time_management.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\verification_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\services\verification_service.h</name>
+    </file>
   </group>
 </project>
 
