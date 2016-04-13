@@ -97,16 +97,16 @@ void set_time_QB50(uint32_t qb) {
 }
 
 void set_time_UTC(struct time_utc utc) {
-    HAL_obc_setDate(utc.month, utc.day, utc.year);
-    HAL_obc_setTime(utc.hours, utc.min, utc.sec);
+    HAL_sys_setDate(utc.month, utc.day, utc.year);
+    HAL_sys_setTime(utc.hours, utc.min, utc.sec);
 }
 
 void get_time_QB50(uint32_t *qb) {
 
     struct time_utc utc;
 
-    HAL_obc_getDate(&utc.month, &utc.day, &utc.year);
-    HAL_obc_getTime(&utc.hours, &utc.min, &utc.sec);
+    HAL_sys_getDate(&utc.month, &utc.day, &utc.year);
+    HAL_sys_getTime(&utc.hours, &utc.min, &utc.sec);
     cnv_UTC_QB50(utc, qb);
 
 }
@@ -114,13 +114,13 @@ void get_time_QB50(uint32_t *qb) {
 
 void get_time_UTC(struct time_utc *utc) {
 
-    HAL_obc_getDate(&utc->month, &utc->day, &utc->year);
-    HAL_obc_getTime(&utc->hours, &utc->min, &utc->sec);
+    HAL_sys_getDate(&utc->month, &utc->day, &utc->year);
+    HAL_sys_getTime(&utc->hours, &utc->min, &utc->sec);
 
 }
 
 uint32_t get_time_ELAPSED() {
-    return HAL_obc_GetTick();
+    return HAL_sys_GetTick();
 }
 
 /*works when the tick ovf*/

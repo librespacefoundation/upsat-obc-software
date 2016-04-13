@@ -30,7 +30,7 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
         uint8_t sec = 0;
 
         //cnvQB50_UTC(val, &hours, &mins, &sec);
-        HAL_obc_setTime(hours, mins, sec);
+        HAL_sys_setTime(hours, mins, sec);
         //HAL_obc_setDate(hours, mins, sec);
     }
 
@@ -41,7 +41,7 @@ SAT_returnState function_management_pctrl_crt_pkt_api(tc_tm_pkt **pkt, TC_TM_app
 
     *pkt = get_pkt();
     if(!C_ASSERT(*pkt != NULL) == true) { return SATR_ERROR; }
-    crt_pkt(*pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_TEST_SERVICE, TC_FM_PERFORM_FUNCTION, dest_id);
+    crt_pkt(*pkt, SYSTEM_APP_ID, TM, TC_ACK_NO, TC_TEST_SERVICE, TC_FM_PERFORM_FUNCTION, dest_id);
 
     (*pkt)->data[0] = fun_id;
 

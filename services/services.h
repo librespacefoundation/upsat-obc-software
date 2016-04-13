@@ -141,7 +141,7 @@ typedef enum {
 #define TM_MONTH_NOVEMBER             ((uint8_t)0x11U)
 #define TM_MONTH_DECEMBER             ((uint8_t)0x12U)
 
-#define OBC_UART_BUF_SIZE 1024
+#define UART_BUF_SIZE 1024
 
 typedef enum {  
     OBC_APP_ID      = 1,
@@ -239,7 +239,8 @@ union _cnv {
     uint16_t cnv16[2];
     uint8_t cnv8[4];
 };
-extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
+
+extern void HAL_uart_tx(uint8_t *buf, uint16_t size);
 extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 
 extern void cnv32_8(const uint32_t from, uint8_t *to);
@@ -282,58 +283,8 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
-struct _obc_data
-{
-    uint16_t obc_seq_cnt;
-    uint8_t rsrc;
-    uint32_t *file_id;
-    uint32_t *boot_counter;
-    uint32_t *log;
-    uint32_t *log_cnt;
-    uint32_t *log_state;
-    uint32_t *wod_log;
-    uint32_t *wod_cnt;
-
-    uint8_t dbg_uart_buf[OBC_UART_BUF_SIZE];
-    uint8_t dbg_uart_pkt_buf[OBC_UART_BUF_SIZE];
-    uint8_t dbg_deframed_buf[TC_MAX_PKT_SIZE];
-    uint16_t dbg_uart_size;
-    
-    uint8_t comms_uart_buf[OBC_UART_BUF_SIZE];
-    uint8_t comms_uart_pkt_buf[OBC_UART_BUF_SIZE];
-    uint8_t comms_deframed_buf[TC_MAX_PKT_SIZE];
-    uint16_t comms_uart_size;
-    
-    uint8_t adcs_uart_buf[OBC_UART_BUF_SIZE];
-    uint8_t adcs_uart_pkt_buf[OBC_UART_BUF_SIZE];
-    uint8_t adcs_deframed_buf[TC_MAX_PKT_SIZE];
-    uint16_t adcs_uart_size;
-
-    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
-    uint8_t eps_uart_pkt_buf[OBC_UART_BUF_SIZE];
-    uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
-    uint16_t eps_uart_size;
-};
-
-struct _sat_status {
-    uint8_t mode;
-    uint8_t batt_curr;
-    uint8_t batt_volt;
-    uint8_t bus_3v3_curr;
-    uint8_t bus_5v_curr;
-    uint8_t temp_eps;
-    uint8_t temp_batt;
-    uint8_t temp_comms;
-};
-
-extern struct _sat_status sat_status;
-
-extern struct _obc_data obc_data;
-
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-
-extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
 //  add reset counter, reset source finder.
@@ -375,6 +326,13 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  add seq count in pack and global memory.
 //  use pkt->len for data?
 //  add pack functions in each service.
+
+struct uart_data
+    uint8_t uart_buf[UART_BUF_SIZE];
+    uint8_t uart_pkt_buf[UART_BUF_SIZE];
+    uint8_t deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t uart_size;
+};
 
 //stub
 uint32_t time_now();

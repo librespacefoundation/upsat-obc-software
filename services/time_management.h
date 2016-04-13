@@ -22,13 +22,13 @@ struct time_keeping {
 
 };
 
-extern void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec);
-extern void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec);
+extern void HAL_sys_setTime(uint8_t hours, uint8_t mins, uint8_t sec);
+extern void HAL_sys_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec);
 
-extern void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year);
-extern void HAL_obc_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
+extern void HAL_sys_setDate(uint8_t mon, uint8_t date, uint8_t year);
+extern void HAL_sys_getDate(uint8_t *mon, uint8_t *date, uint8_t *year);
 
-extern uint32_t HAL_obc_GetTick();
+extern uint32_t HAL_sys_GetTick();
 
 //ToDo
 //  Set assertions everywhere

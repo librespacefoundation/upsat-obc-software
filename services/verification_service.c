@@ -51,7 +51,7 @@ SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt **out, SAT_return
         (*out)->len = ECSS_VR_DATA_LEN_FAILURE;
     }
 
-    crt_pkt(*out, OBC_APP_ID, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->dest_id);
+    crt_pkt(*out, SYSTEM_APP_ID, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->dest_id);
 
     return SATR_OK;
 }
