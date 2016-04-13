@@ -31,10 +31,6 @@ SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 
 SAT_returnState hk_crt_empty_pkt_TM(tc_tm_pkt **pkt, TC_TM_app_id app_id, HK_struct_id sid);
 
-void hk_SCH();
 
-void hk_INIT();
-
-void clear_wod();
 
 #endif
