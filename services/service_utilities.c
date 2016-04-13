@@ -115,7 +115,7 @@ SAT_returnState import_adcs_pkt() {
     res = HAL_adcs_uart_rx();
     if( res == SATR_EOT ) {
         size = obc_data.adcs_uart_size;
-        res_deframe = HLDLC_deframe(obc_data.adcs_uart_buf, obc_data.adcs_deframed_buf, &size);
+        res_deframe = HLDLC_deframe(obc_data.adcs_uart_pkt_buf, obc_data.adcs_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();
@@ -161,7 +161,7 @@ SAT_returnState import_comms_pkt() {
     res = HAL_comms_uart_rx();
     if( res == SATR_EOT ) {
         size = obc_data.comms_uart_size;
-        res_deframe = HLDLC_deframe(obc_data.comms_uart_buf, obc_data.comms_deframed_buf, &size);
+        res_deframe = HLDLC_deframe(obc_data.comms_uart_pkt_buf, obc_data.comms_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();
@@ -207,7 +207,7 @@ SAT_returnState import_dbg_pkt() {
     res = HAL_dbg_uart_rx();
     if( res == SATR_EOT ) {
         size = obc_data.dbg_uart_size;
-        res_deframe = HLDLC_deframe(obc_data.dbg_uart_buf, obc_data.dbg_deframed_buf, &size);
+        res_deframe = HLDLC_deframe(obc_data.dbg_uart_pkt_buf, obc_data.dbg_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();
@@ -253,7 +253,7 @@ SAT_returnState import_eps_pkt() {
     res = HAL_eps_uart_rx();
     if( res == SATR_EOT ) {
         size = obc_data.eps_uart_size;
-        res_deframe = HLDLC_deframe(obc_data.eps_uart_buf, obc_data.eps_deframed_buf, &size);
+        res_deframe = HLDLC_deframe(obc_data.eps_uart_pkt_buf, obc_data.eps_deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();

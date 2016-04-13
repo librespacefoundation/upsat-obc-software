@@ -592,6 +592,7 @@ void StartDefaultTask(void const * argument)
    
   sprintf((char*)uart_temp, "Hello\n");
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+  HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   
   /*Uart inits*/
   HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);

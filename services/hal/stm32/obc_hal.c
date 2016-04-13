@@ -30,6 +30,7 @@ SAT_returnState HAL_dbg_uart_rx() {
 
     if(huart3.RxState == HAL_UART_STATE_READY) {
         obc_data.dbg_uart_size = huart3.RxXferSize - huart3.RxXferCount;
+        for(uint16_t i = 0; i < obc_data.dbg_uart_size; i++) { obc_data.dbg_uart_pkt_buf[i] = obc_data.dbg_uart_buf[i]; }
         HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart_buf, OBC_UART_BUF_SIZE);
         return SATR_EOT;
     }
@@ -50,6 +51,7 @@ SAT_returnState HAL_adcs_uart_rx() {
 
     if(huart6.RxState == HAL_UART_STATE_READY) {
         obc_data.adcs_uart_size = huart6.RxXferSize - huart6.RxXferCount;
+        for(uint16_t i = 0; i < obc_data.adcs_uart_size; i++) { obc_data.adcs_uart_pkt_buf[i] = obc_data.adcs_uart_buf[i]; }
         HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart_buf, OBC_UART_BUF_SIZE);
         return SATR_EOT;
     }
@@ -70,6 +72,7 @@ SAT_returnState HAL_comms_uart_rx() {
 
     if(huart4.RxState == HAL_UART_STATE_READY) {
         obc_data.comms_uart_size = huart4.RxXferSize - huart4.RxXferCount;
+        for(uint16_t i = 0; i < obc_data.comms_uart_size; i++) { obc_data.comms_uart_pkt_buf[i] = obc_data.comms_uart_buf[i]; }
         HAL_UART_Receive_IT(&huart4, obc_data.comms_uart_buf, OBC_UART_BUF_SIZE);
         return SATR_EOT;
     }
@@ -90,6 +93,7 @@ SAT_returnState HAL_eps_uart_rx() {
 
     if(huart1.RxState == HAL_UART_STATE_READY) {
         obc_data.eps_uart_size = huart1.RxXferSize - huart1.RxXferCount;
+        for(uint16_t i = 0; i < obc_data.eps_uart_size; i++) { obc_data.eps_uart_pkt_buf[i] = obc_data.eps_uart_buf[i]; }
         HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
         return SATR_EOT;
     }
