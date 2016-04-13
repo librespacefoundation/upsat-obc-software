@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "system.h"
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
@@ -150,7 +151,8 @@ typedef enum {
     COMMS_APP_ID    = 4,
     IAC_APP_ID      = 5,
     GND_APP_ID      = 6,
-    LAST_APP_ID     = 7
+    DBG_APP_ID      = 7,
+    LAST_APP_ID     = 8
 }TC_TM_app_id;
 
 typedef enum {  
@@ -240,7 +242,7 @@ union _cnv {
     uint8_t cnv8[4];
 };
 
-extern void HAL_uart_tx(uint8_t *buf, uint16_t size);
+extern void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
 extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 
 extern void cnv32_8(const uint32_t from, uint8_t *to);
@@ -327,13 +329,18 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 //  use pkt->len for data?
 //  add pack functions in each service.
 
-struct uart_data
+struct uart_data {
     uint8_t uart_buf[UART_BUF_SIZE];
     uint8_t uart_pkt_buf[UART_BUF_SIZE];
     uint8_t deframed_buf[TC_MAX_PKT_SIZE];
     uint16_t uart_size;
 };
 
+struct _sys_data {
+    uint8_t seq_cnt;
+};
+
+extern struct _sys_data sys_data;
 //stub
 uint32_t time_now();
 

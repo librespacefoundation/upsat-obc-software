@@ -61,7 +61,7 @@ SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_
 }
 
 //WIP
-SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data data) {
+SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data *data) {
 
     tc_tm_pkt *pkt;
     uint16_t size = 0;
@@ -69,15 +69,15 @@ SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data data) {
     SAT_returnState res;    
     SAT_returnState res_deframe;
 
-    res = HAL_uart_rx(app_id);
+    res = HAL_uart_rx(app_id, data);
     if( res == SATR_EOT ) {
-        size = data.uart_size;
-        res_deframe = HLDLC_deframe(data.uart_pkt_buf, data.deframed_buf, &size);
+        size = data->uart_size;
+        res_deframe = HLDLC_deframe(data->uart_pkt_buf, data->deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();
             if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-            if(unpack_pkt(data.deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            if(unpack_pkt(data->deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }
@@ -232,7 +232,7 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
     buf[1] = cnv.cnv8[0];
 
     /*if the pkt was created in OBC, it updates the counter*/
-    if(pkt->app_id == OBC_APP_ID) { pkt->seq_count = obc_data.obc_seq_cnt++; }
+    if(pkt->app_id == SYSTEM_APP_ID) { pkt->seq_count = sys_data.seq_cnt++; }
 
     pkt->seq_flags = TC_TM_SEQ_SPACKET;
     cnv.cnv16[0] = pkt->seq_count;

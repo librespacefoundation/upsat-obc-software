@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
 #include <cmsis_os.h>
-#include "../../services.h"
+#include "../../../../services/services.h"
 
 //ToDo
 //  improve return types
@@ -28,21 +28,9 @@ void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
 
 void UART_OBC_Receive_IT(UART_HandleTypeDef *huart);
 
-void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size);
+void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
 
-SAT_returnState HAL_adcs_uart_rx();
-
-void HAL_comms_uart_tx(uint8_t *buf, uint16_t size);
-
-SAT_returnState HAL_comms_uart_rx();
-
-void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size);
-
-SAT_returnState HAL_dbg_uart_rx();
-
-void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
-
-SAT_returnState HAL_eps_uart_rx();
+SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data);
 
 void HAL_su_uart_tx(uint8_t *buf, uint16_t size);
 

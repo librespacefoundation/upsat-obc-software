@@ -5,8 +5,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "../../../services/services.h"
 
-#define SYSTEM_APP_ID OBC_APP_ID
+//temp
+#define TEST_ARRAY 1024
+
+#define EV_MAX_BUFFER 1024
+
+#define WOD_MAX_BUFFER 64
+
+/*restriction for 8 char filename, for conversion from num to file name*/
+#define MAX_FILE_NUM 0x5F5E0FF
 
 struct _obc_data
 {
@@ -19,7 +28,7 @@ struct _obc_data
     uint32_t *log_state;
     uint32_t *wod_log;
     uint32_t *wod_cnt;
-
+    
     struct uart_data dbg_uart;
     struct uart_data comms_uart;
     struct uart_data adcs_uart;
@@ -42,6 +51,10 @@ extern struct _sat_status sat_status;
 extern struct _obc_data obc_data;
 
 extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+
+extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
+
+extern uint32_t * HAL_obc_BKPSRAM_BASE();
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt);
 

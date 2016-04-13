@@ -6,18 +6,9 @@
 
 //temp
 #define TEST_ARRAY 1024
+
 #define MIN_PKT_SIZE 5
 #define MAX_PKT_SIZE 1024
-
-#define EV_MAX_BUFFER 1024
-
-#define WOD_MAX_BUFFER 64
-
-/*restriction for 8 char filename, for conversion from num to file name*/
-#define MAX_FILE_NUM 0x5F5E0FF
-
-extern struct _obc_data obc_data;
-extern struct _sat_status sat_status;
 
 extern tc_tm_pkt * get_pkt();
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
@@ -37,15 +28,10 @@ extern SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 extern SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 extern SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 
-extern SAT_returnState HAL_adcs_uart_rx();
-extern void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size);
-extern SAT_returnState HAL_comms_uart_rx();
-extern void HAL_comms_uart_tx(uint8_t *buf, uint16_t size);
-extern SAT_returnState HAL_dbg_uart_rx();
-extern void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size);
-extern SAT_returnState HAL_eps_uart_rx();
-extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
-extern uint32_t * HAL_obc_BKPSRAM_BASE();
+extern void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
+extern SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data);
+
+extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 //ToDo
 //  seq counter, hoq it works?
@@ -59,11 +45,9 @@ SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_
 
 SAT_returnState obc_data_INIT();
 
-SAT_returnState route_pkt(tc_tm_pkt *pkt);
+SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data *data);
 
-SAT_returnState import_eps_pkt();
-
-SAT_returnState export_eps_pkt(tc_tm_pkt *pkt);
+SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
 
 SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 

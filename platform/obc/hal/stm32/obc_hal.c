@@ -16,85 +16,37 @@ void HAL_obc_SD_OFF() {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 }
 
-void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size) {
+void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size) {
+    
     HAL_StatusTypeDef res;
+    UART_HandleTypeDef *huart;
+
+    if(app_id == EPS_APP_ID) { huart = &huart1; }
+    else if(app_id == DBG_APP_ID) { huart = &huart3; }
+    else if(app_id == COMMS_APP_ID) { huart = &huart4; }
+    else if(app_id == ADCS_APP_ID) { huart = &huart6; }
+
     //HAL_UART_Transmit(&huart2, buf, size, 10);
     for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart3, buf, size);
+        res = HAL_UART_Transmit_DMA(huart, buf, size);
         if(res == HAL_OK) { break; }
         osDelay(10);
     }
 }
 
-SAT_returnState HAL_dbg_uart_rx() {
+SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data) {
 
-    if(huart3.RxState == HAL_UART_STATE_READY) {
-        obc_data.dbg_uart_size = huart3.RxXferSize - huart3.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.dbg_uart_size; i++) { obc_data.dbg_uart_pkt_buf[i] = obc_data.dbg_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
+    UART_HandleTypeDef *huart;
 
-void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart6, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
+    if(app_id == EPS_APP_ID) { huart = &huart1; }
+    else if(app_id == DBG_APP_ID) { huart = &huart3; }
+    else if(app_id == COMMS_APP_ID) { huart = &huart4; }
+    else if(app_id == ADCS_APP_ID) { huart = &huart6; }
 
-SAT_returnState HAL_adcs_uart_rx() {
-
-    if(huart6.RxState == HAL_UART_STATE_READY) {
-        obc_data.adcs_uart_size = huart6.RxXferSize - huart6.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.adcs_uart_size; i++) { obc_data.adcs_uart_pkt_buf[i] = obc_data.adcs_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
-
-void HAL_comms_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart4, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
-
-SAT_returnState HAL_comms_uart_rx() {
-
-    if(huart4.RxState == HAL_UART_STATE_READY) {
-        obc_data.comms_uart_size = huart4.RxXferSize - huart4.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.comms_uart_size; i++) { obc_data.comms_uart_pkt_buf[i] = obc_data.comms_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart4, obc_data.comms_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
-
-void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart1, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
-
-SAT_returnState HAL_eps_uart_rx() {
-
-    if(huart1.RxState == HAL_UART_STATE_READY) {
-        obc_data.eps_uart_size = huart1.RxXferSize - huart1.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.eps_uart_size; i++) { obc_data.eps_uart_pkt_buf[i] = obc_data.eps_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+    if(huart->RxState == HAL_UART_STATE_READY) {
+        data->uart_size = huart->RxXferSize - huart->RxXferCount;
+        for(uint16_t i = 0; i < data->uart_size; i++) { data->uart_pkt_buf[i] = data->uart_buf[i]; }
+        HAL_UART_Receive_IT(huart, data->uart_buf, UART_BUF_SIZE);
         return SATR_EOT;
     }
     return SATR_OK;

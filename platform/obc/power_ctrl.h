@@ -2,7 +2,7 @@
 #define __POWER_CTRL_H
 
 #include <stdint.h>
-#include "services.h"
+#include "../../../services/services.h"
 
 extern void HAL_obc_SD_ON();
 extern void HAL_obc_SD_OFF();
