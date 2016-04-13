@@ -104,7 +104,32 @@ SAT_returnState obc_data_INIT() {
 }
 
 //WIP
-SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
+SAT_returnState import_adcs_pkt() {
+
+    tc_tm_pkt *pkt;
+    uint16_t size = 0;
+
+    SAT_returnState res;    
+    SAT_returnState res_deframe;
+
+    res = HAL_adcs_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.adcs_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.adcs_uart_buf, obc_data.adcs_deframed_buf, &size);
+        if(res_deframe == SATR_EOT) {
+
+            pkt = get_pkt();
+            if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
+            if(unpack_pkt(obc_data.adcs_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            else { verification_app(pkt); free_pkt(pkt); }
+        }
+    }
+
+    return SATR_OK;
+}
+
+//WIP
+SAT_returnState export_adcs_pkt(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
@@ -119,13 +144,102 @@ SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
 
     if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
 
-    HAL_eps_uart_tx(buf_out, size);
+    HAL_adcs_uart_tx(buf_out, size);
 
     return SATR_OK;
 }
 
-    uint16_t cnt = 0;
+//WIP
+SAT_returnState import_comms_pkt() {
+
+    tc_tm_pkt *pkt;
+    uint16_t size = 0;
+
+    SAT_returnState res;    
+    SAT_returnState res_deframe;
+
+    res = HAL_comms_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.comms_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.comms_uart_buf, obc_data.comms_deframed_buf, &size);
+        if(res_deframe == SATR_EOT) {
+
+            pkt = get_pkt();
+            if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
+            if(unpack_pkt(obc_data.comms_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            else { verification_app(pkt); free_pkt(pkt); }
+        }
+    }
+
+    return SATR_OK;
+}
+
+//WIP
+SAT_returnState export_comms_pkt(tc_tm_pkt *pkt) {
+
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+
+    uint16_t size = 0;
     uint8_t buf[TEST_ARRAY];
+    uint8_t buf_out[TEST_ARRAY];
+    SAT_returnState res;    
+
+    pack_pkt(buf, pkt, &size);
+    res = HLDLC_frame(buf, buf_out, &size);
+    if(res == SATR_ERROR) { return SATR_ERROR; }
+
+    if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
+
+    HAL_comms_uart_tx(buf_out, size);
+
+    return SATR_OK;
+}
+
+//WIP
+SAT_returnState import_dbg_pkt() {
+
+    tc_tm_pkt *pkt;
+    uint16_t size = 0;
+
+    SAT_returnState res;    
+    SAT_returnState res_deframe;
+
+    res = HAL_dbg_uart_rx();
+    if( res == SATR_EOT ) {
+        size = obc_data.dbg_uart_size;
+        res_deframe = HLDLC_deframe(obc_data.dbg_uart_buf, obc_data.dbg_deframed_buf, &size);
+        if(res_deframe == SATR_EOT) {
+
+            pkt = get_pkt();
+            if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
+            if(unpack_pkt(obc_data.dbg_deframed_buf, pkt, size) == SATR_OK) { route_pkt(pkt); } 
+            else { verification_app(pkt); free_pkt(pkt); }
+        }
+    }
+
+    return SATR_OK;
+}
+
+//WIP
+SAT_returnState export_dbg_pkt(tc_tm_pkt *pkt) {
+
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+
+    uint16_t size = 0;
+    uint8_t buf[TEST_ARRAY];
+    uint8_t buf_out[TEST_ARRAY];
+    SAT_returnState res;    
+
+    pack_pkt(buf, pkt, &size);
+    res = HLDLC_frame(buf, buf_out, &size);
+    if(res == SATR_ERROR) { return SATR_ERROR; }
+
+    if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
+
+    HAL_dbg_uart_tx(buf_out, size);
+
+    return SATR_OK;
+}
 
 //WIP
 SAT_returnState import_eps_pkt() {
@@ -148,6 +262,27 @@ SAT_returnState import_eps_pkt() {
             else { verification_app(pkt); free_pkt(pkt); }
         }
     }
+
+    return SATR_OK;
+}
+
+//WIP
+SAT_returnState export_eps_pkt(tc_tm_pkt *pkt) {
+
+    if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
+
+    uint16_t size = 0;
+    uint8_t buf[TEST_ARRAY];
+    uint8_t buf_out[TEST_ARRAY];
+    SAT_returnState res;    
+
+    pack_pkt(buf, pkt, &size);
+    res = HLDLC_frame(buf, buf_out, &size);
+    if(res == SATR_ERROR) { return SATR_ERROR; }
+
+    if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
+
+    HAL_eps_uart_tx(buf_out, size);
 
     return SATR_OK;
 }
@@ -405,6 +540,9 @@ SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint1
    }
    return SATR_OK;
 }
+
+    uint16_t cnt = 0;
+    uint8_t buf[TEST_ARRAY];
 
 SAT_returnState event_log_IDLE() {
 

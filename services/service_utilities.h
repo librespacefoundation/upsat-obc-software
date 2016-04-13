@@ -37,6 +37,12 @@ extern SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
 extern SAT_returnState HLDLC_deframe(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 extern SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size);
 
+extern SAT_returnState HAL_adcs_uart_rx();
+extern void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size);
+extern SAT_returnState HAL_comms_uart_rx();
+extern void HAL_comms_uart_tx(uint8_t *buf, uint16_t size);
+extern SAT_returnState HAL_dbg_uart_rx();
+extern void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size);
 extern SAT_returnState HAL_eps_uart_rx();
 extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 extern uint32_t * HAL_obc_BKPSRAM_BASE();

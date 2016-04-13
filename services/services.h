@@ -294,6 +294,18 @@ struct _obc_data
     uint32_t *wod_log;
     uint32_t *wod_cnt;
 
+    uint8_t dbg_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t dbg_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t dbg_uart_size;
+    
+    uint8_t comms_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t comms_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t comms_uart_size;
+    
+    uint8_t adcs_uart_buf[OBC_UART_BUF_SIZE];
+    uint8_t adcs_deframed_buf[TC_MAX_PKT_SIZE];
+    uint16_t adcs_uart_size;
+
     uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
     uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
     uint16_t eps_uart_size;

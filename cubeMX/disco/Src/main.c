@@ -594,10 +594,16 @@ void StartDefaultTask(void const * argument)
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   
   /*Uart inits*/
-  HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart_buf, OBC_UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart4, obc_data.comms_uart_buf, OBC_UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart_buf, OBC_UART_BUF_SIZE);
   /* Infinite loop */
   for(;;)
   {
+    import_adcs_pkt();
+    import_comms_pkt();
+    import_dbg_pkt();
     import_eps_pkt();
     //su_SCH();
     osDelay(100);

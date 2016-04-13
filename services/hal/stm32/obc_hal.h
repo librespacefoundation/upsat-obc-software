@@ -11,7 +11,11 @@
 //  need to make the change from the two different typedefs
 
 extern struct _obc_data obc_data;
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart3;
+extern UART_HandleTypeDef huart4;
+extern UART_HandleTypeDef huart6;
 extern RTC_HandleTypeDef hrtc;
 
 void HAL_obc_SD_ON();
@@ -23,6 +27,18 @@ void HAL_obc_delay(uint32_t sec);
 void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
 
 void UART_OBC_Receive_IT(UART_HandleTypeDef *huart);
+
+void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size);
+
+SAT_returnState HAL_adcs_uart_rx();
+
+void HAL_comms_uart_tx(uint8_t *buf, uint16_t size);
+
+SAT_returnState HAL_comms_uart_rx();
+
+void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size);
+
+SAT_returnState HAL_dbg_uart_rx();
 
 void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
 
