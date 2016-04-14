@@ -36,7 +36,8 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
-#include "../../services/service_utilities.h"
+#include "../../../platform/obc/obc.h"
+#include "../../../services/service_utilities.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -535,8 +536,8 @@ void StartDefaultTask(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
-   //obc_data.rsrc = 0;
-   HAL_reset_source(&obc_data.rsrc);
+    //obc_data.rsrc = 0;
+   HAL_reset_source(&sys_data.rsrc);
    update_boot_counter();
 
    //uint32_t t1, t2, t3;
@@ -592,19 +593,20 @@ void StartDefaultTask(void const * argument)
    
   sprintf((char*)uart_temp, "Hello\n");
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+  HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   
   /*Uart inits*/
-  HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart_buf, OBC_UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart4, obc_data.comms_uart_buf, OBC_UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart_buf, OBC_UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
   /* Infinite loop */
   for(;;)
   {
-    import_adcs_pkt();
-    import_comms_pkt();
-    import_dbg_pkt();
-    import_eps_pkt();
+    import_pkt(EPS_APP_ID, &obc_data.eps_uart);
+    import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
+    import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
+    import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     //su_SCH();
     osDelay(100);
   }

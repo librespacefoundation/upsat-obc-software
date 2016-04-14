@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\EWARM\settings\obc_pinout.obc_pinout.general.xcl" --backend -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
+"G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" --backend -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\EWARM\settings\obc_pinout.obc_pinout.general.xcl" "--debug_file=%~1" --backend -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
+"G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" "--debug_file=%~1" --backend -f "G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
 
 @echo off 
 :end

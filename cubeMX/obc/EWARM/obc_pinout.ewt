@@ -1134,6 +1134,12 @@
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sd.c</name>
       </file>
       <file>
@@ -1210,88 +1216,100 @@
   <group>
     <name>OBC</name>
     <file>
-      <name>$PROJ_DIR$\..\..\services\function_management_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\function_management_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\function_management_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\function_management_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hldlc.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\hldlc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hldlc.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\hldlc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\housekeeping_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\housekeeping_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\large_data_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\large_data_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\mass_storage_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\large_data_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\mass_storage_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\large_data_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\pkt_pool.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\pkt_pool.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\power_ctrl.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\power_ctrl.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\service_utilities.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\service_utilities.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\services.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\services.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\su_mnlp.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\service_utilities.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\su_mnlp.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\service_utilities.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\test_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\services.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\test_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\services.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\time_management.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\time_management.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\verification_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\test_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\verification_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\test_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\time_management.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\time_management.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\verification_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\verification_service.h</name>
     </file>
   </group>
 </project>

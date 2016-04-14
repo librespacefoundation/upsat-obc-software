@@ -1,4 +1,4 @@
-"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\Src\stm32f4xx_it.c"
+"G:\Users\nanimo\Documents\GitHub\upsat-obc-software\cubeMX\obc\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.c"
 -std=c99
 -ferror-limit=100
 -I

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
+
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
@@ -225,19 +226,19 @@
         </option>
         <option>
           <name>CCDiagSuppress</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagWarning</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCDiagError</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCObjPrefix</name>
@@ -266,7 +267,7 @@
         </option>
         <option>
           <name>IExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CCLangConformance</name>
@@ -306,7 +307,7 @@
         </option>
         <option>
           <name>PreInclude</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CompilerMisraOverride</name>
@@ -465,15 +466,15 @@
         </option>
         <option>
           <name>AWarnOne</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange1</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AWarnRange2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>ADebug</name>
@@ -485,7 +486,7 @@
         </option>
         <option>
           <name>ADefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AList</name>
@@ -589,7 +590,7 @@
         </option>
         <option>
           <name>AExtraOptionsV2</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>AsmNoLiteralPool</name>
@@ -631,22 +632,22 @@
       <name>CUSTOM</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <extensions />
-        <cmdline />
+        <extensions></extensions>
+        <cmdline></cmdline>
         <hasPrio>0</hasPrio>
       </data>
     </settings>
     <settings>
       <name>BICOMP</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
     <settings>
       <name>BUILDACTION</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <prebuild />
-        <postbuild />
+        <prebuild></prebuild>
+        <postbuild></postbuild>
       </data>
     </settings>
     <settings>
@@ -678,31 +679,31 @@
         </option>
         <option>
           <name>IlinkKeepSymbols</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySymbol</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinarySegment</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkRawBinaryAlign</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -738,7 +739,7 @@
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkEnableRemarks</name>
@@ -746,19 +747,19 @@
         </option>
         <option>
           <name>IlinkSuppressDiags</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsRem</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsWarn</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkTreatAsErr</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkWarningsAreErrors</name>
@@ -770,7 +771,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -782,7 +783,7 @@
         </option>
         <option>
           <name>IlinkAdditionalLibs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -917,11 +918,11 @@
         </option>
         <option>
           <name>IlinkStackControlFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IlinkStackCallGraphFile</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>CrcAlgorithm</name>
@@ -948,7 +949,7 @@
         <debug>1</debug>
         <option>
           <name>IarchiveInputs</name>
-          <state />
+          <state></state>
         </option>
         <option>
           <name>IarchiveOverride</name>
@@ -963,7 +964,7 @@
     <settings>
       <name>BILINK</name>
       <archiveVersion>0</archiveVersion>
-      <data />
+      <data/>
     </settings>
   </configuration>
   <group>
@@ -973,9 +974,7 @@
       <file>
         <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f405xx.s</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f405xx.s</name>
-    </file></group>
+    </group>
     <group>
       <name>User</name>
       <file>
@@ -999,21 +998,7 @@
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Src/stm32f4xx_hal_msp.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/freertos.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/main.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/stm32f4xx_hal_timebase_TIM.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/bsp_driver_sd.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/fatfs.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Src/stm32f4xx_it.c</name>
-    </file></group>
+    </group>
   </group>
   <group>
     <name>Drivers</name>
@@ -1022,9 +1007,7 @@
       <file>
         <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c</name>
-    </file></group>
+    </group>
     <group>
       <name>STM32F4xx_HAL_Driver</name>
       <file>
@@ -1070,6 +1053,12 @@
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rtc_ex.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sd.c</name>
       </file>
       <file>
@@ -1087,51 +1076,7 @@
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</name>
-    </file></group>
+    </group>
   </group>
   <group>
     <name>Middlewares</name>
@@ -1152,17 +1097,7 @@
       <file>
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\option\syscall.c</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/ff.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/option/syscall.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/drivers/sd_diskio.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/diskio.c</name>
-    </file></group>
+    </group>
     <group>
       <name>FreeRTOS</name>
       <file>
@@ -1195,113 +1130,107 @@
       <file>
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\timers.c</name>
       </file>
-    <file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/list.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/queue.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/croutine.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/portable/IAR/ARM_CM4F/port.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/portable/IAR/ARM_CM4F/portasm.s</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/tasks.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/timers.c</name>
-    </file><file>
-      <name>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</name>
-    </file></group>
+    </group>
   </group>
   <group>
     <name>OBC</name>
     <file>
-      <name>$PROJ_DIR$\..\..\services\function_management_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\function_management_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\function_management_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\function_management_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hldlc.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\hldlc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hldlc.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\hldlc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\housekeeping_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\housekeeping_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\large_data_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\large_data_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\mass_storage_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\large_data_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\mass_storage_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\large_data_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\hal\stm32\obc_hal.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\pkt_pool.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\pkt_pool.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\power_ctrl.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\power_ctrl.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\service_utilities.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\service_utilities.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\services.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\services.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\su_mnlp.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\service_utilities.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\su_mnlp.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\service_utilities.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\test_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\services.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\test_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\services.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\time_management.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\time_management.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\verification_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\services\test_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\services\verification_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\services\test_service.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\time_management.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\time_management.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\verification_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\verification_service.h</name>
     </file>
   </group>
 </project>
+
+
