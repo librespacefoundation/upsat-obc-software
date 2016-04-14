@@ -100,7 +100,7 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\services.c}.69.12" 0 0 1 "" 0 "" 0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\services.c}.62.1" 0 0 1 "" 0 "" 0
 Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\hal\stm32\obc_hal.c}.16.5" 0 0 1 "" 0 "" 0
 Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\services\hal\stm32\obc_hal.c}.12.5" 0 0 1 "" 0 "" 0
 Count=3

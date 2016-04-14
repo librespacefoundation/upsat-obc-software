@@ -1147,6 +1147,12 @@
       <name>$PROJ_DIR$\..\..\..\services\hldlc.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.c</name>
     </file>
     <file>
@@ -1165,10 +1171,16 @@
       <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\hal\stm32\obc_hal.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\hal\stm32\obc_hal.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\services\pkt_pool.c</name>
@@ -1177,10 +1189,10 @@
       <name>$PROJ_DIR$\..\..\..\services\pkt_pool.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\power_ctrl.c</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\power_ctrl.h</name>
+      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\services\service_utilities.c</name>

@@ -537,7 +537,7 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
    //obc_data.rsrc = 0;
-   HAL_reset_source(&obc_data.rsrc);
+   HAL_reset_source(&sys_data.rsrc);
    update_boot_counter();
 
    //uint32_t t1, t2, t3;
