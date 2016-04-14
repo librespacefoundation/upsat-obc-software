@@ -201,6 +201,6 @@ uint32_t * HAL_obc_BKPSRAM_BASE() {
   return (uint32_t *)BKPSRAM_BASE;
 }
 
-uint32_t HAL_obc_GetTick() {
+uint32_t HAL_sys_GetTick() {
   return HAL_GetTick();
 }

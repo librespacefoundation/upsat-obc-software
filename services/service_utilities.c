@@ -290,3 +290,13 @@ SAT_returnState crt_pkt(tc_tm_pkt *pkt, TC_TM_app_id app_id, uint8_t type, uint8
 
     return SATR_OK;
 }
+
+SAT_returnState update_boot_counter() {
+    (*sys_data.boot_counter)++;
+    return SATR_OK;
+}
+
+SAT_returnState get_boot_counter(uint32_t *cnt) {
+    *cnt = *sys_data.boot_counter;
+    return SATR_OK;
+}

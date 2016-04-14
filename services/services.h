@@ -338,6 +338,8 @@ struct uart_data {
 
 struct _sys_data {
     uint8_t seq_cnt;
+    uint8_t rsrc;
+    uint32_t *boot_counter;
 };
 
 extern struct _sys_data sys_data;

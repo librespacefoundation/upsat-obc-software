@@ -71,6 +71,7 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
 SAT_returnState obc_data_INIT() {
 
     obc_data.obc_seq_cnt = 0;
+    bkup_sram_INIT();
     return SATR_OK;
 }
 
@@ -79,7 +80,7 @@ void bkup_sram_INIT() {
 
     obc_data.log_cnt = HAL_obc_BKPSRAM_BASE();
     obc_data.log_state = HAL_obc_BKPSRAM_BASE() + 1;
-    obc_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
+    sys_data.boot_counter = HAL_obc_BKPSRAM_BASE() + 2;
     obc_data.file_id = HAL_obc_BKPSRAM_BASE() + 3;
     obc_data.wod_cnt = HAL_obc_BKPSRAM_BASE() + 4;
 
@@ -102,16 +103,6 @@ uint32_t get_new_fileId() {
         *obc_data.file_id = 1;
     }
     return *obc_data.file_id;
-}
-
-SAT_returnState update_boot_counter() {
-    (*obc_data.boot_counter)++;
-    return SATR_OK;
-}
-
-SAT_returnState get_boot_counter(uint32_t *cnt) {
-    *cnt = *obc_data.boot_counter;
-    return SATR_OK;
 }
 
 SAT_returnState event_log(uint8_t *buf, const uint16_t size) {

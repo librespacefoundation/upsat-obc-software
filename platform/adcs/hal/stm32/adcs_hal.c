@@ -1,100 +1,47 @@
-#include "obc_hal.h"
+#include "adcs_hal.h"
 
 
 #undef __FILE_ID__
 #define __FILE_ID__ 13
 
-void HAL_obc_delay(uint32_t sec) {
+void HAL_sys_delay(uint32_t sec) {
 	osDelay(sec);
 }
 
-void HAL_obc_SD_ON() {
+void HAL_adcs_SD_ON() {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
 }
 
-void HAL_obc_SD_OFF() {
+void HAL_adcs_SD_OFF() {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 }
 
-void HAL_dbg_uart_tx(uint8_t *buf, uint16_t size) {
+void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size) {
+    
     HAL_StatusTypeDef res;
+    UART_HandleTypeDef *huart;
+
+    if(app_id == OBC_APP_ID) { huart = &huart2; }
+    else if(app_id == DBG_APP_ID) { huart = &huart2; }
+
     //HAL_UART_Transmit(&huart2, buf, size, 10);
     for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart3, buf, size);
+        res = HAL_UART_Transmit_DMA(huart, buf, size);
         if(res == HAL_OK) { break; }
         osDelay(10);
     }
 }
 
-SAT_returnState HAL_dbg_uart_rx() {
+SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data) {
 
-    if(huart3.RxState == HAL_UART_STATE_READY) {
-        obc_data.dbg_uart_size = huart3.RxXferSize - huart3.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.dbg_uart_size; i++) { obc_data.dbg_uart_pkt_buf[i] = obc_data.dbg_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
+    UART_HandleTypeDef *huart;
 
-void HAL_adcs_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart6, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
+    if(app_id == OBC_APP_ID) { huart = &huart2; }
 
-SAT_returnState HAL_adcs_uart_rx() {
-
-    if(huart6.RxState == HAL_UART_STATE_READY) {
-        obc_data.adcs_uart_size = huart6.RxXferSize - huart6.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.adcs_uart_size; i++) { obc_data.adcs_uart_pkt_buf[i] = obc_data.adcs_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
-
-void HAL_comms_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart4, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
-
-SAT_returnState HAL_comms_uart_rx() {
-
-    if(huart4.RxState == HAL_UART_STATE_READY) {
-        obc_data.comms_uart_size = huart4.RxXferSize - huart4.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.comms_uart_size; i++) { obc_data.comms_uart_pkt_buf[i] = obc_data.comms_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart4, obc_data.comms_uart_buf, OBC_UART_BUF_SIZE);
-        return SATR_EOT;
-    }
-    return SATR_OK;
-}
-
-void HAL_eps_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_StatusTypeDef res;
-    //HAL_UART_Transmit(&huart2, buf, size, 10);
-    for(;;) { // should use hard limits
-        res = HAL_UART_Transmit_DMA(&huart1, buf, size);
-        if(res == HAL_OK) { break; }
-        osDelay(10);
-    }
-}
-
-SAT_returnState HAL_eps_uart_rx() {
-
-    if(huart1.RxState == HAL_UART_STATE_READY) {
-        obc_data.eps_uart_size = huart1.RxXferSize - huart1.RxXferCount;
-        for(uint16_t i = 0; i < obc_data.eps_uart_size; i++) { obc_data.eps_uart_pkt_buf[i] = obc_data.eps_uart_buf[i]; }
-        HAL_UART_Receive_IT(&huart1, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+    if(huart->RxState == HAL_UART_STATE_READY) {
+        data->uart_size = huart->RxXferSize - huart->RxXferCount;
+        for(uint16_t i = 0; i < data->uart_size; i++) { data->uart_pkt_buf[i] = data->uart_buf[i]; }
+        HAL_UART_Receive_IT(huart, data->uart_buf, UART_BUF_SIZE);
         return SATR_EOT;
     }
     return SATR_OK;
@@ -106,7 +53,7 @@ SAT_returnState HAL_eps_uart_rx() {
   *                the configuration information for the specified UART module.
   * @retval None
   */
-void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart)
+void HAL_ADCS_UART_IRQHandler(UART_HandleTypeDef *huart)
 {
   uint32_t tmp1 = 0U, tmp2 = 0U;
 
@@ -115,7 +62,7 @@ void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart)
   /* UART in mode Receiver ---------------------------------------------------*/
   if((tmp1 != RESET) && (tmp2 != RESET))
   { 
-    UART_OBC_Receive_IT(huart);
+    UART_ADCS_Receive_IT(huart);
   }
 }
 
@@ -125,7 +72,7 @@ void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart)
   *                the configuration information for the specified UART module.
   * @retval HAL status
   */
-void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
+void UART_ADCS_Receive_IT(UART_HandleTypeDef *huart)
 {
     uint8_t c;
 
@@ -166,22 +113,6 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
 
 }
 
-void HAL_su_uart_tx(uint8_t *buf, uint16_t size) {
-    HAL_UART_Transmit(&huart2, buf, size, 10);
-    //HAL_UART_Transmit_DMA(&huart2, buf, size, 10);
-}
-
-SAT_returnState HAL_su_uart_rx(uint8_t *c) {
-
-    HAL_StatusTypeDef res;
-
-    res = HAL_UART_Receive(&huart2, c, 1, 10);
-    if(res == HAL_OK) { return SATR_OK; }
-    else if(res == HAL_TIMEOUT) { return SATR_ERROR; }
-    
-    return SATR_ERROR;
-}
-
 void HAL_reset_source(uint8_t *src) {
 
     *src = __HAL_RCC_GET_FLAG(RCC_FLAG_BORRST);
@@ -196,7 +127,7 @@ void HAL_reset_source(uint8_t *src) {
 
 }
 
-void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
+void HAL_sys_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
 
   RTC_TimeTypeDef sTime;
 
@@ -210,7 +141,7 @@ void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
 
 }
 
-void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
+void HAL_sys_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
 
   RTC_TimeTypeDef sTime;
 
@@ -221,7 +152,7 @@ void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
    *sec = sTime.Seconds;  
 }
 
-void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year) {
+void HAL_sys_setDate(uint8_t mon, uint8_t date, uint8_t year) {
 
   RTC_DateTypeDef sDate;
 
@@ -238,17 +169,6 @@ void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year) {
 //
 //}
 
-void HAL_obc_enableBkUpAccess() {
-  
-  HAL_PWR_EnableBkUpAccess();
-  __HAL_RCC_BKPSRAM_CLK_ENABLE();
-  
-}
-
-uint32_t * HAL_obc_BKPSRAM_BASE() {
-  return (uint32_t *)BKPSRAM_BASE;
-}
-
-uint32_t HAL_obc_GetTick() {
+uint32_t HAL_sys_GetTick() {
   return HAL_GetTick();
 }

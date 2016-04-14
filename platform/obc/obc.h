@@ -20,9 +20,7 @@
 struct _obc_data
 {
     uint16_t obc_seq_cnt;
-    uint8_t rsrc;
     uint32_t *file_id;
-    uint32_t *boot_counter;
     uint32_t *log;
     uint32_t *log_cnt;
     uint32_t *log_state;
@@ -72,10 +70,6 @@ SAT_returnState obc_data_INIT();
 void bkup_sram_INIT();
 
 uint32_t get_new_fileId();
-
-SAT_returnState update_boot_counter();
-
-SAT_returnState get_boot_counter(uint32_t *cnt);
 
 
 SAT_returnState event_log(uint8_t *buf, const uint16_t size);
