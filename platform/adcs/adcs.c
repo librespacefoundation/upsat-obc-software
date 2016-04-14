@@ -33,7 +33,7 @@ struct _adcs_data adcs_data;
 SAT_returnState route_pkt(tc_tm_pkt *pkt) {
 
     SAT_returnState res;
-    uint16_t id;
+    TC_TM_app_id id;
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true)                         { verification_app(pkt); free_pkt(pkt); return SATR_ERROR; }
     if(!C_ASSERT(pkt->type == TC || pkt->type == TM) == true)                       { verification_app(pkt); free_pkt(pkt); return SATR_ERROR; }

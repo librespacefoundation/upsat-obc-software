@@ -337,7 +337,7 @@ struct uart_data {
 };
 
 struct _sys_data {
-    uint8_t seq_cnt;
+    uint8_t seq_cnt[LAST_APP_ID];
     uint8_t rsrc;
     uint32_t *boot_counter;
 };
