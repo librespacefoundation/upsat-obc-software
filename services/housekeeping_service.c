@@ -19,19 +19,10 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         route_pkt(temp_pkt);
 
     } else if(pkt->app_id == EPS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
-        sat_status.batt_curr = pkt->data[1];
-        sat_status.batt_volt = pkt->data[2];
-        sat_status.bus_3v3_curr = pkt->data[3];
-        sat_status.bus_5v_curr = pkt->data[4];
-        sat_status.temp_eps = pkt->data[5];
-        sat_status.temp_batt = pkt->data[6];
 
-        pkt->verification_state = SATR_OK;
+        SAT_returnState res = hk_parameters_report(pkt->app_id, (HK_struct_id)pkt->data[0],  pkt->data);
 
-    } else if(pkt->app_id == COMMS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
-        sat_status.temp_comms = pkt->data[1];
-
-        pkt->verification_state = SATR_OK;
+        if(res == SATR_OK) { pkt->verification_state = SATR_OK; }
     }
 
     return SATR_OK;
@@ -60,25 +51,7 @@ SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 
 SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
 
-    pkt->data[0] = (HK_struct_id)sid;
-
-    if(sid == EX_HEALTH_REP) {
-
-        //cnv.cnv32 = time.now();
-        cnv32_8(time_now(), &pkt->data[1]);
-        pkt->len = 5;
-    } else if(sid == WOD_REP) {
-
-        pkt->data[1] = sat_status.mode;
-        pkt->data[2] = sat_status.batt_curr;
-        pkt->data[3] = sat_status.batt_volt;
-        pkt->data[4] = sat_status.bus_3v3_curr;
-        pkt->data[5] = sat_status.bus_5v_curr;
-        pkt->data[6] = sat_status.temp_eps;
-        pkt->data[7] = sat_status.temp_batt;
-        pkt->data[8] = sat_status.temp_comms;
-        pkt->len = 9;
-    }
+    hk_report_parameters(sid, pkt);
 
     crt_pkt(pkt, SYSTEM_APP_ID, TM, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
 
