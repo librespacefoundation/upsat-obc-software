@@ -4,7 +4,7 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 13
 
-void HAL_obc_delay(uint32_t sec) {
+void HAL_sys_delay(uint32_t sec) {
 	osDelay(sec);
 }
 
@@ -148,7 +148,7 @@ void HAL_reset_source(uint8_t *src) {
 
 }
 
-void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
+void HAL_sys_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
 
   RTC_TimeTypeDef sTime;
 
@@ -162,7 +162,7 @@ void HAL_obc_setTime(uint8_t hours, uint8_t mins, uint8_t sec) {
 
 }
 
-void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
+void HAL_sys_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
 
   RTC_TimeTypeDef sTime;
 
@@ -173,7 +173,7 @@ void HAL_obc_getTime(uint8_t *hours, uint8_t *mins, uint8_t *sec) {
    *sec = sTime.Seconds;  
 }
 
-void HAL_obc_setDate(uint8_t mon, uint8_t date, uint8_t year) {
+void HAL_sys_setDate(uint8_t mon, uint8_t date, uint8_t year) {
 
   RTC_DateTypeDef sDate;
 

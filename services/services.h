@@ -341,6 +341,7 @@ struct _sys_data {
 };
 
 extern struct _sys_data sys_data;
+
 //stub
 uint32_t time_now();
 

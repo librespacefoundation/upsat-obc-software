@@ -3,7 +3,7 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 1
 
-struct _sys_data _sys_data;
+struct _sys_data sys_data;
 
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2] = { 

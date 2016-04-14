@@ -14,7 +14,7 @@ SAT_returnState power_control_api(FM_dev_id did, FM_fun_id fid) {
     else if(did == OBC_SD_DEV_ID && fid == P_OFF)   { HAL_obc_SD_OFF(); }
     else if(did == OBC_SD_DEV_ID && fid == P_RESET) {
         HAL_obc_SD_OFF();
-        HAL_obc_delay(60);
+        HAL_sys_delay(60);
         HAL_obc_SD_ON();
     }
 

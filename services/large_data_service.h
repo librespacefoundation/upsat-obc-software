@@ -36,17 +36,10 @@ struct _ld_status {
     uint32_t to;            /**/
 };
 
-extern struct _ld_status LD_status;
-
 extern tc_tm_pkt * get_pkt();
-extern uint32_t time_now();
 
 extern SAT_returnState crt_pkt(tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack, uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
-
-extern void cnv16_8(uint16_t from, uint8_t *to);
-extern void cnv8_16(uint8_t *from, uint16_t *to);
-
 
 //ToDo
 //  check again if app_id and dest_id are ok.

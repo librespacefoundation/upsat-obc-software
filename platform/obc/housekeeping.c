@@ -16,7 +16,7 @@ void hk_SCH() {
     route_pkt(&hk_pkt);
     hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
     route_pkt(&hk_pkt);
-    HAL_obc_delay(59000);
+    HAL_sys_delay(59000);
     hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
     route_pkt(&hk_pkt);
     clear_wod();

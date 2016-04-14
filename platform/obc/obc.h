@@ -50,12 +50,39 @@ extern struct _sat_status sat_status;
 
 extern struct _obc_data obc_data;
 
-extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
-
 extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
 
 extern uint32_t * HAL_obc_BKPSRAM_BASE();
 
+extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
+
+extern SAT_returnState verification_app(tc_tm_pkt *pkt);
+extern SAT_returnState hk_app(tc_tm_pkt *pkt);
+extern SAT_returnState function_management_app(tc_tm_pkt *pkt);
+extern SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
+extern SAT_returnState mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
+extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
+extern SAT_returnState test_app(tc_tm_pkt *pkt);
+
 SAT_returnState route_pkt(tc_tm_pkt *pkt);
+
+SAT_returnState obc_data_INIT();
+
+
+void bkup_sram_INIT();
+
+uint32_t get_new_fileId();
+
+SAT_returnState update_boot_counter();
+
+SAT_returnState get_boot_counter(uint32_t *cnt);
+
+
+SAT_returnState event_log(uint8_t *buf, const uint16_t size);
+
+SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint16_t size);
+
+SAT_returnState event_log_IDLE();
+
 
 #endif

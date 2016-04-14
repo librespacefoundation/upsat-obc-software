@@ -19,10 +19,6 @@ struct _pkt_pool{
 //	add assertions
 //	finish definitions
 
-extern uint32_t time_now();
-
-extern struct _pkt_pool pkt_pool;
-
 tc_tm_pkt * get_pkt();
 
 SAT_returnState free_pkt(tc_tm_pkt *pkt);
