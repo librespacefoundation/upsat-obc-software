@@ -41,7 +41,7 @@ SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_
 
 SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data *data);
 
-SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
+SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data);
 
 SAT_returnState unpack_pkt(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 

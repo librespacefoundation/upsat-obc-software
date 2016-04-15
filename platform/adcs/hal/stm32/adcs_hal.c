@@ -40,7 +40,7 @@ SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data) {
 
     if(huart->RxState == HAL_UART_STATE_READY) {
         data->uart_size = huart->RxXferSize - huart->RxXferCount;
-        for(uint16_t i = 0; i < data->uart_size; i++) { data->uart_pkt_buf[i] = data->uart_buf[i]; }
+        for(uint16_t i = 0; i < data->uart_size; i++) { data->uart_unpkt_buf[i] = data->uart_buf[i]; }
         HAL_UART_Receive_IT(huart, data->uart_buf, UART_BUF_SIZE);
         return SATR_EOT;
     }

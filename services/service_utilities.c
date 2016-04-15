@@ -42,8 +42,8 @@ void cnv8_16(uint8_t *from, uint16_t *to) {
 
     union _cnv cnv;
 
-    cnv.cnv8[0] = from[1];
     cnv.cnv8[1] = from[0];
+    cnv.cnv8[0] = from[1];
     *to = cnv.cnv16[0];
 }
 
@@ -72,7 +72,7 @@ SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data *data) {
     res = HAL_uart_rx(app_id, data);
     if( res == SATR_EOT ) {
         size = data->uart_size;
-        res_deframe = HLDLC_deframe(data->uart_pkt_buf, data->deframed_buf, &size);
+        res_deframe = HLDLC_deframe(data->uart_unpkt_buf, data->deframed_buf, &size);
         if(res_deframe == SATR_EOT) {
 
             pkt = get_pkt();
@@ -86,22 +86,20 @@ SAT_returnState import_pkt(TC_TM_app_id app_id, struct uart_data *data) {
 }
 
 //WIP
-SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt) {
+SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data) {
 
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     uint16_t size = 0;
-    uint8_t buf[TEST_ARRAY];
-    uint8_t buf_out[TEST_ARRAY];
     SAT_returnState res;    
 
-    pack_pkt(buf, pkt, &size);
-    res = HLDLC_frame(buf, buf_out, &size);
+    pack_pkt(data->uart_pkted_buf, pkt, &size);
+    res = HLDLC_frame(data->uart_pkted_buf, data->framed_buf, &size);
     if(res == SATR_ERROR) { return SATR_ERROR; }
 
     if(!C_ASSERT(size > 0) == true) { return SATR_ERROR; }
 
-    HAL_uart_tx(app_id, buf_out, size);
+    HAL_uart_tx(app_id, data->framed_buf, size);
 
     return SATR_OK;
 }
@@ -237,7 +235,7 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
     pkt->seq_flags = TC_TM_SEQ_SPACKET;
     cnv.cnv16[0] = pkt->seq_count;
-    buf[2] = (  pkt->seq_flags << 6 | cnv.cnv8[1]);
+    buf[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
     buf[3] = cnv.cnv8[0];
 
     /* TYPE = 0 TM, TYPE = 1 TC*/
@@ -261,13 +259,13 @@ SAT_returnState pack_pkt(uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size) {
 
     /*check if this is correct*/
     cnv.cnv16[0] = pkt->len;
-    buf[4] = cnv.cnv8[0];
-    buf[5] = cnv.cnv8[1];
+    buf[4] = cnv.cnv8[1];
+    buf[5] = cnv.cnv8[0];
 
     /*added it for ecss conformity, checksum in the ecss is defined to have 16 bits, we only use 8*/
     buf[buf_pointer++] = 0;
     checkSum(buf, buf_pointer-2, &buf[buf_pointer]);
-    *size = buf_pointer; //maybe it needs + 1
+    *size = buf_pointer + 1;
 
     if(!C_ASSERT(*size > MIN_PKT_SIZE && *size < MAX_PKT_SIZE) == true)       { return SATR_ERROR; }
 

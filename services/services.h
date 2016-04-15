@@ -331,8 +331,10 @@ extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
 
 struct uart_data {
     uint8_t uart_buf[UART_BUF_SIZE];
-    uint8_t uart_pkt_buf[UART_BUF_SIZE];
+    uint8_t uart_unpkt_buf[UART_BUF_SIZE];
     uint8_t deframed_buf[TC_MAX_PKT_SIZE];
+    uint8_t uart_pkted_buf[UART_BUF_SIZE];
+    uint8_t framed_buf[UART_BUF_SIZE];
     uint16_t uart_size;
 };
 

@@ -594,6 +594,7 @@ void StartDefaultTask(void const * argument)
   sprintf((char*)uart_temp, "Hello\n");
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
+  HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
   
   /*Uart inits*/
   HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
@@ -621,7 +622,7 @@ void HK_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    hk_SCH();
+   // hk_SCH();
   }
   /* USER CODE END HK_task */
 }

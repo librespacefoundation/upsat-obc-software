@@ -48,7 +48,7 @@ extern struct _sat_status sat_status;
 
 extern struct _obc_data obc_data;
 
-extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
+extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data);
 
 extern uint32_t * HAL_obc_BKPSRAM_BASE();
 

@@ -23,7 +23,7 @@ extern struct _adcs_data adcs_data;
 
 extern const uint8_t services_verification_ADCS_TC[MAX_SERVICES][MAX_SUBTYPES];
 
-extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt);
+extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data);
 
 extern uint32_t * HAL_obc_BKPSRAM_BASE();
 

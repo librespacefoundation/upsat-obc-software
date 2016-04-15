@@ -56,12 +56,12 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
         //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return SATR_ERROR; }
         res = test_app(pkt);
     } 
-    else if(id == EPS_APP_ID)      { export_pkt(EPS_APP_ID, pkt); }
-    else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt); }
-    else if(id == COMMS_APP_ID)    { export_pkt(COMMS_APP_ID, pkt); }
-    else if(id == IAC_APP_ID)      { export_pkt(DBG_APP_ID, pkt); }
-    else if(id == GND_APP_ID)      { export_pkt(DBG_APP_ID, pkt); }
-    else if(id == DBG_APP_ID)      { export_pkt(DBG_APP_ID, pkt); }
+    else if(id == EPS_APP_ID)      { export_pkt(EPS_APP_ID, pkt, &obc_data.eps_uart); }
+    else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt, &obc_data.adcs_uart); }
+    else if(id == COMMS_APP_ID)    { export_pkt(COMMS_APP_ID, pkt, &obc_data.comms_uart); }
+    else if(id == IAC_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &obc_data.dbg_uart); }
+    else if(id == GND_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &obc_data.dbg_uart); }
+    else if(id == DBG_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &obc_data.dbg_uart); }
 
     verification_app(pkt);
     free_pkt(pkt);
