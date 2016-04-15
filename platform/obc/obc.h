@@ -71,12 +71,14 @@ void bkup_sram_INIT();
 
 uint32_t get_new_fileId();
 
-
 SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 
 SAT_returnState event_log_load(uint8_t *buf, const uint16_t pointer, const uint16_t size);
 
 SAT_returnState event_log_IDLE();
 
+SAT_returnState wod_log();
+
+SAT_returnState wod_log_load(uint8_t *buf);
 
 #endif

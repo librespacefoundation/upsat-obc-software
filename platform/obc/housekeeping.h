@@ -10,6 +10,9 @@ extern void HAL_sys_delay(uint32_t sec);
 extern SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid);
 extern SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid);
 
+extern void get_time_QB50(uint32_t *qb);
+extern SAT_returnState wod_log();
+extern SAT_returnState wod_log_load(uint8_t *buf);
 
 void hk_SCH();
 

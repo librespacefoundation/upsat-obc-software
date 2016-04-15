@@ -183,21 +183,27 @@ SAT_returnState wod_log() {
 
 SAT_returnState wod_log_load(uint8_t *buf) {
 
-//    union _cnv temp_cnv;
+   union _cnv temp_cnv;
+   uint8_t rev_wod_cnt = *obc_data.wod_cnt;
 
-//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
-//    buf[i] = temp_cnv.cnv8[3];
-//    buf[i] = temp_cnv.cnv8[2];
-//    buf[i] = temp_cnv.cnv8[1];
-//    buf[i] = temp_cnv.cnv8[0];
+   for(uint16_t i = 0; i < WOD_MAX_BUFFER; i++) {
 
-//    temp_cnv.cnv32 = obc_data.wod_log[*obc_data.wod_cnt]; 
-//    buf[i] = temp_cnv.cnv8[2];
-//    buf[i] = temp_cnv.cnv8[1];
-//    buf[i] = temp_cnv.cnv8[0];
-   
-//   for(uint16_t i = 0; i < size; i++) {
-//        buf[i] = obc_data.log[(pointer + i) >> 2] >> ((0x00000003 & i) * 8);
-//   }
+        rev_wod_cnt--;
+        temp_cnv.cnv32 = obc_data.wod_log[rev_wod_cnt]; 
+        buf[i] = temp_cnv.cnv8[3];
+        buf[i] = temp_cnv.cnv8[2];
+        buf[i] = temp_cnv.cnv8[1];
+        buf[i] = temp_cnv.cnv8[0];
+
+        if(rev_wod_cnt == 0) { rev_wod_cnt = WOD_MAX_BUFFER; }
+        rev_wod_cnt--;
+        
+        temp_cnv.cnv32 = obc_data.wod_log[rev_wod_cnt]; 
+        buf[i] = temp_cnv.cnv8[2];
+        buf[i] = temp_cnv.cnv8[1];
+        buf[i] = temp_cnv.cnv8[0];
+
+        if(rev_wod_cnt == 0) { rev_wod_cnt = WOD_MAX_BUFFER; }
+   }
    return SATR_OK;
 }

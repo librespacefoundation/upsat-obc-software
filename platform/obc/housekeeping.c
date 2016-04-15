@@ -17,9 +17,11 @@ void hk_SCH() {
     hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
     route_pkt(&hk_pkt);
     HAL_sys_delay(59000);
+    wod_log();
+    clear_wod();
+    //write to mass storage
     hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
     route_pkt(&hk_pkt);
-    clear_wod();
 }
 
 void clear_wod() {
@@ -57,19 +59,18 @@ SAT_returnState hk_report_parameters(HK_struct_id sid, tc_tm_pkt *pkt) {
     
     if(sid == EX_HEALTH_REP) {
 
-        //cnv.cnv32 = time.now();
-        cnv32_8(time_now(), &pkt->data[1]);
+        uint32_t time_temp;
+        get_time_QB50(&time_temp);
+
+        cnv32_8(time_temp, &pkt->data[1]);
         pkt->len = 5;
     } else if(sid == WOD_REP) {
 
-        pkt->data[1] = sat_status.mode;
-        pkt->data[2] = sat_status.batt_curr;
-        pkt->data[3] = sat_status.batt_volt;
-        pkt->data[4] = sat_status.bus_3v3_curr;
-        pkt->data[5] = sat_status.bus_5v_curr;
-        pkt->data[6] = sat_status.temp_eps;
-        pkt->data[7] = sat_status.temp_batt;
-        pkt->data[8] = sat_status.temp_comms;
+        uint32_t time_temp;
+        get_time_QB50(&time_temp);
+
+        cnv32_8(time_temp, &pkt->data[1]);
+        wod_log_load(&pkt->data[5]);
         pkt->len = 9;
     }
 
