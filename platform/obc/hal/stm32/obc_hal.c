@@ -70,7 +70,7 @@ void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart)
     UART_OBC_Receive_IT(huart);
   }
 }
-
+uint16_t err;
 /**
   * @brief  Receives an amount of data in non blocking mode 
   * @param  huart: pointer to a UART_HandleTypeDef structure that contains
@@ -87,6 +87,10 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
       huart->RxXferCount--;
       //start timeout
     } else if(c == HLDLC_START_FLAG && (huart->RxXferSize - huart->RxXferCount) < TC_MIN_PKT_SIZE) {
+      err++;
+      huart->pRxBuffPtr -= huart->RxXferSize - huart->RxXferCount;
+      huart->RxXferCount = huart->RxXferSize - 1;
+      *huart->pRxBuffPtr++ = c;
       //error
       //event log
       //reset buffers & pointers
@@ -108,6 +112,8 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
     } else if(huart->RxXferSize > huart->RxXferCount) {
       *huart->pRxBuffPtr++ = c;
       huart->RxXferCount--;
+    } else {
+      err++;
     }
 
     if(huart->RxXferCount == 0U) // errror

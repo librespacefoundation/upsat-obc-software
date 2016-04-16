@@ -35,7 +35,7 @@
 //needs to redifine
 #define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
-#define TC_MIN_PKT_SIZE 1 //random
+#define TC_MIN_PKT_SIZE 6 //random
 
 #define ECSS_HEADER_SIZE        6
 #define ECSS_DATA_HEADER_SIZE   4
