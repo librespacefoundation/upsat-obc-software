@@ -337,7 +337,7 @@ void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -540,6 +540,10 @@ void StartDefaultTask(void const * argument)
    HAL_reset_source(&sys_data.rsrc);
    update_boot_counter();
 
+   /*IS25LP128  eeprom*/
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+   
    //uint32_t t1, t2, t3;
    
    //t1 = time_cmp_elapsed(3, 6);
@@ -554,7 +558,7 @@ void StartDefaultTask(void const * argument)
    
    //event_log(reset source);
    
-   uint8_t uart_temp[20];
+   uint8_t uart_temp[30];
    
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
@@ -588,8 +592,23 @@ void StartDefaultTask(void const * argument)
    
    //sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
    //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   uint8_t spi_in_temp[7], spi_out_temp[7];
    
+   spi_in_temp[0] = 0x90;
+   spi_in_temp[1] = 0x00;
+   spi_in_temp[2] = 0x00;
+   spi_in_temp[3] = 0x00;
+   spi_in_temp[4] = 0x00;
+   spi_in_temp[5] = 0x00;
+   spi_in_temp[6] = 0x00;
    
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
+    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
+    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
+    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
    
   sprintf((char*)uart_temp, "Hello\n");
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
