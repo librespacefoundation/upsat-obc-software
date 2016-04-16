@@ -71,7 +71,7 @@ SAT_returnState hk_report_parameters(HK_struct_id sid, tc_tm_pkt *pkt) {
 
         cnv32_8(time_temp, &pkt->data[1]);
         wod_log_load(&pkt->data[5]);
-        pkt->len = 9;
+        pkt->len = 1+4+(32*7); //we should see what mode is.
     }
 
     return SATR_OK;
