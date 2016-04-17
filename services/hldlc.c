@@ -40,7 +40,13 @@ SAT_returnState HLDLC_frame(uint8_t *buf_in, uint8_t *buf_out, uint16_t *size) {
             buf_out[0] = HLDLC_START_FLAG;
             buf_out[1] = buf_in[0];
         } else if(i == (*size) - 1) {
-            buf_out[cnt++] = buf_in[i];
+            if(buf_in[i] == HLDLC_START_FLAG) {
+                buf_out[cnt++] = HLDLC_CONTROL_FLAG;
+                buf_out[cnt++] = 0x5E;
+            } else if(buf_in[i] == HLDLC_CONTROL_FLAG) {
+                buf_out[cnt++] = HLDLC_CONTROL_FLAG;
+                buf_out[cnt++] = 0x5D;
+            } else { buf_out[cnt++] = buf_in[i]; }
             buf_out[cnt++] = HLDLC_START_FLAG;
             *size = cnt;
             return SATR_EOT;
