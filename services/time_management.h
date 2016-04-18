@@ -6,15 +6,6 @@
 
 #define MAX_YEAR 21
 
-struct time_utc {
-    uint8_t day;
-    uint8_t month;
-    uint8_t year;
-    uint8_t hours;
-    uint8_t min;
-    uint8_t sec;
-};
-
 struct time_keeping {
     uint32_t epoch;
     uint32_t elapsed;

@@ -69,7 +69,8 @@ typedef enum {
     SATR_MS_MAX_FILES          = 12,
     SATR_PKT_INIT              = 13,
     SATR_INV_STORE_ID          = 14,
-    SATR_LAST                  = 15
+    SATR_INV_DATA_LEN          = 15,
+    SATR_LAST                  = 16
 }SAT_returnState;
 
 /*services types*/
@@ -342,6 +343,15 @@ struct _sys_data {
     uint8_t seq_cnt[LAST_APP_ID];
     uint8_t rsrc;
     uint32_t *boot_counter;
+};
+
+struct time_utc {
+    uint8_t day;
+    uint8_t month;
+    uint8_t year;
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
 };
 
 extern struct _sys_data sys_data;
