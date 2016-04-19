@@ -76,6 +76,7 @@ typedef enum {
 /*services types*/
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
+#define TC_EVENT_SERVICE 		        5
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
 #define TC_SCHEDULING_SERVICE           11
 #define TC_LARGE_DATA_SERVICE           13
@@ -88,6 +89,9 @@ typedef enum {
 
 #define TC_HK_REPORT_PARAMETERS         21
 #define TM_HK_PARAMETERS_REPORT         23
+
+#define TM_EV_NORMAL_REPORT         	1
+#define TM_EV_ERROR_REPORT         		4
 
 #define TC_FM_PERFORM_FUNCTION          1
 
