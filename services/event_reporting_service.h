@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "services.h"
 
+extern SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_t *res_crc);
 
 //ToDo
 

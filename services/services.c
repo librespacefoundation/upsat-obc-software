@@ -51,7 +51,7 @@ uint8_t tst_debugging(char *f, int fi, int l, char *e) {
   //res = sprintf((char*)uart_temp, "Assertion failed %s,%d,%d,%s\n", f, fi, l, e);
   //size = strnlen(uart_temp, 200);
   event_crt_pkt_api(uart_temp, f, fi, l, e, &size, SATR_ERROR);
- // HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
+  HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
 
   cnv32_8(time_now(), &uart_temp[0]);
   uart_temp[4] = fi;

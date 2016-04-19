@@ -249,6 +249,7 @@ union _cnv {
 
 extern void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
 extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
+extern SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e, uint16_t *size, SAT_returnState mode);
 
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 extern void cnv16_8(const uint16_t from, uint8_t *to);
