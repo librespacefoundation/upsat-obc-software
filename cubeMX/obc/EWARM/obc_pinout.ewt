@@ -1216,6 +1216,12 @@
   <group>
     <name>OBC</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\services\event_reporting_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\event_reporting_service.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\services\function_management_service.c</name>
     </file>
     <file>

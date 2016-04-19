@@ -12,7 +12,7 @@ SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e,
 	else { sub_type = TM_EV_ERROR_REPORT; }
 
 	buf[0] = HLDLC_START_FLAG;
-	buf[1] = ox08;
+	buf[1] = 0x08;
 	buf[2] = SYSTEM_APP_ID;
 	buf[3] = 0xC0;
 	buf[4] = 0;
