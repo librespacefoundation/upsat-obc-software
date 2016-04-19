@@ -1,9 +1,9 @@
-#include "comms.h"
+#include "eps.h"
 
 #undef __FILE_ID__
 #define __FILE_ID__ 666
 
-const uint8_t services_verification_COMMS_TC[MAX_SERVICES][MAX_SUBTYPES] = { 
+const uint8_t services_verification_EPS_TC[MAX_SERVICES][MAX_SUBTYPES] = { 
 /*    0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 */
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /*TC_VERIFICATION_SERVICE*/
@@ -27,7 +27,7 @@ const uint8_t services_verification_COMMS_TC[MAX_SERVICES][MAX_SUBTYPES] = {
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-struct _comms_data comms_data;
+struct _eps_data eps_data;
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt) {
 
@@ -55,15 +55,14 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
         //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return SATR_ERROR; }
         res = test_app(pkt);
     } 
-    else if(id == EPS_APP_ID)      { export_pkt(EPS_APP_ID, pkt, &comms_data.obc_uart); }
-    else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt, &comms_data.obc_uart); }
-    else if(id == OBC_APP_ID)    { export_pkt(COMMS_APP_ID, pkt, &comms_data.obc_uart); }
-    else if(id == IAC_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &comms_data.obc_uart); }
-    else if(id == GND_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &comms_data.dbg_uart); } //we need to fix this
-    else if(id == DBG_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &comms_data.obc_uart); }
+    else if(id == COMMS_APP_ID)    { export_pkt(EPS_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == OBC_APP_ID)      { export_pkt(COMMS_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == IAC_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == GND_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == DBG_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
 
     verification_app(pkt);
     free_pkt(pkt);
     return SATR_OK;
 }
-

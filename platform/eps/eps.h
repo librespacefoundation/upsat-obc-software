@@ -1,5 +1,5 @@
-#ifndef __ADCS_H
-#define __ADCS_H
+#ifndef __EPS_H
+#define __EPS_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -7,25 +7,21 @@
 #include <string.h>
 #include "../../../services/services.h"
 
-struct _adcs_data
-{
-    uint16_t adcs_seq_cnt;
-    uint8_t rsrc;
-    uint32_t *boot_counter;
-    uint32_t *log;
-    uint32_t *log_cnt;
-    uint32_t *log_state;
+//temp
+#define TEST_ARRAY 1024
 
+/*restriction for 8 char filename, for conversion from num to file name*/
+#define MAX_FILE_NUM 0x5F5E0FF
+
+struct _eps_data
+{   
+    struct uart_data dbg_uart;
     struct uart_data obc_uart;
 };
 
-extern struct _adcs_data adcs_data;
-
-extern const uint8_t services_verification_ADCS_TC[MAX_SERVICES][MAX_SUBTYPES];
+extern struct _eps_data eps_data;
 
 extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data);
-
-extern uint32_t * HAL_obc_BKPSRAM_BASE();
 
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 
@@ -38,7 +34,5 @@ extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 extern SAT_returnState test_app(tc_tm_pkt *pkt);
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt);
-
-SAT_returnState event_log(uint8_t *buf, const uint16_t size);
 
 #endif
