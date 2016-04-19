@@ -59,3 +59,8 @@ uint8_t tst_debugging(char *f, int fi, int l, char *e) {
 
   return false;
 }
+
+SAT_returnState sys_data_INIT() {
+  for(uint8_t i = 0; i < LAST_APP_ID; i++) { sys_data.seq_cnt[i] = 0; }
+  return SATR_OK;
+}

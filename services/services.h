@@ -361,4 +361,6 @@ uint32_t time_now();
 
 uint8_t tst_debugging(char *f, int fi, int l, char *e);
 
+SAT_returnState sys_data_INIT();
+
 #endif
