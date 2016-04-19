@@ -70,7 +70,6 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
 
 SAT_returnState obc_data_INIT() {
 
-    obc_data.obc_seq_cnt = 0;
     bkup_sram_INIT();
     return SATR_OK;
 }
