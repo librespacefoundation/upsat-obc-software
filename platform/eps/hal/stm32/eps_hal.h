@@ -2,8 +2,7 @@
 #define __EPS_HAL_H
 
 #include <stdint.h>
-#include "stm32f4xx_hal.h"
-#include <cmsis_os.h>
+#include "stm32l1xx_hal.h"
 #include "../../../../services/services.h"
 
 //ToDo
@@ -11,12 +10,25 @@
 //  need to make the change from the two different typedefs
 
 extern struct _eps_data eps_data;
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart3;
 extern RTC_HandleTypeDef hrtc;
 
-void HAL_adcs_SD_ON();
+void HAL_eps_OBC_ON();
 
-void HAL_adcs_SD_OFF();
+void HAL_eps_OBC_OFF();
+
+void HAL_eps_ADCS_ON();
+
+void HAL_eps_ADCS_OFF();
+
+void HAL_eps_COMMS_ON();
+
+void HAL_eps_COMMS_OFF();
+
+void HAL_eps_SU_ON();
+
+void HAL_eps_SU_OFF();
+
 
 void HAL_sys_delay(uint32_t sec);
 

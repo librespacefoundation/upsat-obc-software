@@ -1,19 +1,43 @@
-#include "adcs_hal.h"
+#include "eps_hal.h"
 
 
 #undef __FILE_ID__
 #define __FILE_ID__ 13
 
 void HAL_sys_delay(uint32_t sec) {
-	osDelay(sec);
+	HAL_Delay(sec);
 }
 
-void HAL_adcs_SD_ON() {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+void HAL_eps_OBC_ON() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_OBC_SWITCH_Pin, GPIO_PIN_RESET);
 }
 
-void HAL_adcs_SD_OFF() {
-    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+void HAL_eps_OBC_OFF() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_OBC_SWITCH_Pin, GPIO_PIN_SET);
+}
+
+void HAL_eps_ADCS_ON() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_ADCS_SWITCH_Pin, GPIO_PIN_RESET);
+}
+
+void HAL_eps_ADCS_OFF() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_ADCS_SWITCH_Pin, GPIO_PIN_SET);
+}
+
+void HAL_eps_COMMS_ON() {
+    HAL_GPIO_WritePin(GPIOH, GPIO_COMM_SWITCH_Pin, GPIO_PIN_RESET);
+}
+
+void HAL_eps_COMMS_OFF() {
+    HAL_GPIO_WritePin(GPIOH, GPIO_COMM_SWITCH_Pin, GPIO_PIN_SET);
+}
+
+void HAL_eps_SU_ON() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_SU_SWITCH_Pin, GPIO_PIN_RESET);
+}
+
+void HAL_eps_SU_OFF() {
+    HAL_GPIO_WritePin(GPIOC, GPIO_SU_SWITCH_Pin, GPIO_PIN_SET);
 }
 
 void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size) {
@@ -21,14 +45,14 @@ void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size) {
     HAL_StatusTypeDef res;
     UART_HandleTypeDef *huart;
 
-    if(app_id == OBC_APP_ID) { huart = &huart2; }
-    else if(app_id == DBG_APP_ID) { huart = &huart2; }
+    if(app_id == OBC_APP_ID) { huart = &huart3; }
+    else if(app_id == DBG_APP_ID) { huart = &huart3; }
 
     //HAL_UART_Transmit(&huart2, buf, size, 10);
     for(;;) { // should use hard limits
         res = HAL_UART_Transmit_DMA(huart, buf, size);
         if(res == HAL_OK) { break; }
-        osDelay(10);
+        HAL_Delay(10);
     }
 }
 
@@ -36,9 +60,9 @@ SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data) {
 
     UART_HandleTypeDef *huart;
 
-    if(app_id == OBC_APP_ID) { huart = &huart2; }
+    if(app_id == OBC_APP_ID) { huart = &huart3; }
 
-    if(huart->RxState == HAL_UART_STATE_READY) {
+    if((huart->State == HAL_UART_STATE_READY) || (huart->State == HAL_UART_STATE_BUSY_TX)) {
         data->uart_size = huart->RxXferSize - huart->RxXferCount;
         for(uint16_t i = 0; i < data->uart_size; i++) { data->uart_unpkt_buf[i] = data->uart_buf[i]; }
         HAL_UART_Receive_IT(huart, data->uart_buf, UART_BUF_SIZE);
@@ -53,17 +77,18 @@ SAT_returnState HAL_uart_rx(TC_TM_app_id app_id, struct uart_data *data) {
   *                the configuration information for the specified UART module.
   * @retval None
   */
-void HAL_COMMS_UART_IRQHandler(UART_HandleTypeDef *huart)
+void HAL_EPS_UART_IRQHandler(UART_HandleTypeDef *huart)
 {
-  uint32_t tmp1 = 0U, tmp2 = 0U;
+  uint32_t tmp_flag = 0, tmp_it_source = 0;
 
-  tmp1 = __HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE);
-  tmp2 = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_RXNE);
+  tmp_flag = __HAL_UART_GET_FLAG(huart, UART_FLAG_RXNE);
+  tmp_it_source = __HAL_UART_GET_IT_SOURCE(huart, UART_IT_RXNE);
   /* UART in mode Receiver ---------------------------------------------------*/
-  if((tmp1 != RESET) && (tmp2 != RESET))
+  if((tmp_flag != RESET) && (tmp_it_source != RESET))
   { 
-    UART_ADCS_Receive_IT(huart);
+    UART_EPS_Receive_IT(huart);
   }
+
 }
 
 /**
@@ -72,11 +97,12 @@ void HAL_COMMS_UART_IRQHandler(UART_HandleTypeDef *huart)
   *                the configuration information for the specified UART module.
   * @retval HAL status
   */
-void UART_COMMS_Receive_IT(UART_HandleTypeDef *huart)
+void UART_EPS_Receive_IT(UART_HandleTypeDef *huart)
 {
+  
     uint8_t c;
 
-    c = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FFU);
+    c = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
     if(huart->RxXferSize == huart->RxXferCount && c == HLDLC_START_FLAG) {
       *huart->pRxBuffPtr++ = c;
       huart->RxXferCount--;
@@ -92,14 +118,21 @@ void UART_COMMS_Receive_IT(UART_HandleTypeDef *huart)
       
       __HAL_UART_DISABLE_IT(huart, UART_IT_RXNE);
 
-      /* Disable the UART Parity Error Interrupt */
-      __HAL_UART_DISABLE_IT(huart, UART_IT_PE);
+      /* Check if a transmit process is ongoing or not */
+      if(huart->State == HAL_UART_STATE_BUSY_TX_RX) 
+      {
+        huart->State = HAL_UART_STATE_BUSY_TX;
+      }
+      else
+      {
+        /* Disable the UART Parity Error Interrupt */
+        __HAL_UART_DISABLE_IT(huart, UART_IT_PE);
 
-      /* Disable the UART Error Interrupt: (Frame error, noise error, overrun error) */
-      __HAL_UART_DISABLE_IT(huart, UART_IT_ERR);
+        /* Disable the UART Error Interrupt: (Frame error, noise error, overrun error) */
+        __HAL_UART_DISABLE_IT(huart, UART_IT_ERR);
 
-	  /* Rx process is completed, restore huart->RxState to Ready */
-      huart->RxState = HAL_UART_STATE_READY;
+        huart->State = HAL_UART_STATE_READY;
+      }
     } else if(huart->RxXferSize > huart->RxXferCount) {
       *huart->pRxBuffPtr++ = c;
       huart->RxXferCount--;
@@ -115,7 +148,6 @@ void UART_COMMS_Receive_IT(UART_HandleTypeDef *huart)
 
 void HAL_reset_source(uint8_t *src) {
 
-    *src = __HAL_RCC_GET_FLAG(RCC_FLAG_BORRST);
     *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) << 1);
     *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) << 2);
     *src |= (__HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST) << 3);

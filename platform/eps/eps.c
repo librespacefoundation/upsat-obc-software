@@ -46,21 +46,16 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
         res = hk_app(pkt);
     } else if(id == SYSTEM_APP_ID && pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE) {
         res = function_management_app(pkt);
-    } else if(id == SYSTEM_APP_ID && pkt->ser_type == TC_LARGE_DATA_SERVICE) {
-        res = large_data_app(pkt);
-    } else if(id == SYSTEM_APP_ID && pkt->ser_type == TC_MASS_STORAGE_SERVICE) {
-        //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return SATR_ERROR; }
-        res = mass_storage_app(pkt);
     } else if(id == SYSTEM_APP_ID && pkt->ser_type == TC_TEST_SERVICE) {
         //C_ASSERT(pkt->ser_subtype == 1 || pkt->ser_subtype == 2 || pkt->ser_subtype == 9 || pkt->ser_subtype == 11 || pkt->ser_subtype == 12 || pkt->ser_subtype == 13) { free_pkt(pkt); return SATR_ERROR; }
         res = test_app(pkt);
     } 
-    else if(id == COMMS_APP_ID)    { export_pkt(EPS_APP_ID, pkt, &eps_data.obc_uart); }
-    else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt, &eps_data.obc_uart); }
-    else if(id == OBC_APP_ID)      { export_pkt(COMMS_APP_ID, pkt, &eps_data.obc_uart); }
-    else if(id == IAC_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
-    else if(id == GND_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
-    else if(id == DBG_APP_ID)      { export_pkt(DBG_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == COMMS_APP_ID)    { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == ADCS_APP_ID)     { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == OBC_APP_ID)      { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == IAC_APP_ID)      { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == GND_APP_ID)      { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
+    else if(id == DBG_APP_ID)      { export_pkt(OBC_APP_ID, pkt, &eps_data.obc_uart); }
 
     verification_app(pkt);
     free_pkt(pkt);
