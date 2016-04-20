@@ -15,9 +15,8 @@ SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e,
 	buf[1] = 0x08;
 	buf[2] = SYSTEM_APP_ID;
 	buf[3] = 0xC0;
-	buf[4] = 0;
-	buf[5] = 0;
-	buf[6] = 5;
+	buf[4] = 5;
+
     buf[7] = 16;
     buf[8] = TC_EVENT_SERVICE;
     buf[9] = sub_type;
@@ -28,9 +27,16 @@ SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e,
     *size += 11 + 1;
     buf[*size] = 0;
 
-	checkSum(buf, *size, &res_crc);
+   
+    
+    buf[5] = 0;
+    buf[6] = *size - 6 -2 + 2;
+    checkSum(&buf[1], *size - 1, &res_crc);
     buf[(*size)+1] = res_crc;
     buf[(*size)+2] = HLDLC_START_FLAG;
 
+    *size += 3;
+    	
+    
 	return SATR_OK;
 }
