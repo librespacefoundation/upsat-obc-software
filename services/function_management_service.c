@@ -39,6 +39,8 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
         temp_time.min = pkt->data[5];
         temp_time.sec = pkt->data[6];
         set_time_UTC(temp_time);
+
+        pkt->verification_state = SATR_OK;
     }
 
     return SATR_OK;

@@ -59,11 +59,19 @@ SAT_returnState hk_report_parameters(HK_struct_id sid, tc_tm_pkt *pkt) {
     
     if(sid == EX_HEALTH_REP) {
 
-        uint32_t time_temp;
-        get_time_QB50(&time_temp);
+        struct time_utc temp_time;
 
-        cnv32_8(time_temp, &pkt->data[1]);
-        pkt->len = 5;
+        get_time_UTC(&temp_time);
+
+        pkt->data[1] = temp_time.day;
+        pkt->data[2] = temp_time.month;
+        pkt->data[3] = temp_time.year;
+        
+        pkt->data[4] = temp_time.hour;
+        pkt->data[5] = temp_time.min;
+        pkt->data[6] = temp_time.sec;
+        
+        pkt->len = 7;
     } else if(sid == WOD_REP) {
 
         uint32_t time_temp;

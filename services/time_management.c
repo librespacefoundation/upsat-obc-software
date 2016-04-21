@@ -105,8 +105,9 @@ void get_time_QB50(uint32_t *qb) {
 
     struct time_utc utc;
 
-    HAL_sys_getDate(&utc.month, &utc.day, &utc.year);
     HAL_sys_getTime(&utc.hour, &utc.min, &utc.sec);
+    HAL_sys_getDate(&utc.month, &utc.day, &utc.year);
+    
     cnv_UTC_QB50(utc, qb);
 
 }
@@ -114,8 +115,8 @@ void get_time_QB50(uint32_t *qb) {
 
 void get_time_UTC(struct time_utc *utc) {
 
-    HAL_sys_getDate(&utc->month, &utc->day, &utc->year);
     HAL_sys_getTime(&utc->hour, &utc->min, &utc->sec);
+    HAL_sys_getDate(&utc->month, &utc->day, &utc->year);
 
 }
 
