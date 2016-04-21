@@ -6,7 +6,11 @@
 
 #define PKT_TIMEOUT 1000 /*in seconds*/
 
-#define POOL_PKT_SIZE    20
+#if (SYSTEM_APP_ID == EPS_APP_ID) 
+#define POOL_PKT_SIZE   5
+#else
+#define POOL_PKT_SIZE   20
+#endif
 
 struct _pkt_pool{
     tc_tm_pkt pkt[POOL_PKT_SIZE];
