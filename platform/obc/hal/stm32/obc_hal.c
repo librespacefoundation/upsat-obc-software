@@ -205,8 +205,8 @@ void HAL_sys_getDate(uint8_t *mon, uint8_t *date, uint8_t *year) {
 }
 
 void HAL_obc_enableBkUpAccess() {
-  
   HAL_PWR_EnableBkUpAccess();
+  HAL_PWREx_EnableBkUpReg();
   __HAL_RCC_BKPSRAM_CLK_ENABLE();
   
 }
