@@ -167,12 +167,12 @@ SAT_returnState wod_log() {
 
 //check endianess
 
-    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.batt_curr << 24) || (sat_status.batt_volt << 16) || (sat_status.bus_3v3_curr << 8) || sat_status.bus_5v_curr; 
+    obc_data.wod_log[*obc_data.wod_cnt] = ((uint32_t)sat_status.batt_curr << 24) | ((uint32_t)sat_status.batt_volt << 16) | ((uint32_t)sat_status.bus_3v3_curr << 8) | (uint32_t)sat_status.bus_5v_curr; 
      
     (*obc_data.wod_cnt)++;
     if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
 
-    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.temp_eps << 16) || (sat_status.temp_batt << 8) || sat_status.temp_comms;
+    obc_data.wod_log[*obc_data.wod_cnt] = (sat_status.temp_eps << 16) | (sat_status.temp_batt << 8) | sat_status.temp_comms;
 
     (*obc_data.wod_cnt)++;
     if(*obc_data.wod_cnt >= WOD_MAX_BUFFER) { *obc_data.wod_cnt = 0; }
@@ -184,23 +184,23 @@ SAT_returnState wod_log_load(uint8_t *buf) {
 
    union _cnv temp_cnv;
    uint8_t rev_wod_cnt = *obc_data.wod_cnt;
-
+   uint16_t buf_cnt = 0;
    for(uint16_t i = 0; i < WOD_MAX_BUFFER; i++) {
 
         rev_wod_cnt--;
         temp_cnv.cnv32 = obc_data.wod_log[rev_wod_cnt]; 
-        buf[i] = temp_cnv.cnv8[3];
-        buf[i] = temp_cnv.cnv8[2];
-        buf[i] = temp_cnv.cnv8[1];
-        buf[i] = temp_cnv.cnv8[0];
+        buf[buf_cnt++] = temp_cnv.cnv8[2];
+        buf[buf_cnt++] = temp_cnv.cnv8[1];
+        buf[buf_cnt++] = temp_cnv.cnv8[0];
 
         if(rev_wod_cnt == 0) { rev_wod_cnt = WOD_MAX_BUFFER; }
         rev_wod_cnt--;
         
         temp_cnv.cnv32 = obc_data.wod_log[rev_wod_cnt]; 
-        buf[i] = temp_cnv.cnv8[2];
-        buf[i] = temp_cnv.cnv8[1];
-        buf[i] = temp_cnv.cnv8[0];
+        buf[buf_cnt++] = temp_cnv.cnv8[3];
+        buf[buf_cnt++] = temp_cnv.cnv8[2];
+        buf[buf_cnt++] = temp_cnv.cnv8[1];
+        buf[buf_cnt++] = temp_cnv.cnv8[0];
 
         if(rev_wod_cnt == 0) { rev_wod_cnt = WOD_MAX_BUFFER; }
    }
