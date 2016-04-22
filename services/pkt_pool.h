@@ -3,13 +3,12 @@
 
 #include <stdint.h>
 #include "services.h"
+#include "system.h"
 
 #define PKT_TIMEOUT 1000 /*in seconds*/
 
-#if (SYSTEM_APP_ID == EPS_APP_ID) 
-#define POOL_PKT_SIZE   5
-#else
-#define POOL_PKT_SIZE   20
+#ifndef POOL_PKT_SIZE
+#define POOL_PKT_SIZE   30
 #endif
 
 struct _pkt_pool{
