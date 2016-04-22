@@ -3,7 +3,7 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 666
 
-SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e, uint16_t *size, SAT_returnState mode) {
+SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e, uint16_t *size, SAT_returnState mode) {
 
     uint8_t sub_type;
     uint8_t res_crc;

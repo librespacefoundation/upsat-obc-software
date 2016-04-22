@@ -239,7 +239,7 @@ typedef enum {
     LAST_EV_STATE = 7
 }EV_state;
 
-#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __FILE_ID__, __LINE__, #e))) 
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging((uint8_t *)__FILE__, __FILE_ID__, __LINE__, #e))) 
 
 union _cnv {
     uint32_t cnv32;
@@ -249,7 +249,7 @@ union _cnv {
 
 extern void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
 extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
-extern SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e, uint16_t *size, SAT_returnState mode);
+extern SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e, uint16_t *size, SAT_returnState mode);
 
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 extern void cnv16_8(const uint16_t from, uint8_t *to);
@@ -364,7 +364,7 @@ extern struct _sys_data sys_data;
 //stub
 uint32_t time_now();
 
-uint8_t tst_debugging(char *f, int fi, int l, char *e);
+uint8_t tst_debugging(uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e);
 
 SAT_returnState sys_data_INIT();
 

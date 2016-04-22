@@ -8,6 +8,6 @@ extern SAT_returnState checkSum(const uint8_t *data, const uint16_t size, uint8_
 
 //ToDo
 
-SAT_returnState event_crt_pkt_api(uint8_t *buf, char *f, int fi, int l, char *e, uint16_t *size, SAT_returnState mode);
+SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e, uint16_t *size, SAT_returnState mode);
 
 #endif
