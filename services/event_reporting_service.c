@@ -26,6 +26,8 @@ SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_
     else { sprintf((char*)&buf[11], "Error %s,%d,%d,%s\n", f, fi, l, e); }
 
     *size = strnlen(&buf[11], 200);
+    event_log(&buf[11], *size);
+
     *size += 11 + 1;
     buf[*size] = 0;
 
@@ -36,6 +38,6 @@ SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_
     buf[(*size)+2] = HLDLC_START_FLAG;
 
     *size += 3;
-	    
+
     return SATR_OK;
 }

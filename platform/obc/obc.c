@@ -85,11 +85,7 @@ void bkup_sram_INIT() {
 
     obc_data.log = HAL_obc_BKPSRAM_BASE() + 5;
 
-    obc_data.wod_log = HAL_obc_BKPSRAM_BASE() + 5 + (EV_MAX_BUFFER/32);
-
-    //for testing only
-    *obc_data.log_cnt = 0;
-    *obc_data.wod_cnt = 0;
+    obc_data.wod_log = HAL_obc_BKPSRAM_BASE() + 6 + (EV_MAX_BUFFER/4);
     
     if(!C_ASSERT(*obc_data.log_cnt < EV_MAX_BUFFER) == true) { *obc_data.log_cnt = 0; }
     if(!C_ASSERT(*obc_data.wod_cnt < EV_MAX_BUFFER) == true) { *obc_data.wod_cnt = 0; }
@@ -184,6 +180,8 @@ SAT_returnState wod_log_load(uint8_t *buf) {
 
    union _cnv temp_cnv;
    uint8_t rev_wod_cnt = *obc_data.wod_cnt;
+   if(rev_wod_cnt == 0) { rev_wod_cnt = WOD_MAX_BUFFER; }
+
    uint16_t buf_cnt = 0;
    for(uint16_t i = 0; i < WOD_MAX_BUFFER; i++) {
 
