@@ -38,6 +38,10 @@
 /* USER CODE BEGIN Includes */
 #include "../../../platform/obc/obc.h"
 #include "../../../services/service_utilities.h"
+
+#undef __FILE_ID__
+#define __FILE_ID__ 666
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -277,14 +281,14 @@ void MX_RTC_Init(void)
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 1;
   sDate.Year = 0;
 
-  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  //HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     /**Enable Calibrartion 
     */
@@ -317,7 +321,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -357,7 +361,7 @@ void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -558,16 +562,17 @@ void StartDefaultTask(void const * argument)
    
    //event_log(reset source);
    
-   uint8_t uart_temp[30];
-   
+   uint8_t uart_temp[200];
+   //if(!C_ASSERT(false) == true)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
    
-   mass_storage_init();
-   //su_INIT();
+   //HAL_obc_SD_ON();
    
-   *obc_data.log_cnt = 0;
+   //mass_storage_init();
+   //su_INIT();
+
    //uint8_t hours, mins, sec = 0;
    //HAL_obc_getTime(&hours, &mins, &sec);
    //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
@@ -594,6 +599,7 @@ void StartDefaultTask(void const * argument)
    //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
    uint8_t spi_in_temp[7], spi_out_temp[7];
    
+   /*IS25LP128  eeprom*/
    spi_in_temp[0] = 0x90;
    spi_in_temp[1] = 0x00;
    spi_in_temp[2] = 0x00;
@@ -609,11 +615,52 @@ void StartDefaultTask(void const * argument)
     sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
     HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
     HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
-   
+
+    for(uint8_t i = 0; i < 10; i++) {
+      /*AD7682*/
+      spi_in_temp[0] = 0xFA; //0b11110001;
+      spi_in_temp[1] = 0x40; //0b00000100;
+      spi_in_temp[2] = 0x00;
+      spi_in_temp[3] = 0x00;
+      spi_in_temp[4] = 0x00;
+      spi_in_temp[5] = 0x00;
+      
+      spi_out_temp[0] = 0x00;
+      spi_out_temp[1] = 0x00; 
+      spi_out_temp[2] = 0x00;
+      spi_out_temp[3] = 0x00;
+      spi_out_temp[4] = 0x00;
+      spi_out_temp[5] = 0x00;
+      
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+      osDelay(1);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+      osDelay(6);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+      osDelay(1);
+      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 10000);
+      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
+      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
+      osDelay(100);
+    }
+      
+    /*RTC*/
+    struct time_utc utc;
+
+    get_time_UTC(&utc);
+    sprintf(uart_temp, "TIME %d %d %d %d %d %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
+    
   sprintf((char*)uart_temp, "Hello\n");
   HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
+  
+  uint16_t size = 0;
+  
+  event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
+  HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
   
   /*Uart inits*/
   HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
@@ -628,7 +675,7 @@ void StartDefaultTask(void const * argument)
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     //su_SCH();
-    osDelay(100);
+    osDelay(10);
   }
   /* USER CODE END 5 */ 
 }
@@ -642,6 +689,7 @@ void HK_task(void const * argument)
   for(;;)
   {
    // hk_SCH();
+    osDelay(10);
   }
   /* USER CODE END HK_task */
 }
