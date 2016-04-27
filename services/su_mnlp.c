@@ -67,7 +67,8 @@ SAT_returnState su_incoming_rx() {
 
     res = HAL_su_uart_rx(&c);
     if( res == SATR_OK ) {
-        if(obc_su_scripts.rx_cnt < SU_RSP_PCKT_SIZE) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
+        //if(obc_su_scripts.rx_cnt < SU_SCI_HEADER + 5) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
+        if(obc_su_scripts.rx_cnt < SU_SCI_HEADER + SU_RSP_PCKT_SIZE) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
         else {
 
             obc_su_scripts.rx_cnt = SU_SCI_HEADER;
@@ -146,8 +147,8 @@ void su_SCH() {
 void su_INIT() {
     for(MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
         mass_storage_su_load_api(i, obc_su_scripts.temp_buf);
-        su_populate_header(&obc_su_scripts.scripts[(uint8_t)i].header, obc_su_scripts.temp_buf);
-        su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)i], obc_su_scripts.temp_buf);       
+        su_populate_header(&obc_su_scripts.scripts[(uint8_t)i-1].header, obc_su_scripts.temp_buf);
+        su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)i-1], obc_su_scripts.temp_buf);       
     }
     obc_su_scripts.rx_cnt = SU_SCI_HEADER;
 }
@@ -165,7 +166,7 @@ SAT_returnState su_tt_handler(struct script_times_table tt, struct su_script *sc
 
 SAT_returnState su_cmd_handler(struct script_seq *cmd) {
 
-    HAL_obc_delay((cmd->dt_min * 60) + cmd->dt_sec);
+    HAL_sys_delay((cmd->dt_min * 60) + cmd->dt_sec);
 
     if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID)          { su_power_ctrl(P_ON); } 
     else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID)    { su_power_ctrl(P_OFF); } 
@@ -178,18 +179,34 @@ SAT_returnState su_cmd_handler(struct script_seq *cmd) {
 SAT_returnState su_populate_header(struct script_hdr *hdr, uint8_t *buf) {
 
 
-    if(!C_ASSERT(buf != NULL) == true)          { return SATR_ERROR; }
+    if(!C_ASSERT(buf != NULL && hdr != NULL) == true)          { return SATR_ERROR; }
 
-    cnv8_16(&buf[0], &hdr->script_len);
-    cnv8_32(&buf[2], &hdr->start_time);
-    cnv8_32(&buf[6], &hdr->file_sn);
+    union _cnv cnv;
+
+    cnv.cnv8[0] = buf[0];
+    cnv.cnv8[1] = buf[1];
+    hdr->script_len = cnv.cnv16[0];
+
+    cnv.cnv8[0] = buf[2];
+    cnv.cnv8[1] = buf[3];
+    cnv.cnv8[2] = buf[4];
+    cnv.cnv8[3] = buf[5];
+    hdr->start_time = cnv.cnv32;
+    
+    cnv.cnv8[0] = buf[6];
+    cnv.cnv8[1] = buf[7];
+    cnv.cnv8[2] = buf[8];
+    cnv.cnv8[3] = buf[9];
+    hdr->file_sn = cnv.cnv32;
 
     hdr->sw_ver = 0x1F & buf[10];
     hdr->su_id = 0x03 & (buf[10] >> 5); //need to check this
     hdr->script_type = 0x1F & buf[11];
     hdr->su_md = 0x03 & (buf[11] >> 5); //need to check this
 
-    hdr->xsum = buf[hdr->script_len]; //need to check this
+    cnv.cnv8[0] = buf[hdr->script_len-2];
+    cnv.cnv8[1] = buf[hdr->script_len-1];
+    hdr->xsum = cnv.cnv16[0];
 
     return SATR_OK;
 }  
@@ -201,28 +218,35 @@ SAT_returnState su_populate_scriptPointers(struct su_script *su_scr, uint8_t *bu
     tt_temp = SU_TT_OFFSET;
 
     struct script_times_table temp_tt_header;
-
+    
+    su_scr->header.scr_sequences = 0;
+    
     for(uint16_t i = SU_TT_OFFSET; i < SU_MAX_FILE_SIZE; i++) {
         su_next_tt(buf, &temp_tt_header, &tt_temp);
         if(temp_tt_header.script_index == SU_SCR_TT_EOR) { break; }
         if(!C_ASSERT(tt_temp < su_scr->header.script_len) == true) { break; }
     }
 
-    struct script_seq temp_cmd_header;
-
-    su_scr->script_pointer_start[0] = tt_temp + SU_TT_HEADER_SIZE;
+    su_scr->script_pointer_start[0] = tt_temp;
     uint16_t script_temp = su_scr->script_pointer_start[0];
 
     for(uint8_t a = 1; a < SU_CMD_SEQ; a++) {
 
+        if(script_temp == su_scr->header.script_len - 2) { break; }
+
         for(uint16_t b = 0; b < SU_MAX_FILE_SIZE; b++) {
-            su_next_cmd(buf, &temp_cmd_header, &script_temp);
-            if(temp_cmd_header.cmd_id == SU_OBC_EOT_CMD_ID) { break; }
-            else if(!C_ASSERT(script_temp < su_scr->header.script_len) == true) { break; }
+            struct script_seq temp_cmd_header = {0};
+            if(su_next_cmd(buf, &temp_cmd_header, &script_temp) == SATR_ERROR) { break; };
+            if(temp_cmd_header.cmd_id == SU_OBC_EOT_CMD_ID && script_temp != su_scr->header.script_len - 2) { 
+                su_scr->script_pointer_start[a] = script_temp;
+                su_scr->header.scr_sequences++;
+                break; 
+            } else if(script_temp == su_scr->header.script_len - 2) { break; }
         }
-        su_scr->script_pointer_start[a] = script_temp + SU_EOT_CMD_HEADER_SIZE;
         
     }
+    if(!C_ASSERT(su_scr->header.scr_sequences < SU_CMD_SEQ) == true) { return SATR_ERROR; }
+
     return SATR_OK;
 }
 

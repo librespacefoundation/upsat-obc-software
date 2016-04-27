@@ -414,12 +414,15 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
 
     if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
         
-    res = f_read(&fp, &buf, MS_MAX_SU_FILE_SIZE, (void *)&size);
+    res = f_read(&fp, buf, MS_MAX_SU_FILE_SIZE, (void *)&size);
     f_close(&fp);
 
     if(res != FR_OK) { return SATR_ERROR; } 
 
-    cnv8_16(&buf[0], &script_len);
+    union _cnv cnv;
+    cnv.cnv8[0] = buf[0];
+    cnv.cnv8[1] = buf[1];
+    script_len = cnv.cnv16[0];
 
     if(!C_ASSERT(size == script_len) == true) { return SATR_ERROR; } 
 
@@ -431,7 +434,7 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
         sum2 = (sum2 + sum1) % 255;
     }
 
-    if(!C_ASSERT(((sum2 << 8) | sum1) != 0) == true)  { return SATR_CRC_ERROR; }
+    if(!C_ASSERT(((sum2 << 8) | sum1) == 0) == true)  { return SATR_CRC_ERROR; }
 
     return SATR_OK;
 }
