@@ -16,6 +16,14 @@ void HAL_obc_SD_OFF() {
     HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
 }
 
+void HAL_obc_IAC_ON() {
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+}
+
+void HAL_obc_IAC_OFF() {
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+}
+
 void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size) {
     
     HAL_StatusTypeDef res;
