@@ -25,16 +25,11 @@ extern struct _comms_data comms_data;
 
 extern SAT_returnState export_pkt(TC_TM_app_id app_id, tc_tm_pkt *pkt, struct uart_data *data);
 
-extern uint32_t * HAL_obc_BKPSRAM_BASE();
-
 extern SAT_returnState free_pkt(tc_tm_pkt *pkt);
 
 extern SAT_returnState verification_app(tc_tm_pkt *pkt);
 extern SAT_returnState hk_app(tc_tm_pkt *pkt);
 extern SAT_returnState function_management_app(tc_tm_pkt *pkt);
-extern SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
-extern SAT_returnState mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
-extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 extern SAT_returnState test_app(tc_tm_pkt *pkt);
 
 SAT_returnState route_pkt(tc_tm_pkt *pkt);

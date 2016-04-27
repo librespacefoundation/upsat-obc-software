@@ -29,18 +29,7 @@ SAT_returnState function_management_app(tc_tm_pkt *pkt) {
 
        // if(!C_ASSERT(pkt->len < PKT_LEN_FM_SETTIME) == true) { return SATR_INV_DATA_LEN; }
 
-        struct time_utc temp_time;
-
-        temp_time.day = pkt->data[1];
-        temp_time.month = pkt->data[2];
-        temp_time.year = pkt->data[3];
-        
-        temp_time.hour = pkt->data[4];
-        temp_time.min = pkt->data[5];
-        temp_time.sec = pkt->data[6];
-        set_time_UTC(temp_time);
-
-        pkt->verification_state = SATR_OK;
+       pkt->verification_state = SATR_OK;
     }
 
     return SATR_OK;
