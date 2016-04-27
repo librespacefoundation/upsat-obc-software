@@ -1,6 +1,6 @@
 Notes on building merge commit:
 
-1) select your device on cubeMX/disco/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h file
+1) select your device on cubeMX/disco/Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h file, on line 84
 
 2) place file: 'portmacro.h' on: test5/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 

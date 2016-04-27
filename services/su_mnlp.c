@@ -165,7 +165,7 @@ SAT_returnState su_tt_handler(struct script_times_table tt, struct su_script *sc
 
 SAT_returnState su_cmd_handler(struct script_seq *cmd) {
 
-    HAL_obc_delay((cmd->dt_min * 60) + cmd->dt_sec);
+    HAL_sys_delay((cmd->dt_min * 60) + cmd->dt_sec);
 
     if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID)          { su_power_ctrl(P_ON); } 
     else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID)    { su_power_ctrl(P_OFF); } 

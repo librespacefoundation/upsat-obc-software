@@ -47,14 +47,9 @@ struct _MS_data {
     //uint32_t ev_temp_log;
 };
 
-extern struct _MS_data MS_data;
-
 extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
 extern uint32_t get_new_fileId();
-extern void cnv8_32(uint8_t *from, uint32_t *to);
-extern void cnv32_8(const uint32_t from, uint8_t *to);
-extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 //ToDo
 //  add format for sd

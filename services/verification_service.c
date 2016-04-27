@@ -9,8 +9,9 @@ SAT_returnState verification_app(tc_tm_pkt *pkt) {
     if(!C_ASSERT(pkt != NULL && pkt->data != NULL) == true) { return SATR_ERROR; }
 
     if(!C_ASSERT(pkt->ack == TC_ACK_ACC || pkt->ack == TC_ACK_NO) == true) { return SATR_ERROR; } 
-    if(pkt->type == TM) { return SATR_OK; } 
-
+    if(pkt->type == TM) { return SATR_OK; }
+    if(pkt->app_id != SYSTEM_APP_ID) { return SATR_OK; } 
+    
     if(pkt->ack == TC_ACK_NO) { return SATR_OK; } 
     else if(pkt->ack == TC_ACK_ACC) {
 
@@ -51,7 +52,7 @@ SAT_returnState verification_crt_pkt(tc_tm_pkt *pkt, tc_tm_pkt **out, SAT_return
         (*out)->len = ECSS_VR_DATA_LEN_FAILURE;
     }
 
-    crt_pkt(*out, OBC_APP_ID, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->dest_id);
+    crt_pkt(*out, SYSTEM_APP_ID, TM, TC_ACK_NO, TC_VERIFICATION_SERVICE, subtype, pkt->dest_id);
 
     return SATR_OK;
 }

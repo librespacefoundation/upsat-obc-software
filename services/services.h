@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include "system.h"
 
 /* TM TC services*/
 #define ECSS_VER_NUMBER             0
@@ -34,7 +35,7 @@
 //needs to redifine
 #define MAX_PKT_DATA 525
 #define TC_MAX_PKT_SIZE 515 //random
-#define TC_MIN_PKT_SIZE 1 //random
+#define TC_MIN_PKT_SIZE 6 //random
 
 #define ECSS_HEADER_SIZE        6
 #define ECSS_DATA_HEADER_SIZE   4
@@ -90,6 +91,7 @@ typedef enum {
 /*services types*/
 #define TC_VERIFICATION_SERVICE         1
 #define TC_HOUSEKEEPING_SERVICE         3
+#define TC_EVENT_SERVICE 		        5
 #define TC_FUNCTION_MANAGEMENT_SERVICE  8
 #define TC_SCHEDULING_SERVICE           11
 #define TC_LARGE_DATA_SERVICE           13
@@ -103,6 +105,9 @@ typedef enum {
 
 #define TC_HK_REPORT_PARAMETERS         21
 #define TM_HK_PARAMETERS_REPORT         23
+
+#define TM_EV_NORMAL_REPORT         	1
+#define TM_EV_ERROR_REPORT         		4
 
 #define TC_FM_PERFORM_FUNCTION          1
 
@@ -158,7 +163,7 @@ typedef enum {
 #define TM_MONTH_NOVEMBER             ((uint8_t)0x11U)
 #define TM_MONTH_DECEMBER             ((uint8_t)0x12U)
 
-#define OBC_UART_BUF_SIZE 1024
+#define UART_BUF_SIZE 1024
 
 typedef enum {  
     OBC_APP_ID      = 1,
@@ -167,7 +172,8 @@ typedef enum {
     COMMS_APP_ID    = 4,
     IAC_APP_ID      = 5,
     GND_APP_ID      = 6,
-    LAST_APP_ID     = 7
+    DBG_APP_ID      = 7,
+    LAST_APP_ID     = 8
 }TC_TM_app_id;
 
 typedef enum {  
@@ -256,15 +262,17 @@ typedef enum {
     LAST_EV_STATE = 7
 }EV_state;
 
-#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging( __FILE__, __FILE_ID__, __LINE__, #e))) 
+#define C_ASSERT(e)    ((e) ? (true) : (tst_debugging((uint8_t *)__FILE__, __FILE_ID__, __LINE__, #e))) 
 
 union _cnv {
     uint32_t cnv32;
     uint16_t cnv16[2];
     uint8_t cnv8[4];
 };
-extern void HAL_eps_uart_tx(uint8_t *buf, uint16_t size);
+
+extern void HAL_uart_tx(TC_TM_app_id app_id, uint8_t *buf, uint16_t size);
 extern SAT_returnState event_log(uint8_t *buf, const uint16_t size);
+extern SAT_returnState event_crt_pkt_api(uint8_t *buf, uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e, uint16_t *size, SAT_returnState mode);
 
 extern void cnv32_8(const uint32_t from, uint8_t *to);
 extern void cnv16_8(const uint16_t from, uint8_t *to);
@@ -306,42 +314,8 @@ typedef struct {
 //  uint16_t crc; /* CRC or checksum, mission specific*/
 }tc_tm_pkt;
 
-struct _obc_data
-{
-    uint16_t obc_seq_cnt;
-    uint8_t rsrc;
-    uint32_t *file_id;
-    uint32_t *boot_counter;
-    uint32_t *log;
-    uint32_t *log_cnt;
-    uint32_t *log_state;
-    uint32_t *wod_log;
-    uint32_t *wod_cnt;
-
-    uint8_t eps_uart_buf[OBC_UART_BUF_SIZE];
-    uint8_t eps_deframed_buf[TC_MAX_PKT_SIZE];
-    uint16_t eps_uart_size;
-};
-
-struct _sat_status {
-    uint8_t mode;
-    uint8_t batt_curr;
-    uint8_t batt_volt;
-    uint8_t bus_3v3_curr;
-    uint8_t bus_5v_curr;
-    uint8_t temp_eps;
-    uint8_t temp_batt;
-    uint8_t temp_comms;
-};
-
-extern struct _sat_status sat_status;
-
-extern struct _obc_data obc_data;
-
 /*Lookup table that returns if a service with its subtype with TC or TM is supported and valid*/
 extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-
-extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
 //ToDo
 //  add reset counter, reset source finder.
@@ -384,9 +358,37 @@ extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 //  use pkt->len for data?
 //  add pack functions in each service.
 
+struct uart_data {
+    uint8_t uart_buf[UART_BUF_SIZE];
+    uint8_t uart_unpkt_buf[UART_BUF_SIZE];
+    uint8_t deframed_buf[TC_MAX_PKT_SIZE];
+    uint8_t uart_pkted_buf[UART_BUF_SIZE];
+    uint8_t framed_buf[UART_BUF_SIZE];
+    uint16_t uart_size;
+};
+
+struct _sys_data {
+    uint8_t seq_cnt[LAST_APP_ID];
+    uint8_t rsrc;
+    uint32_t *boot_counter;
+};
+
+struct time_utc {
+    uint8_t day;
+    uint8_t month;
+    uint8_t year;
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
+};
+
+extern struct _sys_data sys_data;
+
 //stub
 uint32_t time_now();
 
-uint8_t tst_debugging(char *f, int fi, int l, char *e);
+uint8_t tst_debugging(uint8_t *f, uint16_t fi, uint32_t l, uint8_t *e);
+
+SAT_returnState sys_data_INIT();
 
 #endif

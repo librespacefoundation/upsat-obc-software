@@ -177,7 +177,7 @@ extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 extern SAT_returnState HAL_su_uart_rx(uint8_t *c);
 extern void HAL_su_uart_tx(uint8_t *buf, uint16_t size);
-extern void HAL_obc_delay(uint32_t sec);
+extern void HAL_sys_delay(uint32_t sec);
 extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 extern SAT_returnState mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);

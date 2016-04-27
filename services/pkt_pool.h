@@ -3,10 +3,13 @@
 
 #include <stdint.h>
 #include "services.h"
+#include "system.h"
 
 #define PKT_TIMEOUT 1000 /*in seconds*/
 
-#define POOL_PKT_SIZE    20
+#ifndef POOL_PKT_SIZE
+#define POOL_PKT_SIZE   30
+#endif
 
 struct _pkt_pool{
     tc_tm_pkt pkt[POOL_PKT_SIZE];
@@ -18,10 +21,6 @@ struct _pkt_pool{
 //ToDo
 //	add assertions
 //	finish definitions
-
-extern uint32_t time_now();
-
-extern struct _pkt_pool pkt_pool;
 
 tc_tm_pkt * get_pkt();
 

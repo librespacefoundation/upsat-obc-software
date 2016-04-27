@@ -1,59 +1,7 @@
 #include "housekeeping_service.h"
 
-
 #undef __FILE_ID__
 #define __FILE_ID__ 5
-
-tc_tm_pkt hk_pkt;
-uint8_t hk_pkt_data[MAX_PKT_DATA];
-
-void hk_INIT() {
-   hk_pkt.data = hk_pkt_data;
-}
-
-void hk_SCH() {     
-    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&hk_pkt);
-
-        HAL_obc_delay(50);
-//
-//        hk_crt_pkt_TC( &hk_pkt, EPS_APP_ID, HEALTH_REP );
-//        route_pkt(&hk_pkt);
-//
-        HAL_obc_delay(50);
-//    
-    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&hk_pkt);
-
-        HAL_obc_delay(50);
-//
-//        hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
-//        route_pkt(&hk_pkt);
-//
-        HAL_obc_delay(50);
-//        
-    hk_crt_pkt_TM(&hk_pkt, GND_APP_ID, WOD_REP);
-    route_pkt(&hk_pkt);
-//    
-        HAL_obc_delay(50);
-//        
-//        hk_crt_pkt_TC(&hk_pkt, COMMS_APP_ID, HEALTH_REP);
-//        route_pkt(&hk_pkt);
-
-    //    HAL_obc_delay(100);    
-    
-    clear_wod();
-}
-
-void clear_wod() {
-        sat_status.batt_curr = 0;
-        sat_status.batt_volt = 0;
-        sat_status.bus_3v3_curr = 0;
-        sat_status.bus_5v_curr = 0;
-        sat_status.temp_eps = 0;
-        sat_status.temp_batt = 0;
-        sat_status.temp_comms = 0;
-}
 
 SAT_returnState hk_app(tc_tm_pkt *pkt) {
 
@@ -71,19 +19,10 @@ SAT_returnState hk_app(tc_tm_pkt *pkt) {
         route_pkt(temp_pkt);
 
     } else if(pkt->app_id == EPS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
-        sat_status.batt_curr = pkt->data[1];
-        sat_status.batt_volt = pkt->data[2];
-        sat_status.bus_3v3_curr = pkt->data[3];
-        sat_status.bus_5v_curr = pkt->data[4];
-        sat_status.temp_eps = pkt->data[5];
-        sat_status.temp_batt = pkt->data[6];
 
-        pkt->verification_state = SATR_OK;
+        SAT_returnState res = hk_parameters_report(pkt->app_id, (HK_struct_id)pkt->data[0],  pkt->data);
 
-    } else if(pkt->app_id == COMMS_APP_ID && pkt->ser_subtype == TM_HK_PARAMETERS_REPORT) {
-        sat_status.temp_comms = pkt->data[1];
-
-        pkt->verification_state = SATR_OK;
+        if(res == SATR_OK) { pkt->verification_state = SATR_OK; }
     }
 
     return SATR_OK;
@@ -102,7 +41,7 @@ SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 
     if(!C_ASSERT(app_id < LAST_APP_ID) == true)  { return SATR_ERROR; }
 
-    crt_pkt( pkt, app_id, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_HK_REPORT_PARAMETERS, OBC_APP_ID);
+    crt_pkt(pkt, app_id, TC, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TC_HK_REPORT_PARAMETERS, SYSTEM_APP_ID);
 
     pkt->data[0] = (char)sid;
     pkt->len = 1;
@@ -112,31 +51,9 @@ SAT_returnState hk_crt_pkt_TC(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id 
 
 SAT_returnState hk_crt_pkt_TM(tc_tm_pkt *pkt, TC_TM_app_id app_id, HK_struct_id sid) {
 
-    pkt->data[0] = (HK_struct_id)sid;
+    hk_report_parameters(sid, pkt);
 
-    if(sid == EX_HEALTH_REP) {
-
-        //cnv.cnv32 = time.now();
-        cnv32_8(time_now(), &pkt->data[1]);
-        pkt->len = 5;
-    } else if(sid == WOD_REP) {
-
-        pkt->data[1] = sat_status.mode;
-        pkt->data[2] = sat_status.batt_curr;
-        pkt->data[3] = sat_status.batt_volt;
-        pkt->data[4] = sat_status.bus_3v3_curr;
-        pkt->data[5] = sat_status.bus_5v_curr;
-        pkt->data[6] = sat_status.temp_eps;
-        pkt->data[7] = sat_status.temp_batt;
-        pkt->data[8] = sat_status.temp_comms;
-        
-        pkt->data[9] = 666;
-        pkt->data[10] =999;
-        pkt->data[11] = 333;
-        pkt->len = 12;
-    }
-
-    crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
+    crt_pkt(pkt, SYSTEM_APP_ID, TM, TC_ACK_NO, TC_HOUSEKEEPING_SERVICE, TM_HK_PARAMETERS_REPORT, app_id);
 
     return SATR_OK;
 }
