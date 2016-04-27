@@ -166,32 +166,32 @@ int main(void)
 //                tskIDLE_PRIORITY + 2UL, /* Task priority*/
 //                NULL /* Task handle */
 //                );
-      xTaskCreate(
-    		  ToggleLED_Timer2,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
-      
-      xTaskCreate(
-    		  ToggleLED_Timer3,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
-      
-      xTaskCreate(
-    		  ToggleLED_Timer4,                 /* Function pointer */
-    		  "Task1",                          /* Task name - for debugging only*/
-    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-    		  NULL                              /* Task handle */
-      );
+//      xTaskCreate(
+//    		  ToggleLED_Timer2,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer3,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
+//      
+//      xTaskCreate(
+//    		  ToggleLED_Timer4,                 /* Function pointer */
+//    		  "Task1",                          /* Task name - for debugging only*/
+//    		  configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//    		  (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//    		  tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+//    		  NULL                              /* Task handle */
+//      );
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -658,13 +658,16 @@ void StartDefaultTask(void const * argument)
    osDelay(1000);
    t3 = get_time_ELAPSED();
    
+   //scheduling service specific
+   scheduling_init_service();
+   
+   
    //event_log(reset source);
    uint8_t uart_temp[20];
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
    *obc_data.log_cnt = 0;
-//   
    uint8_t hours, mins, sec = 0;
    HAL_obc_getTime(&hours, &mins, &sec);
 //   sprintf( (char*)uart_temp, "T: %d:%d:%d\n", hours, mins, sec);
@@ -697,13 +700,15 @@ void StartDefaultTask(void const * argument)
 //   //HAL_IWDG_Start(&hiwdg); //0x17
 //   //HAL_WWDG_Start(&hwwdg); //0x22
 //  /* Infinite loop */
-////   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
+   
+   HAL_UART_Receive_IT(&huart2, obc_data.eps_uart_buf, OBC_UART_BUF_SIZE);
 //   
   for(;;)
   {
-//    import_eps_pkt();
+    import_eps_pkt();
     //su_SCH();
     osDelay(100);
+//     vTaskDelay(1000 / portTICK_RATE_MS);
   }
   /* USER CODE END 5 */ 
 }
@@ -716,16 +721,22 @@ void StartTask02(void const * argument)
   /* Infinite loop */
 //  while (1)
 //    {
-//        char *test = "Hello\n";
-//        char *test1 = "one\n";
-//        char *test2 = "two\n";
-//        char *test3 = "three\n";
-//        uint8_t t1[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,0,0,0,8,0,124,126};
-//        uint8_t t2[19] = {126,24,1,192,185,0,10,16,8,1, 6,0,1,0,0,8,0,124,126};
-//        uint8_t t3[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,1,1,1,8,1,124,126};
-//        uint8_t t4[19] = {126,24,1,192,185,0,10,16,8,1, 6,0,0,0,0,1,0,124,126};
-//        
-//        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
+        char *test = "Hello\n";
+        char *test1 = "one\n";
+        char *test2 = "two\n";
+        char *test3 = "three\n";
+                                                //when 19 we serial losses one byte!
+        uint8_t tt[19] = {126,24,1,192,60 ,0,10,19,8,1, 6,1,0,0,0,8,0,250,126};
+        
+        uint8_t t4[19] = {126,24,1,1,666 ,0,10,19,8,1, 6,19,19,19,19,19,0,124,126};
+        
+        uint8_t t1[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,0,0,0,8,0,124,126};
+        uint8_t t2[19] = {126,24,1,192,185,0,10,16,8,1, 6,0,1,0,0,8,0,124,126};
+        uint8_t t3[19] = {126,24,1,192,185,0,10,16,8,1, 6,1,1,1,1,8,1,124,126};
+        
+        for(;;)
+  {
+        //        HAL_UART_Receive_IT( &UartHandle, gpsdata ,100 );
 //        HAL_UART_Transmit(&huart2, (uint8_t *) test, 6, 5000);
 //        
 //        HAL_UART_Transmit(&huart2, (uint8_t *) t1, 19, 5000);
@@ -738,15 +749,19 @@ void StartTask02(void const * argument)
 //        
 //        
 //        HAL_UART_Transmit(&huart2, (uint8_t *) test3, 6, 5000);
-//        HAL_UART_Transmit(&huart2, (uint8_t *) t4, 19, 5000);
-////        C_ASSERT(false);
-//        vTaskDelay(1000 / portTICK_RATE_MS);
+        HAL_UART_Transmit(&huart2, (uint8_t *) t4, 19, 5000);
+//        HAL_UART_Transmit(&huart2, (uint8_t *) tt, 19, 5000);
+////        
 //    }
   
-  for(;;)
-  {
-    hk_SCH();
-   osDelay(100);
+//    hk_SCH();
+//   osDelay(100);
+    cross_schedules();
+   vTaskDelay(1000 / portTICK_RATE_MS);
+   for(;;)
+   {
+       
+   }
   }
   /* USER CODE END StartTask02 */
 }

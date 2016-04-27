@@ -134,7 +134,8 @@ void cross_schedules(){
             
             if (    schedule_mem_pool.sc_mem_array[i].valid == true &&
                     sc_s_state.scheduling_apids_enabled[(schedule_mem_pool.sc_mem_array[i].app_id)-1] == true &&
-                    schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
+//                    schedule_mem_pool.sc_mem_array[i].release_time == boot_seconds ){
+                    schedule_mem_pool.sc_mem_array[i].release_time == 10 ){
                 route_pkt( &(schedule_mem_pool.sc_mem_array[i].tc_pck));   
                 
                 schedule_mem_pool.sc_mem_array[i].valid = false;
@@ -553,7 +554,6 @@ SAT_returnState report_detailed_subset( SC_pkt theSchpck ){
     
     return SATR_OK;
 }
-
 
 SAT_returnState parse_sch_packet( SC_pkt *sc_pkt, tc_tm_pkt *tc_pkt ){
     

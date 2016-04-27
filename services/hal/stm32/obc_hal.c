@@ -1,6 +1,5 @@
 #include "obc_hal.h"
 
-
 #undef __FILE_ID__
 #define __FILE_ID__ 13
 
