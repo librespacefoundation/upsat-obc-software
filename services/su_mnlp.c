@@ -95,11 +95,13 @@ SAT_returnState su_incoming_rx() {
     return SATR_OK;
 }
 
+uint8_t time_lala = 5;
+
 void su_SCH() {
 
     if(obc_su_scripts.state == su_idle) {
         for(MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
-            if(obc_su_scripts.scripts[i].header.start_time >= time_now() && obc_su_scripts.scripts[i].header.start_time != 0) {
+            if(obc_su_scripts.scripts[i].invalid != true && obc_su_scripts.scripts[i].header.start_time >= time_lala && obc_su_scripts.scripts[i].header.start_time != 0) {
                 
                 obc_su_scripts.state = su_running;
                 obc_su_scripts.active_script = i;
@@ -147,7 +149,8 @@ void su_SCH() {
 void su_INIT() {
     for(MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
         obc_su_scripts.scripts[(uint8_t)i-1].invalid = false;
-        if(mass_storage_su_load_api(i, obc_su_scripts.temp_buf) == SATR_ERROR) { obc_su_scripts.scripts[(uint8_t)i-1].invalid = true; break; }
+        SAT_returnState res = mass_storage_su_load_api(i, obc_su_scripts.temp_buf);
+        if(res == SATR_ERROR || res == SATR_CRC_ERROR) { obc_su_scripts.scripts[(uint8_t)i-1].invalid = true; break; }
         su_populate_header(&obc_su_scripts.scripts[(uint8_t)i-1].header, obc_su_scripts.temp_buf);
         su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)i-1], obc_su_scripts.temp_buf);       
     }
