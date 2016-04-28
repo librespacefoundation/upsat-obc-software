@@ -576,6 +576,7 @@ void StartDefaultTask(void const * argument)
    HAL_obc_SD_ON();
    
    mass_storage_init();
+   large_data_INIT();
    su_INIT();
 
    //uint8_t hours, mins, sec = 0;
@@ -643,7 +644,7 @@ void StartDefaultTask(void const * argument)
       osDelay(6);
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
       osDelay(1);
-      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 10000);
+      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
       //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
       sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
       HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
@@ -675,9 +676,9 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    su_incoming_rx();
+    //su_incoming_rx();
     //import_pkt(EPS_APP_ID, &obc_data.eps_uart);
-    //import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
+    import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     //import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     //import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     //su_SCH();

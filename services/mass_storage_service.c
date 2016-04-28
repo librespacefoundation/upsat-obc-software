@@ -137,7 +137,7 @@ SAT_returnState mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t fro
             *part = from;
             res = mass_storage_findLog(sid, part); 
         } 
-        else if(mode == SPECIFIC ) { res = SATR_OK; }
+        else if(mode == SPECIFIC ) { *part = from; res = SATR_OK; }
 
         if(res == SATR_EOT) { return SATR_EOT; }
         else if(res != SATR_OK) { return SATR_ERROR; }
@@ -158,6 +158,7 @@ SAT_returnState mass_storage_downlinkLogs(MS_sid sid, MS_mode mode, uint32_t fro
 
     f_close(&fp);
 
+    if(mode == SPECIFIC) { return SATR_EOT; } 
     if((mode == ALL || mode == TO || mode == BETWEEN) && mass_storage_findLog(sid, part) == SATR_EOT) { return SATR_EOT; } 
     if((mode == to || mode == BETWEEN) && *part >= TO) { return SATR_EOT; }
 
@@ -366,7 +367,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
 #endif
 
         ret = strtol((char*)fn, NULL, 10);
-        if(start_flag = 0 && *iter == ret) { start_flag = 1; }
+        if(start_flag == 0 && *iter == ret) { start_flag = 1; }
         if(start_flag == 1) {
 
             cnv32_8(ret, &buf[(*size)]);

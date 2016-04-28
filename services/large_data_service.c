@@ -8,18 +8,18 @@ struct _ld_status LD_status;
 
 SAT_returnState large_data_app(tc_tm_pkt *pkt) {
 
-    if(pkt->ser_subtype == TC_LD_FIRST_UPLINK)              { large_data_firstRx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_INT_UPLINK)           { large_data_intRx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_LAST_UPLINK)          { large_data_lastRx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_REPEATED_UPLINK)      { large_data_retryRx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_STANDALONE_UPLINK)    { large_data_standaloneRx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_ABORT_SE_UPLINK)      { large_data_abort_api(pkt); } 
+    if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_FIRST_UPLINK)              { large_data_firstRx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_INT_UPLINK)           { large_data_intRx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_LAST_UPLINK)          { large_data_lastRx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_REPEATED_UPLINK)      { large_data_retryRx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_STANDALONE_UPLINK)    { large_data_standaloneRx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_ABORT_SE_UPLINK)      { large_data_abort_api(pkt); } 
 
     else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == TC_MS_REPORT)   { large_data_reportTx_api(pkt); } 
     else if(pkt->ser_type == TC_MASS_STORAGE_SERVICE && pkt->ser_subtype == TC_MS_DOWNLINK) { large_data_downlinkTx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_ACK_DOWNLINK)         { large_data_intTx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_REPEAT_DOWNLINK)      { large_data_retryTx_api(pkt); } 
-    else if(pkt->ser_subtype == TC_LD_ABORT_RE_DOWNLINK)    { large_data_abort_api(pkt); }
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_ACK_DOWNLINK)         { large_data_intTx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_REPEAT_DOWNLINK)      { large_data_retryTx_api(pkt); } 
+    else if(pkt->ser_type == TC_LARGE_DATA_SERVICE && pkt->ser_subtype == TC_LD_ABORT_RE_DOWNLINK)    { large_data_abort_api(pkt); }
 
     return SATR_OK;
 }
@@ -253,9 +253,10 @@ SAT_returnState large_data_reportTx_api(tc_tm_pkt *pkt) {
 
     LD_status.fcurr = 0;
 
-    size = LD_PKT_DATA;
+    //size = LD_PKT_DATA;
+    size = 0;
 
-    large_data_downlinkPkt(temp_pkt, 0, sid, app_id);
+    large_data_downlinkPkt(&temp_pkt, 0, sid, app_id);
 
     res = mass_storage_report_api(sid, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext);
 
@@ -320,13 +321,13 @@ SAT_returnState large_data_downlinkTx_api(tc_tm_pkt *pkt) {
 
     size = LD_PKT_DATA;
 
-    large_data_downlinkPkt(temp_pkt, 0, sid, app_id);
+    large_data_downlinkPkt(&temp_pkt, 0, sid, app_id);
 
     res = mass_storage_downlink_api(sid, mode, from, to, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext);
 
     temp_pkt->len = size;
 
-    if(res == SATR_EOT) { subtype = TM_LD_STANDALONE_DOWNLINK; } 
+    if(res == SATR_EOT) { temp_pkt->ser_subtype = TM_LD_STANDALONE_DOWNLINK; } 
     else {
 
         subtype = TM_LD_FIRST_DOWNLINK;
@@ -348,6 +349,8 @@ SAT_returnState large_data_downlinkTx_api(tc_tm_pkt *pkt) {
 
     large_data_updatePkt(temp_pkt, size, subtype);
     route_pkt(temp_pkt);
+
+    LD_status.fnext = 0;
 
     return SATR_OK;
 }
@@ -381,7 +384,7 @@ SAT_returnState large_data_intTx_api(tc_tm_pkt *pkt) {
 
     fnext = LD_status.fnext;
 
-    large_data_downlinkPkt(temp_pkt, LD_status.ld_num + 1, LD_status.sid, LD_status.app_id);
+    large_data_downlinkPkt(&temp_pkt, LD_status.ld_num + 1, LD_status.sid, LD_status.app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     if(LD_status.txType == LD_STATE_DOWNLINK)    { res = mass_storage_downlink_api(LD_status.sid, LD_status.mode, LD_status.from, LD_status.to, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext); }
@@ -422,7 +425,7 @@ SAT_returnState large_data_retryTx_api(tc_tm_pkt *pkt) {
 
     fnext = LD_status.fcurr;
 
-    large_data_downlinkPkt(temp_pkt, LD_status.ld_num, LD_status.sid, LD_status.app_id);
+    large_data_downlinkPkt(&temp_pkt, LD_status.ld_num, LD_status.sid, LD_status.app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     if(LD_status.txType == LD_STATE_DOWNLINK)     { mass_storage_downlink_api(LD_status.sid, LD_status.mode, LD_status.from, LD_status.to, &temp_pkt->data[3], &size, &fnext); } 
@@ -445,14 +448,14 @@ SAT_returnState large_data_updatePkt(tc_tm_pkt *pkt, uint16_t size, uint8_t subt
     return SATR_OK;
 }
 
-SAT_returnState large_data_downlinkPkt(tc_tm_pkt *pkt, uint16_t n, MS_sid sid, uint16_t dest_id) {
+SAT_returnState large_data_downlinkPkt(tc_tm_pkt **pkt, uint16_t n, MS_sid sid, uint16_t dest_id) {
 
-    pkt = get_pkt();
-    if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-    crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, 0, dest_id); //what dest_id ?
+    *pkt = get_pkt();
+    if(!C_ASSERT(*pkt != NULL) == true) { return SATR_ERROR; }
+    crt_pkt(*pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, 0, dest_id); //what dest_id ?
 
-    cnv16_8(n, &pkt->data[0]);
-    pkt->data[2] = sid;
+    cnv16_8(n, &(*pkt)->data[0]);
+    (*pkt)->data[2] = sid;
 
     return SATR_OK;
 }
@@ -518,4 +521,13 @@ SAT_returnState large_data_timeout() {
     LD_status.started = 0;
 
     return SATR_OK;
+}
+
+void large_data_INIT() {
+
+    LD_status.state = LD_STATE_FREE;
+    LD_status.ld_num = 0;
+    LD_status.timeout = 0;
+    LD_status.started = 0;
+
 }
