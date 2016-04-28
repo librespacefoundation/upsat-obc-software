@@ -94,7 +94,7 @@ SAT_returnState large_data_downlinkPkt(tc_tm_pkt **pkt, uint16_t n, MS_sid sid, 
 
 SAT_returnState large_data_verifyPkt(tc_tm_pkt **pkt, uint16_t n, uint16_t dest_id);
 
-SAT_returnState large_data_abortPkt(tc_tm_pkt *pkt, uint16_t dest_id, uint8_t subtype);
+SAT_returnState large_data_abortPkt(tc_tm_pkt **pkt, uint16_t dest_id, uint8_t subtype);
 
 void large_data_INIT();
 #endif

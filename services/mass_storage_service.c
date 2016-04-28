@@ -438,7 +438,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
         if(start_flag == 1) {
 
             sprintf(temp_path,"%s/%s", path, (char*)fn);
-            if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
+            if(f_stat(temp_path, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
 
             cnv32_8(ret, &buf[(*size)]);
             *size += sizeof(uint32_t);
@@ -475,28 +475,30 @@ SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_
     if(!C_ASSERT(*size == 0) == true)                                                             { return SATR_ERROR; }
     if(!C_ASSERT(sid <= SU_SCRIPT_7) == true)    { return SATR_ERROR; }
 
-    if(sid == SU_SCRIPT_1)          { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_2)     { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_3)     { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_4)     { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_5)     { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_6)     { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
-    else if(sid == SU_SCRIPT_7)     { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
-    else { return SATR_ERROR; }
+    for(uint8_t i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
 
-    uint8_t fres = (uint8_t)sid;
-    
-    res = f_stat((char*)path, &fno);
-    if(res == FR_NO_FILE) { fres = -1; fno.fsize = 0; }
-    else if(res != FR_OK) { return SATR_ERROR; } 
+        if(i == SU_SCRIPT_1)          { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_2)     { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_3)     { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_4)     { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_5)     { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_6)     { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
+        else if(i == SU_SCRIPT_7)     { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
+        else { return SATR_ERROR; }
 
-    cnv32_8(fres, &buf[(*size)]);
-    *size += sizeof(uint32_t);
-            
-    cnv32_8(fno.fsize, &buf[(*size)]);
-    *size += sizeof(uint32_t);
+        uint8_t fres = i;
+        
+        res = f_stat((char*)path, &fno);
+        if(res == FR_NO_FILE) { fres = 0; fno.fsize = 0; }
+        else if(res != FR_OK) { fres = -1; fno.fsize = 0; } 
 
-    return SATR_OK;
+        cnv32_8(fres, &buf[(*size)]);
+        *size += sizeof(uint32_t);
+                
+        cnv32_8(fno.fsize, &buf[(*size)]);
+        *size += sizeof(uint32_t);
+    }
+    return SATR_EOT;
 }
 
 SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {

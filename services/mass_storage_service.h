@@ -82,6 +82,7 @@ SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, u
 
 SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
+SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
 
