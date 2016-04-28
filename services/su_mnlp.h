@@ -145,6 +145,7 @@ struct script_seq
 struct su_script {
     struct script_hdr header;
     uint16_t script_pointer_start[SU_CMD_SEQ];
+    uint8_t invalid;
 };
 
 struct script_handler
