@@ -405,6 +405,7 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
     uint8_t *fn;
     uint8_t start_flag = 0;
     uint8_t path[MS_MAX_PATH];
+    uint8_t temp_path[MS_MAX_PATH];
     uint16_t i;
 
     if(!C_ASSERT(buf != NULL && size != NULL && iter != NULL) == true)                            { return SATR_ERROR; }
@@ -436,11 +437,14 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
         if(start_flag == 0 && *iter == ret) { start_flag = 1; }
         if(start_flag == 1) {
 
+            sprintf(temp_path,"%s/%s", path, (char*)fn);
+            if(f_stat(fn, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
+
             cnv32_8(ret, &buf[(*size)]);
             *size += sizeof(uint32_t);
-
-            //if(f_stat(fn, &fno) != FSATR_OK) { f_closedir(&dir) return SATR_ERROR; } 
-
+            
+            cnv32_8(fno.fsize, &buf[(*size)]);
+            *size += sizeof(uint32_t);
             //(*fcount)++;
             //*fsize += fno.fsize;    
 
@@ -456,6 +460,41 @@ SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size
  
     if(!C_ASSERT(*size != 0) == true) { return SATR_ERROR; }
     if(i == MS_MAX_FILES - 1) { return SATR_MS_MAX_FILES; }
+
+    return SATR_OK;
+}
+
+
+SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter) {
+
+    FILINFO fno;
+    FRESULT res;
+    uint8_t path[MS_MAX_PATH];
+
+    if(!C_ASSERT(buf != NULL && size != NULL && iter != NULL) == true)                            { return SATR_ERROR; }
+    if(!C_ASSERT(*size == 0) == true)                                                             { return SATR_ERROR; }
+    if(!C_ASSERT(sid <= SU_SCRIPT_7) == true)    { return SATR_ERROR; }
+
+    if(sid == SU_SCRIPT_1)          { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_2)     { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_3)     { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_4)     { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_5)     { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_6)     { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_7)     { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
+    else { return SATR_ERROR; }
+
+    uint8_t fres = (uint8_t)sid;
+    
+    res = f_stat((char*)path, &fno);
+    if(res == FR_NO_FILE) { fres = -1; fno.fsize = 0; }
+    else if(res != FR_OK) { return SATR_ERROR; } 
+
+    cnv32_8(fres, &buf[(*size)]);
+    *size += sizeof(uint32_t);
+            
+    cnv32_8(fno.fsize, &buf[(*size)]);
+    *size += sizeof(uint32_t);
 
     return SATR_OK;
 }

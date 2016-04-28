@@ -258,7 +258,12 @@ SAT_returnState large_data_reportTx_api(tc_tm_pkt *pkt) {
 
     large_data_downlinkPkt(&temp_pkt, 0, sid, app_id);
 
-    res = mass_storage_report_api(sid, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext);
+    if(sid <= SU_SCRIPT_7) {
+        res = mass_storage_report_su_scr_api(sid, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext);
+    } else {
+        res = mass_storage_report_api(sid, &temp_pkt->data[LD_PKT_DATA_HDR_SIZE], &size, &LD_status.fnext);
+    }
+    
 
     temp_pkt->len = size;
 
