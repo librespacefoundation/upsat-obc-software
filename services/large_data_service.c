@@ -66,7 +66,7 @@ SAT_returnState large_data_firstRx_api(tc_tm_pkt *pkt) {
     LD_status.timeout = time_now();
     //return SATR_OK;
 
-    large_data_verifyPkt(temp_pkt, LD_status.ld_num, LD_status.app_id);
+    large_data_verifyPkt(&temp_pkt, LD_status.ld_num, LD_status.app_id);
     route_pkt(temp_pkt);
 
     return SATR_OK;
@@ -103,7 +103,7 @@ SAT_returnState large_data_intRx_api(tc_tm_pkt *pkt) {
     //return SATR_OK;
     tc_tm_pkt *temp_pkt = 0;
 
-    large_data_verifyPkt(temp_pkt, LD_status.ld_num, LD_status.app_id);
+    large_data_verifyPkt(&temp_pkt, LD_status.ld_num, LD_status.app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
     
     route_pkt(temp_pkt);
@@ -145,7 +145,7 @@ SAT_returnState large_data_lastRx_api(tc_tm_pkt *pkt) {
     //return SATR_OK;
     tc_tm_pkt *temp_pkt = 0;
 
-    large_data_verifyPkt(temp_pkt, LD_status.ld_num, LD_status.app_id);
+    large_data_verifyPkt(&temp_pkt, LD_status.ld_num, LD_status.app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     route_pkt(temp_pkt);
@@ -184,7 +184,7 @@ SAT_returnState large_data_retryRx_api(tc_tm_pkt *pkt) {
     //return SATR_OK;
     tc_tm_pkt *temp_pkt = 0;
 
-    large_data_verifyPkt(temp_pkt, LD_status.ld_num, LD_status.app_id);
+    large_data_verifyPkt(&temp_pkt, LD_status.ld_num, LD_status.app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     route_pkt(temp_pkt);
@@ -218,7 +218,7 @@ SAT_returnState large_data_standaloneRx_api(tc_tm_pkt *pkt) {
     //return SATR_OK;
     tc_tm_pkt *temp_pkt = 0;
 
-    large_data_verifyPkt(temp_pkt, 0, LD_status.app_id);
+    large_data_verifyPkt(&temp_pkt, 0, app_id);
     if(!C_ASSERT(temp_pkt != NULL) == true) { return SATR_ERROR; }
 
     route_pkt(temp_pkt);
@@ -460,15 +460,15 @@ SAT_returnState large_data_downlinkPkt(tc_tm_pkt **pkt, uint16_t n, MS_sid sid, 
     return SATR_OK;
 }
 
-SAT_returnState large_data_verifyPkt(tc_tm_pkt *pkt, uint16_t n, uint16_t dest_id) {
+SAT_returnState large_data_verifyPkt(tc_tm_pkt **pkt, uint16_t n, uint16_t dest_id) {
 
-    pkt = get_pkt();
-    if(!C_ASSERT(pkt != NULL) == true) { return SATR_ERROR; }
-    crt_pkt(pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, TM_LD_ACK_UPLINK, dest_id);
+    *pkt = get_pkt();
+    if(!C_ASSERT(*pkt != NULL) == true) { return SATR_ERROR; }
+    crt_pkt(*pkt, OBC_APP_ID, TM, TC_ACK_NO, TC_LARGE_DATA_SERVICE, TM_LD_ACK_UPLINK, dest_id);
 
-    cnv16_8(n, &pkt->data[0]);
+    cnv16_8(n, &(*pkt)->data[0]);
 
-    pkt->len = 2;
+    (*pkt)->len = 2;
 
     return SATR_OK;
 }
