@@ -23,10 +23,15 @@ SAT_returnState mass_storage_app(tc_tm_pkt *pkt) {
     } else if(pkt->ser_subtype == TC_MS_DELETE) {
 
         uint32_t to;
+        MS_mode mode;
 
-        cnv8_32(&pkt->data[1], &to);
-        mass_storage_delete_api(sid, to);
-
+        if(sid <= SU_SCRIPT_7) {
+            mass_storage_delete_su_scr(sid);
+        } else {
+            mode = pkt->data[1];
+            cnv8_32(&pkt->data[2], &to);
+            mass_storage_delete_api(sid, to, mode);
+        }
     } else if(pkt->ser_subtype == TC_MS_REPORT || pkt->ser_subtype == TC_MS_DOWNLINK) {
 
         large_data_app(pkt);
@@ -36,23 +41,58 @@ SAT_returnState mass_storage_app(tc_tm_pkt *pkt) {
     return SATR_OK; 
 }
 
-/*delete handles deletion of mass storage. sid denotes the store id.*/
-/*if to is 0: it deletes every file of the sid else it deletes every file which time is lower then the time denoted in to*/
-SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
+SAT_returnState mass_storage_delete_su_scr(MS_sid sid) {
 
     FRESULT res;
     FILINFO fno;
     DIR dir;
     uint8_t *fn;
     uint8_t path[MS_MAX_PATH];
+    uint8_t temp_path[MS_MAX_PATH];
     uint16_t i;
 
-    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG ||sid == EVENT_LOG || sid == FOTOS) == true) { return SATR_ERROR; }
+    if(!C_ASSERT(sid <= SU_SCRIPT_7) == true) { return SATR_ERROR; }
+
+    if(sid == SU_SCRIPT_1) { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_2) { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_3) { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_4) { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_5) { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_6) { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_7) { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
+
+    if(f_stat((char*)path, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
+
+    if(f_unlink((char*)path) != FR_OK) { return SATR_ERROR; }
+
+    return SATR_OK;
+}
+
+/*delete handles deletion of mass storage. sid denotes the store id.*/
+/*if to is 0: it deletes every file of the sid else it deletes every file which time is lower then the time denoted in to*/
+SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to, MS_mode mode) {
+
+    FRESULT res;
+    FILINFO fno;
+    DIR dir;
+    uint8_t *fn;
+    uint8_t path[MS_MAX_PATH];
+    uint8_t temp_path[MS_MAX_PATH];
+    uint16_t i;
+
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG ||sid == EVENT_LOG || sid == FOTOS || (sid <= SU_SCRIPT_7 && mode == SPECIFIC)) == true) { return SATR_ERROR; }
 
     if(sid == SU_LOG)           { strncpy((char*)path, MS_SU_LOG, MS_MAX_PATH); }
     else if(sid == WOD_LOG)     { strncpy((char*)path, MS_WOD_LOG, MS_MAX_PATH); }
     else if(sid == EVENT_LOG)   { strncpy((char*)path, MS_EVENT_LOG, MS_MAX_PATH); }
     else if(sid == FOTOS)       { strncpy((char*)path, MS_FOTOS, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_1) { strncpy((char*)path, MS_SU_SCRIPT_1, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_2) { strncpy((char*)path, MS_SU_SCRIPT_2, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_3) { strncpy((char*)path, MS_SU_SCRIPT_3, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_4) { strncpy((char*)path, MS_SU_SCRIPT_4, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_5) { strncpy((char*)path, MS_SU_SCRIPT_5, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_6) { strncpy((char*)path, MS_SU_SCRIPT_6, MS_MAX_PATH); }
+    else if(sid == SU_SCRIPT_7) { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
 
     if (f_opendir(&dir, (char*)path) != FR_OK) { return SATR_ERROR; } //add more error checking
     for (i = 0; i < MS_MAX_FILES; i++) {
@@ -68,7 +108,9 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
 #endif
 
         uint32_t ret = strtol((char*)fn, NULL, 10);
-        if(to == ALL || ret <= to) {
+        if(mode == ALL) {
+
+            sprintf(temp_path,"%s/%s", path, (char*)fn);
 
             if(f_stat((char*)fn, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
 
@@ -76,6 +118,29 @@ SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to) {
 
             MS_data.stores_fcount[sid-SU_SCRIPT_7]--;
             MS_data.stores_fsize[sid-SU_SCRIPT_7] -= fno.fsize;
+
+        } else if(mode == TO && ret <= to) {
+
+            sprintf(temp_path,"%s/%s", path, (char*)fn);
+
+            if(f_stat((char*)fn, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
+
+            if(f_unlink((char*)fn) != FR_OK) { return SATR_ERROR; }
+
+            MS_data.stores_fcount[sid-SU_SCRIPT_7]--;
+            MS_data.stores_fsize[sid-SU_SCRIPT_7] -= fno.fsize;
+
+        } else if(mode == SPECIFIC && ret == to) {
+
+            sprintf(temp_path,"%s/%s", path, (char*)fn);
+            
+            if(f_stat((char*)temp_path, &fno) != FR_OK) { f_closedir(&dir); return SATR_ERROR; } 
+
+            if(f_unlink((char*)temp_path) != FR_OK) { return SATR_ERROR; }
+
+            MS_data.stores_fcount[sid-SU_SCRIPT_7]--;
+            MS_data.stores_fsize[sid-SU_SCRIPT_7] -= fno.fsize;
+            break;
 
         }
     }
@@ -205,8 +270,8 @@ SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, u
 
     SAT_returnState res; 
 
-    if(!C_ASSERT(buf != NULL && size != NULL && part != NULL) == true)                            { return SATR_ERROR; }
-    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS) == true)    { return SATR_ERROR; }
+    if(!C_ASSERT(buf != NULL && size != NULL) == true)                            { return SATR_ERROR; }
+    if(!C_ASSERT(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG || sid == FOTOS || sid <= SU_SCRIPT_7) == true)    { return SATR_ERROR; }
 
     if(sid == SU_LOG || sid == WOD_LOG || sid == EVENT_LOG) { res = mass_storage_storeLogs(sid, buf, size); }
     else if(sid == FOTOS || sid <= SU_SCRIPT_7) { res = mass_storage_storeLargeFile(sid, mode, buf, size, part); }
@@ -245,7 +310,7 @@ SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *b
     if(f_open(&fp, (char*)path, flags) != FR_OK) { return SATR_ERROR; }
 
     uint16_t len = f_size(&fp);
-    if(!C_ASSERT(len < (part * MS_FILE_SECTOR)) == true) { f_close(&fp); return SATR_ERROR; }
+    if(!C_ASSERT(len < ((part * MS_FILE_SECTOR) + MS_FILE_SECTOR)) == true) { f_close(&fp); return SATR_ERROR; }
     res = f_lseek(&fp, len);
 
     res = f_write(&fp, buf, *size, (void *)&byteswritten);
@@ -265,7 +330,7 @@ SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *b
             if(sid == FOTOS) {
 	            MS_data.stores_fcount[sid-SU_SCRIPT_7]++;
 	            MS_data.stores_fsize[sid-SU_SCRIPT_7] += fno.fsize;
-	        }
+	    }
 
         } else if(sid == SU_SCRIPT_1) { 
             if(mass_storage_su_checksum_api(TMP_SU_SCRIPT_1) != SATR_OK) { return SATR_ERROR; } 
@@ -284,7 +349,8 @@ SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *b
             if(f_rename(MS_SU_SCRIPT_5, MS_TMP_SU_SCRIPT_5) != FR_OK) { return SATR_ERROR; }
         }  else if(sid == SU_SCRIPT_6) { 
             if(mass_storage_su_checksum_api(TMP_SU_SCRIPT_6) != SATR_OK) { return SATR_ERROR; } 
-            if(f_rename(MS_SU_SCRIPT_6, MS_TMP_SU_SCRIPT_6) != FR_OK) { return SATR_ERROR; }
+            f_unlink(MS_SU_SCRIPT_6);
+            if(f_rename(MS_TMP_SU_SCRIPT_6, MS_SU_SCRIPT_6) != FR_OK) { return SATR_ERROR; }
         }  else if(sid == SU_SCRIPT_7) { 
             if(mass_storage_su_checksum_api(TMP_SU_SCRIPT_7) != SATR_OK) { return SATR_ERROR; } 
             if(f_rename(MS_SU_SCRIPT_7, MS_TMP_SU_SCRIPT_7) != FR_OK) { return SATR_ERROR; }
@@ -413,12 +479,12 @@ SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
     else if(sid == SU_SCRIPT_7)     { strncpy((char*)path, MS_SU_SCRIPT_7, MS_MAX_PATH); }
     else { return SATR_ERROR; }
 
-    if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
+    if(f_open(&fp, (char*)path, FA_OPEN_EXISTING | FA_READ) != FR_OK) { return SATR_ERROR; }
         
     res = f_read(&fp, buf, MS_MAX_SU_FILE_SIZE, (void *)&size);
     f_close(&fp);
 
-    if(res != FR_OK) { return SATR_ERROR; } 
+    if(res != FR_OK || size == 0) { return SATR_ERROR; } 
 
     union _cnv cnv;
     cnv.cnv8[0] = buf[0];
@@ -451,7 +517,7 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
     uint16_t sum1 = 0;
     uint16_t sum2 = 0;
 
-    uint8_t c = 0;
+    uint8_t c[2048] = 0;
 
     if(!C_ASSERT(sid < LAST_SID) == true) { return SATR_INV_STORE_ID; }
 
@@ -471,22 +537,23 @@ SAT_returnState mass_storage_su_checksum_api(MS_sid sid) {
     else if(sid == TMP_SU_SCRIPT_7) { strncpy((char*)path, MS_TMP_SU_SCRIPT_7, MS_MAX_PATH); }
     else { return SATR_ERROR; }
 
-    if(f_open(&fp, (char*)path, FA_OPEN_ALWAYS | FA_READ) != FR_OK) { return SATR_ERROR; }
+    if(f_open(&fp, (char*)path, FA_OPEN_EXISTING | FA_READ) != FR_OK) { return SATR_ERROR; }
+    
+    byteswritten = 2048; //SU_MAX_FILE_SIZE;
 
-    for(i = 0; i < MS_MAX_SU_FILE_SIZE; i++) {
-        
-        res = f_read(&fp, &c, 1, (void *)&byteswritten);
-        if(res != FR_OK) { f_close(&fp); return SATR_ERROR; } 
-        if(byteswritten == 0) {
+    res = f_read(&fp, &c, 2048, (void *)&byteswritten);
+    if(res != FR_OK || byteswritten == 0) { f_close(&fp); return SATR_ERROR; } 
+    for(uint16_t i = 0; i <= byteswritten; i++) {
             
-            if(((sum2 << 8) | sum1) == 0)  { return SATR_OK; }
-            else {  return SATR_CRC_ERROR; }
-        } 
-
-        sum1 = (sum1 + c) % 255; 
+        sum1 = (sum1 + c[i]) % 255; 
         sum2 = (sum2 + sum1) % 255;
-    }
 
+        if((i == byteswritten - 1) && (((sum2 << 8) | sum1) == 0))  
+        { f_close(&fp); return SATR_OK; }
+        else if(i == byteswritten - 1) 
+        { f_close(&fp); return SATR_CRC_ERROR; }
+
+    }
     f_close(&fp);
 
     return SATR_OK;
