@@ -281,14 +281,14 @@ void MX_RTC_Init(void)
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 1;
   sDate.Year = 0;
 
-  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  //HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     /**Enable Calibrartion 
     */
@@ -648,7 +648,7 @@ void StartDefaultTask(void const * argument)
       //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
       sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
       HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
-      osDelay(100);
+      osDelay(10);
     }
       
     /*RTC*/
@@ -676,12 +676,12 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    //su_incoming_rx();
-    //import_pkt(EPS_APP_ID, &obc_data.eps_uart);
+    su_incoming_rx();
+    import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
-    //import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
-    //import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     //su_SCH();
+    import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
+    import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     osDelay(1);
   }
   /* USER CODE END 5 */ 
