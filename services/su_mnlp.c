@@ -109,6 +109,7 @@ void su_SCH() {
                 mass_storage_su_load_api(i, obc_su_scripts.active_buf);
                 obc_su_scripts.tt_pointer_curr = SU_TT_OFFSET;
 
+                /*finds the next tt that needs to be executed, it iterates all the tt to find the correct one*/
                 for(uint16_t b = SU_TT_OFFSET; b < SU_MAX_FILE_SIZE; b++) {
 
                     su_next_tt(obc_su_scripts.active_buf, &obc_su_scripts.tt_header, &obc_su_scripts.tt_pointer_curr);
