@@ -13,6 +13,8 @@
 
 #include "scheduling_service.h"
 
+struct time_keeping obc_time;
+
 SAT_returnState copy_inner_tc(const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
 SC_pkt* find_schedule_pos();
 

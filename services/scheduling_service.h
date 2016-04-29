@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include "service_utilities.h"
 #include "time_management.h"
-//#include "services.h"
+#include "services.h"
 
 #define SCHEDULING_SERVICE_V 0.1
 
