@@ -577,6 +577,11 @@ void StartDefaultTask(void const * argument)
    
    mass_storage_init();
    large_data_INIT();
+   
+   uint8_t t1[10];
+   uint8_t t2[10] = {10,11,12,13,14,15,16,17,18,19};
+   strncpy( t1, t2, 5);
+   
    su_INIT();
 
    //uint8_t hours, mins, sec = 0;
