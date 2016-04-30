@@ -114,6 +114,7 @@ struct script_hdr
     uint8_t  script_type;
     uint8_t  su_md;
     uint16_t xsum;
+    uint8_t  scr_sequences;
 };
 
 /* 
@@ -144,6 +145,7 @@ struct script_seq
 struct su_script {
     struct script_hdr header;
     uint16_t script_pointer_start[SU_CMD_SEQ];
+    uint8_t invalid;
 };
 
 struct script_handler
@@ -169,16 +171,12 @@ struct script_handler
 extern struct script_handler obc_su_scripts;
 extern struct OBC_data flight_data;
 
-extern void cnv32_8(const uint32_t from, uint8_t *to);
-extern void cnv16_8(const uint16_t from, uint8_t *to);
-extern void cnv8_32(uint8_t *from, uint32_t *to);
 extern SAT_returnState function_management_pctrl_crt_pkt_api(tc_tm_pkt **pkt, TC_TM_app_id dest_id, FM_fun_id fun_id, FM_dev_id did);
 extern SAT_returnState route_pkt(tc_tm_pkt *pkt);
 
 extern SAT_returnState HAL_su_uart_rx(uint8_t *c);
 extern void HAL_su_uart_tx(uint8_t *buf, uint16_t size);
 extern void HAL_sys_delay(uint32_t sec);
-extern void cnv8_16(uint8_t *from, uint16_t *to);
 
 extern SAT_returnState mass_storage_storeLogs(MS_sid sid, uint8_t *buf, uint16_t *size);
 

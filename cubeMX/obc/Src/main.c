@@ -321,7 +321,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -361,7 +361,7 @@ void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -501,7 +501,8 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, COMMS_EN_Pin|ADC_CS_SPI1_Pin|IAC_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, FLASH_HOLD_Pin|IAC_CS_SPI3_Pin|DBG_EN_Pin|IAC_CAMERA_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|FLASH_HOLD_Pin|IAC_CS_SPI3_Pin|DBG_EN_Pin 
+                          |IAC_CAMERA_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, FLASH_WP_Pin|FLASH_CS_SPI2_Pin|SD_PWR_EN_Pin, GPIO_PIN_RESET);
@@ -513,8 +514,10 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FLASH_HOLD_Pin IAC_CS_SPI3_Pin DBG_EN_Pin IAC_CAMERA_PWR_Pin */
-  GPIO_InitStruct.Pin = FLASH_HOLD_Pin|IAC_CS_SPI3_Pin|DBG_EN_Pin|IAC_CAMERA_PWR_Pin;
+  /*Configure GPIO pins : PB1 FLASH_HOLD_Pin IAC_CS_SPI3_Pin DBG_EN_Pin 
+                           IAC_CAMERA_PWR_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|FLASH_HOLD_Pin|IAC_CS_SPI3_Pin|DBG_EN_Pin 
+                          |IAC_CAMERA_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -568,10 +571,18 @@ void StartDefaultTask(void const * argument)
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
    
-   //HAL_obc_SD_ON();
+   HAL_obc_IAC_ON();
    
-   //mass_storage_init();
-   //su_INIT();
+   HAL_obc_SD_ON();
+   
+   mass_storage_init();
+   large_data_INIT();
+   
+   uint8_t t1[10];
+   uint8_t t2[10] = {10,11,12,13,14,15,16,17,18,19};
+   strncpy( t1, t2, 5);
+   
+   su_INIT();
 
    //uint8_t hours, mins, sec = 0;
    //HAL_obc_getTime(&hours, &mins, &sec);
@@ -638,11 +649,11 @@ void StartDefaultTask(void const * argument)
       osDelay(6);
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
       osDelay(1);
-      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 10000);
+      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
       //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
       sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
       HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
-      osDelay(100);
+      osDelay(10);
     }
       
     /*RTC*/
@@ -670,12 +681,13 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+    su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
+    //su_SCH();
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    //su_SCH();
-    osDelay(10);
+    osDelay(1);
   }
   /* USER CODE END 5 */ 
 }

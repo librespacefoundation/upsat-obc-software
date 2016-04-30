@@ -6,6 +6,7 @@
 #include <string.h>
 #include "fatfs.h"
 #include "services.h"
+#include "su_mnlp.h"
 
 #define MS_SD_PATH "0:"
 
@@ -47,9 +48,15 @@ struct _MS_data {
     //uint32_t ev_temp_log;
 };
 
+extern struct script_handler obc_su_scripts;
+
 extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
 extern uint32_t get_new_fileId();
+
+extern SAT_returnState su_populate_header(struct script_hdr *hdr, uint8_t *buf);
+
+extern SAT_returnState su_populate_scriptPointers(struct su_script *su_scr, uint8_t *buf);
 
 //ToDo
 //  add format for sd
@@ -72,7 +79,9 @@ SAT_returnState mass_storage_init();
 
 SAT_returnState mass_storage_app(tc_tm_pkt *pkt);
 
-SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to);
+SAT_returnState mass_storage_delete_api(MS_sid sid, uint32_t to, MS_mode mode);
+
+SAT_returnState mass_storage_delete_su_scr(MS_sid sid);
 
 SAT_returnState mass_storage_downlink_api(MS_sid sid, MS_mode mode, uint32_t from, uint32_t to, uint8_t *buf, uint16_t *size, uint32_t *part);
 
@@ -80,6 +89,7 @@ SAT_returnState mass_storage_store_api(MS_sid sid, MS_mode mode, uint8_t *buf, u
 
 SAT_returnState mass_storage_report_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
+SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_t *size, uint32_t *iter);
 
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
 
