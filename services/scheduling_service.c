@@ -38,7 +38,7 @@ SAT_returnState load_schedules()
         test.dest_id = OBC_APP_ID;
         test.len = 29;
         test.seq_count = 66;
-        test.seq_flags = 0b1111;
+        //test.seq_flags = 0b1111;
         test.ser_subtype = 4;
         test.ser_type = 11;
         test.type = 1;
@@ -162,12 +162,12 @@ SAT_returnState scheduling_app( tc_tm_pkt *spacket){
     
     switch( spacket->ser_subtype){
         /*Ranges may not be supported by some c compilers*/
-        case 1 ... 2 : /*Enable / Disable release TCs*/
+        case 1: /*Enable / Disable release TCs*/
                 enable_disable_schedule_apid_release( spacket->ser_subtype, spacket->data[3] );
                 break;
-//        case 2: /*Disable release TCs*/
-//                ;
-//                break;
+        case 2:
+                enable_disable_schedule_apid_release( spacket->ser_subtype, spacket->data[3] );
+                break;
         case 3: /*Reset TCs Schedule*/
                 operations_scheduling_reset_schedule_api();
                 break;

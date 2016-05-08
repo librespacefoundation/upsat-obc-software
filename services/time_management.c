@@ -114,13 +114,19 @@ void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb) {
     *qb = UTC_QB50_YM[utc.year][utc.month] + UTC_QB50_D[utc.day] + UTC_QB50_H[utc.hour] + utc.min * 60 + utc.sec;  
 }
 
+void cnv_QB50_UTC( struct time_utc *utc, uint32_t qb ) {
+    
+}
+
 void set_time_QB50(uint32_t qb) {
   
 }
 
 void set_time_UTC(struct time_utc utc) {
+  
     HAL_sys_setDate(utc.month, utc.day, utc.year);
     HAL_sys_setTime(utc.hour, utc.min, utc.sec);
+    
 }
 
 void get_time_QB50(uint32_t *qb) {

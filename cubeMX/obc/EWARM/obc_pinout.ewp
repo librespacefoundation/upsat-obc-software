@@ -1201,6 +1201,12 @@
       <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\services\scheduling_service.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\services\scheduling_service.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\services\service_utilities.c</name>
     </file>
     <file>

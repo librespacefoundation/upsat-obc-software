@@ -1,5 +1,5 @@
 #include "obc.h"
-#include "service_utilities.h"
+#include "../../services/service_utilities.h"
 
 #undef __FILE_ID__
 #define __FILE_ID__ 666
@@ -59,7 +59,7 @@ SAT_returnState route_pkt(tc_tm_pkt *pkt) {
     } else if(id == SYSTEM_APP_ID && pkt->ser_type == TC_SCHEDULING_SERVICE) {
         //TODO: ADD C_ASSERT
         res = scheduling_app(pkt);
-    } 
+    }
     else if(id == EPS_APP_ID)      { export_pkt(EPS_APP_ID, pkt, &obc_data.eps_uart); }
     else if(id == ADCS_APP_ID)     { export_pkt(ADCS_APP_ID, pkt, &obc_data.adcs_uart); }
     else if(id == COMMS_APP_ID)    { export_pkt(COMMS_APP_ID, pkt, &obc_data.comms_uart); }

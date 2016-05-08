@@ -13,7 +13,7 @@ CStepIntDis=_ 0
 stlinkserialNo=2798FD0D
 stlinkfoundProbes=
 [DebugChecksum]
-Checksum=-2113119366
+Checksum=1609833325
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -86,11 +86,10 @@ SumSortOrder=0
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\Src\main.c}.587.4" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\su_mnlp.c}.105.21" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\su_mnlp.c}.158.1" 0 0 1 "" 0 "" 0
-Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\su_mnlp.c}.103.53" 0 0 1 "" 0 "" 0
-Count=4
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\main.c}.586.4" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\main.c}.587.4" 0 0 1 "" 0 "" 0
+Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\su_mnlp.c}.130.25" 0 0 1 "" 0 "" 0
+Count=3
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""

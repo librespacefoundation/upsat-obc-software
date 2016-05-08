@@ -102,6 +102,7 @@ void HK_task(void const * argument);
 
 /* USER CODE END 0 */
 
+
 int main(void)
 {
 
@@ -131,7 +132,7 @@ int main(void)
   MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
-
+  
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -583,7 +584,8 @@ void StartDefaultTask(void const * argument)
    strncpy( t1, t2, 5);
    
    su_INIT();
-
+   su_SCH();
+   
    //uint8_t hours, mins, sec = 0;
    //HAL_obc_getTime(&hours, &mins, &sec);
    //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
@@ -660,7 +662,7 @@ void StartDefaultTask(void const * argument)
     struct time_utc utc;
 
     get_time_UTC(&utc);
-    sprintf(uart_temp, "TIME %d %d %d %d %d %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+    sprintf(uart_temp, "TIME IS: year: %d, month: %d, day: %d, hour: %d, min: %d, sec: %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
     HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
     
   sprintf((char*)uart_temp, "Hello\n");

@@ -65,7 +65,7 @@ SAT_returnState mass_storage_delete_su_scr(MS_sid sid) {
 
     if(f_unlink((char*)path) != FR_OK) { return SATR_ERROR; }
 
-    obc_su_scripts.scripts[(uint8_t)sid-1].invalid = true;
+    //su_scripts.scripts[(uint8_t)sid-1].invalid = true;
 
     return SATR_OK;
 }
@@ -345,13 +345,13 @@ SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *b
             else if(sid == SU_SCRIPT_7)     { strncpy((char*)orig_path, MS_SU_SCRIPT_7, MS_MAX_PATH); strncpy((char*)temp_path, MS_TMP_SU_SCRIPT_7, MS_MAX_PATH);}
             else { return SATR_ERROR; }
         
-            obc_su_scripts.scripts[(uint8_t)sid-1].invalid = false;
-            SAT_returnState res = mass_storage_su_load_api(sid + (TMP_SU_SCRIPT_1 - 1), obc_su_scripts.temp_buf);
-            if(res == SATR_ERROR || res == SATR_CRC_ERROR) { obc_su_scripts.scripts[(uint8_t)sid-1].invalid = true; return SATR_ERROR; }
-            f_unlink(orig_path);
-            if(f_rename(temp_path, orig_path) != FR_OK) { return SATR_ERROR; }
-            su_populate_header(&obc_su_scripts.scripts[(uint8_t)sid-1].header, obc_su_scripts.temp_buf);
-            su_populate_scriptPointers(&obc_su_scripts.scripts[(uint8_t)sid-1], obc_su_scripts.temp_buf);
+            //su_scripts.scripts[(uint8_t)sid-1].invalid = false;
+            //SAT_returnState res = mass_storage_su_load_api(sid + (TMP_SU_SCRIPT_1 - 1), su_scripts.temp_buf);
+            //if(res == SATR_ERROR || res == SATR_CRC_ERROR) { su_scripts.scripts[(uint8_t)sid-1].invalid = true; return SATR_ERROR; }
+            //f_unlink(orig_path);
+            //if(f_rename(temp_path, orig_path) != FR_OK) { return SATR_ERROR; }
+            //su_populate_header(&su_scripts.scripts[(uint8_t)sid-1].header, su_scripts.temp_buf);
+            //su_populate_scriptPointers(&su_scripts.scripts[(uint8_t)sid-1], su_scripts.temp_buf);
         }
     }
 
@@ -496,12 +496,13 @@ SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_
         cnv32_8(fno.fsize, &buf[(*size)]);
         *size += sizeof(uint32_t);
         
-        buf[(*size)] = obc_su_scripts.scripts[(uint8_t)i-1].invalid;
+        //buf[(*size)] = su_scripts.scripts[(uint8_t)i-1].invalid;
         *size += sizeof(uint8_t);
     }
     return SATR_EOT;
 }
 
+/*loads the su script indicated by 'sid' to the destination buffer 'buf'*/
 SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf) {
 
     FIL fp;

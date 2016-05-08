@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "services.h"
 #include "pkt_pool.h"
-#include "obc_hal.h"
+#include "../platform/obc/hal/stm32/obc_hal.h"
 
 //temp
 #define TEST_ARRAY 1024

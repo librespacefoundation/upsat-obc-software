@@ -1,4 +1,4 @@
-"E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\mass_storage_service.c"
+"E:\cubesat_firmware\upsat-obc-software\services\mass_storage_service.c"
 -std=c99
 -ferror-limit=100
 -I

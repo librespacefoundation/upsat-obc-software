@@ -6,7 +6,7 @@
 
 "-p" 
 
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CONFIG\debugger\ST\STM32F405RG.ddf" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\arm\CONFIG\debugger\ST\STM32F405RG.ddf" 
 
 "--drv_verify_download" 
 

@@ -19,6 +19,38 @@
 #define MS_SU_SCRIPT_5     "/SU_SCR_5/SCR5.bin"
 #define MS_SU_SCRIPT_6     "/SU_SCR_6/SCR6.bin"
 #define MS_SU_SCRIPT_7     "/SU_SCR_7/SCR7.bin"
+
+/*E2E tests script definitions*/
+#define MS_SU_E2E_F             "/SU_SCR_E2E"
+/*E2E test 1 */
+#define MS_SU_SCRIPT_E2E_1_1     "/SU_SCR_E2E/MNLP_E2E_1_1.bin"
+#define MS_SU_SCRIPT_E2E_1_2     "/SU_SCR_E2E/MNLP_E2E_1_2.bin"
+#define MS_SU_SCRIPT_E2E_1_3     "/SU_SCR_E2E/MNLP_E2E_1_3.bin"
+#define MS_SU_SCRIPT_E2E_1_4     "/SU_SCR_E2E/MNLP_E2E_1_4.bin"
+#define MS_SU_SCRIPT_E2E_1_5     "/SU_SCR_E2E/MNLP_E2E_1_5.bin"
+#define MS_SU_SCRIPT_E2E_1_6     "/SU_SCR_E2E/MNLP_E2E_1_6.bin"
+#define MS_SU_SCRIPT_E2E_1_7     "/SU_SCR_E2E/MNLP_E2E_1_7.bin"
+/*E2E test 2 */
+#define MS_SU_SCRIPT_E2E_2_1     "/SU_SCR_E2E/MNLP_E2E_2_1.bin"
+/*E2E test 3 */
+#define MS_SU_SCRIPT_E2E_3_1     "/SU_SCR_E2E/MNLP_E2E_3_1.bin"
+#define MS_SU_SCRIPT_E2E_3_2     "/SU_SCR_E2E/MNLP_E2E_3_2.bin"
+#define MS_SU_SCRIPT_E2E_3_3     "/SU_SCR_E2E/MNLP_E2E_3_3.bin"
+/*E2E test 6 */
+#define MS_SU_SCRIPT_E2E_6_1     "/SU_SCR_E2E/MNLP_E2E_6_1.bin"
+/*E2E test 7 */
+#define MS_SU_SCRIPT_E2E_7_1     "/SU_SCR_E2E/MNLP_E2E_7_1.bin"
+/*E2E test 8 */
+#define MS_SU_SCRIPT_E2E_8_1     "/SU_SCR_E2E/MNLP_E2E_8_1.bin"
+/*E2E test 9 */
+#define MS_SU_SCRIPT_E2E_9_1     "/SU_SCR_E2E/MNLP_E2E_9_1.bin"
+/*E2E test 10 */
+#define MS_SU_SCRIPT_E2E_10_1     "/SU_SCR_E2E/MNLP_E2E_10_1.bin"
+/*E2E test 11 */
+#define MS_SU_SCRIPT_E2E_11_1     "/SU_SCR_E2E/MNLP_E2E_11_1.bin"
+/*E2E test 12 */
+#define MS_SU_SCRIPT_E2E_12_1     "/SU_SCR_E2E/MNLP_E2E_12_1.bin"
+
 #define MS_EVENT_LOG       "/EVENT_LOG"
 #define MS_FOTOS           "/FOTOS"
 
@@ -39,7 +71,7 @@
 #define MS_FILE_SECTOR          512
 #define MS_STORES               3
 #define MS_SU_FSIZE             174
-#define MS_MIN_SU_FILE 			1	//min is the header.
+#define MS_MIN_SU_FILE 		1	//min is the header.
 
 struct _MS_data {
     FATFS test;
@@ -48,15 +80,15 @@ struct _MS_data {
     //uint32_t ev_temp_log;
 };
 
-extern struct script_handler obc_su_scripts;
+//extern script_handler su_scripts;
 
 extern SAT_returnState large_data_app(tc_tm_pkt *pkt);
 
 extern uint32_t get_new_fileId();
 
-extern SAT_returnState su_populate_header(struct script_hdr *hdr, uint8_t *buf);
+extern SAT_returnState su_populate_header( science_unit_script_header *hdr, uint8_t *buf);
 
-extern SAT_returnState su_populate_scriptPointers(struct su_script *su_scr, uint8_t *buf);
+//extern SAT_returnState su_populate_scriptPointers( su_script *su_scr, uint8_t *buf);
 
 //ToDo
 //  add format for sd
@@ -94,7 +126,6 @@ SAT_returnState mass_storage_report_su_scr_api(MS_sid sid, uint8_t *buf, uint16_
 SAT_returnState mass_storage_su_checksum_api(MS_sid sid);
 
 SAT_returnState mass_storage_su_load_api(MS_sid sid, uint8_t *buf);
-
 
 SAT_returnState mass_storage_storeLargeFile(MS_sid sid, MS_mode mode, uint8_t *buf, uint16_t *size, uint32_t part);
 

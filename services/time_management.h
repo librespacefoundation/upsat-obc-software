@@ -33,6 +33,8 @@ extern const uint32_t UTC_QB50_H[25];
 
 void cnv_UTC_QB50(struct time_utc utc, uint32_t *qb);
 
+void cnv_QB50_UTC( struct time_utc *utc, uint32_t qb );
+
 void set_time_QB50(uint32_t qb);
 
 void set_time_UTC(struct time_utc utc);
