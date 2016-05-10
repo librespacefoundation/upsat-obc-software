@@ -33,6 +33,7 @@ REQ: MNLP-027
 #define SU_SCR_TT_S3  0x43
 #define SU_SCR_TT_S4  0x44
 #define SU_SCR_TT_S5  0x45
+#define SU_SCR_TT_SNONE = 0x00
 #define SU_SCR_TT_EOT 0x55
 
 /*
@@ -40,6 +41,8 @@ Section 13.10
 
 when 0x00 is undefined
 */
+
+/*SU command IDs*/
 #define SU_OBC_SU_ON_CMD_ID     0xF1
 #define SU_OBC_SU_OFF_CMD_ID    0xF2
 #define SU_RESET_CMD_ID         0x02
@@ -58,6 +61,7 @@ when 0x00 is undefined
 #define SU_OBC_SU_ERR_CMD_ID    0x00
 #define SU_OBC_EOT_CMD_ID       0xFE
 
+/*SU responses IDs*/
 #define OBC_SU_ON_RSP_ID    0x00
 #define OBC_SU_OFF_RSP_ID   0x00
 #define SU_RESET_RSP_ID     0x00
@@ -242,6 +246,12 @@ void su_load_scripts();
 /*this is to be called from a freeRTOS task, continually*/
 void su_SCH();
 
+/* 
+ * traverses the script sequences to find the one requested by
+ * *ss_to_go parameter, the resulting offset is stored on 
+ * *script_sequence_pointer.
+ */
+SAT_returnState su_goto_script_seq( uint16_t *script_sequence_pointer, uint8_t *ss_to_go);
 //void su_timeout_handler(uint8_t error);
 
 SAT_returnState su_incoming_rx();

@@ -1,4 +1,4 @@
-"E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\services\time_management.c"
+"E:\cubesat_firmware\upsat-obc-software\services\time_management.c"
 -std=c99
 -ferror-limit=100
 -I

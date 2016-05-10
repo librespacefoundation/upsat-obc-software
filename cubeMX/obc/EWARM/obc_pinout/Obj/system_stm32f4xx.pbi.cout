@@ -1,4 +1,4 @@
-"E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c"
+"E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\Drivers\CMSIS\Device\ST\STM32F4XX\Source\TEMPLATES\system_stm32f4xx.c"
 -std=c99
 -ferror-limit=100
 -I

@@ -1,4 +1,4 @@
-"E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c"
+"E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\Drivers\STM32F4XX_HAL_DRIVER\Src\stm32f4xx_hal.c"
 -std=c99
 -ferror-limit=100
 -I

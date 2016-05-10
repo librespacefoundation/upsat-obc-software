@@ -579,17 +579,13 @@ void StartDefaultTask(void const * argument)
    mass_storage_init();
    large_data_INIT();
    
-   uint8_t t1[10];
-   uint8_t t2[10] = {10,11,12,13,14,15,16,17,18,19};
-   strncpy( t1, t2, 5);
-   
    su_INIT();
    su_SCH();
    
-   //uint8_t hours, mins, sec = 0;
-   //HAL_obc_getTime(&hours, &mins, &sec);
-   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
+   uint8_t hours, mins, sec = 0;
+   HAL_sys_getTime(&hours, &mins, &sec);
+   sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   HAL_UART_Transmit( &huart2, uart_temp, 50 , 10000);
    
    //hours = 19;
    //mins = 35;

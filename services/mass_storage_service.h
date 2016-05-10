@@ -21,7 +21,7 @@
 #define MS_SU_SCRIPT_7     "/SU_SCR_7/SCR7.bin"
 
 /*E2E tests script definitions*/
-#define MS_SU_E2E_F             "/SU_SCR_E2E"
+#define MS_SU_E2E_F              "/SU_SCR_E2E"
 /*E2E test 1 */
 #define MS_SU_SCRIPT_E2E_1_1     "/SU_SCR_E2E/MNLP_E2E_1_1.bin"
 #define MS_SU_SCRIPT_E2E_1_2     "/SU_SCR_E2E/MNLP_E2E_1_2.bin"

@@ -1,4 +1,4 @@
-"E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\Middlewares\Third_Party\FreeRTOS\Source\tasks.c"
+"E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\tasks.c"
 -std=c99
 -ferror-limit=100
 -I
