@@ -71,32 +71,33 @@ void su_INIT(){
     }
 }
 
-void su_load_scripts() {
+void su_load_scripts(){
     
-    for (MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
+    for( MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
         /*mark every script as non-valid*/
         su_scripts[(uint8_t) i-1].valid = false;
         /*mark every script as non-active*/
         su_scripts[(uint8_t) i-1].active = false;
         /*load scripts on memory but, parse them at a later time, in order to unlock access to the storage medium for other users*/
-        SAT_returnState res = mass_storage_su_load_api(i, su_scripts[(uint8_t) i - 1].file_load_buf);
-        if (res == SATR_ERROR || res == SATR_CRC_ERROR) {
+        SAT_returnState res = mass_storage_su_load_api( i, su_scripts[(uint8_t) i - 1].file_load_buf);
+        if( res == SATR_ERROR || res == SATR_CRC_ERROR){
             //su_scripts[(uint8_t)i-1].valid = false;
             continue;
-        } else {
+        }
+        else{
             /*mark the script as valid, to be parsed afterwards*/
             su_scripts[(uint8_t) i-1].valid = true;
         }
     }
 }
 
-void su_SCH() {
+void su_SCH(){
 
-    if (su_state == su_off || su_state == su_idle) {
+    if( su_state == su_off || su_state == su_idle) {
 
-        for (MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
+        for( MS_sid i = SU_SCRIPT_1; i <= SU_SCRIPT_7; i++) {
             
-            if (su_scripts[(uint8_t) i-1].valid == true && 
+            if( su_scripts[(uint8_t) i-1].valid == true && 
                 su_scripts[(uint8_t) i-1].scr_header.start_time >= time_lala &&
                 su_scripts[(uint8_t) i-1].scr_header.start_time != 0) {
 
@@ -112,7 +113,7 @@ void su_SCH() {
                  */
                 current_tt_pointer = SU_TT_OFFSET;
                 /*finds the next tt that needs to be executed, it iterates all the tt to find the correct one*/
-                for (uint16_t b = current_tt_pointer; 
+                for( uint16_t b = current_tt_pointer; 
                               b < SU_MAX_FILE_SIZE; b++) { //TODO: check until when for will run
 
                     call_state = 
@@ -130,12 +131,24 @@ void su_SCH() {
                         /*start every search after current_tt_pointer, current_tt_pointer now points to the start of the next tt_header*/
                         current_ss_pointer = current_tt_pointer;
                         su_goto_script_seq( &current_ss_pointer, 
-                                            &su_scripts[(uint8_t) active_script - 1].tt_header.script_index);                        
-                        su_next_cmd( su_scripts[(uint8_t) active_script - 1].file_load_buf, 
-                                     &su_scripts[(uint8_t) active_script - 1].seq_header,
-                                     &current_ss_pointer);
-                        su_cmd_handler( &su_scripts[(uint8_t) active_script - 1].seq_header  );
+                                                &su_scripts[(uint8_t) active_script - 1].tt_header.script_index);
+                        while(true){ /*start executing commands in a script sequence*/
+                            call_state =
+                            su_next_cmd( su_scripts[(uint8_t) active_script - 1].file_load_buf, 
+                                         &su_scripts[(uint8_t) active_script - 1].seq_header,
+                                         &current_ss_pointer);
+                            if( call_state == SATR_EOT || call_state == SATR_ERROR){
+                                /*no more commands on script sequences to be executed*/
+                                /*reset seq_header->cmd_if field to something other than 0xFE*/
+                                su_scripts[(uint8_t) active_script - 1].seq_header.cmd_id = 0x0;
+                                break;
+                            }
+                            else{
+                                /*handle script sequence command*/
+                                su_cmd_handler( &su_scripts[(uint8_t) active_script - 1].seq_header  );
+                            }
 //                        break;
+                        }
                     }
 //                    if (su_scripts.tt_header.script_index == SU_SCR_TT_EOT) {
 //                        break;
@@ -146,7 +159,8 @@ void su_SCH() {
 //                    if (!C_ASSERT(su_scripts.tt_pointer_curr < su_scripts.scripts[i].header.script_len) == true) {
 //                        break;
 //                    }
-                }//script handling for ends here, at this point every time table in the script has been served.
+                }//go for next time table
+                //script handling for ends here, at this point every time table in the script has been served.
                 su_state = su_idle;
                 su_scripts[(uint8_t) active_script - 1].active = false;
             }//script validity if ends here
@@ -196,6 +210,8 @@ SAT_returnState su_goto_script_seq(uint16_t *script_sequence_pointer, uint8_t *s
                 /*su_scripts[(uint8_t) active_script - 1].tt_header.script_index*/ SU_OBC_EOT_CMD_ID) {
             //                            current_ss_pointer++;
         }/*now current_ss_pointer points to start of S<times>*/
+        /*move the pointer until end of 0xFE command*/
+        (*script_sequence_pointer) = (*script_sequence_pointer) + 2;
     }
 //    /*go until the end of the time tables entries*/
 //    while (su_scripts[(uint8_t) active_script - 1].file_load_buf[current_ss_pointer++] !=
@@ -346,7 +362,7 @@ SAT_returnState su_next_cmd(uint8_t *file_buffer, science_unit_script_sequence *
     script_sequence->pointer = *ss_pointer;
     script_sequence->len = file_buffer[(*ss_pointer)++];
     script_sequence->seq_cnt = file_buffer[(*ss_pointer)++];
-
+    
     for(uint8_t i = 1; i < script_sequence->len; i++) {
         script_sequence->parameters[i] = file_buffer[(*ss_pointer)++]; 
     }
