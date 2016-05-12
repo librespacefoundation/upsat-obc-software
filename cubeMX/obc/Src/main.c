@@ -36,8 +36,8 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
-#include "../../../platform/obc/obc.h"
-#include "../../../services/service_utilities.h"
+#include "obc.h"
+#include "service_utilities.h"
 
 #undef __FILE_ID__
 #define __FILE_ID__ 666
