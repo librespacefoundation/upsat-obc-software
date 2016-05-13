@@ -67,12 +67,15 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
-osThreadId defaultTaskHandle;
+osThreadId uartHandle;
 osThreadId HKHandle;
+osThreadId time_checkHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+uint8_t uart_temp[200];
 
+TaskHandle_t xTask_UART = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,8 +93,9 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
-void StartDefaultTask(void const * argument);
+void UART_task(void const * argument);
 void HK_task(void const * argument);
+void IDLE_task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -149,13 +153,17 @@ int main(void)
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of uart */
+  osThreadDef(uart, UART_task, osPriorityNormal, 0, 128);
+  uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
   osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
   HKHandle = osThreadCreate(osThread(HK), NULL);
+
+  /* definition and creation of time_check */
+  osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 128);
+  time_checkHandle = osThreadCreate(osThread(time_check), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -281,14 +289,14 @@ void MX_RTC_Init(void)
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 1;
   sDate.Year = 0;
 
-  //HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     /**Enable Calibrartion 
     */
@@ -321,7 +329,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -361,7 +369,7 @@ void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -536,8 +544,8 @@ void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+/* UART_task function */
+void UART_task(void const * argument)
 {
   /* init code for FATFS */
   MX_FATFS_Init();
@@ -564,8 +572,7 @@ void StartDefaultTask(void const * argument)
    //t3 = get_time_ELAPSED();
    
    //event_log(reset source);
-   
-   uint8_t uart_temp[200];
+
    //if(!C_ASSERT(false) == true)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
@@ -668,6 +675,12 @@ void StartDefaultTask(void const * argument)
   event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
   HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
   
+  /*Task notification setup*/
+  uint32_t ulNotificationValue;
+  const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
+
+  xTask_UART = xTaskGetCurrentTaskHandle();
+
   /*Uart inits*/
   HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
@@ -682,7 +695,11 @@ void StartDefaultTask(void const * argument)
     //su_SCH();
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    osDelay(1);
+    
+    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
+    //sprintf((char*)uart_temp, "Task %d\n", ulNotificationValue);
+    //HAL_UART_Transmit(&huart3, uart_temp, strlen(uart_temp) , 10000);
+    //osDelay(1);
   }
   /* USER CODE END 5 */ 
 }
@@ -695,10 +712,22 @@ void HK_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-   // hk_SCH();
-    osDelay(10);
+    hk_SCH();
+    //osDelay(10);
   }
   /* USER CODE END HK_task */
+}
+
+/* IDLE_task function */
+void IDLE_task(void const * argument)
+{
+  /* USER CODE BEGIN IDLE_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END IDLE_task */
 }
 
 #ifdef USE_FULL_ASSERT
