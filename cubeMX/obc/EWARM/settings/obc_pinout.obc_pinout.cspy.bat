@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" --backend -f "E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" --backend -f "E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" "--debug_file=%~1" --backend -f "E:\cubesat_firmware\upsat-obc-software\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.3\common\bin\cspybat" -f "E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.general.xcl" "--debug_file=%~1" --backend -f "E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\cubeMX\obc\EWARM\settings\obc_pinout.obc_pinout.driver.xcl" 
 
 @echo off 
 :end

@@ -12,7 +12,7 @@
           
           
           
-        <Column0>168</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>249</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Build>
         
@@ -32,7 +32,7 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>obc_pinout</ExpandedNode><ExpandedNode>obc_pinout/OBC</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>obc_pinout</ExpandedNode><ExpandedNode>obc_pinout/Application</ExpandedNode><ExpandedNode>obc_pinout/Application/User</ExpandedNode><ExpandedNode>obc_pinout/OBC</ExpandedNode><ExpandedNode>obc_pinout/Services</ExpandedNode></NodeDict></Session>
           </Tab>
         <Tab><Identity>TabID-8089-19749</Identity><TabName>Source Browser</TabName><Factory>SourceBrowser</Factory><Session><TypeFilter>2147483647</TypeFilter><FileFilter>1</FileFilter></Session></Tab></Tabs>
         
@@ -42,14 +42,14 @@
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\SERVICES\su_mnlp.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>251</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\SERVICES\su_mnlp.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>270</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\SRC\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>563</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><ActiveTab>2</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane/><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00EA1A60><key>iaridepm.enu1</key></Toolbar-00EA1A60></Sizes></Row0><Row1><Sizes/></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>529</Bottom><Right>258</Right><x>-2</x><y>-2</y><xscreen>2874</xscreen><yscreen>6792</yscreen><sizeHorzCX>1805276</sizeHorzCX><sizeHorzCY>9203252</sizeHorzCY><sizeVertCX>163317</sizeVertCX><sizeVertCY>719512</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>165</Bottom><Right>1594</Right><x>-2</x><y>-2</y><xscreen>1596</xscreen><yscreen>167</yscreen><sizeHorzCX>1002513</sizeHorzCX><sizeHorzCY>226287</sizeHorzCY><sizeVertCX>1971734</sizeVertCX><sizeVertCY>11873984</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-00F534A0><key>iaridepm.enu1</key></Toolbar-00F534A0></Sizes></Row0></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>478</Bottom><Right>339</Right><x>-2</x><y>-2</y><xscreen>7240</xscreen><yscreen>22278</yscreen><sizeHorzCX>4547739</sizeHorzCX><sizeHorzCY>30186992</sizeHorzCY><sizeVertCX>214196</sizeVertCX><sizeVertCY>650407</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>216</Bottom><Right>1594</Right><x>-2</x><y>-2</y><xscreen>1596</xscreen><yscreen>218</yscreen><sizeHorzCX>1002513</sizeHorzCX><sizeHorzCY>295393</sizeHorzCY><sizeVertCX>4966709</sizeVertCX><sizeVertCY>38947154</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

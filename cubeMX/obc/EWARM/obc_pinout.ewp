@@ -325,6 +325,8 @@
           <state>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/portable/IAR/ARM_CM4F</state>
           <state>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/include</state>
           <state>$PROJ_DIR$/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</state>
+          <state>E:\cubesat_firmware\ecss_services\services</state>
+          <state>E:\cubesat_firmware\ecss_services\platform\obc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -972,7 +974,7 @@
     <group>
       <name>EWARM</name>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f405xx.s</name>
+        <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4XX\Source\TEMPLATES\iar\startup_stm32f405xx.s</name>
       </file>
     </group>
     <group>
@@ -998,6 +1000,9 @@
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\Inc\system.h</name>
+      </file>
     </group>
   </group>
   <group>
@@ -1005,13 +1010,13 @@
     <group>
       <name>CMSIS</name>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
+        <name>$PROJ_DIR$\..\Drivers\CMSIS\Device\ST\STM32F4XX\Source\TEMPLATES\system_stm32f4xx.c</name>
       </file>
     </group>
     <group>
       <name>STM32F4xx_HAL_Driver</name>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4XX_HAL_DRIVER\Src\stm32f4xx_hal.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</name>
@@ -1071,7 +1076,7 @@
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4XX_HAL_DRIVER\Src\stm32f4xx_hal_uart.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c</name>
@@ -1101,7 +1106,7 @@
     <group>
       <name>FreeRTOS</name>
       <file>
-        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</name>
+        <name>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\croutine.c</name>
@@ -1116,7 +1121,7 @@
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\list.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</name>
+        <name>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\portasm.s</name>
@@ -1125,7 +1130,7 @@
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\queue.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\tasks.c</name>
+        <name>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\tasks.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\timers.c</name>
@@ -1135,112 +1140,115 @@
   <group>
     <name>OBC</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\event_reporting_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\housekeeping.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\event_reporting_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\housekeeping.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\function_management_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\obc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\function_management_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\obc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\hldlc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\hal\stm32\obc_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\hldlc.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\hal\stm32\obc_hal.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\power_ctrl.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\housekeeping.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\platform\obc\power_ctrl.h</name>
+    </file>
+  </group>
+  <group>
+    <name>Services</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\event_reporting_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\event_reporting_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\housekeeping_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\function_management_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\large_data_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\function_management_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\large_data_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\hldlc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\hldlc.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\mass_storage_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\housekeeping_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\housekeeping_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\obc.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\large_data_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\large_data_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\hal\stm32\obc_hal.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\mass_storage_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\mass_storage_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\pkt_pool.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\pkt_pool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\pkt_pool.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\platform\obc\power_ctrl.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\scheduling_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\scheduling_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\scheduling_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\scheduling_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\service_utilities.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\service_utilities.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\service_utilities.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\service_utilities.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\services.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\services.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\services.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\services.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\su_mnlp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\su_mnlp.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\su_mnlp.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\test_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\test_service.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\test_service.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\test_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\time_management.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\time_management.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\time_management.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\time_management.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\verification_service.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\services\verification_service.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\services\verification_service.h</name>
+      <name>$PROJ_DIR$\..\..\..\..\ecss_services\services\verification_service.h</name>
     </file>
   </group>
 </project>
