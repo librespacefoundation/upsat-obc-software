@@ -565,8 +565,7 @@ void StartDefaultTask(void const * argument)
    //t3 = get_time_ELAPSED();
    
    //event_log(reset source);
-   
-   uint8_t uart_temp[200];
+      
    //if(!C_ASSERT(false) == true)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
@@ -577,10 +576,134 @@ void StartDefaultTask(void const * argument)
    HAL_obc_SD_ON();
    
    mass_storage_init();
+   
    large_data_INIT();
    
-   su_INIT();
-   su_SCH();
+   uint8_t uart_temp[200];
+   uint16_t ldp_par[200];
+   uint8_t su_out[200];
+   //temporal su sim test code
+   
+//   while(true){
+//   su_out[0]= 0xF1;
+//   su_out[1]= 1;
+//   su_out[2]= 1;
+//   HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
+//   
+//   su_out[0]= 0x05;
+//   su_out[1]= 0x63; //len
+//   su_out[2]= 2; //seq_coun
+//   HAL_UART_Transmit( &huart2, su_out, 101 , 10); //ver ok
+   
+//   su_out[0]= 0x05;
+//   su_out[1]= 141; //len
+//   su_out[2]= 2;
+   
+//   ldp_par[0]= 1; //bias to auto
+//   ldp_par[1]= 4000;
+//   ldp_par[2]= 4000;
+//   ldp_par[3]= 4000;
+//   ldp_par[4]= 4000;
+//   
+//   ldp_par[5]= 0;
+//   ldp_par[6]= 3;
+//   ldp_par[7]= 800;
+//   ldp_par[8]= 16;
+//   ldp_par[9]= 1;
+//   ldp_par[10]= 43000;
+//   ldp_par[11]= 32000;
+//   ldp_par[12]= 5000;
+//   ldp_par[13]= (uint16_t)1 << 8 | 2;
+//   ldp_par[14]= (uint16_t)1 << 8 | 2;
+//   ldp_par[15]= (uint16_t)23 << 8 | 2;
+//   ldp_par[16]= 66; //HK secs
+//   ldp_par[17]= 99; //stm secs
+//   ldp_par[18]= 3;
+//   ldp_par[19]= 44;
+//   ldp_par[20]= 4;
+//   ldp_par[21]= 45;
+//   ldp_par[22]= 5;
+//   ldp_par[23]= 46;
+//   ldp_par[24]= 6;
+//   ldp_par[25]= 47;
+//   
+//   ldp_par[26]= 3;
+//   ldp_par[27]= 44;
+//   ldp_par[28]= 4;
+//   ldp_par[29]= 45;
+//   ldp_par[30]= 5;
+//   ldp_par[31]= 46;
+//   ldp_par[32]= 6;
+//   ldp_par[33]= 47;
+//   
+//   ldp_par[34]= 3;
+//   ldp_par[35]= 44;
+//   ldp_par[36]= 4;
+//   ldp_par[37]= 45;
+//   ldp_par[38]= 5;
+//   ldp_par[39]= 46;
+//   ldp_par[40]= 6;
+//   ldp_par[41]= 47;
+//   
+//   ldp_par[42]= 3;
+//   ldp_par[43]= 44;
+//   ldp_par[44]= 4;
+//   ldp_par[45]= 45;
+//   ldp_par[46]= 5;
+//   ldp_par[47]= 46;
+//   ldp_par[48]= 6;
+//   ldp_par[49]= 47;
+//   
+//   ldp_par[50]= 3;
+//   ldp_par[51]= 44;
+//   ldp_par[52]= 4;
+//   ldp_par[53]= 45;
+//   ldp_par[54]= 5;
+//   ldp_par[55]= 46;
+//   ldp_par[56]= 6;
+//   ldp_par[57]= 47;
+//   
+//   ldp_par[58]= 3; //CHx bias coef
+//   ldp_par[59]= 47;
+//   ldp_par[60]= 3;
+//   ldp_par[61]= 47;
+//   ldp_par[62]= 3;
+//   ldp_par[63]= 47;
+//   ldp_par[64]= 3;
+//   ldp_par[65]= 47;
+//   
+//   ldp_par[66]= 0;
+//   ldp_par[67]= 0;
+//   
+//   ldp_par[68]= 1500;
+//   
+//   ldp_par[69]= 0;
+//   
+//   uint8_t p=0;
+//   for( uint8_t i = 0; i< 70;i++){
+//       
+//       cnv16_8( ldp_par[i], su_out+i+p+3); //after second byte
+//       p=i+1;
+//   }
+//      
+//   HAL_UART_Transmit( &huart2, su_out, 142 , 10); //ver not ok
+   
+//   su_out[0]= 0x6;
+//   su_out[1]= 1;
+//   su_out[2]= 2;
+//   HAL_UART_Transmit( &huart2, su_out, 3 , 10000); //ver ok
+   
+//   su_out[0]= 0x7;
+//   su_out[1]= 3;
+//   su_out[2]= 2;
+//   HAL_UART_Transmit( &huart2, su_out, 5 , 10000); //ver ok
+   
+//   su_out[0]= 0xF2;
+//   su_out[1]= 1;
+//   su_out[2]= 1;
+//   
+//   HAL_UART_Transmit( &huart2, su_out, 3 , 10);
+//   }
    
    uint8_t hours, mins, sec = 0;
    HAL_sys_getTime(&hours, &mins, &sec);
@@ -677,6 +800,7 @@ void StartDefaultTask(void const * argument)
   HAL_UART_Receive_IT(&huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
   /* Infinite loop */
+  su_INIT();
   for(;;)
   {
     su_incoming_rx();
@@ -685,6 +809,7 @@ void StartDefaultTask(void const * argument)
     //su_SCH();
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+    su_SCH();
     osDelay(1);
   }
   /* USER CODE END 5 */ 

@@ -1,4 +1,4 @@
-"E:\cubesat_firmware\upsat-obc-software\platform\obc\hal\stm32\obc_hal.c"
+"E:\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\platform\obc\hal\stm32\obc_hal.c"
 -std=c99
 -ferror-limit=100
 -I

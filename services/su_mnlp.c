@@ -8,7 +8,9 @@ mnlp_response_science_header flight_data;
 science_unit_script_inst su_scripts[SU_MAX_SCRIPTS_POPU];
 /*the state of the science unit*/
 SU_state su_state;
-SAT_returnState call_state;
+SAT_returnState tt_call_state;
+SAT_returnState ss_call_state;
+SAT_returnState scom_call_state;
 MS_sid active_script;
 /*points to the current start byte of a time's table begining, into the loaded script*/
 uint16_t current_tt_pointer;
@@ -28,15 +30,17 @@ SAT_returnState su_incoming_rx() {
     uint8_t c = 0;
 
     res = HAL_su_uart_rx(&c);
-    if( res == SATR_OK ) {
-        //if(obc_su_scripts.rx_cnt < SU_SCI_HEADER + 5) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
-        //if(obc_su_scripts.rx_cnt < SU_SCI_HEADER + SU_RSP_PCKT_SIZE) { obc_su_scripts.rx_buf[obc_su_scripts.rx_cnt++] = c; }
-       // else {
+//    if( res == SATR_OK ) {
+//        if(su_scripts[(uint8_t) active_script - 1].rx_cnt < SU_SCI_HEADER + 5) { 
+//            su_scripts[(uint8_t) active_script - 1].rx_buf[obc_su_scripts.rx_cnt++] = c; }
+//        if(su_scripts[(uint8_t) active_script - 1].rx_cnt < SU_SCI_HEADER + SU_RSP_PCKT_SIZE) { 
+//            su_scripts[(uint8_t) active_script - 1].rx_buf[obc_su_scripts.rx_cnt++] = c; }
+//        else {
 //            su_scripts.rx_cnt = SU_SCI_HEADER;
 //            su_scripts.timeout = time_now();
 //            if(su_scripts.rx_buf[SU_SCI_HEADER] == SU_ERR_RSP_ID) { su_power_ctrl(P_RESET); }
-//
-//            /*science header*/
+
+            /*science header*/
 //            cnv32_8(time_now(), &su_scripts.rx_buf[0]);
 //            cnv16_8(flight_data.roll, &su_scripts.rx_buf[4]);
 //            cnv16_8(flight_data.pitch, &su_scripts.rx_buf[6]);
@@ -47,12 +51,12 @@ SAT_returnState su_incoming_rx() {
 //            cnv16_8(flight_data.x_eci, &su_scripts.rx_buf[16]);
 //            cnv16_8(flight_data.y_eci, &su_scripts.rx_buf[18]);
 //            cnv16_8(flight_data.z_eci, &su_scripts.rx_buf[20]);
-//
-//            uint16_t size = SU_MAX_RSP_SIZE;
+
+            uint16_t size = SU_MAX_RSP_SIZE;
 //            mass_storage_storeLogs(SU_LOG, su_scripts.rx_buf, &size);
-        }
-   // }
-    return SATR_OK;
+//        }
+//    }
+//    return SATR_OK;
 }
 
 uint8_t time_lala = 5; //keep for fun and profit
@@ -77,9 +81,10 @@ void su_load_scripts(){
         /*mark every script as non-valid*/
         su_scripts[(uint8_t) i-1].valid = false;
         /*mark every script as non-active*/
-        su_scripts[(uint8_t) i-1].active = false;
+//        su_scripts[(uint8_t) i-1].active = false;
         /*load scripts on memory but, parse them at a later time, in order to unlock access to the storage medium for other users*/
         SAT_returnState res = mass_storage_su_load_api( i, su_scripts[(uint8_t) i - 1].file_load_buf);
+//        SAT_returnState res = mass_storage_su_load_api( SU_SCRIPT_6, su_scripts[(uint8_t) i - 1].file_load_buf);
         if( res == SATR_ERROR || res == SATR_CRC_ERROR){
             //su_scripts[(uint8_t)i-1].valid = false;
             continue;
@@ -116,38 +121,52 @@ void su_SCH(){
                 for( uint16_t b = current_tt_pointer; 
                               b < SU_MAX_FILE_SIZE; b++) { //TODO: check until when for will run
 
-                    call_state = 
+                    tt_call_state = 
                     polulate_next_time_table( su_scripts[(uint8_t) active_script - 1].file_load_buf, 
                                               &su_scripts[(uint8_t) active_script - 1].tt_header,
                                               &current_tt_pointer);
-                    if( call_state == SATR_EOT){
+                    if( tt_call_state == SATR_EOT){
                         /*reached the last time table, go for another script, or this script, but on the NEXT day*/
                         //TODO: here to save on non-volatile mem that we have finished executing all ss'es, 
                         //see also line: 150,151
                         break;
                     }
-                    else{
+                    else
+                    if( tt_call_state == SATR_ERROR ){
+                        /*go for next time table*/
+                            break;
+                        }
+                    else{/*call_state == SATR_OK*/
                         /*find the script sequence pointed by *time_table->script_index, and execute it */
                         /*start every search after current_tt_pointer, current_tt_pointer now points to the start of the next tt_header*/
-                        current_ss_pointer = current_tt_pointer;
+                        current_ss_pointer = current_tt_pointer-1;
+                        ss_call_state=
                         su_goto_script_seq( &current_ss_pointer, 
-                                                &su_scripts[(uint8_t) active_script - 1].tt_header.script_index);
-                        while(true){ /*start executing commands in a script sequence*/
-                            call_state =
-                            su_next_cmd( su_scripts[(uint8_t) active_script - 1].file_load_buf, 
-                                         &su_scripts[(uint8_t) active_script - 1].seq_header,
-                                         &current_ss_pointer);
-                            if( call_state == SATR_EOT || call_state == SATR_ERROR){
-                                /*no more commands on script sequences to be executed*/
-                                /*reset seq_header->cmd_if field to something other than 0xFE*/
-                                su_scripts[(uint8_t) active_script - 1].seq_header.cmd_id = 0x0;
-                                break;
-                            }
-                            else{
-                                /*handle script sequence command*/
-                                su_cmd_handler( &su_scripts[(uint8_t) active_script - 1].seq_header  );
-                            }
-//                        break;
+                                            &su_scripts[(uint8_t) active_script - 1].tt_header.script_index);
+                        if( ss_call_state == SATR_OK ){
+                            while(true){ /*start executing commands in a script sequence*/
+                                scom_call_state =
+                                su_next_cmd( su_scripts[(uint8_t) active_script - 1].file_load_buf, 
+                                             &su_scripts[(uint8_t) active_script - 1].seq_header,
+                                             &current_ss_pointer);
+                                if( scom_call_state == SATR_EOT){
+                                    /*no more commands on script sequences to be executed*/
+                                    /*or an unknown commandd has been encountered in the script sequences, so go for the next time table*/
+                                    /*reset seq_header->cmd_if field to something else other than 0xFE*/
+                                    su_scripts[(uint8_t) active_script - 1].seq_header.cmd_id = 0x0;
+                                    break;
+                                }
+                                else
+                                if( scom_call_state == SATR_ERROR){
+                                    /*go for the next command in the same script sequence*/
+                                  break;
+                                }
+                                else{
+                                    /*handle script sequence command*/
+                                    su_cmd_handler( &su_scripts[(uint8_t) active_script - 1].seq_header  );
+                                }
+    //                        break;
+                            }//while ends here
                         }
                     }
 //                    if (su_scripts.tt_header.script_index == SU_SCR_TT_EOT) {
@@ -162,9 +181,9 @@ void su_SCH(){
                 }//go for next time table
                 //script handling for ends here, at this point every time table in the script has been served.
                 su_state = su_idle;
-                su_scripts[(uint8_t) active_script - 1].active = false;
-            }//script validity if ends here
-        }//go to check next script
+//                su_scripts[(uint8_t) active_script - 1].active = false;
+            }//script if run validity if ends here
+        }//go to take next script
     }
     
 //    if (obc_su_scripts.state == su_running) {
@@ -199,18 +218,24 @@ void su_SCH(){
 
 SAT_returnState su_goto_script_seq(uint16_t *script_sequence_pointer, uint8_t *ss_to_go) {
     
+    if( *ss_to_go == SU_SCR_TT_EOT ){
+        /*if searching to go to script 0x55*/
+        return SATR_EOT;
+    }
     /*go until the end of the time tables entries*/
     while (su_scripts[(uint8_t) active_script - 1].file_load_buf[(*script_sequence_pointer)++] !=
             /*su_scripts[(uint8_t) active_script - 1].tt_header.script_index*/ SU_SCR_TT_EOT) {
         //                            current_ss_pointer++;
     }/*now current_ss_pointer points to start of S1*/
     if( *ss_to_go == 0x41){ return SATR_OK;}
+    
+    /*an alternative implemantaion can count how many 0xFE we are passing over*/
     for (uint8_t i = 0x41; i <*ss_to_go; i++) {
         while (su_scripts[(uint8_t) active_script - 1].file_load_buf[(*script_sequence_pointer)++] !=
                 /*su_scripts[(uint8_t) active_script - 1].tt_header.script_index*/ SU_OBC_EOT_CMD_ID) {
             //                            current_ss_pointer++;
         }/*now current_ss_pointer points to start of S<times>*/
-        /*move the pointer until end of 0xFE command*/
+        /*move the pointer until end of 0xFE (SU_OBC_EOT_CMD_ID) command*/
         (*script_sequence_pointer) = (*script_sequence_pointer) + 2;
     }
 //    /*go until the end of the time tables entries*/
@@ -241,15 +266,17 @@ SAT_returnState su_goto_script_seq(uint16_t *script_sequence_pointer, uint8_t *s
 
 SAT_returnState su_cmd_handler( science_unit_script_sequence *cmd) {
 
-    HAL_sys_delay( (cmd->dt_min * 60) + cmd->dt_sec); //*1000 to be millisecs
+    HAL_sys_delay( (cmd->dt_min * 60) + cmd->dt_sec); //*1000 to be milliseconds
     
-    HAL_su_uart_tx( &cmd->pointer, cmd->len);
+    HAL_su_uart_tx( cmd->command, 3 + (cmd->len-1));
+//    HAL_su_uart_tx( &cmd->pointer, cmd->len);
+//    HAL_su_uart_tx( &cmd->cmd_id, cmd->len);
     
 //    if(cmd->cmd_id == SU_OBC_SU_ON_CMD_ID)          { su_power_ctrl(P_ON); } 
 //    else if(cmd->cmd_id == SU_OBC_SU_OFF_CMD_ID)    { su_power_ctrl(P_OFF); } 
 //    else if(cmd->cmd_id == SU_OBC_EOT_CMD_ID)       { return SATR_EOT; } 
 //    else                                            { HAL_su_uart_tx( &cmd->pointer, cmd->len); }
-
+    //HAL_sys_delay( 10); //*1000 to be milliseconds
     return SATR_OK;
 }
 
@@ -359,12 +386,15 @@ SAT_returnState su_next_cmd(uint8_t *file_buffer, science_unit_script_sequence *
     script_sequence->dt_sec = file_buffer[(*ss_pointer)++];
     script_sequence->dt_min = file_buffer[(*ss_pointer)++];
     script_sequence->cmd_id = file_buffer[(*ss_pointer)++];
-    script_sequence->pointer = *ss_pointer;
+    script_sequence->command[0] = script_sequence->cmd_id;
+//    script_sequence->pointer = *ss_pointer;
     script_sequence->len = file_buffer[(*ss_pointer)++];
+    script_sequence->command[1] = script_sequence->len;
     script_sequence->seq_cnt = file_buffer[(*ss_pointer)++];
+    script_sequence->command[2] = script_sequence->seq_cnt;
     
-    for(uint8_t i = 1; i < script_sequence->len; i++) {
-        script_sequence->parameters[i] = file_buffer[(*ss_pointer)++]; 
+    for(uint8_t i = 3; i < script_sequence->len; i++) {
+        script_sequence->command[i] = file_buffer[(*ss_pointer)++]; 
     }
 
     if(!C_ASSERT(script_sequence->dt_sec < 59) == true) { return SATR_ERROR; }
@@ -384,7 +414,7 @@ SAT_returnState su_next_cmd(uint8_t *file_buffer, science_unit_script_sequence *
                  script_sequence->cmd_id == SU_MTEE_ON_CMD_ID || \
                  script_sequence->cmd_id == SU_MTEE_OFF_CMD_ID || \
                  script_sequence->cmd_id == SU_OBC_EOT_CMD_ID) == true) { return SATR_ERROR; }
-
+    
     return SATR_OK;
 }
 

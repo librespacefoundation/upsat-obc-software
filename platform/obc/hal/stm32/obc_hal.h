@@ -21,7 +21,7 @@ void HAL_obc_SD_ON();
 
 void HAL_obc_SD_OFF();
 
-void HAL_sys_delay(uint32_t sec);
+void HAL_sys_delay(uint32_t millisecs);
 
 void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
 

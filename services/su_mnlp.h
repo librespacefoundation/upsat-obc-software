@@ -178,10 +178,15 @@ typedef struct
     uint8_t len;
     /*SEQ_CNT, command counter, range: 0 - 255*/
     uint8_t seq_cnt;
-    /**/
-    uint8_t parameters[255];
-    /**/
-    uint8_t pointer;
+    /* holds the command payload to send to the mNLP science unit
+     * first byte is the cmd_id to send to the mNLP,
+     * //second byte is this command's length,
+     * second byte is command's sequence count,
+     * and from the third byte the command's parameters starts.
+     * Maximum command's length is 140 bytes ( SU_LDP cmd 70 16-bit words ), 
+     */
+    uint8_t command[255];
+
 }science_unit_script_sequence;
 
 //typedef struct{
@@ -204,15 +209,15 @@ typedef struct
     uint8_t valid;
     
     /*a script is active if it is the now-running-active script*/
-    uint8_t active;
+//    uint8_t active;
     
-    uint16_t tt_pointer_curr;
+//    uint16_t tt_pointer_curr;
     
-    uint32_t timeout;
+//    uint32_t timeout;
     uint16_t rx_cnt;
-    uint8_t rx_buf[SU_MAX_RSP_SIZE];    
+//    uint8_t rx_buf[SU_MAX_RSP_SIZE];    
     
-    uint8_t active_buf[SU_MAX_FILE_SIZE];  
+//    uint8_t active_buf[SU_MAX_FILE_SIZE];  
     
     uint16_t script_pointer_curr;
     

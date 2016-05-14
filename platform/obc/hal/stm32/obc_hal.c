@@ -4,8 +4,8 @@
 #undef __FILE_ID__
 #define __FILE_ID__ 13
 
-void HAL_sys_delay(uint32_t sec) {
-	osDelay(sec);
+void HAL_sys_delay(uint32_t millisecs) {
+	osDelay(millisecs);
 }
 
 void HAL_obc_SD_ON() {
@@ -132,7 +132,7 @@ void UART_OBC_Receive_IT(UART_HandleTypeDef *huart)
 
 }
 
-void HAL_su_uart_tx(uint8_t *buf, uint16_t size) {
+void HAL_su_uart_tx( uint8_t *buf, uint16_t size) {
     HAL_UART_Transmit(&huart2, buf, size, 10);
     //HAL_UART_Transmit_DMA(&huart2, buf, size, 10);
 }
