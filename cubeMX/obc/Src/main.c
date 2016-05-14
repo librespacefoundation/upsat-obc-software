@@ -69,7 +69,7 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId defaultTaskHandle;
 osThreadId HKHandle;
-
+osThreadId SU_SCHHandle;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
@@ -92,7 +92,7 @@ static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
 void StartDefaultTask(void const * argument);
 void HK_task(void const * argument);
-
+void SU_SCH_task(void const * argument);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -158,6 +158,9 @@ int main(void)
   osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
   HKHandle = osThreadCreate(osThread(HK), NULL);
 
+  osThreadDef(SUSCH, SU_SCH_task, osPriorityLow, 0, 128);
+  SU_SCHHandle = osThreadCreate(osThread(SUSCH), NULL);
+  
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -570,18 +573,13 @@ void StartDefaultTask(void const * argument)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
-   
    HAL_obc_IAC_ON();
-   
    HAL_obc_SD_ON();
-   
    mass_storage_init();
-   
    large_data_INIT();
-   
-   uint8_t uart_temp[200];
-   uint16_t ldp_par[200];
-   uint8_t su_out[200];
+   uint8_t uart_temp[70];
+//   uint16_t ldp_par[200];
+//   uint8_t su_out[200];
    //temporal su sim test code
    
 //   while(true){
@@ -705,11 +703,6 @@ void StartDefaultTask(void const * argument)
 //   HAL_UART_Transmit( &huart2, su_out, 3 , 10);
 //   }
    
-   uint8_t hours, mins, sec = 0;
-   HAL_sys_getTime(&hours, &mins, &sec);
-   sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   HAL_UART_Transmit( &huart2, uart_temp, 50 , 10000);
-   
    //hours = 19;
    //mins = 35;
    //sec = 11;
@@ -729,53 +722,53 @@ void StartDefaultTask(void const * argument)
    
    //sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
    //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   uint8_t spi_in_temp[7], spi_out_temp[7];
-   
-   /*IS25LP128  eeprom*/
-   spi_in_temp[0] = 0x90;
-   spi_in_temp[1] = 0x00;
-   spi_in_temp[2] = 0x00;
-   spi_in_temp[3] = 0x00;
-   spi_in_temp[4] = 0x00;
-   spi_in_temp[5] = 0x00;
-   spi_in_temp[6] = 0x00;
-   
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
-    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
-    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
+//   uint8_t spi_in_temp[7], spi_out_temp[7];
+//   
+//   /*IS25LP128  eeprom*/
+//   spi_in_temp[0] = 0x90;
+//   spi_in_temp[1] = 0x00;
+//   spi_in_temp[2] = 0x00;
+//   spi_in_temp[3] = 0x00;
+//   spi_in_temp[4] = 0x00;
+//   spi_in_temp[5] = 0x00;
+//   spi_in_temp[6] = 0x00;
+//   
+//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
+//    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
+//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+//    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+//    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
+//    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
+//    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
 
-    for(uint8_t i = 0; i < 10; i++) {
-      /*AD7682*/
-      spi_in_temp[0] = 0xFA; //0b11110001;
-      spi_in_temp[1] = 0x40; //0b00000100;
-      spi_in_temp[2] = 0x00;
-      spi_in_temp[3] = 0x00;
-      spi_in_temp[4] = 0x00;
-      spi_in_temp[5] = 0x00;
-      
-      spi_out_temp[0] = 0x00;
-      spi_out_temp[1] = 0x00; 
-      spi_out_temp[2] = 0x00;
-      spi_out_temp[3] = 0x00;
-      spi_out_temp[4] = 0x00;
-      spi_out_temp[5] = 0x00;
-      
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-      osDelay(1);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-      osDelay(6);
-      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-      osDelay(1);
-      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
-      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
-      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
-      osDelay(10);
-    }
+//    for(uint8_t i = 0; i < 10; i++) {
+//      /*AD7682*/
+//      spi_in_temp[0] = 0xFA; //0b11110001;
+//      spi_in_temp[1] = 0x40; //0b00000100;
+//      spi_in_temp[2] = 0x00;
+//      spi_in_temp[3] = 0x00;
+//      spi_in_temp[4] = 0x00;
+//      spi_in_temp[5] = 0x00;
+//      
+//      spi_out_temp[0] = 0x00;
+//      spi_out_temp[1] = 0x00; 
+//      spi_out_temp[2] = 0x00;
+//      spi_out_temp[3] = 0x00;
+//      spi_out_temp[4] = 0x00;
+//      spi_out_temp[5] = 0x00;
+//      
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+//      osDelay(1);
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+//      osDelay(6);
+//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+//      osDelay(1);
+//      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
+//      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+//      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
+//      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
+//      osDelay(10);
+//    }
       
     /*RTC*/
     struct time_utc utc;
@@ -783,9 +776,14 @@ void StartDefaultTask(void const * argument)
     get_time_UTC(&utc);
     sprintf(uart_temp, "TIME IS: year: %d, month: %d, day: %d, hour: %d, min: %d, sec: %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
     HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-    
+    uint8_t hours, mins, sec = 0;
+  
+    HAL_sys_getTime(&hours, &mins, &sec);
+    sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+    HAL_UART_Transmit( &huart3, uart_temp, 50 , 10000);
+   
   sprintf((char*)uart_temp, "Hello\n");
-  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+//  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
   
@@ -799,18 +797,22 @@ void StartDefaultTask(void const * argument)
   HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
-  /* Infinite loop */
+  
+  HAL_UART_Receive_IT(&huart2, obc_data.su_inc_buffer, 200);
+  
   su_INIT();
+  /* Infinite loop */  
   for(;;)
   {
+//    HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
     su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     //su_SCH();
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    su_SCH();
     osDelay(1);
+//    HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   }
   /* USER CODE END 5 */ 
 }
@@ -824,7 +826,21 @@ void HK_task(void const * argument)
   for(;;)
   {
    // hk_SCH();
-    osDelay(10);
+    osDelay(1);
+  }
+  /* USER CODE END HK_task */
+}
+
+/* SU_SCH_task function */
+void SU_SCH_task(void const * argument)
+{
+  /* USER CODE BEGIN HK_task */
+  //su_INIT();
+  /* Infinite loop */
+  for(;;)
+  {
+    su_SCH();
+    osDelay(1);
   }
   /* USER CODE END HK_task */
 }

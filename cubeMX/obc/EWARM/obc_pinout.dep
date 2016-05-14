@@ -19,7 +19,7 @@
       <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\MemMang\heap_4.c</file>
       <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\event_groups.c</file>
       <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\list.c</file>
-      <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</file>
+      <file>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</file>
       <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\portasm.s</file>
       <file>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\queue.c</file>
       <file>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\tasks.c</file>
@@ -505,7 +505,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 94 92 103 88 77 100 83 183 184 169 228 343 243 113 217 85 56 47 157 220 166 87 124 80 78 42 173 28 241 101 345 200 73 333 291 174 40 171 43 300 160 108 159 198 46 216 37 97 196 162 81 225 93 86 167 119 71 240 34 52 238 335 148 31 26 181 158 230 236 175 130 242 134 138 49 91 104 235 337</file>
+          <file> 225 108 171 216 37 183 124 86 103 119 228 343 174 300 198 97 162 240 34 345 220 166 291 40 43 160 159 46 200 196 81 93 167 71 52 238 73 333 243 88 100 87 83 85 92 94 80 78 77 42 184 173 28 113 241 217 169 56 101 47 157 335 148 31 26 181 158 230 236 175 130 242 134 138 49 91 104 235 337</file>
         </tool>
       </inputs>
     </file>
@@ -708,7 +708,7 @@
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</name>
+      <name>$PROJ_DIR$\..\MIDDLEWARES\THIRD_PARTY\FreeRTOS\Source\portable\IAR\ARM_CM4F\port.c</name>
       <outputs>
         <tool>
           <name>ICCARM</name>
@@ -1817,7 +1817,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 43 235 124 26 42 93 104 85 291 159 86 103 157 183 345 40 160 46 220 200 196 81 158 92 101 225 337 73 174 171 300 108 198 216 37 97 162 31 169 56 77 343 148 94 80 78 228 335 243 88 100 87 83 181 230 236 240 34 333 184 173 28 113 167 119 241 71 217 175 130 242</file>
+          <file> 171 124 183 86 42 216 37 26 225 85 108 103 157 337 73 174 300 198 97 162 158 92 101 220 345 93 235 104 291 40 43 160 159 46 200 196 81 31 169 56 77 343 148 94 80 78 228 335 243 88 100 87 83 181 230 236 240 34 333 184 173 28 113 167 119 241 71 217 175 130 242</file>
         </tool>
       </inputs>
     </file>
@@ -2006,7 +2006,7 @@
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 124 85 80 78 345 42 94 183 104 225 93 220 157 228 148 235 347</file>
+          <file> 157 124 183 225 42 85 93 220 228 148 345 94 80 78 104 235 347</file>
         </tool>
       </inputs>
     </file>

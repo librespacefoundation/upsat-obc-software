@@ -31,6 +31,7 @@ struct _obc_data
     struct uart_data comms_uart;
     struct uart_data adcs_uart;
     struct uart_data eps_uart;
+    uint8_t su_inc_buffer[200];
 };
 
 struct _sat_status {

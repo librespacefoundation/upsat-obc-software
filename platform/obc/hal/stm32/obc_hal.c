@@ -140,8 +140,7 @@ void HAL_su_uart_tx( uint8_t *buf, uint16_t size) {
 SAT_returnState HAL_su_uart_rx(uint8_t *c) {
 
     HAL_StatusTypeDef res;
-
-    res = HAL_UART_Receive(&huart2, c, 1, 10);
+    res = HAL_UART_Receive( &huart2, c, 1, 10);
     if(res == HAL_OK) { return SATR_OK; }
     else if(res == HAL_TIMEOUT) { return SATR_ERROR; }
     
