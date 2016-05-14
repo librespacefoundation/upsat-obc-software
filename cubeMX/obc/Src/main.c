@@ -36,8 +36,8 @@
 #include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
-#include "../../../platform/obc/obc.h"
-#include "../../../services/service_utilities.h"
+#include "obc.h"
+#include "service_utilities.h"
 
 #undef __FILE_ID__
 #define __FILE_ID__ 666
@@ -67,12 +67,15 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
-osThreadId defaultTaskHandle;
+osThreadId uartHandle;
 osThreadId HKHandle;
-osThreadId SU_SCHHandle;
+osThreadId time_checkHandle;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+uint8_t uart_temp[200];
 
+TaskHandle_t xTask_UART = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,9 +93,10 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
-void StartDefaultTask(void const * argument);
+void UART_task(void const * argument);
 void HK_task(void const * argument);
-void SU_SCH_task(void const * argument);
+void IDLE_task(void const * argument);
+
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -101,7 +105,6 @@ void SU_SCH_task(void const * argument);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-
 
 int main(void)
 {
@@ -132,7 +135,7 @@ int main(void)
   MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
-  
+
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -150,17 +153,18 @@ int main(void)
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of uart */
+  osThreadDef(uart, UART_task, osPriorityNormal, 0, 128);
+  uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
   osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
   HKHandle = osThreadCreate(osThread(HK), NULL);
 
-  osThreadDef(SUSCH, SU_SCH_task, osPriorityLow, 0, 128);
-  SU_SCHHandle = osThreadCreate(osThread(SUSCH), NULL);
-  
+  /* definition and creation of time_check */
+  osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 128);
+  time_checkHandle = osThreadCreate(osThread(time_check), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -285,14 +289,14 @@ void MX_RTC_Init(void)
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 1;
   sDate.Year = 0;
 
-  //HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     /**Enable Calibrartion 
     */
@@ -325,7 +329,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -365,7 +369,7 @@ void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -540,8 +544,8 @@ void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+/* UART_task function */
+void UART_task(void const * argument)
 {
   /* init code for FATFS */
   MX_FATFS_Init();
@@ -568,140 +572,24 @@ void StartDefaultTask(void const * argument)
    //t3 = get_time_ELAPSED();
    
    //event_log(reset source);
-      
+
    //if(!C_ASSERT(false) == true)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
+   
    HAL_obc_IAC_ON();
+   
    HAL_obc_SD_ON();
+   
    mass_storage_init();
    large_data_INIT();
-   uint8_t uart_temp[70];
-//   uint16_t ldp_par[200];
-//   uint8_t su_out[200];
-   //temporal su sim test code
-   
-//   while(true){
-//   su_out[0]= 0xF1;
-//   su_out[1]= 1;
-//   su_out[2]= 1;
-//   HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
-//   
-//   su_out[0]= 0x05;
-//   su_out[1]= 0x63; //len
-//   su_out[2]= 2; //seq_coun
-//   HAL_UART_Transmit( &huart2, su_out, 101 , 10); //ver ok
-   
-//   su_out[0]= 0x05;
-//   su_out[1]= 141; //len
-//   su_out[2]= 2;
-   
-//   ldp_par[0]= 1; //bias to auto
-//   ldp_par[1]= 4000;
-//   ldp_par[2]= 4000;
-//   ldp_par[3]= 4000;
-//   ldp_par[4]= 4000;
-//   
-//   ldp_par[5]= 0;
-//   ldp_par[6]= 3;
-//   ldp_par[7]= 800;
-//   ldp_par[8]= 16;
-//   ldp_par[9]= 1;
-//   ldp_par[10]= 43000;
-//   ldp_par[11]= 32000;
-//   ldp_par[12]= 5000;
-//   ldp_par[13]= (uint16_t)1 << 8 | 2;
-//   ldp_par[14]= (uint16_t)1 << 8 | 2;
-//   ldp_par[15]= (uint16_t)23 << 8 | 2;
-//   ldp_par[16]= 66; //HK secs
-//   ldp_par[17]= 99; //stm secs
-//   ldp_par[18]= 3;
-//   ldp_par[19]= 44;
-//   ldp_par[20]= 4;
-//   ldp_par[21]= 45;
-//   ldp_par[22]= 5;
-//   ldp_par[23]= 46;
-//   ldp_par[24]= 6;
-//   ldp_par[25]= 47;
-//   
-//   ldp_par[26]= 3;
-//   ldp_par[27]= 44;
-//   ldp_par[28]= 4;
-//   ldp_par[29]= 45;
-//   ldp_par[30]= 5;
-//   ldp_par[31]= 46;
-//   ldp_par[32]= 6;
-//   ldp_par[33]= 47;
-//   
-//   ldp_par[34]= 3;
-//   ldp_par[35]= 44;
-//   ldp_par[36]= 4;
-//   ldp_par[37]= 45;
-//   ldp_par[38]= 5;
-//   ldp_par[39]= 46;
-//   ldp_par[40]= 6;
-//   ldp_par[41]= 47;
-//   
-//   ldp_par[42]= 3;
-//   ldp_par[43]= 44;
-//   ldp_par[44]= 4;
-//   ldp_par[45]= 45;
-//   ldp_par[46]= 5;
-//   ldp_par[47]= 46;
-//   ldp_par[48]= 6;
-//   ldp_par[49]= 47;
-//   
-//   ldp_par[50]= 3;
-//   ldp_par[51]= 44;
-//   ldp_par[52]= 4;
-//   ldp_par[53]= 45;
-//   ldp_par[54]= 5;
-//   ldp_par[55]= 46;
-//   ldp_par[56]= 6;
-//   ldp_par[57]= 47;
-//   
-//   ldp_par[58]= 3; //CHx bias coef
-//   ldp_par[59]= 47;
-//   ldp_par[60]= 3;
-//   ldp_par[61]= 47;
-//   ldp_par[62]= 3;
-//   ldp_par[63]= 47;
-//   ldp_par[64]= 3;
-//   ldp_par[65]= 47;
-//   
-//   ldp_par[66]= 0;
-//   ldp_par[67]= 0;
-//   
-//   ldp_par[68]= 1500;
-//   
-//   ldp_par[69]= 0;
-//   
-//   uint8_t p=0;
-//   for( uint8_t i = 0; i< 70;i++){
-//       
-//       cnv16_8( ldp_par[i], su_out+i+p+3); //after second byte
-//       p=i+1;
-//   }
-//      
-//   HAL_UART_Transmit( &huart2, su_out, 142 , 10); //ver not ok
-   
-//   su_out[0]= 0x6;
-//   su_out[1]= 1;
-//   su_out[2]= 2;
-//   HAL_UART_Transmit( &huart2, su_out, 3 , 10000); //ver ok
-   
-//   su_out[0]= 0x7;
-//   su_out[1]= 3;
-//   su_out[2]= 2;
-//   HAL_UART_Transmit( &huart2, su_out, 5 , 10000); //ver ok
-   
-//   su_out[0]= 0xF2;
-//   su_out[1]= 1;
-//   su_out[2]= 1;
-//   
-//   HAL_UART_Transmit( &huart2, su_out, 3 , 10);
-//   }
+   su_INIT();
+
+   //uint8_t hours, mins, sec = 0;
+   //HAL_obc_getTime(&hours, &mins, &sec);
+   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
+   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
    
    //hours = 19;
    //mins = 35;
@@ -722,68 +610,63 @@ void StartDefaultTask(void const * argument)
    
    //sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
    //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-//   uint8_t spi_in_temp[7], spi_out_temp[7];
-//   
-//   /*IS25LP128  eeprom*/
-//   spi_in_temp[0] = 0x90;
-//   spi_in_temp[1] = 0x00;
-//   spi_in_temp[2] = 0x00;
-//   spi_in_temp[3] = 0x00;
-//   spi_in_temp[4] = 0x00;
-//   spi_in_temp[5] = 0x00;
-//   spi_in_temp[6] = 0x00;
-//   
-//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
-//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-//    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-//    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
-//    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-//    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
+   uint8_t spi_in_temp[7], spi_out_temp[7];
+   
+   /*IS25LP128  eeprom*/
+   spi_in_temp[0] = 0x90;
+   spi_in_temp[1] = 0x00;
+   spi_in_temp[2] = 0x00;
+   spi_in_temp[3] = 0x00;
+   spi_in_temp[4] = 0x00;
+   spi_in_temp[5] = 0x00;
+   spi_in_temp[6] = 0x00;
+   
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
+    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
+    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
+    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
+    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
 
-//    for(uint8_t i = 0; i < 10; i++) {
-//      /*AD7682*/
-//      spi_in_temp[0] = 0xFA; //0b11110001;
-//      spi_in_temp[1] = 0x40; //0b00000100;
-//      spi_in_temp[2] = 0x00;
-//      spi_in_temp[3] = 0x00;
-//      spi_in_temp[4] = 0x00;
-//      spi_in_temp[5] = 0x00;
-//      
-//      spi_out_temp[0] = 0x00;
-//      spi_out_temp[1] = 0x00; 
-//      spi_out_temp[2] = 0x00;
-//      spi_out_temp[3] = 0x00;
-//      spi_out_temp[4] = 0x00;
-//      spi_out_temp[5] = 0x00;
-//      
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-//      osDelay(1);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-//      osDelay(6);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-//      osDelay(1);
-//      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
-//      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-//      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
-//      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
-//      osDelay(10);
-//    }
+    for(uint8_t i = 0; i < 10; i++) {
+      /*AD7682*/
+      spi_in_temp[0] = 0xFA; //0b11110001;
+      spi_in_temp[1] = 0x40; //0b00000100;
+      spi_in_temp[2] = 0x00;
+      spi_in_temp[3] = 0x00;
+      spi_in_temp[4] = 0x00;
+      spi_in_temp[5] = 0x00;
+      
+      spi_out_temp[0] = 0x00;
+      spi_out_temp[1] = 0x00; 
+      spi_out_temp[2] = 0x00;
+      spi_out_temp[3] = 0x00;
+      spi_out_temp[4] = 0x00;
+      spi_out_temp[5] = 0x00;
+      
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+      osDelay(1);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+      osDelay(6);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+      osDelay(1);
+      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
+      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
+      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
+      osDelay(10);
+    }
       
     /*RTC*/
     struct time_utc utc;
 
     get_time_UTC(&utc);
-    sprintf(uart_temp, "TIME IS: year: %d, month: %d, day: %d, hour: %d, min: %d, sec: %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+    sprintf(uart_temp, "TIME %d %d %d %d %d %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
     HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-    uint8_t hours, mins, sec = 0;
-  
-    HAL_sys_getTime(&hours, &mins, &sec);
-    sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-    HAL_UART_Transmit( &huart3, uart_temp, 50 , 10000);
-   
+    
   sprintf((char*)uart_temp, "Hello\n");
-//  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
   
@@ -792,27 +675,31 @@ void StartDefaultTask(void const * argument)
   event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
   HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
   
+  /*Task notification setup*/
+  uint32_t ulNotificationValue;
+  const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
+
+  xTask_UART = xTaskGetCurrentTaskHandle();
+
   /*Uart inits*/
   HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
-  
-  HAL_UART_Receive_IT(&huart2, obc_data.su_inc_buffer, 200);
-  
-  su_INIT();
-  /* Infinite loop */  
+  /* Infinite loop */
   for(;;)
   {
-//    HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
     su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     //su_SCH();
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    osDelay(1);
-//    HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
+    
+    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
+    //sprintf((char*)uart_temp, "Task %d\n", ulNotificationValue);
+    //HAL_UART_Transmit(&huart3, uart_temp, strlen(uart_temp) , 10000);
+    //osDelay(1);
   }
   /* USER CODE END 5 */ 
 }
@@ -825,24 +712,22 @@ void HK_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-   // hk_SCH();
-    osDelay(1);
+    hk_SCH();
+    //osDelay(10);
   }
   /* USER CODE END HK_task */
 }
 
-/* SU_SCH_task function */
-void SU_SCH_task(void const * argument)
+/* IDLE_task function */
+void IDLE_task(void const * argument)
 {
-  /* USER CODE BEGIN HK_task */
-  //su_INIT();
+  /* USER CODE BEGIN IDLE_task */
   /* Infinite loop */
   for(;;)
   {
-    su_SCH();
     osDelay(1);
   }
-  /* USER CODE END HK_task */
+  /* USER CODE END IDLE_task */
 }
 
 #ifdef USE_FULL_ASSERT
