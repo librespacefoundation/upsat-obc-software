@@ -19,7 +19,7 @@
           
           
           
-        <Column0>187</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>188</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Disassembly>
         <col-names>
@@ -34,12 +34,12 @@
         
         
       <ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
-    <SYMLIST><PreferedWindows><Position>1</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows></SYMLIST><StaticWatch><expressions><item/></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>115</item><item>150</item><item>100</item><item>164</item></col-widths></StaticWatch><TerminalIO><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><InputSource>1</InputSource><InputMode>10</InputMode><Filename>$PROJ_DIR$\TermIOInput.txt</Filename><InputEcho>1</InputEcho><ShowReset>0</ShowReset></TerminalIO><Breakpoints><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints><SymbolicMemory><col-names><item>Data</item><item>Location</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>100</item><item>100</item><item>100</item><item>100</item><item>100</item></col-widths><SymMemHistory/><zone>Memory</zone></SymbolicMemory><Memory><MemGotoHistory><item>0x200176a6</item></MemGotoHistory><FindAsHex>0</FindAsHex></Memory><Locals><col-names><item>Location</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>150</item><item>100</item><item>172</item><item>160</item></col-widths></Locals><Statics><excluded-vars/><excluded-mods/><col-names><item>Location</item><item>Module</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>150</item><item>100</item><item>100</item><item>126</item><item>211</item></col-widths><sortOrder>0</sortOrder></Statics></Static>
+    <SYMLIST><PreferedWindows><Position>1</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows></SYMLIST><StaticWatch><expressions><item>su_inc_buffer[174]</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>132</item><item>150</item><item>100</item><item>164</item></col-widths><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows></StaticWatch><TerminalIO><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows><InputSource>1</InputSource><InputMode>10</InputMode><Filename>$PROJ_DIR$\TermIOInput.txt</Filename><InputEcho>1</InputEcho><ShowReset>0</ShowReset></TerminalIO><Breakpoints><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints><SymbolicMemory><col-names><item>Data</item><item>Location</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>100</item><item>100</item><item>100</item><item>100</item><item>100</item></col-widths><SymMemHistory/><zone>Memory</zone></SymbolicMemory><Memory><MemGotoHistory><item>0x200176a6</item></MemGotoHistory><FindAsHex>0</FindAsHex></Memory><Locals><col-names><item>Location</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>150</item><item>100</item><item>172</item><item>160</item></col-widths></Locals><Statics><excluded-vars/><excluded-mods/><col-names><item>Location</item><item>Module</item><item>Type</item><item>Value</item><item>Variable</item></col-names><col-widths><item>150</item><item>100</item><item>100</item><item>126</item><item>213</item></col-widths><sortOrder>0</sortOrder></Statics><WATCH_1><expressions><item>su_inc_buffer[174]</item><item>b</item><item>tt_call_state</item><item>current_tt_pointer</item><item>su_scripts[(uint8_t) active_script - 1].tt_header</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>160</item><item>150</item><item>100</item><item>100</item></col-widths><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>Disassembly</Factory></Window><Window><Factory>StaticWatch</Factory></Window><Window><Factory>Locals</Factory></Window><Window><Factory>Statics</Factory></Window></Windows></PreferedWindows></WATCH_1><QuickWatch><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>107</item><item>100</item><item>100</item></col-widths><QWatchHistory><item>b</item><item>tt_call_state</item></QWatchHistory><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>Disassembly</Factory></Window><Window><Factory>Locals</Factory></Window><Window><Factory>Statics</Factory></Window><Window><Factory>WATCH_1</Factory></Window></Windows></PreferedWindows></QuickWatch></Static>
     <Windows>
       
       
       
-    <Wnd0>
+    <Wnd3>
         <Tabs>
           <Tab>
             <Identity>TabID-24506-21982</Identity>
@@ -55,7 +55,7 @@
             <Session/>
           </Tab></Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+      <SelectedTab>0</SelectedTab></Wnd3><Wnd4>
         <Tabs>
           <Tab>
             <Identity>TabID-2486-21985</Identity>
@@ -63,11 +63,11 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>obc_pinout</ExpandedNode><ExpandedNode>obc_pinout/OBC</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>obc_pinout</ExpandedNode><ExpandedNode>obc_pinout/OBC</ExpandedNode><ExpandedNode>obc_pinout/Services</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd1><Wnd2>
+      <SelectedTab>0</SelectedTab></Wnd4><Wnd5>
         <Tabs>
           <Tab>
             <Identity>TabID-13235-21988</Identity>
@@ -75,22 +75,22 @@
             <Factory>Disassembly</Factory>
             <Session/>
           </Tab>
-        <Tab><Identity>TabID-31636-21150</Identity><TabName>Live Watch</TabName><Factory>StaticWatch</Factory></Tab><Tab><Identity>TabID-18043-21405</Identity><TabName>Locals</TabName><Factory>Locals</Factory></Tab><Tab><Identity>TabID-27746-21428</Identity><TabName>Statics</TabName><Factory>Statics</Factory><Session/></Tab></Tabs>
+        <Tab><Identity>TabID-18043-21405</Identity><TabName>Locals</TabName><Factory>Locals</Factory></Tab><Tab><Identity>TabID-27746-21428</Identity><TabName>Statics</TabName><Factory>Statics</Factory><Session/></Tab><Tab><Identity>TabID-28557-25325</Identity><TabName>Watch 1</TabName><Factory>WATCH_1</Factory></Tab></Tabs>
         
-      <SelectedTab>3</SelectedTab></Wnd2></Windows>
+      <SelectedTab>2</SelectedTab></Wnd5></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\SERVICES\su_mnlp.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>251</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\SERVICES\su_mnlp.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>270</YPos2><SelStart2>14284</SelStart2><SelEnd2>14284</SelEnd2></Tab><ActiveTab>1</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\SRC\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>794</YPos2><SelStart2>24692</SelStart2><SelEnd2>24692</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\SRC\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>723</YPos2><SelStart2>22925</SelStart2><SelEnd2>22925</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\PLATFORM\OBC\HAL\STM32\obc_hal.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>24</YPos2><SelStart2>5550</SelStart2><SelEnd2>5550</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\PLATFORM\OBC\HAL\STM32\obc_hal.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>23</YPos2><SelStart2>497</SelStart2><SelEnd2>497</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\PLATFORM\OBC\obc.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>52</YPos2><SelStart2>1638</SelStart2><SelEnd2>1638</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\SERVICES\su_mnlp.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>116</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\SERVICES\su_mnlp.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>6</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\ECSS_SERVICES\PLATFORM\OBC\obc.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>63</YPos2><SelStart2>4783</SelStart2><SelEnd2>4783</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\MIDDLEWARES\THIRD_PARTY\FREERTOS\SOURCE\tasks.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>2235</YPos2><SelStart2>73971</SelStart2><SelEnd2>73971</SelEnd2></Tab><ActiveTab>7</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-00EA1A60><key>iaridepm.enu1</key></Toolbar-00EA1A60></Sizes></Row0><Row1><Sizes><Toolbar-239AB7B8><key>debuggergui.enu1</key></Toolbar-239AB7B8></Sizes></Row1><Row2><Sizes><Toolbar-1F70BB30><key>armstlink2.enu1</key></Toolbar-1F70BB30></Sizes></Row2></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>533</Bottom><Right>277</Right><x>-2</x><y>-2</y><xscreen>48</xscreen><yscreen>18</yscreen><sizeHorzCX>30151</sizeHorzCX><sizeHorzCY>24390</sizeHorzCY><sizeVertCX>175251</sizeVertCX><sizeVertCY>724932</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>533</Bottom><Right>459</Right><x>-2</x><y>-2</y><xscreen>48</xscreen><yscreen>18</yscreen><sizeHorzCX>30151</sizeHorzCX><sizeHorzCY>24390</sizeHorzCY><sizeVertCX>289573</sizeVertCX><sizeVertCY>724932</sizeVertCY></Rect></Wnd2></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>113</Bottom><Right>1594</Right><x>-2</x><y>-2</y><xscreen>1596</xscreen><yscreen>115</yscreen><sizeHorzCX>1002513</sizeHorzCX><sizeHorzCY>155827</sizeHorzCY><sizeVertCX>30151</sizeVertCX><sizeVertCY>24390</sizeVertCY></Rect></Wnd0></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-011F1A60><key>iaridepm.enu1</key></Toolbar-011F1A60></Sizes></Row0><Row1><Sizes><Toolbar-16800238><key>debuggergui.enu1</key></Toolbar-16800238></Sizes></Row1><Row2><Sizes><Toolbar-1B9B4C68><key>armstlink2.enu1</key></Toolbar-1B9B4C68></Sizes></Row2></Top><Left><Row0><Sizes><Wnd4><Rect><Top>-2</Top><Left>-2</Left><Bottom>533</Bottom><Right>278</Right><x>-2</x><y>-2</y><xscreen>48</xscreen><yscreen>18</yscreen><sizeHorzCX>30151</sizeHorzCX><sizeHorzCY>24390</sizeHorzCY><sizeVertCX>175879</sizeVertCX><sizeVertCY>724932</sizeVertCY></Rect></Wnd4></Sizes></Row0></Left><Right><Row0><Sizes><Wnd5><Rect><Top>-2</Top><Left>-2</Left><Bottom>533</Bottom><Right>408</Right><x>-2</x><y>-2</y><xscreen>48</xscreen><yscreen>18</yscreen><sizeHorzCX>30151</sizeHorzCX><sizeHorzCY>24390</sizeHorzCY><sizeVertCX>257538</sizeVertCX><sizeVertCY>724932</sizeVertCY></Rect></Wnd5></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>113</Bottom><Right>1594</Right><x>-2</x><y>-2</y><xscreen>1596</xscreen><yscreen>115</yscreen><sizeHorzCX>1002513</sizeHorzCX><sizeHorzCY>155827</sizeHorzCY><sizeVertCX>30151</sizeVertCX><sizeVertCY>24390</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Project>
 

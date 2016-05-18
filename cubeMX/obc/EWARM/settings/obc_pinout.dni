@@ -13,7 +13,7 @@ CStepIntDis=_ 0
 stlinkserialNo=2798FD0D
 stlinkfoundProbes=
 [DebugChecksum]
-Checksum=1071972041
+Checksum=-1214806422
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -87,9 +87,6 @@ SumSortOrder=0
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [DriverProfiling]
 Enabled=0
 Mode=3
@@ -103,10 +100,12 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\CUBEMX\OBC\SRC\main.c}.762.1" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\SERVICES\su_mnlp.c}.283.1" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\SERVICES\su_mnlp.c}.37.10" 0 0 1 "" 0 "" 0
-Count=3
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\SRC\main.c}.594.4" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\CUBESAT_FIRMWARE\UPSAT-OBC-SOFTWARE\CUBEMX\OBC\SRC\main.c}.767.5" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 Count=0
 SuppressDialog=0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""

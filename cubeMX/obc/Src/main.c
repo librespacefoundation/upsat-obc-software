@@ -69,11 +69,13 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId uartHandle;
 osThreadId HKHandle;
+osThreadId SUHandle;
 osThreadId time_checkHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
+extern uint8_t su_inc_buffer[196];
 
 TaskHandle_t xTask_UART = NULL;
 /* USER CODE END PV */
@@ -93,10 +95,12 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
+
 void UART_task(void const * argument);
 void HK_task(void const * argument);
 void IDLE_task(void const * argument);
 
+void SU_SCH_task(void const * argument);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -158,9 +162,12 @@ int main(void)
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
-  osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
-  HKHandle = osThreadCreate(osThread(HK), NULL);
+  //osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
+  //HKHandle = osThreadCreate(osThread(HK), NULL);
 
+  osThreadDef(SUSCH, SU_SCH_task, osPriorityLow, 0, 128);
+  SUHandle = osThreadCreate(osThread(SUSCH), NULL);
+  
   /* definition and creation of time_check */
   osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 128);
   time_checkHandle = osThreadCreate(osThread(time_check), NULL);
@@ -584,8 +591,13 @@ void UART_task(void const * argument)
    
    mass_storage_init();
    large_data_INIT();
+   
    su_INIT();
-
+   
+   //uint32_t papartime = time_now();
+  
+   //uint8_t g = 5;
+   
    //uint8_t hours, mins, sec = 0;
    //HAL_obc_getTime(&hours, &mins, &sec);
    //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
@@ -666,7 +678,7 @@ void UART_task(void const * argument)
     HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
     
   sprintf((char*)uart_temp, "Hello\n");
-  HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
+  //HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
   HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
   
@@ -682,10 +694,36 @@ void UART_task(void const * argument)
   xTask_UART = xTaskGetCurrentTaskHandle();
 
   /*Uart inits*/
-  HAL_UART_Receive_IT(&huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT(&huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[23], 174);
+  HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
+  HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
+  
+   //temporal su sim test code
+
+//   uint8_t su_out[200];
+//
+//          while(true){
+//
+//          su_out[0]= 0xF1;
+//
+//          su_out[1]= 1;
+//
+//          su_out[2]= 1;
+//
+//          HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
+//
+//          su_out[0]= 0x05;
+//
+//          su_out[1]= 0x63; //len
+//
+//          su_out[2]= 2; //seq_coun
+//
+//          HAL_UART_Transmit( &huart2, su_out, 102 , 10); //ver ok
+//          }
+          
+          
   /* Infinite loop */
   for(;;)
   {
@@ -710,10 +748,25 @@ void HK_task(void const * argument)
   /* USER CODE BEGIN HK_task */
   hk_INIT();
   /* Infinite loop */
+ 
   for(;;)
   {
     hk_SCH();
-    //osDelay(10);
+    osDelay(10);
+  }
+  /* USER CODE END HK_task */
+}
+
+/* SU_SCH_task function */
+void SU_SCH_task(void const * argument)
+{
+  /* USER CODE BEGIN HK_task */
+  
+  /* Infinite loop */
+  for(;;)
+  {
+    su_SCH();
+    osDelay(10);
   }
   /* USER CODE END HK_task */
 }
@@ -725,7 +778,7 @@ void IDLE_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(100);
   }
   /* USER CODE END IDLE_task */
 }
