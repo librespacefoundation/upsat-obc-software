@@ -69,8 +69,8 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId uartHandle;
 osThreadId HKHandle;
-osThreadId SUHandle;
 osThreadId time_checkHandle;
+osThreadId SU_SCH_taskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -95,12 +95,11 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
-
 void UART_task(void const * argument);
 void HK_task(void const * argument);
 void IDLE_task(void const * argument);
+void SU_SCH(void const * argument);
 
-void SU_SCH_task(void const * argument);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -165,14 +164,14 @@ int main(void)
   osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
   HKHandle = osThreadCreate(osThread(HK), NULL);
 
-  osThreadDef(SUSCH, SU_SCH_task, osPriorityNormal, 0, 128);
-  SUHandle = osThreadCreate(osThread(SUSCH), NULL);
-  
   /* definition and creation of time_check */
   osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 128);
   time_checkHandle = osThreadCreate(osThread(time_check), NULL);
 
-  
+  /* definition and creation of SU_SCH_task */
+  osThreadDef(SU_SCH_task, SU_SCH, osPriorityNormal, 0, 128);
+  SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -729,7 +728,7 @@ void UART_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    //su_incoming_rx();
+    su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
@@ -759,20 +758,6 @@ void HK_task(void const * argument)
   /* USER CODE END HK_task */
 }
 
-/* SU_SCH_task function */
-void SU_SCH_task(void const * argument)
-{
-  /* USER CODE BEGIN SU_SCH_task */
-    
-  /* Infinite loop */
-  for(;;)
-  {
-//    su_SCH();
-    osDelay(10);
-  }
-  /* USER CODE END HK_task */
-}
-
 /* IDLE_task function */
 void IDLE_task(void const * argument)
 {
@@ -783,6 +768,19 @@ void IDLE_task(void const * argument)
     osDelay(10);
   }
   /* USER CODE END IDLE_task */
+}
+
+/* SU_SCH function */
+void SU_SCH(void const * argument)
+{
+  /* USER CODE BEGIN SU_SCH */
+  /* Infinite loop */
+  for(;;)
+  {
+    su_SCH();
+    osDelay(10);
+  }
+  /* USER CODE END SU_SCH */
 }
 
 #ifdef USE_FULL_ASSERT
