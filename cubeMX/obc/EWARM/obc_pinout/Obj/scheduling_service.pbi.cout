@@ -1,4 +1,4 @@
-"E:\CUBESAT_FIRMWARE\ECSS_SERVICES\services\scheduling_service.c"
+"E:\cubesat_firmware\ECSS_SERVICES\services\scheduling_service.c"
 -std=c99
 -ferror-limit=100
 -I
