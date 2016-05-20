@@ -75,7 +75,7 @@ osThreadId SU_SCH_taskHandle;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
-extern uint8_t su_inc_buffer[196];
+extern uint8_t su_inc_buffer[197];
 
 TaskHandle_t xTask_UART = NULL;
 /* USER CODE END PV */
@@ -157,7 +157,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uart */
-  osThreadDef(uart, UART_task, osPriorityNormal, 0, 548);
+  osThreadDef(uart, UART_task, osPriorityNormal, 0, 750);
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
@@ -696,7 +696,8 @@ void UART_task(void const * argument)
 
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[23], 174);
+  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[22], 173);//&23,174
+//  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[23], 174);
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
