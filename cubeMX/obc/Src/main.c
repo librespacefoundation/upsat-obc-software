@@ -776,6 +776,36 @@ void SU_SCH(void const * argument)
 {
   /* USER CODE BEGIN SU_SCH */
   /* Infinite loop */
+    
+//    uint8_t su_out[200];
+//
+//    while(true){
+//
+//    su_out[0]= 0xF1;
+//
+//    su_out[1]= 1;
+//
+//    su_out[2]= 1;
+//
+//    HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
+//
+//    su_out[0]= 0x05;
+//
+//    su_out[1]= 0x63; //len
+//
+//    su_out[2]= 2; //seq_coun
+//
+//    HAL_UART_Transmit( &huart2, su_out, 102 , 10); //ver ok
+//    
+//    su_out[0]= 0xF2;
+//
+//    su_out[1]= 1;
+//
+//    su_out[2]= 1;
+//    
+//    HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
+//}
+    
   for(;;)
   {
     su_SCH();
