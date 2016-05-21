@@ -78,6 +78,7 @@ uint8_t uart_temp[200];
 extern uint8_t su_inc_buffer[197];
 
 TaskHandle_t xTask_UART = NULL;
+TaskHandle_t xTask_IDLE = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -763,10 +764,18 @@ void HK_task(void const * argument)
 void IDLE_task(void const * argument)
 {
   /* USER CODE BEGIN IDLE_task */
+    
+    /*Task notification setup*/
+  uint32_t ulNotificationValue;
+  const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
+  xTask_IDLE = xTaskGetCurrentTaskHandle();
+  
   /* Infinite loop */
   for(;;)
   {
-    osDelay(10);
+    check_timeouts();
+    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
+//    osDelay(10);
   }
   /* USER CODE END IDLE_task */
 }
