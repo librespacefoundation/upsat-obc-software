@@ -3,4 +3,6 @@
 
 #define SYSTEM_APP_ID OBC_APP_ID
 
+#define POOL_PKT_EXT
+
 #endif

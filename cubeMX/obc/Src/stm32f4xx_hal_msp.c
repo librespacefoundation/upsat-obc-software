@@ -311,6 +311,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    /* Peripheral interrupt init */
+    HAL_NVIC_SetPriority(SPI3_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(SPI3_IRQn);
   /* USER CODE BEGIN SPI3_MspInit 1 */
 
   /* USER CODE END SPI3_MspInit 1 */
@@ -373,6 +376,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     PB5     ------> SPI3_MOSI 
     */
     HAL_GPIO_DeInit(GPIOB, IAC_SCK_SPI3_Pin|IAC_MISO_SPI3_Pin|IAC_MOSI_SPI3_Pin);
+
+    /* Peripheral interrupt DeInit*/
+    HAL_NVIC_DisableIRQ(SPI3_IRQn);
 
   /* USER CODE BEGIN SPI3_MspDeInit 1 */
 

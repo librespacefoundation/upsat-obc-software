@@ -32,6 +32,7 @@
   */
 
 #include "fatfs.h"
+#include "services.h"
 
 uint8_t retSD;    /* Return value for SD */
 char SD_Path[4];  /* SD logical drive path */
@@ -58,7 +59,16 @@ void MX_FATFS_Init(void)
 DWORD get_fattime(void)
 {
   /* USER CODE BEGIN get_fattime */
-  return 0;
+    struct time_utc tmp;
+
+    get_time_UTC(&tmp);
+
+    return ((((1980 - tmp.year) & 0x7F) << 25) | \
+      (((tmp.month) & 0x0F) << 21) | \
+      (((tmp.day) & 0x0F) << 16) | \
+      (((tmp.hour) & 0x1F) << 5) | \
+      (((tmp.sec)) >> 2));
+
   /* USER CODE END get_fattime */  
 }
 
