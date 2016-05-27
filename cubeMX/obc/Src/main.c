@@ -37,6 +37,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "obc.h"
+#include "su_mnlp.h"
 #include "service_utilities.h"
 
 #undef __FILE_ID__
@@ -75,7 +76,8 @@ osThreadId SU_SCH_taskHandle;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
-extern uint8_t su_inc_buffer[197];
+extern uint8_t su_inc_buffer[210];
+extern struct _MNLP_data MNLP_data;
 
 TaskHandle_t xTask_UART = NULL;
 TaskHandle_t xTask_IDLE = NULL;
@@ -158,7 +160,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uart */
-  osThreadDef(uart, UART_task, osPriorityNormal, 0, 750);
+  osThreadDef(uart, UART_task, osPriorityNormal, 0, 800);
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
@@ -292,19 +294,19 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   HAL_RTC_Init(&hrtc);
 
-  sTime.Hours = 0;
-  sTime.Minutes = 0;
-  sTime.Seconds = 0;
-  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+//  sTime.Hours = 0;
+//  sTime.Minutes = 0;
+//  sTime.Seconds = 0;
+//  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+//  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  //HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
-  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
-  sDate.Month = RTC_MONTH_JANUARY;
-  sDate.Date = 1;
-  sDate.Year = 0;
+//  sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+//  sDate.Month = RTC_MONTH_JANUARY;
+//  sDate.Date = 1;
+//  sDate.Year = 0;
 
-  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  //HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
     /**Enable Calibrartion 
     */
@@ -673,11 +675,10 @@ void UART_task(void const * argument)
 //    }
       
     /*RTC*/
-    struct time_utc utc;
-
-    get_time_UTC(&utc);
-    sprintf(uart_temp, "TIME %d %d %d %d %d %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
-    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
+//    struct time_utc utc;
+//    get_time_UTC(&utc);
+//    sprintf(uart_temp, "TIME: Y:%d M:%d D:%d H:%d M:%d S:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+//    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
     
   sprintf((char*)uart_temp, "Hello\n");
   //HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
@@ -697,11 +698,12 @@ void UART_task(void const * argument)
 
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[22], 173);//&23,174
+  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[21], 173);//&23,174
 //  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[23], 174);
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
+//  HAL_UART_Receive_IT( &huart6, obc_data.su_uart.uart_buf, UART_BUF_SIZE);
   
    //temporal su sim test code
 
@@ -735,6 +737,8 @@ void UART_task(void const * argument)
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+//    import_pkt(SU_APID, &obc_data.su_uart);
+    
     
     ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
     
@@ -755,6 +759,10 @@ void HK_task(void const * argument)
   for(;;)
   {
     hk_SCH();
+//    struct time_utc utc;
+//    get_time_UTC(&utc);
+//    sprintf(uart_temp, "TIME: Y:%d M:%d D:%d H:%d M:%d S:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+//    HAL_UART_Transmit(&huart3, uart_temp, 50 , 10000);
     osDelay(10);
   }
   /* USER CODE END HK_task */
@@ -766,16 +774,16 @@ void IDLE_task(void const * argument)
   /* USER CODE BEGIN IDLE_task */
     
     /*Task notification setup*/
-  uint32_t ulNotificationValue;
-  const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
-  xTask_IDLE = xTaskGetCurrentTaskHandle();
+//  uint32_t ulNotificationValue;
+//  const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
+//  xTask_IDLE = xTaskGetCurrentTaskHandle();
   
   /* Infinite loop */
   for(;;)
   {
-    check_timeouts();
-    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
-//    osDelay(10);
+//    check_timeouts();
+//    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
+    osDelay(100);
   }
   /* USER CODE END IDLE_task */
 }
@@ -817,8 +825,10 @@ void SU_SCH(void const * argument)
     
   for(;;)
   {
-    su_SCH();
-    osDelay(10);
+      if( MNLP_data.su_nmlp_sche_active == true){
+          su_SCH();
+      }
+      else{ osDelay(100); }
   }
   /* USER CODE END SU_SCH */
 }
