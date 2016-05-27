@@ -48,6 +48,8 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
+IWDG_HandleTypeDef hiwdg;
+
 RTC_HandleTypeDef hrtc;
 
 SD_HandleTypeDef hsd;
@@ -98,6 +100,7 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
+static void MX_IWDG_Init(void);
 void UART_task(void const * argument);
 void HK_task(void const * argument);
 void IDLE_task(void const * argument);
@@ -141,6 +144,7 @@ int main(void)
   MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
+  MX_IWDG_Init();
 
   /* USER CODE BEGIN 2 */
 
@@ -215,9 +219,11 @@ void SystemClock_Config(void)
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
@@ -273,6 +279,17 @@ void MX_ADC1_Init(void)
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+
+}
+
+/* IWDG init function */
+void MX_IWDG_Init(void)
+{
+
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Reload = 4095;
+  HAL_IWDG_Init(&hiwdg);
 
 }
 
@@ -562,9 +579,10 @@ void UART_task(void const * argument)
 
   /* USER CODE BEGIN 5 */
     //obc_data.rsrc = 0;
-   HAL_reset_source(&sys_data.rsrc);
+   uint8_t rsrc = 0;
+   HAL_reset_source(&rsrc);
+   set_reset_source(rsrc);
    update_boot_counter();
-
    /*IS25LP128  eeprom*/
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -598,7 +616,7 @@ void UART_task(void const * argument)
    
    su_INIT();
    
-   //uint32_t papartime = time_now();
+   //uint32_t papartime = time_ now();
   
    //uint8_t g = 5;
    
