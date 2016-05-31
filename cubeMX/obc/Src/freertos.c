@@ -62,7 +62,6 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
   
   uint8_t check = 0;
   check = 10;
-  //C_ASSERT(0);
    /* Run time stack overflow checking is performed if
    configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
    called if a stack overflow is detected. */
