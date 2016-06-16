@@ -609,17 +609,10 @@ void UART_task(void const * argument)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
-   
    HAL_obc_IAC_ON();
-   
    HAL_obc_SD_ON();
-   
    mass_storage_init();
-   
-   //large_data_INIT();
-   
    su_INIT();
-   
   uint16_t size = 0;
   
   event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
@@ -638,6 +631,8 @@ void UART_task(void const * argument)
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
   HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
+  
+//  osThreadResume(SU_SCH_taskHandle);
   /* Infinite loop */
   for(;;)
   {
@@ -694,15 +689,18 @@ void IDLE_task(void const * argument)
 
 /* SU_SCH function */
 void SU_SCH(void const * argument)
-{
+{   
+    osDelay(5000);
+//    osThreadSuspend(SU_SCH_taskHandle);
   /* USER CODE BEGIN SU_SCH */
-  /* Infinite loop */
-
+  //su_INIT();
   for(;;) {
-      if( MNLP_data.su_nmlp_scheduler_active == true){
+      /*select the script that is eligible to run*/
+      su_script_selector();
+      if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
           su_SCH();
       }
-      else{ osDelay(100); }
+      else{ osDelay(1000); }
   }
   /* USER CODE END SU_SCH */
 }
