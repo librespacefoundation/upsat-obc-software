@@ -146,6 +146,7 @@ int main(void)
   MX_ADC1_Init();
   MX_RTC_Init();
   MX_IWDG_Init();
+  SEGGER_SYSVIEW_Conf();
 
   /* USER CODE BEGIN 2 */
 
@@ -593,6 +594,8 @@ void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
 /* UART_task function */
 void UART_task(void const * argument)
 {
+//  uint32_t tt = xPortGetFreeHeapSize();
+  
   /* init code for FATFS */
   MX_FATFS_Init();
 
@@ -613,7 +616,7 @@ void UART_task(void const * argument)
    HAL_obc_SD_ON();
    mass_storage_init();
    su_INIT();
-  uint16_t size = 0;
+   uint16_t size = 0;
   
   event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
   HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
@@ -632,6 +635,7 @@ void UART_task(void const * argument)
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
   HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   
+  
 //  osThreadResume(SU_SCH_taskHandle);
   /* Infinite loop */
   for(;;)
@@ -642,7 +646,7 @@ void UART_task(void const * argument)
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
     su_incoming_rx();
-    
+//    size_t ttt = xPortGetFreeHeapSize();
     ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
     
   }
@@ -654,12 +658,19 @@ void HK_task(void const * argument)
 {
   /* USER CODE BEGIN HK_task */
   hk_INIT();
+  //HAL_sys_delay(5000);
   /* Infinite loop */
- 
+  tc_tm_pkt hk_pkt;
+  
   for(;;)
   {
+//    size_t ttt = xPortGetFreeHeapSize();
     //hk_SCH();
+//    hk_crt_pkt_TC(&hk_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
+//    route_pkt(&hk_pkt);  
+//    uint32_t tt = xPortGetFreeHeapSize();
     osDelay(100);
+    
   }
   /* USER CODE END HK_task */
 }
@@ -668,7 +679,7 @@ void HK_task(void const * argument)
 void IDLE_task(void const * argument)
 {
   /* USER CODE BEGIN IDLE_task */
-    
+   
     /*Task notification setup*/
   struct time_utc utc;
   uint32_t qb_secs;
@@ -676,6 +687,7 @@ void IDLE_task(void const * argument)
   for(;;)
   {
       /*RTC*/
+    //uint32_t tt = xPortGetFreeHeapSize();
     get_time_UTC(&utc);
     sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
     HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
@@ -690,18 +702,24 @@ void IDLE_task(void const * argument)
 /* SU_SCH function */
 void SU_SCH(void const * argument)
 {   
+  /* USER CODE BEGIN SU_SCH */
+//  uint32_t tt = xPortGetFreeHeapSize();
     osDelay(5000);
 //    osThreadSuspend(SU_SCH_taskHandle);
-  /* USER CODE BEGIN SU_SCH */
   //su_INIT();
   for(;;) {
-      /*select the script that is eligible to run*/
+      /*select the script that is eligible to run, and mark it as ''running script''*/
+      
+      
       su_script_selector();
+      
       if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
           su_SCH();
       }
-      else{ osDelay(1000); }
+      else{ osDelay(3000); }
   }
+  
+  
   /* USER CODE END SU_SCH */
 }
 
