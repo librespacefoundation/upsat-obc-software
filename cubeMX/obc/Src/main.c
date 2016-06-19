@@ -594,8 +594,6 @@ void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
 /* UART_task function */
 void UART_task(void const * argument)
 {
-//  uint32_t tt = xPortGetFreeHeapSize();
-  
   /* init code for FATFS */
   MX_FATFS_Init();
 
@@ -701,7 +699,7 @@ void IDLE_task(void const * argument)
 
 /* SU_SCH function */
 void SU_SCH(void const * argument)
-{   
+{
   /* USER CODE BEGIN SU_SCH */
 //  uint32_t tt = xPortGetFreeHeapSize();
     osDelay(5000);
