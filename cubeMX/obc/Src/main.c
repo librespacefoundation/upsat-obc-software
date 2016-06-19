@@ -709,10 +709,7 @@ void SU_SCH(void const * argument)
   //su_INIT();
   for(;;) {
       /*select the script that is eligible to run, and mark it as ''running script''*/
-      
-      
       su_script_selector();
-      
       if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
           su_SCH();
       }
