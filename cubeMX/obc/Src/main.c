@@ -627,7 +627,7 @@ void UART_task(void const * argument)
 
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[21], 174);//&22,174
+  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[22], 174);//&22,174
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
@@ -683,7 +683,7 @@ void IDLE_task(void const * argument)
   uint32_t qb_secs;
   /* Infinite loop */
   for(;;)
-  {
+  { 
       /*RTC*/
     //uint32_t tt = xPortGetFreeHeapSize();
     get_time_UTC(&utc);
