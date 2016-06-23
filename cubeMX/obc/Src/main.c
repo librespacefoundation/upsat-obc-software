@@ -77,7 +77,7 @@ osThreadId uartHandle;
 osThreadId HKHandle;
 osThreadId time_checkHandle;
 osThreadId SU_SCH_taskHandle;
-osThreadId TEST_taskHandle;
+osThreadId scheduling_servHandle;
 osMessageQId queueCOMMS;
 osMessageQId queueADCS;
 osMessageQId queueDBG;
