@@ -598,7 +598,6 @@ void UART_task(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
-    //obc_data.rsrc = 0;
    uint8_t rsrc = 0;
    HAL_reset_source(&rsrc);
    set_reset_source(rsrc);
@@ -627,12 +626,11 @@ void UART_task(void const * argument)
 
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[22], 174);//&22,174
+  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[21], 174);//&22,174
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
   HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
-  
   
 //  osThreadResume(SU_SCH_taskHandle);
   /* Infinite loop */
@@ -692,7 +690,10 @@ void IDLE_task(void const * argument)
     get_time_QB50(&qb_secs);
     sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
     HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
-    osDelay(10000);
+    osDelay(5000);
+    
+    uint8_t stop_here=0;
+    
   }
   /* USER CODE END IDLE_task */
 }
@@ -701,19 +702,29 @@ void IDLE_task(void const * argument)
 void SU_SCH(void const * argument)
 {
   /* USER CODE BEGIN SU_SCH */
-//  uint32_t tt = xPortGetFreeHeapSize();
+    uint32_t ulNotificationValue;
+    TickType_t su_scheduler_sleep_time;
+    uint32_t sleep_val=0;
+    su_mnlp_returnState su_sche_state;
+    
+//    osDelay(100000);
     osDelay(5000);
-//    osThreadSuspend(SU_SCH_taskHandle);
-  //su_INIT();
-  for(;;) {
+    
+  for(;;){
       /*select the script that is eligible to run, and mark it as ''running script''*/
       su_script_selector();
       if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
-          su_SCH();
+        su_sche_state = su_SCH(&sleep_val);
+        if(su_sche_state == su_sche_sleep){
+            /*all time tables inside su_SCH has been served. Go for the next science collection day*/
+            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);            
+            
+            /*notification to wake up will be given from scheduling service*/
+            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
+        }
       }
       else{ osDelay(3000); }
   }
-  
   
   /* USER CODE END SU_SCH */
 }
