@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Project>
+  <Desktop>
+    <Static>
+      <Debug-Log>
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1221</ColumnWidth1></Debug-Log>
+      <Build>
+        <ColumnWidth0>20</ColumnWidth0>
+        <ColumnWidth1>915</ColumnWidth1>
+        <ColumnWidth2>244</ColumnWidth2>
+        <ColumnWidth3>61</ColumnWidth3>
+      </Build>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>124</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Disassembly>
+        <PreferedWindows>
+          <Position>2</Position>
+          <ScreenPosX>0</ScreenPosX>
+          <ScreenPosY>0</ScreenPosY>
+          <Windows/>
+        </PreferedWindows>
+        
+        
+        <col-names>
+          
+          
+        <item>Disassembly</item><item>_I0</item></col-names>
+        <col-widths>
+          
+          
+        <item>500</item><item>20</item></col-widths>
+        <DisasmHistory/>
+      <ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
+      <Locals>
+        <col-names>
+          
+          
+          
+          
+        <item>Location</item><item>Type</item><item>Value</item><item>Variable</item></col-names>
+        <col-widths>
+          
+          
+          
+          
+        <item>150</item><item>100</item><item>100</item><item>100</item></col-widths>
+      </Locals>
+      <Memory>
+        <MemGotoHistory>
+          
+          
+        <item>0x0800C000</item><item>0x0800FFFF</item></MemGotoHistory>
+        
+      <FindAsHex>0</FindAsHex></Memory>
+    <StaticWatch><expressions><item>c</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>150</item><item>100</item><item>209</item></col-widths></StaticWatch></Static>
+    <Windows>
+      
+      
+      
+      
+    <Wnd0>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-1152-29072</Identity>
+            <TabName>Debug Log</TabName>
+            <Factory>Debug-Log</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-630-29081</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-11901-29075</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>disco</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd1><Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-30554-29339</Identity>
+            <TabName>Locals</TabName>
+            <Factory>Locals</Factory>
+          </Tab>
+        <Tab><Identity>TabID-14059-23508</Identity><TabName>Live Watch</TabName><Factory>StaticWatch</Factory></Tab></Tabs>
+        
+      <SelectedTab>1</SelectedTab></Wnd2><Wnd4>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-10918-29503</Identity>
+            <TabName>Memory</TabName>
+            <Factory>Memory</Factory>
+            <Session>
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            <ZoneNumber>14</ZoneNumber><SelectionAnchor>134266880</SelectionAnchor><SelectionEnd>134266880</SelectionEnd><UnitsPerGroup>1</UnitsPerGroup><EndianMode>0</EndianMode><DataCovEnabled>0</DataCovEnabled><DataCovShown>0</DataCovShown><AutoRefresh>0</AutoRefresh><HScroll>0</HScroll><VScroll>8391675</VScroll></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd4><Wnd5><Tabs><Tab><Identity>TabID-13879-12320</Identity><TabName>Disassembly</TabName><Factory>Disassembly</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd5></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\DRIVERS\STM32F4XX_HAL_DRIVER\SRC\stm32f4xx_hal_flash.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>128</YPos2><SelStart2>7403</SelStart2><SelEnd2>7478</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\DRIVERS\STM32F4XX_HAL_DRIVER\SRC\stm32f4xx_hal_flash_ex.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>105</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\SRC\stm32f4xx_it.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>91</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\SRC\stm32f4xx_hal_timebase_TIM.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\EWARM\DISCO\LIST\disco.map</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>59</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\DRIVERS\STM32F4XX_HAL_DRIVER\SRC\stm32f4xx_hal_uart.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>732</YPos2><SelStart2>28485</SelStart2><SelEnd2>28485</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\SRC\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>613</YPos2><SelStart2>19789</SelStart2><SelEnd2>19789</SelEnd2></Tab><ActiveTab>6</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\..\..\..\NIK\UPSAT-OBC-SOFTWARE\CUBEMX\DISCO\DRIVERS\STM32F4XX_HAL_DRIVER\SRC\stm32f4xx_hal.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>319</YPos2><SelStart2>13288</SelStart2><SelEnd2>13288</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-027998F0><key>iaridepm.enu1</key></Toolbar-027998F0></Sizes></Row0><Row1><Sizes><Toolbar-0CAF2020><key>debuggergui.enu1</key></Toolbar-0CAF2020></Sizes></Row1><Row2><Sizes><Toolbar-0D2D5F60><key>armstlink2.enu1</key></Toolbar-0D2D5F60></Sizes></Row2></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>229</Bottom><Right>198</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>278552</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>321727</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>229</Bottom><Right>430</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>278552</sizeHorzCY><sizeVertCX>337500</sizeVertCX><sizeVertCY>321727</sizeVertCY></Rect></Wnd2></Sizes></Row0><Row1><Sizes><Wnd5><Rect><Top>-2</Top><Left>428</Left><Bottom>229</Bottom><Right>628</Right><x>428</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>278552</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>321727</sizeVertCY></Rect></Wnd5></Sizes></Row1></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>198</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>278552</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>278552</sizeVertCY></Rect></Wnd0></Sizes></Row0><Row1><Sizes><Wnd4><Rect><Top>196</Top><Left>-2</Left><Bottom>396</Bottom><Right>1282</Right><x>-2</x><y>196</y><xscreen>1284</xscreen><yscreen>200</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>278552</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>278552</sizeVertCY></Rect></Wnd4></Sizes></Row1></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Project>
+
+

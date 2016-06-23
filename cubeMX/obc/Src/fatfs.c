@@ -32,13 +32,12 @@
   */
 
 #include "fatfs.h"
-#include "services.h"
 
 uint8_t retSD;    /* Return value for SD */
 char SD_Path[4];  /* SD logical drive path */
 
 /* USER CODE BEGIN Variables */
-
+#include "time_management_service.h"
 /* USER CODE END Variables */    
 
 void MX_FATFS_Init(void) 

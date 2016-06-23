@@ -304,7 +304,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     PB4     ------> SPI3_MISO
     PB5     ------> SPI3_MOSI 
     */
-    GPIO_InitStruct.Pin = IAC_SCK_SPI3_Pin|IAC_MISO_SPI3_Pin|IAC_MOSI_SPI3_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -375,7 +375,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     PB4     ------> SPI3_MISO
     PB5     ------> SPI3_MOSI 
     */
-    HAL_GPIO_DeInit(GPIOB, IAC_SCK_SPI3_Pin|IAC_MISO_SPI3_Pin|IAC_MOSI_SPI3_Pin);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5);
 
     /* Peripheral interrupt DeInit*/
     HAL_NVIC_DisableIRQ(SPI3_IRQn);
