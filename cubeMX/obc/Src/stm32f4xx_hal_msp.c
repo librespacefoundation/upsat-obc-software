@@ -380,6 +380,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     /* Peripheral interrupt DeInit*/
     HAL_NVIC_DisableIRQ(SPI3_IRQn);
 
+    /* Peripheral interrupt DeInit*/
+    HAL_NVIC_DisableIRQ(SPI3_IRQn);
+
   /* USER CODE BEGIN SPI3_MspDeInit 1 */
 
   /* USER CODE END SPI3_MspDeInit 1 */
