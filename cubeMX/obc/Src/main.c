@@ -75,6 +75,7 @@ osThreadId uartHandle;
 osThreadId HKHandle;
 osThreadId time_checkHandle;
 osThreadId SU_SCH_taskHandle;
+osThreadId scheduling_servHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -106,6 +107,7 @@ void UART_task(void const * argument);
 void HK_task(void const * argument);
 void IDLE_task(void const * argument);
 void SU_SCH(void const * argument);
+void sche_se_sch(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -180,6 +182,10 @@ int main(void)
   /* definition and creation of SU_SCH_task */
   osThreadDef(SU_SCH_task, SU_SCH, osPriorityNormal, 0, 128);
   SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+
+  /* definition and creation of scheduling_serv */
+  osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
+  scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -613,6 +619,7 @@ void UART_task(void const * argument)
    HAL_obc_SD_ON();
    mass_storage_init();
    su_INIT();
+   scheduling_init_service();
    uint16_t size = 0;
   
   event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
@@ -727,6 +734,18 @@ void SU_SCH(void const * argument)
   }
   
   /* USER CODE END SU_SCH */
+}
+
+/* sche_se_sch function */
+void sche_se_sch(void const * argument)
+{
+  /* USER CODE BEGIN sche_se_sch */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END sche_se_sch */
 }
 
 #ifdef USE_FULL_ASSERT
