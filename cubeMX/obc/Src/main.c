@@ -86,7 +86,7 @@ osMessageQId queueEPS;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
-extern uint8_t su_inc_buffer[197]; //174 su resp + 22 flight hdr, +1 for serial shift = 197
+extern uint8_t su_inc_resp[180]; //174 su resp + 22 flight hdr, +1 for serial shift = 197
 extern struct _MNLP_data MNLP_data;
 
 TaskHandle_t xTask_UART = NULL;
@@ -657,7 +657,7 @@ void UART_task(void const * argument)
 
    su_INIT();
 
-   scheduling_init_service();
+   scheduling_service_init();
    
   /*Task notification setup*/
   uint32_t ulNotificationValue;
@@ -665,14 +665,13 @@ void UART_task(void const * argument)
 
   xTask_UART = xTaskGetCurrentTaskHandle();
 
-
   //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
   osDelay(1);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[22], 174);
+  HAL_UART_Receive_IT( &huart2, MNLP_data.su_inc_resp, 174);
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
@@ -708,7 +707,7 @@ void HK_task(void const * argument)
  
   for(;;)
   {
-    hk_SCH();
+    //hk_SCH();
     osDelay(10);
   }
   /* USER CODE END HK_task */
@@ -747,26 +746,51 @@ void SU_SCH(void const * argument)
   /* USER CODE BEGIN SU_SCH */
     uint32_t ulNotificationValue;
     TickType_t su_scheduler_sleep_time;
-    uint32_t sleep_val=0;
+    uint32_t sleep_val=5000;
     su_mnlp_returnState su_sche_state;
     
-//    osDelay(100000);
     osDelay(5000);
+    //time_management_force_time_update(ADCS_APP_ID);
+//    tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
+//    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
+//    route_pkt(su_temp);
+//    time_management_force_time_update(ADCS_APP_ID);
+//    tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
+//    time_management_report_time_in_utc(time_rep_pkt, ADCS_APP_ID);
+//    route_pkt(time_rep_pkt);
     
   for(;;){
       /*select the script that is eligible to run, and mark it as ''running script''*/
+    
+//    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);    
+//    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
+//    route_pkt( test_pkt);
+      
+//    time_management_request_time_in_utc(ADCS_APP_ID);
+
+      //      tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
+//    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
+//    route_pkt(su_temp);
+      //time_management_force_time_update(ADCS_APP_ID);
+      
+//      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
+//      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);        
+//      route_pkt(time_rep_pkt);
+      
       su_script_selector();
       if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
         su_sche_state = su_SCH(&sleep_val);
         if(su_sche_state == su_sche_sleep){
             /*all time tables inside su_SCH has been served. Go for the next science collection day*/
-            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);            
-            
-            /*notification to wake up will be given from scheduling service*/
-            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
+            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);
+            osDelay(sleep_val);
+            /*notification to wake up will be given from scheduling service(?)*/
+//            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
         }
       }
-      else{ osDelay(3000); }
+      else{ osDelay(sleep_val); }
+      
+      osDelay(1000);
   }
   
   /* USER CODE END SU_SCH */
@@ -775,11 +799,13 @@ void SU_SCH(void const * argument)
 /* sche_se_sch function */
 void sche_se_sch(void const * argument)
 {
+    
   /* USER CODE BEGIN sche_se_sch */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    cross_schedules();
+    osDelay(1000);
   }
   /* USER CODE END sche_se_sch */
 }
