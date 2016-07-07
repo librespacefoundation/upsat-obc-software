@@ -41,6 +41,7 @@
 #include "time_management_service.h"
 #include "wdg.h"
 #include "su_mnlp.h"
+#include "scheduling_service.h"
 
 
 #undef __FILE_ID__
@@ -74,10 +75,10 @@ DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId uartHandle;
-osThreadId HKHandle;
-osThreadId time_checkHandle;
-osThreadId SU_SCH_taskHandle;
-osThreadId scheduling_servHandle;
+osThreadId hkHandle;
+osThreadId idleHandle;
+osThreadId su_schHandle;
+osThreadId sche_servHandle;
 osMessageQId queueCOMMS;
 osMessageQId queueADCS;
 osMessageQId queueDBG;
@@ -104,15 +105,15 @@ static void MX_USART6_UART_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_IWDG_Init(void);
-static void MX_SPI3_Init(void);
-void UART_task(void const * argument);
-void HK_task(void const * argument);
-void IDLE_task(void const * argument);
-void SU_SCH(void const * argument);
-void sche_se_sch(void const * argument);
+void uart_task(void const * argument);
+void hk_task(void const * argument);
+void idle_task(void const * argument);
+void su_sch_task(void const * argument);
+void sche_serv_task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -176,24 +177,24 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uart */
-  osThreadDef(uart, UART_task, osPriorityNormal, 0, 1024);
+  osThreadDef(uart, uart_task, osPriorityNormal, 0, 1024);
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
-  /* definition and creation of HK */
-  osThreadDef(HK, HK_task, osPriorityLow, 0, 512);
-  HKHandle = osThreadCreate(osThread(HK), NULL);
+  /* definition and creation of hk */
+  osThreadDef(hk, hk_task, osPriorityLow, 0, 512);
+  hkHandle = osThreadCreate(osThread(hk), NULL);
 
-  /* definition and creation of time_check */
-  osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 512);
-  time_checkHandle = osThreadCreate(osThread(time_check), NULL);
+  /* definition and creation of idle */
+  osThreadDef(idle, idle_task, osPriorityIdle, 0, 512);
+  idleHandle = osThreadCreate(osThread(idle), NULL);
 
-  /* definition and creation of SU_SCH_task */
-  osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
-  SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+  /* definition and creation of su_sch */
+  osThreadDef(su_sch, su_sch_task, osPriorityBelowNormal, 0, 512);
+  su_schHandle = osThreadCreate(osThread(su_sch), NULL);
 
-  /* definition and creation of scheduling_serv */
-  osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
-  scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
+  /* definition and creation of sche_serv */
+  osThreadDef(sche_serv, sche_serv_task, osPriorityAboveNormal, 0, 512);
+  sche_servHandle = osThreadCreate(osThread(sche_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -347,17 +348,17 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   HAL_RTC_Init(&hrtc);
 
-  sTime.Hours = 0;
-  sTime.Minutes = 0;
-  sTime.Seconds = 0;
+  sTime.Hours = 12;
+  sTime.Minutes = 55;
+  sTime.Seconds = 31;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
 //  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
-  sDate.Month = RTC_MONTH_JANUARY;
-  sDate.Date = 1;
-  sDate.Year = 0;
+  sDate.Month = RTC_MONTH_JULY;
+  sDate.Date = 7;
+  sDate.Year = 16;
 
 //  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
@@ -625,8 +626,8 @@ void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
 }
 /* USER CODE END 4 */
 
-/* UART_task function */
-void UART_task(void const * argument)
+/* uart_task function */
+void uart_task(void const * argument)
 {
   /* init code for FATFS */
   MX_FATFS_Init();
@@ -698,10 +699,10 @@ void UART_task(void const * argument)
   /* USER CODE END 5 */ 
 }
 
-/* HK_task function */
-void HK_task(void const * argument)
+/* hk_task function */
+void hk_task(void const * argument)
 {
-  /* USER CODE BEGIN HK_task */
+  /* USER CODE BEGIN hk_task */
   hk_INIT();
   /* Infinite loop */
  
@@ -710,22 +711,18 @@ void HK_task(void const * argument)
     //hk_SCH();
     osDelay(10);
   }
-  /* USER CODE END HK_task */
+  /* USER CODE END hk_task */
 }
 
-/* IDLE_task function */
-void IDLE_task(void const * argument)
+/* idle_task function */
+void idle_task(void const * argument)
 {
-  /* USER CODE BEGIN IDLE_task */
-   
-    /*Task notification setup*/
+  /* USER CODE BEGIN idle_task */
   struct time_utc utc;
   uint32_t qb_secs;
   /* Infinite loop */
   for(;;)
-  { 
-      /*RTC*/
-    //uint32_t tt = xPortGetFreeHeapSize();
+  {
     get_time_UTC(&utc);
     sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
     HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
@@ -733,24 +730,20 @@ void IDLE_task(void const * argument)
     sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
     HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
     osDelay(5000);
-    
-    uint8_t stop_here=0;
-    
   }
-  /* USER CODE END IDLE_task */
+  /* USER CODE END idle_task */
 }
 
-/* SU_SCH function */
-void SU_SCH(void const * argument)
+/* su_sch_task function */
+void su_sch_task(void const * argument)
 {
-  /* USER CODE BEGIN SU_SCH */
-    uint32_t ulNotificationValue;
-    TickType_t su_scheduler_sleep_time;
-    uint32_t sleep_val=5000;
-    su_mnlp_returnState su_sche_state;
-    
-    osDelay(5000);
-    //time_management_force_time_update(ADCS_APP_ID);
+  /* USER CODE BEGIN su_sch_task */
+  uint32_t ulNotificationValue;
+  TickType_t su_scheduler_sleep_time;
+  uint32_t sleep_val=5000;
+  su_mnlp_returnState su_sche_state;
+  osDelay(5000);
+  //time_management_force_time_update(ADCS_APP_ID);
 //    tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
 //    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
 //    route_pkt(su_temp);
@@ -758,9 +751,10 @@ void SU_SCH(void const * argument)
 //    tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
 //    time_management_report_time_in_utc(time_rep_pkt, ADCS_APP_ID);
 //    route_pkt(time_rep_pkt);
-    
-  for(;;){
-      /*select the script that is eligible to run, and mark it as ''running script''*/
+  /* Infinite loop */
+  for(;;)
+  {
+       /*select the script that is eligible to run, and mark it as ''running script''*/
     
 //    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);    
 //    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
@@ -776,38 +770,70 @@ void SU_SCH(void const * argument)
 //      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
 //      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);        
 //      route_pkt(time_rep_pkt);
-      
-      su_script_selector();
-      if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
-        su_sche_state = su_SCH(&sleep_val);
-        if(su_sche_state == su_sche_sleep){
-            /*all time tables inside su_SCH has been served. Go for the next science collection day*/
-            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);
-            osDelay(sleep_val);
+        su_script_selector();
+        if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
+            su_sche_state = su_SCH(&sleep_val);
+            if(su_sche_state == su_sche_script_ended){
+                /*all time tables inside su_SCH has been served. Go for the next science collection day*/
+                //TODO: disable the scheduler ?
+                su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);
+                osDelay(sleep_val);
             /*notification to wake up will be given from scheduling service(?)*/
-//            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
+//            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);      
+            }
+            else
+            if(su_sche_state == su_sche_sleep){
+                /*set a SCH packet with OBC execution to wake the su_scheduler*/
+                SC_pkt temp;
+                uint8_t temp_data[1];
+                temp.tc_pck.data = temp_data;
+                
+                temp.app_id = OBC_APP_ID;
+                temp.assmnt_type = 1;
+                temp.enabled = 1;
+                temp.intrlck_set_id = 0;
+                temp.intrlck_ass_id = 0;
+                temp.num_of_sch_tc = 1;
+                temp.release_time = sleep_val;
+                temp.sch_evt = QB50EPC;
+                temp.seq_count = 66;
+                temp.sub_schedule_id = 1;
+                temp.timeout = 0;
+                temp.valid = true;
+                temp.tc_pck.app_id = OBC_APP_ID;
+                temp.tc_pck.type = 1;
+                temp.tc_pck.seq_flags = 3;
+                temp.tc_pck.seq_count = 233;
+                temp.tc_pck.len = 1;
+                temp.tc_pck.ack=0;
+                temp.tc_pck.ser_type = 18;
+                temp.tc_pck.ser_subtype = 24;
+                temp.tc_pck.dest_id = OBC_APP_ID;
+                temp.tc_pck.verification_state = SATR_PKT_INIT;
+                temp.tc_pck.data[0] = 1;
+                
+                scheduling_insert_api(15,temp);
+                (*MNLP_data.su_nmlp_scheduler_active) = (uint8_t)false;
+            }
         }
-      }
       else{ osDelay(sleep_val); }
-      
+        
       osDelay(1000);
   }
-  
-  /* USER CODE END SU_SCH */
+  /* USER CODE END su_sch_task */
 }
 
-/* sche_se_sch function */
-void sche_se_sch(void const * argument)
+/* sche_serv_task function */
+void sche_serv_task(void const * argument)
 {
-    
-  /* USER CODE BEGIN sche_se_sch */
+  /* USER CODE BEGIN sche_serv_task */
   /* Infinite loop */
   for(;;)
   {
     cross_schedules();
     osDelay(1000);
   }
-  /* USER CODE END sche_se_sch */
+  /* USER CODE END sche_serv_task */
 }
 
 #ifdef USE_FULL_ASSERT

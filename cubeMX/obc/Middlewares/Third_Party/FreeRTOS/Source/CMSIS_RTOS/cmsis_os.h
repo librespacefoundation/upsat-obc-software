@@ -96,7 +96,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "core_cmFunc.h"
-
+	
 #include "SEGGER_SYSVIEW_FreeRTOS.h"
 #include "FreeRTOS.h"
 #include "task.h"
