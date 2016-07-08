@@ -150,10 +150,10 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI2_Init();
   MX_SPI1_Init();
+  MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
   MX_IWDG_Init();
-  MX_SPI3_Init();
 
   /* USER CODE BEGIN 2 */
   //wdg_INIT();
@@ -189,11 +189,11 @@ int main(void)
   idleHandle = osThreadCreate(osThread(idle), NULL);
 
   /* definition and creation of su_sch */
-  osThreadDef(su_sch, su_sch_task, osPriorityBelowNormal, 0, 512);
+  osThreadDef(su_sch, su_sch_task, osPriorityNormal, 0, 512);
   su_schHandle = osThreadCreate(osThread(su_sch), NULL);
 
   /* definition and creation of sche_serv */
-  osThreadDef(sche_serv, sche_serv_task, osPriorityAboveNormal, 0, 512);
+  osThreadDef(sche_serv, sche_serv_task, osPriorityNormal, 0, 512);
   sche_servHandle = osThreadCreate(osThread(sche_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -709,7 +709,7 @@ void hk_task(void const * argument)
   for(;;)
   {
     //hk_SCH();
-    osDelay(10);
+    osDelay(1000);
   }
   /* USER CODE END hk_task */
 }
@@ -781,40 +781,40 @@ void su_sch_task(void const * argument)
             /*notification to wake up will be given from scheduling service(?)*/
 //            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);      
             }
-            else
-            if(su_sche_state == su_sche_sleep){
+//            else
+//            if(su_sche_state == su_sche_sleep){
                 /*set a SCH packet with OBC execution to wake the su_scheduler*/
-                SC_pkt temp;
-                uint8_t temp_data[1];
-                temp.tc_pck.data = temp_data;
+//                SC_pkt temp;
+//                uint8_t temp_data[1];
+//                temp.tc_pck.data = temp_data;
+//                
+//                temp.app_id = OBC_APP_ID;
+//                temp.assmnt_type = 1;
+//                temp.enabled = 1;
+//                temp.intrlck_set_id = 0;
+//                temp.intrlck_ass_id = 0;
+//                temp.num_of_sch_tc = 1;
+//                temp.release_time = sleep_val;
+//                temp.sch_evt = QB50EPC;
+//                temp.seq_count = 66;
+//                temp.sub_schedule_id = 1;
+//                temp.timeout = 0;
+//                temp.valid = true;
+//                temp.tc_pck.app_id = OBC_APP_ID;
+//                temp.tc_pck.type = 1;
+//                temp.tc_pck.seq_flags = 3;
+//                temp.tc_pck.seq_count = 233;
+//                temp.tc_pck.len = 1;
+//                temp.tc_pck.ack=0;
+//                temp.tc_pck.ser_type = 18;
+//                temp.tc_pck.ser_subtype = 24;
+//                temp.tc_pck.dest_id = OBC_APP_ID;
+//                temp.tc_pck.verification_state = SATR_PKT_INIT;
+//                temp.tc_pck.data[0] = 1;
                 
-                temp.app_id = OBC_APP_ID;
-                temp.assmnt_type = 1;
-                temp.enabled = 1;
-                temp.intrlck_set_id = 0;
-                temp.intrlck_ass_id = 0;
-                temp.num_of_sch_tc = 1;
-                temp.release_time = sleep_val;
-                temp.sch_evt = QB50EPC;
-                temp.seq_count = 66;
-                temp.sub_schedule_id = 1;
-                temp.timeout = 0;
-                temp.valid = true;
-                temp.tc_pck.app_id = OBC_APP_ID;
-                temp.tc_pck.type = 1;
-                temp.tc_pck.seq_flags = 3;
-                temp.tc_pck.seq_count = 233;
-                temp.tc_pck.len = 1;
-                temp.tc_pck.ack=0;
-                temp.tc_pck.ser_type = 18;
-                temp.tc_pck.ser_subtype = 24;
-                temp.tc_pck.dest_id = OBC_APP_ID;
-                temp.tc_pck.verification_state = SATR_PKT_INIT;
-                temp.tc_pck.data[0] = 1;
-                
-                scheduling_insert_api(15,temp);
-                (*MNLP_data.su_nmlp_scheduler_active) = (uint8_t)false;
-            }
+//                scheduling_insert_api(15,temp);
+//                (*MNLP_data.su_nmlp_scheduler_active) = (uint8_t)false;
+//            }
         }
       else{ osDelay(sleep_val); }
         
