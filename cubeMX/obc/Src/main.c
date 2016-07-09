@@ -740,7 +740,7 @@ void su_sch_task(void const * argument)
   /* USER CODE BEGIN su_sch_task */
   uint32_t ulNotificationValue;
   TickType_t su_scheduler_sleep_time;
-  uint32_t sleep_val=5000;
+  uint32_t sleep_val=3000;
   su_mnlp_returnState su_sche_state;
   osDelay(5000);
   //time_management_force_time_update(ADCS_APP_ID);
@@ -752,74 +752,41 @@ void su_sch_task(void const * argument)
 //    time_management_report_time_in_utc(time_rep_pkt, ADCS_APP_ID);
 //    route_pkt(time_rep_pkt);
   /* Infinite loop */
-  for(;;)
-  {
-       /*select the script that is eligible to run, and mark it as ''running script''*/
-    
-//    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);    
-//    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
-//    route_pkt( test_pkt);
-      
-//    time_management_request_time_in_utc(ADCS_APP_ID);
+  for (;;){
+        /*select the script that is eligible to run, and mark it as ''running script '' */
 
-      //      tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
-//    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
-//    route_pkt(su_temp);
-      //time_management_force_time_update(ADCS_APP_ID);
-      
-//      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
-//      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);        
-//      route_pkt(time_rep_pkt);
-        su_script_selector();
-        if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
-            su_sche_state = su_SCH(&sleep_val);
-            if(su_sche_state == su_sche_script_ended){
-                /*all time tables inside su_SCH has been served. Go for the next science collection day*/
-                //TODO: disable the scheduler ?
-                su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);
-                osDelay(sleep_val);
-            /*notification to wake up will be given from scheduling service(?)*/
-//            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);      
-            }
-//            else
-//            if(su_sche_state == su_sche_sleep){
-                /*set a SCH packet with OBC execution to wake the su_scheduler*/
-//                SC_pkt temp;
-//                uint8_t temp_data[1];
-//                temp.tc_pck.data = temp_data;
-//                
-//                temp.app_id = OBC_APP_ID;
-//                temp.assmnt_type = 1;
-//                temp.enabled = 1;
-//                temp.intrlck_set_id = 0;
-//                temp.intrlck_ass_id = 0;
-//                temp.num_of_sch_tc = 1;
-//                temp.release_time = sleep_val;
-//                temp.sch_evt = QB50EPC;
-//                temp.seq_count = 66;
-//                temp.sub_schedule_id = 1;
-//                temp.timeout = 0;
-//                temp.valid = true;
-//                temp.tc_pck.app_id = OBC_APP_ID;
-//                temp.tc_pck.type = 1;
-//                temp.tc_pck.seq_flags = 3;
-//                temp.tc_pck.seq_count = 233;
-//                temp.tc_pck.len = 1;
-//                temp.tc_pck.ack=0;
-//                temp.tc_pck.ser_type = 18;
-//                temp.tc_pck.ser_subtype = 24;
-//                temp.tc_pck.dest_id = OBC_APP_ID;
-//                temp.tc_pck.verification_state = SATR_PKT_INIT;
-//                temp.tc_pck.data[0] = 1;
-                
-//                scheduling_insert_api(15,temp);
-//                (*MNLP_data.su_nmlp_scheduler_active) = (uint8_t)false;
-//            }
-        }
-      else{ osDelay(sleep_val); }
+        //    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);
+        //    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
+        //    route_pkt( test_pkt);
+
+        //    time_management_request_time_in_utc(ADCS_APP_ID);
+
+        //      tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
+        //    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
+        //    route_pkt(su_temp);
+        //time_management_force_time_update(ADCS_APP_ID);
+
+        //      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
+        //      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);
+        //      route_pkt(time_rep_pkt);
         
-      osDelay(1000);
-  }
+        su_sche_state = su_script_selector();
+        if (su_sche_state == su_no_scr_eligible){
+            osDelay(3000);
+        }
+        else{ /*there is an active script, old or new, go for it*/
+            if((*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
+                su_sche_state = su_SCH(&sleep_val);
+                if (su_sche_state == su_sche_script_ended){
+                    /*all time tables inside su_SCH has been served. Go for the next science collection day*/
+                    //TODO: disable the scheduler ?
+                    osDelay(sleep_val);
+                    /*notification to wake up will be given from scheduling service(?)*/
+                }
+            }
+        }
+        osDelay(1000);
+    }
   /* USER CODE END su_sch_task */
 }
 
