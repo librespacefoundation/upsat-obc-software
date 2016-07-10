@@ -738,10 +738,10 @@ void idle_task(void const * argument)
 void su_sch_task(void const * argument)
 {
   /* USER CODE BEGIN su_sch_task */
-  uint32_t ulNotificationValue;
-  TickType_t su_scheduler_sleep_time;
-  uint32_t sleep_val=3000;
-  su_mnlp_returnState su_sche_state;
+//  uint32_t ulNotificationValue;
+//  TickType_t su_scheduler_sleep_time;
+  uint32_t sleep_val_secs=3000;
+  su_mnlp_returnState su_sche_state = su_sche_last;
   osDelay(5000);
   //time_management_force_time_update(ADCS_APP_ID);
 //    tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
@@ -751,11 +751,7 @@ void su_sch_task(void const * argument)
 //    tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
 //    time_management_report_time_in_utc(time_rep_pkt, ADCS_APP_ID);
 //    route_pkt(time_rep_pkt);
-  /* Infinite loop */
-  for (;;){
-        /*select the script that is eligible to run, and mark it as ''running script '' */
-
-        //    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);
+  //    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);
         //    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
         //    route_pkt( test_pkt);
 
@@ -769,23 +765,37 @@ void su_sch_task(void const * argument)
         //      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
         //      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);
         //      route_pkt(time_rep_pkt);
-        
-        su_sche_state = su_script_selector();
-        if (su_sche_state == su_no_scr_eligible){
-            osDelay(3000);
+  /* Infinite loop */
+  for (;;){
+        /*select the script that is eligible to run, and mark it as ''running script '' */
+        sleep_val_secs = 0;
+        su_sche_state = su_script_selector(&sleep_val_secs);
+        if( su_sche_state == su_no_scr_eligible){
+            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
         }
-        else{ /*there is an active script, old or new, go for it*/
-            if((*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
-                su_sche_state = su_SCH(&sleep_val);
-                if (su_sche_state == su_sche_script_ended){
-                    /*all time tables inside su_SCH has been served. Go for the next science collection day*/
-                    //TODO: disable the scheduler ?
-                    osDelay(sleep_val);
-                    /*notification to wake up will be given from scheduling service(?)*/
+        else{ /*su_scr_selected is returned, so there is an active script, old or new, go for it*/
+        if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
+            sleep_val_secs = 0;
+            su_sche_state = su_SCH(&sleep_val_secs);
+            if( su_sche_state == su_sche_script_ended){
+                /*all time tables inside su_SCH has been served. Go for the next science collection day*/
+               //TODO: disable the scheduler ?
+               //                    osDelay(sleep_val);
+               ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+               /*notification to wake up will be given from scheduling service(?)*/
+               /*also to be notified on script upload*/
                 }
+            }else
+            if( su_sche_state == su_new_scr_selected){
+                uint8_t stop_here;
+                continue;
+            }else
+            if( su_sche_state == su_no_scr_eligible){
+                uint8_t stop_here;
+                continue;
             }
         }
-        osDelay(1000);
+//        osDelay(1000);
     }
   /* USER CODE END su_sch_task */
 }
