@@ -160,6 +160,7 @@ int main(void)
   
   SEGGER_SYSVIEW_Conf();
   sysview_init();
+
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -188,12 +189,12 @@ int main(void)
   time_checkHandle = osThreadCreate(osThread(time_check), NULL);
 
   /* definition and creation of SU_SCH_task */
-  osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
-  SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+  //osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
+  //SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
 
   /* definition and creation of scheduling_serv */
-  osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
-  scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
+  //osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
+  //scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -623,6 +624,8 @@ void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
   //}
 
 }
+
+
 /* USER CODE END 4 */
 
 /* UART_task function */
@@ -647,6 +650,10 @@ void UART_task(void const * argument)
    HAL_reset_source(&rsrc);
    set_reset_source(rsrc);
 
+   uint32_t b_cnt = 0;
+   get_boot_counter(&b_cnt);
+   event_boot(rsrc, b_cnt);
+
    update_boot_counter();
 
    HAL_obc_IAC_ON();
@@ -655,9 +662,9 @@ void UART_task(void const * argument)
    
    mass_storage_init();
 
-   su_INIT();
+   //su_INIT();
 
-   scheduling_init_service();
+   //scheduling_init_service();
    
   /*Task notification setup*/
   uint32_t ulNotificationValue;
@@ -676,10 +683,11 @@ void UART_task(void const * argument)
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
-            
+
   /* Infinite loop */
   for(;;)
   {
+    task_times.uart_time = HAL_sys_GetTick();
     su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
@@ -705,9 +713,10 @@ void HK_task(void const * argument)
   /* USER CODE BEGIN HK_task */
   hk_INIT();
   /* Infinite loop */
- 
+  osDelay(6000);
   for(;;)
   {
+    task_times.hk_time = HAL_sys_GetTick();
     hk_SCH();
     osDelay(10);
   }
@@ -722,19 +731,24 @@ void IDLE_task(void const * argument)
     /*Task notification setup*/
   struct time_utc utc;
   uint32_t qb_secs;
+  osDelay(5000);
   /* Infinite loop */
   for(;;)
   { 
+    task_times.idle_time = HAL_sys_GetTick();
       /*RTC*/
     //uint32_t tt = xPortGetFreeHeapSize();
-    get_time_UTC(&utc);
-    sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
-    HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
-    get_time_QB50(&qb_secs);
-    sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
-    HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
-    osDelay(5000);
-    
+    //get_time_UTC(&utc);
+    //sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+    //HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
+    //get_time_QB50(&qb_secs);
+    //sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
+    //HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
+    pkt_pool_IDLE();
+    //event_log_IDLE();
+
+    osDelay(100);
+
     uint8_t stop_here=0;
     
   }
@@ -754,6 +768,8 @@ void SU_SCH(void const * argument)
     osDelay(5000);
     
   for(;;){
+
+    task_times.su_time = HAL_sys_GetTick();
       /*select the script that is eligible to run, and mark it as ''running script''*/
       su_script_selector();
       if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
@@ -779,7 +795,8 @@ void sche_se_sch(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    task_times.sch_time = HAL_sys_GetTick();
+    osDelay(1000);
   }
   /* USER CODE END sche_se_sch */
 }
