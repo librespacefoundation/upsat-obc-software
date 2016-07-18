@@ -41,7 +41,9 @@ extern void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern ADC_HandleTypeDef hadc1;
 extern SD_HandleTypeDef hsd;
+extern SPI_HandleTypeDef hspi3;
 extern DMA_HandleTypeDef hdma_uart4_tx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
@@ -65,11 +67,11 @@ extern TIM_HandleTypeDef htim1;
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+  //SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END SysTick_IRQn 0 */
   osSystickHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  //SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -86,11 +88,11 @@ void SysTick_Handler(void)
 void DMA1_Stream3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream3_IRQn 0 */
-
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA1_Stream3_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart3_tx);
   /* USER CODE BEGIN DMA1_Stream3_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA1_Stream3_IRQn 1 */
 }
 
@@ -100,11 +102,11 @@ void DMA1_Stream3_IRQHandler(void)
 void DMA1_Stream4_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream4_IRQn 0 */
-
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA1_Stream4_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_uart4_tx);
   /* USER CODE BEGIN DMA1_Stream4_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA1_Stream4_IRQn 1 */
 }
 
@@ -114,12 +116,26 @@ void DMA1_Stream4_IRQHandler(void)
 void DMA1_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream6_IRQn 0 */
-
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA1_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_tx);
   /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA1_Stream6_IRQn 1 */
+}
+
+/**
+* @brief This function handles ADC1, ADC2 and ADC3 global interrupts.
+*/
+void ADC_IRQHandler(void)
+{
+  /* USER CODE BEGIN ADC_IRQn 0 */
+
+  /* USER CODE END ADC_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc1);
+  /* USER CODE BEGIN ADC_IRQn 1 */
+
+  /* USER CODE END ADC_IRQn 1 */
 }
 
 /**
@@ -128,11 +144,11 @@ void DMA1_Stream6_IRQHandler(void)
 void TIM1_UP_TIM10_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
-
+  //SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
-
+  //SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
@@ -142,11 +158,12 @@ void TIM1_UP_TIM10_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
+  SEGGER_SYSVIEW_RecordEnterISR();
   HAL_OBC_UART_IRQHandler(&huart1);
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END USART1_IRQn 1 */
 }
 
@@ -156,11 +173,12 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
+  SEGGER_SYSVIEW_RecordEnterISR();  
   HAL_OBC_SU_UART_IRQHandler(&huart2);
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END USART2_IRQn 1 */
 }
 
@@ -170,11 +188,12 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
+  SEGGER_SYSVIEW_RecordEnterISR();
   HAL_OBC_UART_IRQHandler(&huart3);
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
   /* USER CODE BEGIN USART3_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END USART3_IRQn 1 */
 }
 
@@ -184,12 +203,26 @@ void USART3_IRQHandler(void)
 void SDIO_IRQHandler(void)
 {
   /* USER CODE BEGIN SDIO_IRQn 0 */
-
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END SDIO_IRQn 0 */
   HAL_SD_IRQHandler(&hsd);
   /* USER CODE BEGIN SDIO_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END SDIO_IRQn 1 */
+}
+
+/**
+* @brief This function handles SPI3 global interrupt.
+*/
+void SPI3_IRQHandler(void)
+{
+  /* USER CODE BEGIN SPI3_IRQn 0 */
+
+  /* USER CODE END SPI3_IRQn 0 */
+  HAL_SPI_IRQHandler(&hspi3);
+  /* USER CODE BEGIN SPI3_IRQn 1 */
+
+  /* USER CODE END SPI3_IRQn 1 */
 }
 
 /**
@@ -198,11 +231,12 @@ void SDIO_IRQHandler(void)
 void UART4_IRQHandler(void)
 {
   /* USER CODE BEGIN UART4_IRQn 0 */
+  SEGGER_SYSVIEW_RecordEnterISR();
   HAL_OBC_UART_IRQHandler(&huart4);
   /* USER CODE END UART4_IRQn 0 */
   HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN UART4_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END UART4_IRQn 1 */
 }
 
@@ -212,11 +246,11 @@ void UART4_IRQHandler(void)
 void DMA2_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
-
+  //SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA2_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart6_tx);
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
-
+  //SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA2_Stream6_IRQn 1 */
 }
 
@@ -226,11 +260,11 @@ void DMA2_Stream6_IRQHandler(void)
 void DMA2_Stream7_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
-
+  //SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA2_Stream7_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart1_tx);
   /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
-
+  //SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA2_Stream7_IRQn 1 */
 }
 
@@ -240,15 +274,54 @@ void DMA2_Stream7_IRQHandler(void)
 void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
+  SEGGER_SYSVIEW_RecordEnterISR();
   HAL_OBC_UART_IRQHandler(&huart6);
   /* USER CODE END USART6_IRQn 0 */
   HAL_UART_IRQHandler(&huart6);
   /* USER CODE BEGIN USART6_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END USART6_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
+//void USART6_IRQHandler(void){
+//
+//  / USER CODE BEGIN USART6_IRQn 0 /
+//
+//  SEGGER_SYSVIEW_RecordEnterISR();
+//
+//  HAL_OBC_UART_IRQHandler(&huart6);
+//
+//  / USER CODE END USART6_IRQn 0 /
+//
+//  HAL_UART_IRQHandler(&huart6);
+//
+//  / USER CODE BEGIN USART6_IRQn 1 /
+//
+//  SEGGER_SYSVIEW_RecordExitISR();
+//
+//  / USER CODE END USART6_IRQn 1 /
+//
+//}
 
+//void DMA1_Stream3_IRQHandler(void)
+//
+//{
+//
+//  / USER CODE BEGIN DMA1_Stream3_IRQn 0 /
+//
+//  SEGGER_SYSVIEW_RecordEnterISR();
+//
+//  / USER CODE END DMA1_Stream3_IRQn 0 /
+//
+//  HAL_DMA_IRQHandler(&hdma_usart3_tx);
+//
+//  / USER CODE BEGIN DMA1_Stream3_IRQn 1 /
+//
+//  SEGGER_SYSVIEW_RecordExitISR();
+//
+//  / USER CODE END DMA1_Stream3_IRQn 1 /
+//
+//}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

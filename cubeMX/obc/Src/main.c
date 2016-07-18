@@ -38,6 +38,10 @@
 /* USER CODE BEGIN Includes */
 #include "obc.h"
 #include "service_utilities.h"
+#include "time_management_service.h"
+#include "wdg.h"
+#include "su_mnlp.h"
+
 
 #undef __FILE_ID__
 #define __FILE_ID__ 666
@@ -46,6 +50,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
+IWDG_HandleTypeDef hiwdg;
 
 RTC_HandleTypeDef hrtc;
 
@@ -69,19 +75,26 @@ DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId uartHandle;
 osThreadId HKHandle;
-osThreadId SUHandle;
 osThreadId time_checkHandle;
+osThreadId SU_SCH_taskHandle;
+osThreadId scheduling_servHandle;
+osMessageQId queueCOMMS;
+osMessageQId queueADCS;
+osMessageQId queueDBG;
+osMessageQId queueEPS;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
-extern uint8_t su_inc_buffer[196];
+extern uint8_t su_inc_buffer[197]; //174 su resp + 22 flight hdr, +1 for serial shift = 197
+extern struct _MNLP_data MNLP_data;
 
 TaskHandle_t xTask_UART = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SDIO_SD_Init(void);
@@ -95,12 +108,13 @@ static void MX_SPI1_Init(void);
 static void MX_SPI3_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_RTC_Init(void);
-
+static void MX_IWDG_Init(void);
 void UART_task(void const * argument);
 void HK_task(void const * argument);
 void IDLE_task(void const * argument);
+void SU_SCH(void const * argument);
+void sche_se_sch(void const * argument);
 
-void SU_SCH_task(void const * argument);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -139,8 +153,14 @@ int main(void)
   MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
+  //MX_IWDG_Init();
 
   /* USER CODE BEGIN 2 */
+  //wdg_INIT();
+  // uart_temp[0] = key_test[4];
+
+  SEGGER_SYSVIEW_Conf();
+  sysview_init();
 
   /* USER CODE END 2 */
 
@@ -158,27 +178,51 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uart */
-  osThreadDef(uart, UART_task, osPriorityNormal, 0, 548);
+  osThreadDef(uart, UART_task, osPriorityNormal, 0, 1024);
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
-  osThreadDef(HK, HK_task, osPriorityLow, 0, 128);
+  osThreadDef(HK, HK_task, osPriorityLow, 0, 512);
   HKHandle = osThreadCreate(osThread(HK), NULL);
 
-  osThreadDef(SUSCH, SU_SCH_task, osPriorityNormal, 0, 128);
-  SUHandle = osThreadCreate(osThread(SUSCH), NULL);
-  
   /* definition and creation of time_check */
-  osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 128);
+  osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 512);
   time_checkHandle = osThreadCreate(osThread(time_check), NULL);
 
-  
+  /* definition and creation of SU_SCH_task */
+  //osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
+  //SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+
+  /* definition and creation of scheduling_serv */
+  //osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
+  //scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
+  /* Create the queue(s) */
+  /* definition and creation of queueCOMMS */
+  osMessageQDef(queueCOMMSdef, POOL_PKT_TOTAL_SIZE + 1, sizeof(tc_tm_pkt *));
+  queueCOMMS = osMessageCreate(osMessageQ(queueCOMMSdef), NULL);
+
+  /* definition and creation of queueADCS */
+  osMessageQDef(queueADCSdef, POOL_PKT_TOTAL_SIZE + 1, sizeof(tc_tm_pkt *));
+  queueADCS = osMessageCreate(osMessageQ(queueADCSdef), NULL);
+
+  /* definition and creation of queueDBG */
+  osMessageQDef(queueDBGdef, POOL_PKT_TOTAL_SIZE + 1, sizeof(tc_tm_pkt *));
+  queueDBG = osMessageCreate(osMessageQ(queueDBGdef), NULL);
+
+  /* definition and creation of queueEPS */
+  osMessageQDef(queueEPSdef, POOL_PKT_TOTAL_SIZE + 1, sizeof(tc_tm_pkt *));
+  queueEPS = osMessageCreate(osMessageQ(queueEPSdef), NULL);
+
   /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
+  uint32_t test = uxQueueMessagesWaiting( queueEPS );
+  test = uxQueueMessagesWaiting( queueDBG );
+  test = uxQueueMessagesWaiting( queueADCS );
+  test = uxQueueMessagesWaiting( queueCOMMS );
   /* USER CODE END RTOS_QUEUES */
  
 
@@ -213,16 +257,21 @@ void SystemClock_Config(void)
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 224;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
-  HAL_RCC_OscConfig(&RCC_OscInitStruct);
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -230,11 +279,17 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
@@ -245,7 +300,7 @@ void SystemClock_Config(void)
 }
 
 /* ADC1 init function */
-void MX_ADC1_Init(void)
+static void MX_ADC1_Init(void)
 {
 
   ADC_ChannelConfTypeDef sConfig;
@@ -253,7 +308,7 @@ void MX_ADC1_Init(void)
     /**Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
     */
   hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = DISABLE;
   hadc1.Init.ContinuousConvMode = DISABLE;
@@ -263,19 +318,39 @@ void MX_ADC1_Init(void)
   hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  HAL_ADC_Init(&hadc1);
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
     /**Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
     */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_VBAT;
   sConfig.Rank = 1;
   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
+/* IWDG init function */
+static void MX_IWDG_Init(void)
+{
+
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Reload = 4095;
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* RTC init function */
-void MX_RTC_Init(void)
+static void MX_RTC_Init(void)
 {
 
   RTC_TimeTypeDef sTime;
@@ -290,30 +365,42 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  HAL_RTC_Init(&hrtc);
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   sTime.Hours = 0;
   sTime.Minutes = 0;
   sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+  //if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
+  //{
+  //  Error_Handler();
+  //}
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
   sDate.Date = 1;
   sDate.Year = 0;
 
-  HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+  //if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
+  //{
+  //  Error_Handler();
+  //}
 
     /**Enable Calibrartion 
     */
-  HAL_RTCEx_SetCalibrationOutPut(&hrtc, RTC_CALIBOUTPUT_1HZ);
+  //if (HAL_RTCEx_SetCalibrationOutPut(&hrtc, RTC_CALIBOUTPUT_1HZ) != HAL_OK)
+  //{
+  //  Error_Handler();
+  //}
 
 }
 
 /* SDIO init function */
-void MX_SDIO_SD_Init(void)
+static void MX_SDIO_SD_Init(void)
 {
 
   hsd.Instance = SDIO;
@@ -327,7 +414,7 @@ void MX_SDIO_SD_Init(void)
 }
 
 /* SPI1 init function */
-void MX_SPI1_Init(void)
+static void MX_SPI1_Init(void)
 {
 
   hspi1.Instance = SPI1;
@@ -342,12 +429,15 @@ void MX_SPI1_Init(void)
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi1.Init.CRCPolynomial = 10;
-  HAL_SPI_Init(&hspi1);
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* SPI2 init function */
-void MX_SPI2_Init(void)
+static void MX_SPI2_Init(void)
 {
 
   hspi2.Instance = SPI2;
@@ -362,32 +452,37 @@ void MX_SPI2_Init(void)
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi2.Init.CRCPolynomial = 10;
-  HAL_SPI_Init(&hspi2);
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* SPI3 init function */
-void MX_SPI3_Init(void)
+static void MX_SPI3_Init(void)
 {
 
   hspi3.Instance = SPI3;
-  hspi3.Init.Mode = SPI_MODE_MASTER;
+  hspi3.Init.Mode = SPI_MODE_SLAVE;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
   hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi3.Init.CRCPolynomial = 10;
-  HAL_SPI_Init(&hspi3);
+  if (HAL_SPI_Init(&hspi3) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* UART4 init function */
-void MX_UART4_Init(void)
+static void MX_UART4_Init(void)
 {
 
   huart4.Instance = UART4;
@@ -398,12 +493,15 @@ void MX_UART4_Init(void)
   huart4.Init.Mode = UART_MODE_TX_RX;
   huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart4.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart4);
+  if (HAL_UART_Init(&huart4) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* USART1 init function */
-void MX_USART1_UART_Init(void)
+static void MX_USART1_UART_Init(void)
 {
 
   huart1.Instance = USART1;
@@ -414,12 +512,15 @@ void MX_USART1_UART_Init(void)
   huart1.Init.Mode = UART_MODE_TX_RX;
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart1);
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* USART2 init function */
-void MX_USART2_UART_Init(void)
+static void MX_USART2_UART_Init(void)
 {
 
   huart2.Instance = USART2;
@@ -430,12 +531,15 @@ void MX_USART2_UART_Init(void)
   huart2.Init.Mode = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart2);
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* USART3 init function */
-void MX_USART3_UART_Init(void)
+static void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
@@ -446,12 +550,15 @@ void MX_USART3_UART_Init(void)
   huart3.Init.Mode = UART_MODE_TX_RX;
   huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart3.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart3);
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /* USART6 init function */
-void MX_USART6_UART_Init(void)
+static void MX_USART6_UART_Init(void)
 {
 
   huart6.Instance = USART6;
@@ -462,14 +569,17 @@ void MX_USART6_UART_Init(void)
   huart6.Init.Mode = UART_MODE_TX_RX;
   huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart6.Init.OverSampling = UART_OVERSAMPLING_16;
-  HAL_UART_Init(&huart6);
+  if (HAL_UART_Init(&huart6) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
 }
 
 /** 
   * Enable DMA controller clock
   */
-void MX_DMA_Init(void) 
+static void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
@@ -501,7 +611,7 @@ void MX_DMA_Init(void)
         * EVENT_OUT
         * EXTI
 */
-void MX_GPIO_Init(void)
+static void MX_GPIO_Init(void)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
@@ -550,6 +660,31 @@ void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
+  
+  //if(hspi == &hspi3) {
+    obc_data.iac_flag = true; 
+  
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(xTask_UART, &xHigherPriorityTaskWoken);
+  //}
+}
+
+void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
+
+  //if(hspi == &hspi3) {
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(xTask_UART, &xHigherPriorityTaskWoken);
+  //}
+
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
+    obc_data.adc_flag = true;
+}
+
+
 /* USER CODE END 4 */
 
 /* UART_task function */
@@ -559,187 +694,74 @@ void UART_task(void const * argument)
   MX_FATFS_Init();
 
   /* USER CODE BEGIN 5 */
-    //obc_data.rsrc = 0;
-   HAL_reset_source(&sys_data.rsrc);
-   update_boot_counter();
+  
+   //obc_data.rsrc = 0;
 
    /*IS25LP128  eeprom*/
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
    
-   //uint32_t t1, t2, t3;
-   
-   //t1 = time_cmp_elapsed(3, 6);
-   //t2 = time_cmp_elapsed(0xfffffff0, 0xfffffff6);
-   //t3 = time_cmp_elapsed(0xfffffff0, 3);
-   
-   //t1 = get_time_ELAPSED();
-   //osDelay(10);
-   //t2 = get_time_ELAPSED();
-   //osDelay(1000);
-   //t3 = get_time_ELAPSED();
-   
-   //event_log(reset source);
-
-   //if(!C_ASSERT(false) == true)
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
-   
+
+   uint8_t rsrc = 0;
+   HAL_reset_source(&rsrc);
+   set_reset_source(rsrc);
+
+   uint32_t b_cnt = 0;
+   get_boot_counter(&b_cnt);
+   event_boot(rsrc, b_cnt);
+
+   update_boot_counter();
+
    HAL_obc_IAC_ON();
    
    HAL_obc_SD_ON();
    
    mass_storage_init();
-   
-   large_data_INIT();
-   
-   su_INIT();
-   
-   //uint32_t papartime = time_now();
-  
-   //uint8_t g = 5;
-   
-   //uint8_t hours, mins, sec = 0;
-   //HAL_obc_getTime(&hours, &mins, &sec);
-   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   
-   //hours = 19;
-   //mins = 35;
-   //sec = 11;
-   //HAL_obc_setTime(hours, mins, sec);
-   //sprintf((char*)uart_temp, "T: %d:%d.%d\n", hours, mins, sec);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   
-   //sprintf((char*)uart_temp, "F: %u\n", *obc_data.log_cnt);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-   //(*obc_data.log_cnt)++;
-   //*obc_data.log_cnt = 0;
-   //uint8_t tt[] = "YO!\n";
-   //event_log(tt, 4);
 
-   //event_log_load(uart_temp, (*obc_data.log_cnt) - 4, 4);
-   //HAL_UART_Transmit(&huart2, uart_temp, 5 , 10000);
-   
-   //sprintf((char*)uart_temp, "\nR: %02x\n", obc_data.rsrc);
-   //HAL_UART_Transmit(&huart2, uart_temp, 19 , 10000);
-//   uint8_t spi_in_temp[7], spi_out_temp[7];
-//   
-//   /*IS25LP128  eeprom*/
-//   spi_in_temp[0] = 0x90;
-//   spi_in_temp[1] = 0x00;
-//   spi_in_temp[2] = 0x00;
-//   spi_in_temp[3] = 0x00;
-//   spi_in_temp[4] = 0x00;
-//   spi_in_temp[5] = 0x00;
-//   spi_in_temp[6] = 0x00;
-   
-//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);
-//    HAL_SPI_TransmitReceive(&hspi2, spi_in_temp, spi_out_temp, 7, 10000);
-//    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
-//    //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-//    sprintf(uart_temp, "IS25LP128 %d %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5], spi_out_temp[6]);
-//    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-//    HAL_UART_Transmit(&huart2, uart_temp, 30 , 10000);
+   //su_INIT();
 
-//    for(uint8_t i = 0; i < 10; i++) {
-//      /*AD7682*/
-//      spi_in_temp[0] = 0xFA; //0b11110001;
-//      spi_in_temp[1] = 0x40; //0b00000100;
-//      spi_in_temp[2] = 0x00;
-//      spi_in_temp[3] = 0x00;
-//      spi_in_temp[4] = 0x00;
-//      spi_in_temp[5] = 0x00;
-//      
-//      spi_out_temp[0] = 0x00;
-//      spi_out_temp[1] = 0x00; 
-//      spi_out_temp[2] = 0x00;
-//      spi_out_temp[3] = 0x00;
-//      spi_out_temp[4] = 0x00;
-//      spi_out_temp[5] = 0x00;
-//      
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-//      osDelay(1);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-//      osDelay(1);
-//      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-//      osDelay(1);
-//      HAL_SPI_TransmitReceive(&hspi1, spi_in_temp, spi_out_temp, 4, 100);
-//      //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-//      sprintf(uart_temp, "AD7682 %d %d %d %d %d %d\n", spi_out_temp[0], spi_out_temp[1], spi_out_temp[2], spi_out_temp[3], spi_out_temp[4], spi_out_temp[5]);
-//      HAL_UART_Transmit(&huart3, uart_temp, 29 , 10000);
-//      osDelay(5);
-//    }
-      
-    /*RTC*/
-    struct time_utc utc;
-
-    get_time_UTC(&utc);
-    sprintf(uart_temp, "TIME %d %d %d %d %d %d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
-    HAL_UART_Transmit(&huart3, uart_temp, 30 , 10000);
-    
-  sprintf((char*)uart_temp, "Hello\n");
-  //HAL_UART_Transmit(&huart2, uart_temp, 6 , 10000);
-  HAL_UART_Transmit(&huart3, uart_temp, 6 , 10000);
-  HAL_UART_Transmit(&huart6, uart_temp, 6 , 10000);
-  
-  uint16_t size = 0;
-  
-  event_crt_pkt_api(uart_temp, "OBC STARTED", 666, 666, "", &size, SATR_OK);
-  HAL_uart_tx(DBG_APP_ID, (uint8_t *)uart_temp, size);
-  
+   //scheduling_init_service();
+   
   /*Task notification setup*/
   uint32_t ulNotificationValue;
   const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
 
   xTask_UART = xTaskGetCurrentTaskHandle();
 
+
+  //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+  osDelay(1);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2,  &su_inc_buffer[23], 174);
+  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[22], 174);
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
-  
-   //temporal su sim test code
 
-//   uint8_t su_out[200];
-//
-//          while(true){
-//
-//          su_out[0]= 0xF1;
-//
-//          su_out[1]= 1;
-//
-//          su_out[2]= 1;
-//
-//          HAL_UART_Transmit( &huart2, su_out, 3 , 10); //ver ok
-//
-//          su_out[0]= 0x05;
-//
-//          su_out[1]= 0x63; //len
-//
-//          su_out[2]= 2; //seq_coun
-//
-//          HAL_UART_Transmit( &huart2, su_out, 102 , 10); //ver ok
-//          }
-          
-          
   /* Infinite loop */
   for(;;)
   {
-    //su_incoming_rx();
+    task_times.uart_time = HAL_sys_GetTick();
+    su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    
+    import_spi();
+
+    export_pkt(EPS_APP_ID, &obc_data.eps_uart);
+    export_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+    export_pkt(COMMS_APP_ID, &obc_data.comms_uart);
+    export_pkt(DBG_APP_ID, &obc_data.dbg_uart);
+
+    wdg.uart_valid = true;
     ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
     
-    //sprintf((char*)uart_temp, "Task %d\n", ulNotificationValue);
-    //HAL_UART_Transmit(&huart3, uart_temp, strlen(uart_temp) , 10000);
-    //osDelay(1);
   }
   /* USER CODE END 5 */ 
 }
@@ -750,24 +772,11 @@ void HK_task(void const * argument)
   /* USER CODE BEGIN HK_task */
   hk_INIT();
   /* Infinite loop */
- 
+  osDelay(6000);
   for(;;)
   {
+    task_times.hk_time = HAL_sys_GetTick();
     hk_SCH();
-    osDelay(10);
-  }
-  /* USER CODE END HK_task */
-}
-
-/* SU_SCH_task function */
-void SU_SCH_task(void const * argument)
-{
-  /* USER CODE BEGIN SU_SCH_task */
-    
-  /* Infinite loop */
-  for(;;)
-  {
-//    su_SCH();
     osDelay(10);
   }
   /* USER CODE END HK_task */
@@ -777,12 +786,131 @@ void SU_SCH_task(void const * argument)
 void IDLE_task(void const * argument)
 {
   /* USER CODE BEGIN IDLE_task */
+   
+    /*Task notification setup*/
+  struct time_utc utc;
+  uint32_t qb_secs;
+  osDelay(5000);
+  /* Infinite loop */
+  for(;;)
+  { 
+    uint32_t time = HAL_sys_GetTick();
+    task_times.idle_time = time;
+
+    uart_killer(EPS_APP_ID, &obc_data.eps_uart, time);
+    uart_killer(DBG_APP_ID, &obc_data.dbg_uart, time);
+    uart_killer(COMMS_APP_ID, &obc_data.comms_uart, time);
+    uart_killer(ADCS_APP_ID, &obc_data.adcs_uart, time);
+
+    if(time - obc_data.adc_time > 30000) {
+      HAL_ADC_Start_IT(&hadc1);
+      obc_data.adc_time = time;
+    }
+      
+    if(obc_data.adc_flag == true) {
+      obc_data.vbat = (uint16_t) HAL_ADC_GetValue(&hadc1);
+      HAL_ADC_Stop_IT(&hadc1);
+      obc_data.adc_flag = false;
+    }
+      /*RTC*/
+    //uint32_t tt = xPortGetFreeHeapSize();
+    //get_time_UTC(&utc);
+    //sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
+    //HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
+    //get_time_QB50(&qb_secs);
+    //sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
+    //HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
+    pkt_pool_IDLE();
+    //event_log_IDLE();
+
+    osDelay(100);
+
+    uint8_t stop_here=0;
+    
+  }
+  /* USER CODE END IDLE_task */
+}
+
+/* SU_SCH function */
+void SU_SCH(void const * argument)
+{
+  /* USER CODE BEGIN SU_SCH */
+    uint32_t ulNotificationValue;
+    TickType_t su_scheduler_sleep_time;
+    uint32_t sleep_val=0;
+    su_mnlp_returnState su_sche_state;
+    
+//    osDelay(100000);
+    osDelay(5000);
+    
+  for(;;){
+
+    task_times.su_time = HAL_sys_GetTick();
+      /*select the script that is eligible to run, and mark it as ''running script''*/
+      su_script_selector();
+      if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
+        su_sche_state = su_SCH(&sleep_val);
+        if(su_sche_state == su_sche_sleep){
+            /*all time tables inside su_SCH has been served. Go for the next science collection day*/
+            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);            
+            
+            /*notification to wake up will be given from scheduling service*/
+            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
+        }
+      }
+      else{ osDelay(3000); }
+  }
+  
+  /* USER CODE END SU_SCH */
+}
+
+/* sche_se_sch function */
+void sche_se_sch(void const * argument)
+{
+  /* USER CODE BEGIN sche_se_sch */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(10);
+    task_times.sch_time = HAL_sys_GetTick();
+    osDelay(1000);
   }
-  /* USER CODE END IDLE_task */
+  /* USER CODE END StartTask05 */
+}
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+/* USER CODE BEGIN Callback 0 */
+
+/* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+/* USER CODE BEGIN Callback 1 */
+
+/* USER CODE END Callback 1 */
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler */
+  /* User can add his own implementation to report the HAL error return state */
+  while(1) 
+  {
+  }
+  /* USER CODE END Error_Handler */ 
 }
 
 #ifdef USE_FULL_ASSERT
