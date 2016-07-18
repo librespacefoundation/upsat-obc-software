@@ -399,7 +399,11 @@ RCC.HCLKFreq_Value=168000000
 RCC.HSE_VALUE=12000000
 RCC.HSI_VALUE=16000000
 RCC.I2SClocksFreq_Value=144000000
+<<<<<<< HEAD
 RCC.IPParameters=48MHZClocksFreq_Value,AHBFreq_Value,APB1CLKDivider,APB1Freq_Value,APB1TimFreq_Value,APB2CLKDivider,APB2Freq_Value,APB2TimFreq_Value,CortexFreq_Value,EthernetFreq_Value,FCLKCortexFreq_Value,FamilyName,HCLKFreq_Value,HSE_VALUE,HSI_VALUE,I2SClocksFreq_Value,LSI_VALUE,MCO2PinFreq_Value,PLLCLKFreq_Value,PLLM,PLLN,PLLQ,PLLQCLKFreq_Value,PLLSourceVirtual,RCC_RTC_Clock_Source,RCC_RTC_Clock_SourceVirtual,RTCFreq_Value,RTCHSEDivFreq_Value,SYSCLKFreq_VALUE,SYSCLKSource,VCOI2SOutputFreq_Value,VCOInputFreq_Value,VCOOutputFreq_Value,VcooutputI2S
+=======
+RCC.IPParameters=FamilyName,HSI_VALUE,SYSCLKFreq_VALUE,AHBFreq_Value,CortexFreq_Value,APB1Freq_Value,APB2Freq_Value,LSI_VALUE,RTCFreq_Value,VCOInputFreq_Value,VCOOutputFreq_Value,PLLCLKFreq_Value,PLLQCLKFreq_Value,VCOI2SOutputFreq_Value,VcooutputI2S,I2SClocksFreq_Value,HSE_VALUE,RTCHSEDivFreq_Value,48MHZClocksFreq_Value,SYSCLKSource,HCLKFreq_Value,FCLKCortexFreq_Value,APB1TimFreq_Value,APB2TimFreq_Value,EthernetFreq_Value,MCO2PinFreq_Value,PLLSourceVirtual,PLLM,APB1CLKDivider,APB2CLKDivider,PLLN,PLLQ,RCC_RTC_Clock_SourceVirtual,RCC_RTC_Clock_Source
+>>>>>>> 43d666d733c7030f41e173ef69a7ccceccf4d077
 RCC.LSI_VALUE=32000
 RCC.MCO2PinFreq_Value=168000000
 RCC.PLLCLKFreq_Value=168000000

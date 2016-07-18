@@ -41,6 +41,7 @@
 #include "time_management_service.h"
 #include "wdg.h"
 #include "su_mnlp.h"
+#include "scheduling_service.h"
 
 
 #undef __FILE_ID__
@@ -74,10 +75,10 @@ DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
 osThreadId uartHandle;
-osThreadId HKHandle;
-osThreadId time_checkHandle;
-osThreadId SU_SCH_taskHandle;
-osThreadId scheduling_servHandle;
+osThreadId hkHandle;
+osThreadId idleHandle;
+osThreadId su_schHandle;
+osThreadId sche_servHandle;
 osMessageQId queueCOMMS;
 osMessageQId queueADCS;
 osMessageQId queueDBG;
@@ -86,7 +87,7 @@ osMessageQId queueEPS;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint8_t uart_temp[200];
-extern uint8_t su_inc_buffer[197]; //174 su resp + 22 flight hdr, +1 for serial shift = 197
+extern uint8_t su_inc_resp[180]; //174 su resp + 22 flight hdr, +1 for serial shift = 197
 extern struct _MNLP_data MNLP_data;
 
 TaskHandle_t xTask_UART = NULL;
@@ -721,9 +722,9 @@ void UART_task(void const * argument)
    
    mass_storage_init();
 
-   //su_INIT();
+   su_INIT();
 
-   //scheduling_init_service();
+   scheduling_service_init();
    
   /*Task notification setup*/
   uint32_t ulNotificationValue;
@@ -731,14 +732,13 @@ void UART_task(void const * argument)
 
   xTask_UART = xTaskGetCurrentTaskHandle();
 
-
   //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
   osDelay(1);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
   /*Uart inits*/
   HAL_UART_Receive_IT( &huart1, obc_data.eps_uart.uart_buf, UART_BUF_SIZE);
-  HAL_UART_Receive_IT( &huart2, &su_inc_buffer[22], 174);
+  HAL_UART_Receive_IT( &huart2, MNLP_data.su_inc_resp, 174);
   HAL_UART_Receive_IT( &huart3, obc_data.dbg_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart4, obc_data.comms_uart.uart_buf, UART_BUF_SIZE);
   HAL_UART_Receive_IT( &huart6, obc_data.adcs_uart.uart_buf, UART_BUF_SIZE);
@@ -793,7 +793,7 @@ void IDLE_task(void const * argument)
   osDelay(5000);
   /* Infinite loop */
   for(;;)
-  { 
+  {
     uint32_t time = HAL_sys_GetTick();
     task_times.idle_time = time;
 
@@ -812,20 +812,8 @@ void IDLE_task(void const * argument)
       HAL_ADC_Stop_IT(&hadc1);
       obc_data.adc_flag = false;
     }
-      /*RTC*/
-    //uint32_t tt = xPortGetFreeHeapSize();
-    //get_time_UTC(&utc);
-    //sprintf(uart_temp, "\nUTC TIME: Y:%d, M:%d, D:%d, h:%d, m:%d, s:%d\n", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec);
-    //HAL_UART_Transmit(&huart3, uart_temp, 45 , 10000);
-    //get_time_QB50(&qb_secs);
-    //sprintf(uart_temp, "\nQB50 TIME: %d\n", qb_secs);
-    //HAL_UART_Transmit(&huart3, uart_temp, 21 , 10000);
+    
     pkt_pool_IDLE();
-    //event_log_IDLE();
-
-    osDelay(100);
-
-    uint8_t stop_here=0;
     
   }
   /* USER CODE END IDLE_task */
@@ -834,34 +822,94 @@ void IDLE_task(void const * argument)
 /* SU_SCH function */
 void SU_SCH(void const * argument)
 {
-  /* USER CODE BEGIN SU_SCH */
-    uint32_t ulNotificationValue;
-    TickType_t su_scheduler_sleep_time;
-    uint32_t sleep_val=0;
-    su_mnlp_returnState su_sche_state;
-    
-//    osDelay(100000);
-    osDelay(5000);
-    
-  for(;;){
+  /* USER CODE BEGIN su_sch_task */
+//  uint32_t ulNotificationValue;
+//  TickType_t su_scheduler_sleep_time;
+  uint32_t sleep_val_secs=55;
+  su_mnlp_returnState su_sche_state = su_sche_last;
+  osDelay(5000);
+  //time_management_force_time_update(ADCS_APP_ID);    
+//    time_management_force_time_update(ADCS_APP_ID);
+//    tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
+//    time_management_report_time_in_utc(time_rep_pkt, ADCS_APP_ID);
+//    route_pkt(time_rep_pkt);
+  //    tc_tm_pkt *test_pkt = get_pkt(PKT_NORMAL);
+        //    hk_crt_pkt_TC( test_pkt, ADCS_APP_ID, SU_SCI_HDR_REP);
+        //    route_pkt( test_pkt);
 
-    task_times.su_time = HAL_sys_GetTick();
-      /*select the script that is eligible to run, and mark it as ''running script''*/
-      su_script_selector();
-      if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
-        su_sche_state = su_SCH(&sleep_val);
-        if(su_sche_state == su_sche_sleep){
-            /*all time tables inside su_SCH has been served. Go for the next science collection day*/
-            su_scheduler_sleep_time = pdMS_TO_TICKS(sleep_val);            
-            
-            /*notification to wake up will be given from scheduling service*/
-            ulTaskNotifyTake(pdTRUE, su_scheduler_sleep_time);
+        //    time_management_request_time_in_utc(ADCS_APP_ID);
+
+        //      tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
+        //    hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
+        //    route_pkt(su_temp);
+        //time_management_force_time_update(ADCS_APP_ID);
+
+        //      tc_tm_pkt *time_rep_pkt = get_pkt(PKT_NORMAL);
+        //      time_management_report_time_in_utc( time_rep_pkt, ADCS_APP_ID);
+        //      route_pkt(time_rep_pkt);
+  /* Infinite loop */
+  for (;;){
+        task_times.su_time = HAL_sys_GetTick();
+        /*select the script that is eligible to run, and mark it as ''running script '' */
+        
+        tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
+        hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
+        route_pkt(su_temp);
+        
+        sleep_val_secs = 0;
+        su_sche_state = su_script_selector(&sleep_val_secs);
+//        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+        if( su_sche_state == su_no_scr_eligible){
+            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000)); /*sleeps for <50 secs*/
+            continue;
         }
-      }
-      else{ osDelay(3000); }
-  }
-  
-  /* USER CODE END SU_SCH */
+        else
+        if( su_sche_state == su_new_scr_selected){ /*script marked active 1 to 60 seconds earlier, sleep this time*/
+            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+            continue;
+            //run the su_SCH?
+        }
+        else
+        if( su_sche_state == su_no_new_scr_selected){ /*so there is an already active script, old or new, go for it*/
+            if( (*MNLP_data.su_nmlp_scheduler_active) == (uint8_t) true){
+                
+                /*check that we are not running the same script on the same day twice*/
+//                if( MNLP_data.su_scripts[(uint8_t) 
+//                        (MNLP_data.active_script - 1)].scr_header.start_time ){
+//                    
+//                }                
+                sleep_val_secs = 0;
+                su_sche_state = su_SCH(&sleep_val_secs);
+                
+                if( su_sche_state == su_sche_script_ended){
+                    /*all time tables inside su_SCH has been served. Select a new script or Go for the next science collection day*/
+                   //TODO: disable the scheduler ?
+                   //                    osDelay(sleep_val);
+                   ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+                   continue;
+                   /*notification to wake up will be given from scheduling service(?)*/
+                   /*also to be notified on script upload*/
+                }
+//                else
+//                if(su_sche_state == su_new_scr_selected){
+//                        
+//                }
+//                else
+//                if( su_sche_state == su_new_scr_selected){
+//                    uint8_t stop_here;
+//                    ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+//                    continue;
+//                }
+//                else
+//                if( su_sche_state == su_no_scr_eligible){
+//                    uint8_t stop_here;
+//                    continue;
+//                }
+            }
+        }
+//        osDelay(1000);
+    }
+  /* USER CODE END su_sch_task */
 }
 
 /* sche_se_sch function */
@@ -872,6 +920,7 @@ void sche_se_sch(void const * argument)
   for(;;)
   {
     task_times.sch_time = HAL_sys_GetTick();
+    cross_schedules();
     osDelay(1000);
   }
   /* USER CODE END StartTask05 */

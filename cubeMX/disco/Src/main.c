@@ -679,7 +679,7 @@ void StartDefaultTask(void const * argument)
    uint8_t uart_temp[20];
 //   
    pkt_pool_INIT();
-   scheduling_init_service();
+   scheduling_service_init();
    HAL_obc_enableBkUpAccess();
 //   bkup_sram_INIT();
 //   mass_storage_init();
