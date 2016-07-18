@@ -179,24 +179,24 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of uart */
-  osThreadDef(uart, UART_task, osPriorityNormal, 0, 1024);
+  osThreadDef(uart, UART_task, osPriorityAboveNormal, 0, 1024);
   uartHandle = osThreadCreate(osThread(uart), NULL);
 
   /* definition and creation of HK */
   osThreadDef(HK, HK_task, osPriorityLow, 0, 512);
-  HKHandle = osThreadCreate(osThread(HK), NULL);
+  hkHandle = osThreadCreate(osThread(HK), NULL);
 
   /* definition and creation of time_check */
   osThreadDef(time_check, IDLE_task, osPriorityIdle, 0, 512);
-  time_checkHandle = osThreadCreate(osThread(time_check), NULL);
+  idleHandle = osThreadCreate(osThread(time_check), NULL);
 
   /* definition and creation of SU_SCH_task */
-  //osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
-  //SU_SCH_taskHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
+  osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
+  su_schHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
 
   /* definition and creation of scheduling_serv */
-  //osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
-  //scheduling_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
+  osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
+  sche_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
