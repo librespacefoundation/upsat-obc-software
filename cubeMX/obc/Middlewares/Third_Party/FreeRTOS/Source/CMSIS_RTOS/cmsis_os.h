@@ -115,7 +115,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "core_cmFunc.h"
-	
+
+#include "SEGGER_SYSVIEW_FreeRTOS.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
@@ -125,79 +126,56 @@
 
 /**
 \page cmsis_os_h Header File Template: cmsis_os.h
-
 The file \b cmsis_os.h is a template header file for a CMSIS-RTOS compliant Real-Time Operating System (RTOS).
 Each RTOS that is compliant with CMSIS-RTOS shall provide a specific \b cmsis_os.h header file that represents
 its implementation.
-
 The file cmsis_os.h contains:
  - CMSIS-RTOS API function definitions
  - struct definitions for parameters and return types
  - status and priority values used by CMSIS-RTOS API functions
  - macros for defining threads and other kernel objects
-
-
 <b>Name conventions and header file modifications</b>
-
 All definitions are prefixed with \b os to give an unique name space for CMSIS-RTOS functions.
 Definitions that are prefixed \b os_ are not used in the application code but local to this header file.
 All definitions and functions that belong to a module are grouped and have a common prefix, i.e. \b osThread.
-
 Definitions that are marked with <b>CAN BE CHANGED</b> can be adapted towards the needs of the actual CMSIS-RTOS implementation.
 These definitions can be specific to the underlying RTOS kernel.
-
 Definitions that are marked with <b>MUST REMAIN UNCHANGED</b> cannot be altered. Otherwise the CMSIS-RTOS implementation is no longer
 compliant to the standard. Note that some functions are optional and need not to be provided by every CMSIS-RTOS implementation.
-
-
 <b>Function calls from interrupt service routines</b>
-
 The following CMSIS-RTOS functions can be called from threads and interrupt service routines (ISR):
   - \ref osSignalSet
   - \ref osSemaphoreRelease
   - \ref osPoolAlloc, \ref osPoolCAlloc, \ref osPoolFree
   - \ref osMessagePut, \ref osMessageGet
   - \ref osMailAlloc, \ref osMailCAlloc, \ref osMailGet, \ref osMailPut, \ref osMailFree
-
 Functions that cannot be called from an ISR are verifying the interrupt status and return in case that they are called
 from an ISR context the status code \b osErrorISR. In some implementations this condition might be caught using the HARD FAULT vector.
-
 Some CMSIS-RTOS implementations support CMSIS-RTOS function calls from multiple ISR at the same time.
 If this is impossible, the CMSIS-RTOS rejects calls by nested ISR functions with the status code \b osErrorISRRecursive.
-
-
 <b>Define and reference object definitions</b>
-
 With <b>\#define osObjectsExternal</b> objects are defined as external symbols. This allows to create a consistent header file
 that is used throughout a project as shown below:
-
 <i>Header File</i>
 \code
 #include <cmsis_os.h>                                         // CMSIS RTOS header file
-
 // Thread definition
 extern void thread_sample (void const *argument);             // function prototype
 osThreadDef (thread_sample, osPriorityBelowNormal, 1, 100);
-
 // Pool definition
 osPoolDef(MyPool, 10, long);
 \endcode
-
-
 This header file defines all objects when included in a C/C++ source file. When <b>\#define osObjectsExternal</b> is
 present before the header file, the objects are defined as external symbols. A single consistent header file can therefore be
 used throughout the whole project.
-
 <i>Example</i>
 \code
 #include "osObjects.h"     // Definition of the CMSIS-RTOS objects
 \endcode
-
 \code
 #define osObjectExternal   // Objects will be defined as external symbols
 #include "osObjects.h"     // Reference to the CMSIS-RTOS objects
 \endcode
-
 */
 
 #ifndef _CMSIS_OS_H
@@ -207,7 +185,7 @@ used throughout the whole project.
 #define osCMSIS           0x10002      ///< API version (main [31:16] .sub [15:0])
 
 /// \note CAN BE CHANGED: \b osCMSIS_KERNEL identifies the underlying RTOS kernel and version number.
-#define osCMSIS_KERNEL    0x10000	   ///< RTOS identification and version (main [31:16] .sub [15:0])
+#define osCMSIS_KERNEL    0x10000    ///< RTOS identification and version (main [31:16] .sub [15:0])
 
 /// \note MUST REMAIN UNCHANGED: \b osKernelSystemId shall be consistent in every CMSIS-RTOS.
 #define osKernelSystemId "KERNEL V1.00"   ///< RTOS identification string
@@ -270,11 +248,11 @@ typedef enum  {
 #if ( INCLUDE_eTaskGetState == 1 )
 /* Thread state returned by osThreadGetState */
 typedef enum {
-	osThreadRunning   = 0x0,	      /* A thread is querying the state of itself, so must be running. */
-	osThreadReady     = 0x1 ,			        /* The thread being queried is in a read or pending ready list. */
-	osThreadBlocked   = 0x2,		        /* The thread being queried is in the Blocked state. */
-	osThreadSuspended = 0x3,	      /* The thread being queried is in the Suspended state, or is in the Blocked state with an infinite time out. */
-	osThreadDeleted   = 0x4,		          /* The thread being queried has been deleted, but its TCB has not yet been freed. */   
+  osThreadRunning   = 0x0,        /* A thread is querying the state of itself, so must be running. */
+  osThreadReady     = 0x1 ,             /* The thread being queried is in a read or pending ready list. */
+  osThreadBlocked   = 0x2,            /* The thread being queried is in the Blocked state. */
+  osThreadSuspended = 0x3,        /* The thread being queried is in the Suspended state, or is in the Blocked state with an infinite time out. */
+  osThreadDeleted   = 0x4,              /* The thread being queried has been deleted, but its TCB has not yet been freed. */   
   osThreadError     = 0x7FFFFFFF
 } osThreadState;
 #endif /* INCLUDE_eTaskGetState */
@@ -966,4 +944,4 @@ osStatus osRecursiveMutexWait (osMutexId mutex_id, uint32_t millisec);
 }
 #endif
 
-#endif  // _CMSIS_OS_H
+#endif // _CMSIS_OS_H
