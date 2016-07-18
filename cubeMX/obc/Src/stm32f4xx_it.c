@@ -41,6 +41,7 @@ extern void HAL_OBC_UART_IRQHandler(UART_HandleTypeDef *huart);
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern ADC_HandleTypeDef hadc1;
 extern SD_HandleTypeDef hsd;
 extern SPI_HandleTypeDef hspi3;
 extern DMA_HandleTypeDef hdma_uart4_tx;
@@ -121,6 +122,20 @@ void DMA1_Stream6_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Stream6_IRQn 1 */
   SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA1_Stream6_IRQn 1 */
+}
+
+/**
+* @brief This function handles ADC1, ADC2 and ADC3 global interrupts.
+*/
+void ADC_IRQHandler(void)
+{
+  /* USER CODE BEGIN ADC_IRQn 0 */
+
+  /* USER CODE END ADC_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc1);
+  /* USER CODE BEGIN ADC_IRQn 1 */
+
+  /* USER CODE END ADC_IRQn 1 */
 }
 
 /**

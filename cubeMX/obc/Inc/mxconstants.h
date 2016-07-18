@@ -30,7 +30,10 @@
   *
   ******************************************************************************
   */
-/* Includes ------------------------------------------------------------------*/
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __MXCONSTANT_H
+#define __MXCONSTANT_H
+  /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
 
@@ -86,6 +89,12 @@
 #define FLASH_CS_SPI2_GPIO_Port GPIOA
 #define SD_PWR_EN_Pin GPIO_PIN_12
 #define SD_PWR_EN_GPIO_Port GPIOA
+#define IAC_SCK_SPI3_Pin GPIO_PIN_3
+#define IAC_SCK_SPI3_GPIO_Port GPIOB
+#define IAC_MISO_SPI3_Pin GPIO_PIN_4
+#define IAC_MISO_SPI3_GPIO_Port GPIOB
+#define IAC_MOSI_SPI3_Pin GPIO_PIN_5
+#define IAC_MOSI_SPI3_GPIO_Port GPIOB
 #define IAC_CS_SPI3_Pin GPIO_PIN_6
 #define IAC_CS_SPI3_GPIO_Port GPIOB
 #define DBG_EN_Pin GPIO_PIN_7
@@ -104,4 +113,5 @@
   * @}
 */ 
 
+#endif /* __MXCONSTANT_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

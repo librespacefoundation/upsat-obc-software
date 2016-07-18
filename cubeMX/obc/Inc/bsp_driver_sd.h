@@ -1,12 +1,11 @@
 /**
  ******************************************************************************
-  * @file    bsp_driver_sd.h (based on stm32469i_eval_sd.h)
+  * @file    bsp_driver_sd.h (based on stm324x9i_eval_sd.h)
   * @brief   This file contains the common defines and functions prototypes for 
   *          the bsp_driver_sd.c driver.
   ******************************************************************************
-  * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
+  * COPYRIGHT(c) 2016 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -58,9 +57,8 @@
   */     
 #define   MSD_OK                        ((uint8_t)0x00)
 #define   MSD_ERROR                     ((uint8_t)0x01)
-#define   MSD_ERROR_SD_NOT_PRESENT      ((uint8_t)0x02)
-  
-/** @defgroup STM324x9I_EVAL_SD_Exported_Constants
+   
+/** @defgroup STM324x9I_EVAL_SD_Exported_Constants STM324x9I EVAL SD Exported Constants
   * @{
   */ 
 #define SD_PRESENT               ((uint8_t)0x01)
