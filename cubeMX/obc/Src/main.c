@@ -191,11 +191,11 @@ int main(void)
   idleHandle = osThreadCreate(osThread(time_check), NULL);
 
   /* definition and creation of SU_SCH_task */
-  osThreadDef(SU_SCH_task, SU_SCH, osPriorityBelowNormal, 0, 512);
+  osThreadDef(SU_SCH_task, SU_SCH, osPriorityNormal, 0, 512);
   su_schHandle = osThreadCreate(osThread(SU_SCH_task), NULL);
 
   /* definition and creation of scheduling_serv */
-  osThreadDef(scheduling_serv, sche_se_sch, osPriorityNormal, 0, 128);
+  osThreadDef(scheduling_serv, sche_se_sch, osPriorityBelowNormal, 0, 128);
   sche_servHandle = osThreadCreate(osThread(scheduling_serv), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -797,10 +797,10 @@ void IDLE_task(void const * argument)
     uint32_t time = HAL_sys_GetTick();
     task_times.idle_time = time;
 
-    uart_killer(EPS_APP_ID, &obc_data.eps_uart, time);
-    uart_killer(DBG_APP_ID, &obc_data.dbg_uart, time);
-    uart_killer(COMMS_APP_ID, &obc_data.comms_uart, time);
-    uart_killer(ADCS_APP_ID, &obc_data.adcs_uart, time);
+//    uart_killer(EPS_APP_ID, &obc_data.eps_uart, time);
+//    uart_killer(DBG_APP_ID, &obc_data.dbg_uart, time);
+//    uart_killer(COMMS_APP_ID, &obc_data.comms_uart, time);
+//    uart_killer(ADCS_APP_ID, &obc_data.adcs_uart, time);
 
     if(time - obc_data.adc_time > 30000) {
       HAL_ADC_Start_IT(&hadc1);
@@ -814,6 +814,7 @@ void IDLE_task(void const * argument)
     }
     
     pkt_pool_IDLE();
+    osDelay(1000);
     
   }
   /* USER CODE END IDLE_task */
