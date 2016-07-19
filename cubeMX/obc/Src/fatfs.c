@@ -38,20 +38,20 @@ char SD_Path[4];  /* SD logical drive path */
 
 /* USER CODE BEGIN Variables */
 #include "time_management_service.h"
-/* USER CODE END Variables */    
+/* USER CODE END Variables */
 
-void MX_FATFS_Init(void) 
+void MX_FATFS_Init(void)
 {
   /*## FatFS: Link the SD driver ###########################*/
   retSD = FATFS_LinkDriver(&SD_Driver, SD_Path);
 
   /* USER CODE BEGIN Init */
-  /* additional user code for init */     
+  /* additional user code for init */
   /* USER CODE END Init */
 }
 
 /**
-  * @brief  Gets Time from RTC 
+  * @brief  Gets Time from RTC
   * @param  None
   * @retval Time in DWORD
   */
@@ -62,17 +62,18 @@ DWORD get_fattime(void)
 
     get_time_UTC(&tmp);
 
-    return ((((1980 - tmp.year) & 0x7F) << 25) | \
-      (((tmp.month) & 0x0F) << 21) | \
-      (((tmp.day) & 0x0F) << 16) | \
-      (((tmp.hour) & 0x1F) << 5) | \
-      (((tmp.sec)) >> 2));
+    return (((tmp.year + 20) << 25) | \
+      ((tmp.month) << 21) | \
+      ((tmp.day) << 16) | \
+      ((tmp.hour) << 11) | \
+      ((tmp.hour) << 5) | \
+      ((tmp.sec) >> 1));
 
-  /* USER CODE END get_fattime */  
+  /* USER CODE END get_fattime */
 }
 
 /* USER CODE BEGIN Application */
-     
+
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
