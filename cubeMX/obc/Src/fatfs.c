@@ -66,7 +66,7 @@ DWORD get_fattime(void)
       ((tmp.month) << 21) | \
       ((tmp.day) << 16) | \
       ((tmp.hour) << 11) | \
-      ((tmp.hour) << 5) | \
+      ((tmp.min) << 5) | \
       ((tmp.sec) >> 1));
 
   /* USER CODE END get_fattime */
