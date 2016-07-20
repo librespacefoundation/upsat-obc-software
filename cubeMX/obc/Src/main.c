@@ -722,16 +722,17 @@ void UART_task(void const * argument)
    
    mass_storage_init();
 
-   su_INIT();
-
-   scheduling_service_init();
-   
   /*Task notification setup*/
   uint32_t ulNotificationValue;
   const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
 
   xTask_UART = xTaskGetCurrentTaskHandle();
 
+  su_INIT();
+
+  scheduling_service_init();
+   
+  
   //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
   osDelay(1);
@@ -752,7 +753,7 @@ void UART_task(void const * argument)
     import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-    import_spi();
+//    import_spi();
 
     export_pkt(EPS_APP_ID, &obc_data.eps_uart);
     export_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
@@ -873,6 +874,8 @@ void sche_se_sch(void const * argument)
 {
   /* USER CODE BEGIN sche_se_sch */
   /* Infinite loop */
+    osDelay(5000);
+
   for(;;)
   {
     task_times.sch_time = HAL_sys_GetTick();
