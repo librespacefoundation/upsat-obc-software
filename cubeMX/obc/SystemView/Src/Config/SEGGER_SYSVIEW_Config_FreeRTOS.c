@@ -81,7 +81,7 @@ extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 */
 static void _cbSendSystemDesc(void) {
   SEGGER_SYSVIEW_SendSysDesc("N="SYSVIEW_APP_NAME",D="SYSVIEW_DEVICE_NAME",O=FreeRTOS");
-  SEGGER_SYSVIEW_SendSysDesc("I#15=SysTick,I#53=EPS_U1,I#54=SU_U2,I#55=UMB_U3,I#65=SDIO,I#67=IAC_SPI3,I#68=COMMS_U4,I#87=ADCS_U6");
+  SEGGER_SYSVIEW_SendSysDesc("I#15=SysTick,I#53=EPS_U1,I#54=SU_U2,I#55=UMB_U3,I#65=SDIO,I#67=IAC_SPI3,I#68=COMMS_U4,I#87=ADCS_U6,I#86=EPS_DMA,I#33=SU_DMA,I#30=UMB,I#31=COMMS,I#70=ADCS");
 }
 
 /*********************************************************************

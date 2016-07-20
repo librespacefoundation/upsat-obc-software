@@ -246,11 +246,11 @@ void UART4_IRQHandler(void)
 void DMA2_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
-  //SEGGER_SYSVIEW_RecordEnterISR();
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA2_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart6_tx);
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
-  //SEGGER_SYSVIEW_RecordExitISR();
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA2_Stream6_IRQn 1 */
 }
 
@@ -260,11 +260,11 @@ void DMA2_Stream6_IRQHandler(void)
 void DMA2_Stream7_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
-  //SEGGER_SYSVIEW_RecordEnterISR();
+  SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END DMA2_Stream7_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart1_tx);
   /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
-  //SEGGER_SYSVIEW_RecordExitISR();
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END DMA2_Stream7_IRQn 1 */
 }
 
