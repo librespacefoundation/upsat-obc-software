@@ -137,7 +137,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
+  HAL_Delay(5000);
   /* Configure the system clock */
   SystemClock_Config();
 
@@ -704,7 +704,6 @@ void UART_task(void const * argument)
 
   scheduling_service_init();
 
-  //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
   osDelay(1);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
@@ -771,8 +770,6 @@ void IDLE_task(void const * argument)
   /* USER CODE BEGIN IDLE_task */
    
     /*Task notification setup*/
-  struct time_utc utc;
-  uint32_t qb_secs;
   osDelay(5000);
   /* Infinite loop */
   for(;;)
@@ -782,6 +779,7 @@ void IDLE_task(void const * argument)
 
     uint32_t time = HAL_sys_GetTick();
     task_times.idle_time = time;
+
 
     pkt_pool_IDLE(time);
     queue_IDLE(EPS_APP_ID);
@@ -801,7 +799,7 @@ void IDLE_task(void const * argument)
     }
 
     osDelay(1000);
-    
+
   }
   /* USER CODE END IDLE_task */
 }
@@ -810,20 +808,16 @@ void IDLE_task(void const * argument)
 void SU_SCH(void const * argument)
 {
   /* USER CODE BEGIN su_sch_task */
-  uint32_t sleep_val_secs=55;
+  uint32_t sleep_val_secs;
   su_mnlp_returnState su_sche_state = su_sche_last;
-  osDelay(5000);
-  /* Infinite loop */
-  for (;;){
-    if( *MNLP_data.su_service_sheduler_active){
-          
-//        tc_tm_pkt *su_temp = get_pkt(PKT_NORMAL);
-//        hk_crt_pkt_TC( su_temp, ADCS_APP_ID, SU_SCI_HDR_REP);
-//        route_pkt(su_temp);
+  osDelay(5000); /*delay to hold freeRTOS scheduler executing us before mass_storage init, su_init etc...*/
+  
+  for (;;){ /* Infinite loop */
+    if( *MNLP_data.su_service_scheduler_active){
         
         sleep_val_secs = 0;
         su_sche_state = su_script_selector(&sleep_val_secs);
-//        ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
+
         if( su_sche_state == su_no_scr_eligible){
             ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000)); /*sleeps for <50 secs*/
             continue;
@@ -832,7 +826,6 @@ void SU_SCH(void const * argument)
         if( su_sche_state == su_new_scr_selected){ /*script marked active 1 to 60 seconds earlier, sleep this time*/
             ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
             continue;
-            //run the su_SCH?
         }
         else
         if( su_sche_state == su_no_new_scr_selected){ /*so there is an already active script, old or new, go for it*/
@@ -840,11 +833,10 @@ void SU_SCH(void const * argument)
                 sleep_val_secs = 0;
                 su_sche_state = su_SCH(&sleep_val_secs);                
                 if( su_sche_state == su_sche_script_ended){
-                    /*all time tables inside su_SCH has been served. Select a new script or Go for the next science collection day*/
-                   //TODO: disable the scheduler ?
+                    /*all time tables inside su_SCH has been served. Select a new script or go for the next science collection day*/
                    ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS((sleep_val_secs)*1000));
                    continue;
-                   /*TODO: also to be notified on script upload*/
+                   /*TODO: also to be notified on script upload?*/
                 }
             }
         }
