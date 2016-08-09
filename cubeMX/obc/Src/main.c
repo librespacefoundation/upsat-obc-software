@@ -744,8 +744,6 @@ void UART_task(void const * argument)
     }
 
     ulNotificationValue = ulTaskNotifyTake( pdTRUE, blockTime);
-   }
- 
     
   }
   /* USER CODE END 5 */ 
