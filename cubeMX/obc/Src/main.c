@@ -122,7 +122,8 @@ void sche_se_sch(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+const TickType_t xUARTMaxBlockTime = pdMS_TO_TICKS(10000);
+const TickType_t xUARTMinBlockTime = pdMS_TO_TICKS(100);
 /* USER CODE END 0 */
 
 int main(void)
@@ -154,15 +155,11 @@ int main(void)
   MX_SPI3_Init();
   MX_ADC1_Init();
   MX_RTC_Init();
-  //MX_IWDG_Init();
+  MX_IWDG_Init();
 
   /* USER CODE BEGIN 2 */
-  //wdg_INIT();
-  // uart_temp[0] = key_test[4];
-
   SEGGER_SYSVIEW_Conf();
   sysview_init();
-
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -660,32 +657,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
-  
-  //if(hspi == &hspi3) {
-    obc_data.iac_flag = true; 
-  
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(xTask_UART, &xHigherPriorityTaskWoken);
-  //}
-}
-
-void HAL_SPI_ErrorCallback (SPI_HandleTypeDef * hspi) {
-
-  //if(hspi == &hspi3) {
-
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(xTask_UART, &xHigherPriorityTaskWoken);
-  //}
-
-}
-
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     obc_data.adc_flag = true;
 }
-
-
 /* USER CODE END 4 */
 
 /* UART_task function */
@@ -701,7 +675,7 @@ void UART_task(void const * argument)
    /*IS25LP128  eeprom*/
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-   
+
    pkt_pool_INIT();
    HAL_obc_enableBkUpAccess();
    bkup_sram_INIT();
@@ -712,14 +686,11 @@ void UART_task(void const * argument)
 
    uint32_t b_cnt = 0;
    get_boot_counter(&b_cnt);
-   event_boot(rsrc, b_cnt);
 
    update_boot_counter();
 
-   HAL_obc_IAC_ON();
-   
    HAL_obc_SD_ON();
-   
+
    mass_storage_init();
 
   /*Task notification setup*/
@@ -727,12 +698,12 @@ void UART_task(void const * argument)
   const TickType_t xMaxBlockTime = pdMS_TO_TICKS(10000);
 
   xTask_UART = xTaskGetCurrentTaskHandle();
+  TickType_t blockTime;
 
   su_INIT();
 
   scheduling_service_init();
-   
-  
+
   //HAL_SPI_TransmitReceive_IT(&hspi3, obc_data.iac_out, obc_data.iac_in, 16);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
   osDelay(1);
@@ -750,18 +721,29 @@ void UART_task(void const * argument)
     task_times.uart_time = HAL_sys_GetTick();
     su_incoming_rx();
     import_pkt(EPS_APP_ID, &obc_data.eps_uart);
-    import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
-    import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
-    import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
-//    import_spi();
-
     export_pkt(EPS_APP_ID, &obc_data.eps_uart);
-    export_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+
+    import_pkt(COMMS_APP_ID, &obc_data.comms_uart);
     export_pkt(COMMS_APP_ID, &obc_data.comms_uart);
+
+    import_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+    export_pkt(ADCS_APP_ID, &obc_data.adcs_uart);
+
+    import_pkt(DBG_APP_ID, &obc_data.dbg_uart);
     export_pkt(DBG_APP_ID, &obc_data.dbg_uart);
 
-    wdg.uart_valid = true;
-    ulNotificationValue = ulTaskNotifyTake( pdTRUE, xMaxBlockTime);
+    wdg_reset_UART();
+    if(uxQueueMessagesWaiting(queueADCS) > 0 ||
+       uxQueueMessagesWaiting(queueDBG) > 0 ||
+       uxQueueMessagesWaiting(queueCOMMS) > 0 ||
+       uxQueueMessagesWaiting(queueEPS) > 0) {
+
+      blockTime = xUARTMinBlockTime;
+    } else {
+      blockTime = xUARTMaxBlockTime;
+    }
+
+    ulNotificationValue = ulTaskNotifyTake( pdTRUE, blockTime);
     
   }
   /* USER CODE END 5 */ 
@@ -795,13 +777,17 @@ void IDLE_task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+
+    wdg_IDLE();
+
     uint32_t time = HAL_sys_GetTick();
     task_times.idle_time = time;
 
-//    uart_killer(EPS_APP_ID, &obc_data.eps_uart, time);
-//    uart_killer(DBG_APP_ID, &obc_data.dbg_uart, time);
-//    uart_killer(COMMS_APP_ID, &obc_data.comms_uart, time);
-//    uart_killer(ADCS_APP_ID, &obc_data.adcs_uart, time);
+    pkt_pool_IDLE(time);
+    queue_IDLE(EPS_APP_ID);
+    queue_IDLE(DBG_APP_ID);
+    queue_IDLE(COMMS_APP_ID);
+    queue_IDLE(ADCS_APP_ID);
 
     if(time - obc_data.adc_time > 30000) {
       HAL_ADC_Start_IT(&hadc1);
@@ -813,8 +799,7 @@ void IDLE_task(void const * argument)
       HAL_ADC_Stop_IT(&hadc1);
       obc_data.adc_flag = false;
     }
-    
-    pkt_pool_IDLE();
+
     osDelay(1000);
     
   }
