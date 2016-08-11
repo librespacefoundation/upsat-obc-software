@@ -622,12 +622,15 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, COMMS_EN_Pin|ADC_CS_SPI1_Pin|IAC_EN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, COMMS_EN_Pin|ADC_CS_SPI1_Pin, GPIO_PIN_RESET);
 
+  HAL_GPIO_WritePin(GPIOC, IAC_EN_Pin, GPIO_PIN_SET);
+  
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|FLASH_HOLD_Pin|IAC_CS_SPI3_Pin|DBG_EN_Pin 
-                          |IAC_CAMERA_PWR_Pin, GPIO_PIN_RESET);
-
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|IAC_CS_SPI3_Pin|FLASH_HOLD_Pin|DBG_EN_Pin, GPIO_PIN_RESET);
+  
+  HAL_GPIO_WritePin(GPIOB, IAC_CAMERA_PWR_Pin, GPIO_PIN_SET);
+  
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, FLASH_WP_Pin|FLASH_CS_SPI2_Pin|SD_PWR_EN_Pin, GPIO_PIN_RESET);
 
@@ -670,8 +673,6 @@ void UART_task(void const * argument)
 
   /* USER CODE BEGIN 5 */
   
-   //obc_data.rsrc = 0;
-
    /*IS25LP128  eeprom*/
    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -732,10 +733,10 @@ void UART_task(void const * argument)
     export_pkt(DBG_APP_ID, &obc_data.dbg_uart);
 
     wdg_reset_UART();
-    if(uxQueueMessagesWaiting(queueADCS) > 0 ||
-       uxQueueMessagesWaiting(queueDBG) > 0 ||
-       uxQueueMessagesWaiting(queueCOMMS) > 0 ||
-       uxQueueMessagesWaiting(queueEPS) > 0) {
+    if(uxQueueMessagesWaiting(queueADCS)  > 0  ||
+       uxQueueMessagesWaiting(queueDBG)   > 0  ||
+       uxQueueMessagesWaiting(queueCOMMS) > 0  ||
+       uxQueueMessagesWaiting(queueEPS)   > 0) {
 
       blockTime = xUARTMinBlockTime;
     } else {
