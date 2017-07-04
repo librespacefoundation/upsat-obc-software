@@ -51,14 +51,12 @@ int main() {
  	} while( check != SATR_EOT);
 
 
- 	for(int i =0; i < res_size; i++ ) {
- 		if( out[i] == res[i] ) {
- 			continue;
- 		} else {
- 			printf("error\n");
- 			break;
- 		}
- 	}
+    for(int i =0; i < res_size; i++ ) {
+        if( out[i] != res[i] ) {
+	    printf("error\n");
+	    break;
+        }
+    }
     
     
     in[0] = 0x12;
@@ -102,9 +100,7 @@ int main() {
     
     
     for(int i =0; i < res_size; i++ ) {
-        if( out[i] == res[i] ) {
-            continue;
-        } else {
+        if( out[i] != res[i] ) {
             printf("error\n");
             break;
         }
@@ -151,9 +147,7 @@ int main() {
     
     
     for(int i =0; i < res_size; i++ ) {
-        if( out[i] == res[i] ) {
-            continue;
-        } else {
+        if( out[i] != res[i] ) {
             printf("error\n");
             break;
         }
@@ -200,9 +194,7 @@ int main() {
     
     
     for(int i =0; i < res_size; i++ ) {
-        if( out[i] == res[i] ) {
-            continue;
-        } else {
+        if( out[i] != res[i] ) {
             printf("error\n");
             break;
         }
